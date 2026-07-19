@@ -90,6 +90,12 @@ const nextConfig = {
         destination: "/services/:path*",
         permanent: true,
       },
+       {
+      source: '/:path*',
+      has: [{ type: 'host', value: 'www.kraviona.com' }],
+      destination: 'https://kraviona.com/:path*',
+      permanent: true,
+    }
     ];
   },
 };
