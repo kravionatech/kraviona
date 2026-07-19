@@ -1,0 +1,175 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+@layer base {
+  :root {
+    /* Logo Primary Dark Teal */
+    --primary-teal: #295c5e;
+    --primary-teal-dark: #1b3d3e;
+    --primary-teal-light: #3a7a7c;
+
+    /* Logo Terracotta / Coral (Orange-ish) */
+    --accent-coral: #a9472f;
+    --accent-coral-hover: #953924;
+
+    /* Logo Peach / Sand (Yellow-ish) */
+    --accent-peach: #f4be78;
+
+    /* Backgrounds */
+    --bg-dark: #0f2425; /* Hero section ke liye darker teal */
+    --bg-light: #fdfdfd;
+  }
+}
+body {
+  font-family:
+    Arial,
+    Helvetica,
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+}
+
+@keyframes slow-bounce {
+  0%,
+  100% {
+    transform: translateY(-15%);
+    animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
+  }
+  50% {
+    transform: translateY(0);
+    animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+  }
+}
+
+.animate-slow-bounce {
+  animation: slow-bounce 3s infinite;
+}
+
+@keyframes chatbot-attention-ring {
+  0%,
+  100% {
+    box-shadow:
+      0 12px 26px rgba(15, 36, 37, 0.16),
+      0 0 0 0 rgba(217, 108, 78, 0.38);
+  }
+  48% {
+    box-shadow:
+      0 14px 30px rgba(15, 36, 37, 0.2),
+      0 0 0 14px rgba(217, 108, 78, 0);
+  }
+}
+
+body {
+  overflow-x: hidden;
+}
+
+.blog-rich-content :where(img) {
+  display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  height: auto !important;
+  margin: 2.5rem auto !important;
+  object-fit: contain !important;
+}
+
+.blog-rich-content :where(p:has(img)) {
+  margin: 2.5rem 0 !important;
+}
+
+.blog-rich-content :where(.ql-ui) {
+  display: none;
+}
+
+.blog-rich-content :where(span) {
+  color: inherit !important;
+  background: transparent !important;
+}
+
+/* Chatbase: target only the outer widget containers, not inner chat iframes */
+#chatbase-bubble-window,
+#chatbase-bubble-button {
+  z-index: 9999 !important;
+  transform: none !important;
+  transform-origin: bottom right !important;
+}
+
+#chatbase-bubble-window {
+  position: fixed !important;
+  top: auto !important;
+  left: auto !important;
+  right: 16px !important;
+  bottom: calc(82px + env(safe-area-inset-bottom, 0px)) !important;
+  width: min(360px, calc(100vw - 24px)) !important;
+  height: min(540px, calc(100dvh - 110px - env(safe-area-inset-bottom, 0px))) !important;
+  max-width: calc(100vw - 24px) !important;
+  max-height: calc(100dvh - 110px - env(safe-area-inset-bottom, 0px)) !important;
+  border-radius: 18px !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+  box-shadow: 0 18px 55px rgba(15, 36, 37, 0.22) !important;
+}
+
+#chatbase-bubble-button {
+  position: fixed !important;
+  top: auto !important;
+  left: auto !important;
+  right: 16px !important;
+  bottom: calc(16px + env(safe-area-inset-bottom, 0px)) !important;
+  width: 56px !important;
+  height: 56px !important;
+  max-width: 56px !important;
+  max-height: 56px !important;
+  border-radius: 9999px !important;
+  animation: chatbot-attention-ring 2.8s ease-out infinite !important;
+  will-change: box-shadow;
+}
+
+@media (max-width: 768px) {
+  #chatbase-bubble-window {
+    top: auto !important;
+    left: 12px !important;
+    right: 12px !important;
+    bottom: calc(72px + env(safe-area-inset-bottom, 0px)) !important;
+    width: auto !important;
+    height: min(520px, calc(100dvh - 92px - env(safe-area-inset-bottom, 0px))) !important;
+    max-width: calc(100vw - 24px) !important;
+    max-height: calc(100dvh - 92px - env(safe-area-inset-bottom, 0px)) !important;
+    border-radius: 16px !important;
+  }
+
+  #chatbase-bubble-button {
+    top: auto !important;
+    left: auto !important;
+    right: 12px !important;
+    bottom: calc(12px + env(safe-area-inset-bottom, 0px)) !important;
+    width: 52px !important;
+    height: 52px !important;
+    max-width: 52px !important;
+    max-height: 52px !important;
+  }
+}
+
+@media (max-width: 420px) {
+  #chatbase-bubble-window {
+    left: 10px !important;
+    right: 10px !important;
+    bottom: calc(70px + env(safe-area-inset-bottom, 0px)) !important;
+    width: auto !important;
+    height: min(500px, calc(100dvh - 90px - env(safe-area-inset-bottom, 0px))) !important;
+    max-width: calc(100vw - 20px) !important;
+    max-height: calc(100dvh - 90px - env(safe-area-inset-bottom, 0px)) !important;
+    border-radius: 14px !important;
+  }
+
+  #chatbase-bubble-button {
+    right: 10px !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #chatbase-bubble-button {
+    animation: none !important;
+  }
+}
