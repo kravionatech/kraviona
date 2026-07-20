@@ -21,6 +21,15 @@ const cardVariants = {
   },
 };
 
+const parsePosts = (json) =>
+  Array.isArray(json?.posts)
+    ? json.posts
+    : Array.isArray(json?.data)
+      ? json.data
+      : Array.isArray(json)
+        ? json
+        : [];
+
 const LatestBlog = () => {
   const [posts, setPosts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -34,10 +43,8 @@ const LatestBlog = () => {
         });
 
         const result = response.ok ? await response.json() : {};
-
-        if (result.success && result.data) {
-          setPosts(result.data.slice(0, 3));
-        }
+        const allPosts = parsePosts(result);
+        setPosts(allPosts.filter((p) => p?.slug).slice(0, 3));
       } catch {
         // silent fail
       } finally {
