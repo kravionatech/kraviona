@@ -37,16 +37,29 @@ const LatestBlog = () => {
   useEffect(() => {
     const fetchLatestPosts = async () => {
       try {
-        const response = await fetch(`${API_URL}/public/posts?limit=100`, {
+        const url = `${API_URL}/public/posts?limit=100`;
+        console.warn("[LatestBlog] Fetching:", url);
+        const response = await fetch(url, {
           cache: "no-store",
           headers: { Accept: "application/json" },
         });
 
-        const result = response.ok ? await response.json() : {};
+        console.warn("[LatestBlog] Response status:", response.status, response.ok);
+        if (!response.ok) {
+          console.warn("[LatestBlog] Response NOT OK, status:", response.status);
+          setPosts([]);
+          return;
+        }
+
+        const result = await response.json();
+        console.warn("[LatestBlog] Response keys:", Object.keys(result));
         const allPosts = parsePosts(result);
-        setPosts(allPosts.filter((p) => p?.slug).slice(0, 3));
-      } catch {
-        // silent fail
+        console.warn("[LatestBlog] Parsed posts count:", allPosts.length);
+        const finalPosts = allPosts.filter((p) => p?.slug).slice(0, 3);
+        console.warn("[LatestBlog] Final posts count:", finalPosts.length);
+        setPosts(finalPosts);
+      } catch (err) {
+        console.warn("[LatestBlog] Fetch error:", err?.message || err);
       } finally {
         setIsLoading(false);
       }

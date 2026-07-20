@@ -456,8 +456,13 @@ export default function EwayBlogLayout({ initialPosts = [] }) {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
 
+  console.warn("[EwayBlogLayout] initialPosts.length:", initialPosts.length);
+
   useEffect(() => {
-    if (initialPosts.length > 0) return;
+    if (initialPosts.length > 0) {
+      console.warn("[EwayBlogLayout] Using server-provided initialPosts, skipping client fetch");
+      return;
+    }
 
     const fetchPosts = async () => {
       try {
@@ -466,25 +471,34 @@ export default function EwayBlogLayout({ initialPosts = [] }) {
         let hasNextPage = true;
 
         while (hasNextPage) {
-          const response = await fetch(
-            `${API_URL}/public/posts?page=${pageToFetch}&limit=${POSTS_FETCH_LIMIT}`,
-            {
-              cache: "no-store",
-              headers: { Accept: "application/json" },
-            },
-          );
-          const json = response.ok ? await response.json() : {};
-          posts.push(...parsePosts(json));
+          const url = `${API_URL}/public/posts?page=${pageToFetch}&limit=${POSTS_FETCH_LIMIT}`;
+          console.warn("[EwayBlogLayout] Fetching page:", pageToFetch, url);
+          const response = await fetch(url, {
+            cache: "no-store",
+            headers: { Accept: "application/json" },
+          });
+          console.warn("[EwayBlogLayout] Response status:", response.status, response.ok);
+
+          if (!response.ok) {
+            console.warn("[EwayBlogLayout] Response NOT OK, breaking");
+            break;
+          }
+
+          const json = await response.json();
+          console.warn("[EwayBlogLayout] Response keys:", Object.keys(json));
+          const pagePosts = parsePosts(json);
+          console.warn("[EwayBlogLayout] Page", pageToFetch, "posts:", pagePosts.length);
+          posts.push(...pagePosts);
 
           hasNextPage = Boolean(json?.pagination?.hasNextPage);
           pageToFetch += 1;
         }
 
-        setAllPosts(posts.filter((post) => post?.slug));
+        const finalPosts = posts.filter((post) => post?.slug);
+        console.warn("[EwayBlogLayout] Total posts after filter:", finalPosts.length);
+        setAllPosts(finalPosts);
       } catch (error) {
-        if (process.env.NODE_ENV !== "production") {
-          console.error("[EwayBlogLayout] fetch error:", error);
-        }
+        console.warn("[EwayBlogLayout] Fetch error:", error?.message || error);
         setAllPosts([]);
       } finally {
         setIsLoading(false);

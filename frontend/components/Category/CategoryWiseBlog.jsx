@@ -36,12 +36,22 @@ const CategoryWiseBlog = ({ category }) => {
     const fetchCategoryPosts = async () => {
       setIsLoading(true);
       try {
-        const response = await fetch(`${API_URL}/public/posts?limit=100`, {
+        const url = `${API_URL}/public/posts?limit=100`;
+        console.warn("[CategoryWiseBlog] Fetching:", url, "| category:", category);
+        const response = await fetch(url, {
           cache: "no-store",
           headers: { Accept: "application/json" },
         });
 
-        const result = response.ok ? await response.json() : {};
+        console.warn("[CategoryWiseBlog] Response status:", response.status, response.ok);
+        if (!response.ok) {
+          console.warn("[CategoryWiseBlog] Response NOT OK");
+          setPosts([]);
+          return;
+        }
+
+        const result = await response.json();
+        console.warn("[CategoryWiseBlog] Response keys:", Object.keys(result));
         const allPosts = Array.isArray(result.posts)
           ? result.posts
           : Array.isArray(result.data)
@@ -49,6 +59,8 @@ const CategoryWiseBlog = ({ category }) => {
             : Array.isArray(result)
               ? result
               : [];
+        console.warn("[CategoryWiseBlog] All posts count:", allPosts.length);
+
         const categoryPosts = allPosts.filter((post) => {
           const categorySlug = post.category?.slug || "";
           const categoryName = post.category?.name || "";
@@ -59,11 +71,16 @@ const CategoryWiseBlog = ({ category }) => {
           );
         });
 
+        console.warn("[CategoryWiseBlog] Category posts count:", categoryPosts.length);
+        if (allPosts.length > 0 && categoryPosts.length === 0) {
+          console.warn("[CategoryWiseBlog] Category filter emptied all posts!");
+          console.warn("[CategoryWiseBlog] Looking for category:", category);
+          console.warn("[CategoryWiseBlog] Available slugs:", [...new Set(allPosts.map(p => p.category?.slug))]);
+          console.warn("[CategoryWiseBlog] Available names:", [...new Set(allPosts.map(p => p.category?.name))]);
+        }
         setPosts(categoryPosts);
       } catch (error) {
-        if (process.env.NODE_ENV !== "production") {
-          console.error("Error fetching category posts:", error);
-        }
+        console.warn("[CategoryWiseBlog] Fetch error:", error?.message || error);
         setPosts([]);
       } finally {
         setIsLoading(false);
