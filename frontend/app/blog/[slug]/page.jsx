@@ -283,10 +283,17 @@ const BlogDetail = async ({ params }) => {
     .trim()
     .substring(0, 160);
 
-  const articleSchema = {
+  const supportedArticleType = ["BlogPosting", "Article", "NewsArticle"].includes(
+    blog.schemaType,
+  )
+    ? blog.schemaType
+    : "BlogPosting";
+  const generatedArticleSchema = {
     "@context": "https://schema.org",
 
-    "@type": ["BlogPosting", "Article"],
+    "@type": supportedArticleType,
+
+    "@id": `${canonicalUrl(`/blog/${slug}`)}#article`,
 
     headline: blog.title,
 
@@ -310,6 +317,24 @@ const BlogDetail = async ({ params }) => {
     articleSection: blog.category?.name || "Technology",
 
     keywords: Array.isArray(blog.tags) ? blog.tags.join(", ") : blog.category?.name,
+
+    wordCount: blog.wordCount || undefined,
+
+    timeRequired: blog.readingTimeMinutes
+      ? `PT${blog.readingTimeMinutes}M`
+      : undefined,
+
+    isAccessibleForFree: blog.isAccessibleForFree ?? true,
+
+    inLanguage: blog.language || "en",
+
+    about: [blog.primaryTopicCluster, ...(blog.supportingTopicClusters || [])]
+      .filter(Boolean)
+      .map((name) => ({ "@type": "Thing", name })),
+
+    citation: Array.isArray(blog.sources)
+      ? blog.sources.filter((source) => source?.url).map((source) => source.url)
+      : undefined,
 
     author: {
       "@type": "Person",
@@ -338,6 +363,36 @@ const BlogDetail = async ({ params }) => {
       "@id": canonicalUrl(`/blog/${slug}`),
     },
   };
+
+  // Editors may provide a complete per-post JSON-LD object. Use it as the
+  // article schema only when it is a plain object; otherwise keep the safe,
+  // generated BlogPosting schema above.
+  const articleSchema =
+    blog.structuredDataOverride &&
+    typeof blog.structuredDataOverride === "object" &&
+    !Array.isArray(blog.structuredDataOverride)
+      ? {
+          "@context": "https://schema.org",
+          ...blog.structuredDataOverride,
+        }
+      : generatedArticleSchema;
+
+  const videoSchema = blog.videoEmbedded?.hasVideo && blog.videoEmbedded?.videoUrl
+    ? {
+        "@context": "https://schema.org",
+        "@type": "VideoObject",
+        name: blog.videoEmbedded.name || blog.title,
+        description: articleDescription,
+        thumbnailUrl: blog.videoEmbedded.thumbnailUrl
+          ? [absoluteImageUrl(blog.videoEmbedded.thumbnailUrl)]
+          : [articleImage],
+        uploadDate: getDate(publishedSource),
+        contentUrl: blog.videoEmbedded.videoUrl,
+        ...(blog.videoEmbedded.duration && {
+          duration: blog.videoEmbedded.duration,
+        }),
+      }
+    : null;
 
   const breadcrumbSchema = {
     "@context": "https://schema.org",
@@ -400,6 +455,15 @@ const BlogDetail = async ({ params }) => {
           type="application/ld+json"
           dangerouslySetInnerHTML={{
             __html: JSON.stringify(faqSchema),
+          }}
+        />
+      )}
+
+      {videoSchema && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(videoSchema),
           }}
         />
       )}

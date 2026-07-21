@@ -1,5 +1,6 @@
 import { Auth } from "../../models/auth/auth.models.js";
 import { CategoryModel } from "../../models/blog/category.model.js";
+import { PostModel } from "../../models/blog/post.model.js";
 import slugify from "slugify";
 
 export const createCategory = async (req, res) => {
@@ -65,11 +66,23 @@ export const getCategories = async (req, res) => {
   try {
     const categories = await CategoryModel.find({ status: "published" })
       .select("-__v")
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .lean();
+    const counts = await PostModel.aggregate([
+      { $match: { status: "published" } },
+      { $group: { _id: "$categoryID", postCount: { $sum: 1 } } },
+    ]);
+    const countByCategory = new Map(
+      counts.map(({ _id, postCount }) => [String(_id), postCount]),
+    );
+    const categoriesWithCounts = categories.map((category) => ({
+      ...category,
+      postCount: countByCategory.get(String(category._id)) || 0,
+    }));
     return res.status(200).json({
-      message: categories.length ? "Categories found" : "No categories found",
+      message: categoriesWithCounts.length ? "Categories found" : "No categories found",
       success: true,
-      data: categories,
+      data: categoriesWithCounts,
     });
   } catch (error) {
     return res.status(500).json({ message: error.message, success: false });
@@ -128,10 +141,18 @@ export const getCategoryByIdOrSlug = async (req, res) => {
     const isObjectId = id.match(/^[0-9a-fA-F]{24}$/);
     const category = await CategoryModel.findOne(
       isObjectId ? { _id: id } : { slug: id }
-    ).select("-__v");
+    ).select("-__v").lean();
 
     if (!category) return res.status(404).json({ message: "Category not found", success: false });
-    return res.status(200).json({ message: "Category found", success: true, data: category });
+    const postCount = await PostModel.countDocuments({
+      categoryID: category._id,
+      status: "published",
+    });
+    return res.status(200).json({
+      message: "Category found",
+      success: true,
+      data: { ...category, postCount },
+    });
   } catch (error) {
     return res.status(500).json({ message: error.message, success: false });
   }
@@ -205,10 +226,10 @@ export const deleteCategory = async (req, res) => {
     const category = await CategoryModel.findById(id);
     if (!category) return res.status(404).json({ message: "Category not found", success: false });
 
-    // Optional: block deletion if posts are attached
-    if (category.postCount > 0) {
+    const attachedPostCount = await PostModel.countDocuments({ categoryID: category._id });
+    if (attachedPostCount > 0) {
       return res.status(400).json({
-        message: `Cannot delete — category has ${category.postCount} post(s) attached`,
+        message: `Cannot delete — category has ${attachedPostCount} post(s) attached`,
         success: false,
       });
     }

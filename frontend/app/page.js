@@ -1,4 +1,6 @@
 import DeferredHomeSections from "@/components/Home/DeferredHomeSections";
+import LatestBlog from "@/components/Home/LatestBlog";
+import { API_URL } from "@/utils/api";
 import HeroSection from "@/components/Home/HeroSection";
 import Link from "next/link";
 import { JsonLd } from "@/components/JsonLd";
@@ -254,11 +256,43 @@ export const metadata = {
   robots: defaultRobots,
 };
 
-const Home = () => {
+async function getLatestPosts() {
+  try {
+    const response = await fetch(`${API_URL}/public/posts?page=1&limit=3`, {
+      next: { revalidate: 300 },
+      headers: { Accept: "application/json" },
+    });
+    if (!response.ok) return [];
+    const json = await response.json();
+    const posts = Array.isArray(json?.data) ? json.data : [];
+    return posts.filter((post) => post?.slug).slice(0, 3);
+  } catch {
+    return [];
+  }
+}
+
+const Home = async () => {
+  const latestPosts = await getLatestPosts();
+  const latestPostsSchema = latestPosts.length
+    ? {
+        "@context": "https://schema.org",
+        "@type": "ItemList",
+        name: "Latest Kraviona articles",
+        itemListElement: latestPosts.map((post, index) => ({
+          "@type": "ListItem",
+          position: index + 1,
+          url: `https://kraviona.com/blog/${post.slug}`,
+          name: post.title,
+        })),
+      }
+    : null;
+
   return (
     <>
       {/* Structured Data */}
-      <JsonLd data={[homePageSchema, serviceListSchema, faqSchema]} />
+      <JsonLd
+        data={[homePageSchema, serviceListSchema, faqSchema, latestPostsSchema].filter(Boolean)}
+      />
 
       {/* Page Sections */}
       <HeroSection />
@@ -441,6 +475,7 @@ const Home = () => {
         </div>
       </section>
 
+      <LatestBlog initialPosts={latestPosts} />
       <DeferredHomeSections />
     </>
   );

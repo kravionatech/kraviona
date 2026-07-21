@@ -8,7 +8,6 @@ const FeaturedServices = dynamic(() => import("./FeaturedServices"), {
 });
 const WhyChooseUs = dynamic(() => import("./WhyChooseUs"), { ssr: false });
 const TechStack = dynamic(() => import("./TechStack"), { ssr: false });
-const LatestBlog = dynamic(() => import("./LatestBlog"), { ssr: false });
 const CTASection = dynamic(() => import("./CTASection"), { ssr: false });
 const HomeFAQ = dynamic(() => import("./HomeFAQ"), { ssr: false });
 
@@ -35,7 +34,6 @@ const DeferredHomeSections = () => {
       <FeaturedServices />
       <WhyChooseUs />
       <TechStack />
-      <LatestBlog />
       <CTASection />
       <HomeFAQ />
     </>

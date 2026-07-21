@@ -13,7 +13,7 @@ app.use(cookieParser());
 
 app.use(
   cors({
-    origin: ["http://localhost:3000", "https://kraviona.com", "https://superadmin.kraviona.com", "http://localhost:3001"],
+    origin: ["http://localhost:3000", "https://kraviona.com", "https://www.kraviona.com", "https://superadmin.kraviona.com", "http://localhost:3001"],
     credentials: true,
   })
 );

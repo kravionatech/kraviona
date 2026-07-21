@@ -30,42 +30,41 @@ const parsePosts = (json) =>
         ? json
         : [];
 
-const LatestBlog = () => {
-  const [posts, setPosts] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+const LatestBlog = ({ initialPosts = [] }) => {
+  const validInitialPosts = initialPosts.filter((post) => post?.slug).slice(0, 3);
+  const [posts, setPosts] = useState(validInitialPosts);
+  const [isLoading, setIsLoading] = useState(validInitialPosts.length === 0);
 
   useEffect(() => {
     const fetchLatestPosts = async () => {
+      if (validInitialPosts.length > 0) return;
+
       try {
-        const url = `${API_URL}/public/posts?limit=100`;
-        console.warn("[LatestBlog] Fetching:", url);
+        const url = `${API_URL}/public/posts?page=1&limit=3`;
         const response = await fetch(url, {
           cache: "no-store",
           headers: { Accept: "application/json" },
         });
 
-        console.warn("[LatestBlog] Response status:", response.status, response.ok);
         if (!response.ok) {
-          console.warn("[LatestBlog] Response NOT OK, status:", response.status);
           setPosts([]);
           return;
         }
 
         const result = await response.json();
-        console.warn("[LatestBlog] Response keys:", Object.keys(result));
         const allPosts = parsePosts(result);
-        console.warn("[LatestBlog] Parsed posts count:", allPosts.length);
         const finalPosts = allPosts.filter((p) => p?.slug).slice(0, 3);
-        console.warn("[LatestBlog] Final posts count:", finalPosts.length);
         setPosts(finalPosts);
       } catch (err) {
-        console.warn("[LatestBlog] Fetch error:", err?.message || err);
+        if (process.env.NODE_ENV !== "production") {
+          console.error("[LatestBlog] Fetch error:", err?.message || err);
+        }
       } finally {
         setIsLoading(false);
       }
     };
     fetchLatestPosts();
-  }, []);
+  }, [validInitialPosts.length]);
 
   return (
     <section

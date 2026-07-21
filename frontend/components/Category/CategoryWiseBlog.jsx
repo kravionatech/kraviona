@@ -27,31 +27,29 @@ const cardVariants = {
   },
 };
 
-const CategoryWiseBlog = ({ category }) => {
-  const [posts, setPosts] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+const CategoryWiseBlog = ({ category, initialPosts = [] }) => {
+  const [posts, setPosts] = useState(initialPosts);
+  const [isLoading, setIsLoading] = useState(initialPosts.length === 0);
 
   // 1. Fetch Posts based on the category slug
   useEffect(() => {
     const fetchCategoryPosts = async () => {
+      if (initialPosts.length > 0) return;
+
       setIsLoading(true);
       try {
-        const url = `${API_URL}/public/posts?limit=100`;
-        console.warn("[CategoryWiseBlog] Fetching:", url, "| category:", category);
+        const url = `${API_URL}/public/posts?category=${encodeURIComponent(category)}&limit=100`;
         const response = await fetch(url, {
           cache: "no-store",
           headers: { Accept: "application/json" },
         });
 
-        console.warn("[CategoryWiseBlog] Response status:", response.status, response.ok);
         if (!response.ok) {
-          console.warn("[CategoryWiseBlog] Response NOT OK");
           setPosts([]);
           return;
         }
 
         const result = await response.json();
-        console.warn("[CategoryWiseBlog] Response keys:", Object.keys(result));
         const allPosts = Array.isArray(result.posts)
           ? result.posts
           : Array.isArray(result.data)
@@ -59,26 +57,17 @@ const CategoryWiseBlog = ({ category }) => {
             : Array.isArray(result)
               ? result
               : [];
-        console.warn("[CategoryWiseBlog] All posts count:", allPosts.length);
-
-        const categoryPosts = allPosts.filter((post) => {
-          const categorySlug = post.category?.slug || "";
-          const categoryName = post.category?.name || "";
-
-          return (
-            categorySlug === category ||
-            categoryName.toLowerCase().replace(/\s+/g, "-") === category
-          );
-        });
-
-        console.warn("[CategoryWiseBlog] Category posts count:", categoryPosts.length);
-        if (allPosts.length > 0 && categoryPosts.length === 0) {
-          console.warn("[CategoryWiseBlog] Category filter emptied all posts!");
-          console.warn("[CategoryWiseBlog] Looking for category:", category);
-          console.warn("[CategoryWiseBlog] Available slugs:", [...new Set(allPosts.map(p => p.category?.slug))]);
-          console.warn("[CategoryWiseBlog] Available names:", [...new Set(allPosts.map(p => p.category?.name))]);
-        }
-        setPosts(categoryPosts);
+        setPosts(
+          allPosts.filter((post) => {
+            const slug = post?.category?.slug;
+            const nameSlug = post?.category?.name
+              ?.toLowerCase()
+              .trim()
+              .replace(/[^a-z0-9]+/g, "-")
+              .replace(/^-|-$/g, "");
+            return post?.slug && (slug === category || nameSlug === category);
+          }),
+        );
       } catch (error) {
         console.warn("[CategoryWiseBlog] Fetch error:", error?.message || error);
         setPosts([]);
@@ -89,7 +78,7 @@ const CategoryWiseBlog = ({ category }) => {
     if (category) {
       fetchCategoryPosts();
     }
-  }, [category]);
+  }, [category, initialPosts.length]);
 
   // 2. Format the Category Name for the Header
   const formattedCategoryName =

@@ -335,16 +335,55 @@ export const publicPosts = async (req, res) => {
   try {
     await publishDueScheduledPosts();
 
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
+    const page = Math.max(1, parseInt(req.query.page, 10) || 1);
+    const limit = Math.min(100, Math.max(1, parseInt(req.query.limit, 10) || 10));
     const skip = (page - 1) * limit;
     const filter = publicPostFilter();
+    const category = req.query.category
+      ? normalizeSlug(req.query.category)
+      : null;
+
+    // Category feeds must be filtered by MongoDB before pagination. Filtering
+    // a generic page of posts in the browser drops valid results as soon as a
+    // category has no post in that page. Support both the current embedded
+    // snapshot and categoryID so older records remain discoverable.
+    if (category) {
+      const matchedCategory = await CategoryModel.findOne({
+        slug: category,
+        status: "published",
+      }).select("_id");
+
+      if (!matchedCategory) {
+        return res.status(200).json({
+          success: true,
+          message: "No posts found",
+          data: [],
+          pagination: {
+            totalPosts: 0,
+            currentPage: page,
+            totalPages: 0,
+            limit,
+            hasNextPage: false,
+            hasPreviousPage: page > 1,
+          },
+        });
+      }
+
+      filter.$and = [
+        {
+          $or: [
+            { categoryID: matchedCategory._id },
+            { "category.slug": category },
+          ],
+        },
+      ];
+    }
 
     const [posts, totalPosts] = await Promise.all([
       PostModel.find(filter)
         // Keep public cards focused on visible site fields.
         .select(
-          "title slug excerpt author category views featuredImage contentSourceType commentCount tags primaryTopicCluster publishedAt"
+          "title slug excerpt author category categoryID views featuredImage contentSourceType commentCount tags primaryTopicCluster readingTimeMinutes publishedAt createdAt updatedAt"
         )
         // FIX: there was no sort at all before — results came back in
         // whatever order Mongo happened to store them in.
