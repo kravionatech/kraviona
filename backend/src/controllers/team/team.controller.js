@@ -126,6 +126,29 @@ export const getAllTeamMembers = async (req, res) => {
   }
 };
 
+export const getPublicTeamMembers = async (req, res) => {
+  try {
+    const { department, featured } = req.query;
+    const query = { status: "active" };
+
+    if (department) query.department = { $regex: cleanText(department), $options: "i" };
+    if (featured === "true") query.isFeatured = true;
+
+    const members = await TeamMemberModel.find(query)
+      .select("name slug designation department bio avatar skills socialLinks order isFeatured")
+      .sort({ order: 1, isFeatured: -1, createdAt: 1 })
+      .lean();
+
+    return res.status(200).json({
+      success: true,
+      message: members.length ? "Team members fetched successfully" : "No team members found",
+      data: members,
+    });
+  } catch (error) {
+    return handleTeamError(error, res);
+  }
+};
+
 export const createTeamMember = async (req, res) => {
   try {
     const user = req.user;
