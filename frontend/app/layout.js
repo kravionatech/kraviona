@@ -39,12 +39,12 @@ export const metadata = {
   metadataBase: new URL(SITE_URL),
 
   title: {
-    default: "MERN Stack & Technical SEO Agency India | Kraviona",
+    default: "MERN Stack, Next.js & Technical SEO Agency | Kraviona",
     template: `%s | Kraviona`,
   },
 
   description:
-    "Kraviona builds fast MERN, Next.js, and technical SEO systems for brands that need scalable websites, clean architecture, stronger rankings, and leads.",
+    "Kraviona builds MERN stack products, Next.js websites, backend APIs, and technical SEO systems for businesses that need speed, clarity, and search visibility.",
 
   keywords: [
     "Kraviona",
@@ -75,10 +75,10 @@ export const metadata = {
 
     url: SITE_URL,
 
-    title: "MERN Stack & Technical SEO Agency India | Kraviona",
+    title: "MERN Stack, Next.js & Technical SEO Agency | Kraviona",
 
     description:
-      "Kraviona builds fast MERN, Next.js, and technical SEO systems for scalable websites, clean architecture, stronger rankings, and leads.",
+      "Kraviona builds MERN stack products, Next.js websites, backend APIs, and technical SEO systems for businesses that need speed and search visibility.",
 
     siteName: SITE_NAME,
 
@@ -99,10 +99,10 @@ export const metadata = {
 
     creator: SITE_TWITTER,
 
-    title: "MERN Stack & Technical SEO Agency India | Kraviona",
+    title: "MERN Stack, Next.js & Technical SEO Agency | Kraviona",
 
     description:
-      "Fast MERN, Next.js, and technical SEO systems for stronger rankings and leads.",
+      "MERN stack products, Next.js websites, backend APIs, and technical SEO systems for cleaner digital growth.",
 
     images: [DEFAULT_OG_IMAGE],
   },

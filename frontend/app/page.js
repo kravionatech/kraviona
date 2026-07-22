@@ -1,5 +1,4 @@
 import DeferredHomeSections from "@/components/Home/DeferredHomeSections";
-import LatestBlog from "@/components/Home/LatestBlog";
 import { API_URL } from "@/utils/api";
 import HeroSection from "@/components/Home/HeroSection";
 import Link from "next/link";
@@ -22,7 +21,7 @@ const faqSchema = {
       name: "What is MERN Stack development and why should I choose it?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "MERN Stack development uses MongoDB, Express.js, React.js, and Node.js — a full JavaScript ecosystem for building fast, scalable web applications. It enables rapid development, cost-efficiency, and is ideal for startups to enterprise businesses. At Kraviona, we specialise in delivering production-grade MERN applications with performance-first architecture.",
+        text: "MERN Stack development uses MongoDB, Express.js, React.js, and Node.js to build modern web applications with one JavaScript-based stack. Kraviona uses MERN when clients need fast delivery, clean APIs, scalable databases, and maintainable product foundations.",
       },
     },
     {
@@ -30,7 +29,7 @@ const faqSchema = {
       name: "How does Kraviona approach Technical SEO for websites?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Our Technical SEO process covers Core Web Vitals optimisation, structured data (Schema.org markup), XML sitemaps, robots.txt configuration, canonical tags, Open Graph & Twitter Card meta, site speed improvements, mobile responsiveness, and crawlability audits.",
+        text: "Kraviona's Technical SEO process covers Core Web Vitals, structured data, XML sitemaps, robots.txt, canonical tags, Open Graph metadata, mobile performance, crawlability, indexation, and page-speed improvements.",
       },
     },
     {
@@ -38,7 +37,7 @@ const faqSchema = {
       name: "How long does it take to build a custom web application?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "A typical custom web application takes 4–12 weeks depending on complexity. Simple landing pages are delivered in 1–2 weeks. Full-stack MERN applications with custom admin panels and APIs typically take 6–10 weeks. We follow Agile sprints so you see working deliverables every week.",
+        text: "Most custom web applications take 4 to 12 weeks depending on scope. Landing pages can move faster, while MERN products with admin panels, APIs, authentication, and integrations need more planning. Kraviona works in practical milestones so clients see progress early.",
       },
     },
     {
@@ -46,7 +45,7 @@ const faqSchema = {
       name: "Do you provide SEO services along with web development?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Yes. Kraviona is both a web development agency and a Technical SEO agency. Every website we build is SEO-optimised from day one — including semantic HTML structure, proper heading hierarchy, performance optimisation, structured data markup, and keyword-targeted meta content.",
+        text: "Yes. Kraviona combines web development with Technical SEO. Websites are planned with semantic structure, clean heading hierarchy, performance optimisation, structured data, metadata, and crawl-friendly architecture from the start.",
       },
     },
     {
@@ -54,7 +53,7 @@ const faqSchema = {
       name: "What makes Kraviona different from other web development agencies?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Unlike generic agencies, Kraviona focuses exclusively on performance-first, SEO-ready web solutions. We combine MERN Stack engineering excellence with data-driven marketing strategy, transparent communication, Agile delivery, post-launch support, and measurable ROI-focused outcomes.",
+        text: "Kraviona is founder-led and focused on practical execution: clean MERN and Next.js development, technical SEO, transparent communication, realistic timelines, and post-launch support that helps the product keep improving.",
       },
     },
     {
@@ -62,7 +61,7 @@ const faqSchema = {
       name: "Can you help improve my existing website's performance and SEO?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Absolutely. Our comprehensive website audit covers page speed (Core Web Vitals), SEO health (on-page, technical, and off-page), UX/mobile usability, conversion rate optimisation, and security. We provide a prioritised action plan and implement fixes.",
+        text: "Yes. Kraviona audits page speed, Core Web Vitals, crawlability, technical SEO, mobile UX, conversion blockers, and basic security issues, then turns the findings into a prioritised implementation plan.",
       },
     },
     {
@@ -70,7 +69,7 @@ const faqSchema = {
       name: "Do you offer React.js and Node.js development services separately?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Yes. We offer dedicated React.js frontend development and standalone Node.js/Express.js backend development including RESTful APIs, microservices, and real-time applications with WebSockets.",
+        text: "Yes. Kraviona handles React.js frontend work, Next.js websites, and standalone Node.js or Express.js backend development, including REST APIs, authentication, dashboards, integrations, and real-time features.",
       },
     },
     {
@@ -78,7 +77,7 @@ const faqSchema = {
       name: "What is your pricing model for web development projects?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "We offer flexible pricing models: fixed-price for well-defined projects, time and material for evolving requirements, and monthly retainers for ongoing development and SEO support. Every project starts with a free 30-minute consultation.",
+        text: "Pricing depends on scope, complexity, timeline, integrations, and support needs. Kraviona can work with fixed project pricing for clear scopes or retainers for ongoing development, SEO, and maintenance.",
       },
     },
   ],
@@ -94,7 +93,7 @@ const homePageSchema = {
   isPartOf: { "@id": "https://kraviona.com/#website" },
   about: { "@id": "https://kraviona.com/#organization" },
   description:
-    "Kraviona offers high-performance MERN Stack development, technical SEO, web design, and scalable digital solutions for modern businesses.",
+    "Kraviona builds MERN stack products, Next.js websites, backend APIs, and technical SEO foundations for businesses that need faster, cleaner digital growth.",
   breadcrumb: {
     "@type": "BreadcrumbList",
     itemListElement: [
@@ -114,7 +113,7 @@ const serviceListSchema = {
   "@type": "ItemList",
   name: "Kraviona IT & Web Development Services",
   description:
-    "Comprehensive web development, technical SEO, and digital solutions by Kraviona Tech Solutions.",
+    "Web development, backend engineering, technical SEO, and digital growth services by Kraviona Tech Solutions.",
   url: "https://kraviona.com/services",
   itemListElement: [
     {
@@ -124,7 +123,7 @@ const serviceListSchema = {
         "@type": "Service",
         name: "MERN Stack Development",
         description:
-          "Full-stack web applications built with MongoDB, Express.js, React.js, and Node.js.",
+          "Full-stack web applications built with MongoDB, Express.js, React.js, and Node.js for practical business use cases.",
         provider: { "@id": "https://kraviona.com/#organization" },
         url: "https://kraviona.com/services/mern-stack-development",
         areaServed: "IN",
@@ -137,7 +136,7 @@ const serviceListSchema = {
         "@type": "Service",
         name: "Technical SEO Services",
         description:
-          "Comprehensive technical SEO audits, Core Web Vitals optimisation, and structured data implementation.",
+          "Technical SEO audits, Core Web Vitals improvements, structured data, and crawlability fixes.",
         provider: { "@id": "https://kraviona.com/#organization" },
         url: "https://kraviona.com/services/technical-seo",
         areaServed: "IN",
@@ -150,7 +149,7 @@ const serviceListSchema = {
         "@type": "Service",
         name: "React.js Development",
         description:
-          "High-performance React.js SPAs, dashboards, and component libraries.",
+          "React.js and Next.js interfaces for websites, dashboards, and product experiences.",
         provider: { "@id": "https://kraviona.com/#organization" },
         url: "https://kraviona.com/services/react-development",
         areaServed: "IN",
@@ -163,7 +162,7 @@ const serviceListSchema = {
         "@type": "Service",
         name: "Node.js Backend Development",
         description:
-          "Scalable RESTful APIs, microservices architecture, and real-time backend systems.",
+          "REST APIs, authentication, integrations, and reliable backend systems built with Node.js.",
         provider: { "@id": "https://kraviona.com/#organization" },
         url: "https://kraviona.com/services/nodejs-development",
         areaServed: "IN",
@@ -202,9 +201,9 @@ const testimonials = [
 // ─── Homepage Metadata ────────────────────────────────────────────────────────
 export const metadata = {
   // title.default inherited from layout; override only the page-specific title
-  title: "MERN Stack Development & Technical SEO Solutions | Kraviona",
+  title: "MERN Stack, Next.js & Technical SEO Agency | Kraviona",
   description:
-    "Kraviona Tech Solutions specialises in MERN Stack web development and Technical SEO for businesses across India. We build fast, scalable applications and improve search rankings — backed by 150+ delivered projects and a 99% retention rate.",
+    "Kraviona Tech Solutions builds fast MERN stack products, Next.js websites, backend APIs, and technical SEO systems for businesses across India and beyond.",
   keywords: [
     "Kraviona",
     "Kraviona Tech Solutions",
@@ -230,9 +229,9 @@ export const metadata = {
     type: "website",
     locale: "en_IN",
     url: SITE_URL,
-    title: "MERN Stack Development & Technical SEO Solutions | Kraviona",
+    title: "MERN Stack, Next.js & Technical SEO Agency | Kraviona",
     description:
-      "High-performance MERN Stack development, technical SEO, and scalable digital solutions. Partner with Kraviona to grow your digital presence sustainably.",
+      "Fast MERN stack products, Next.js websites, backend APIs, and technical SEO foundations for businesses that want cleaner digital growth.",
     siteName: SITE_NAME,
     images: [
       {
@@ -248,9 +247,9 @@ export const metadata = {
     card: "summary_large_image",
     site: SITE_TWITTER,
     creator: SITE_TWITTER,
-    title: "MERN Stack Development & Technical SEO Solutions | Kraviona",
+    title: "MERN Stack, Next.js & Technical SEO Agency | Kraviona",
     description:
-      "High-performance MERN stack development & technical SEO. Free 30-min consultation available.",
+      "MERN stack, Next.js, backend APIs, and technical SEO from a founder-led technology team.",
     images: [DEFAULT_OG_IMAGE],
   },
   robots: defaultRobots,
@@ -309,34 +308,33 @@ const Home = async () => {
                 </span>
               </div>
               <h2 className="text-3xl md:text-4xl font-extrabold text-[#111A1F] leading-tight mb-5">
-                Your End-to-End{" "}
+                A Practical{" "}
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#a9472f] to-[#953924]">
-                  Web Development & SEO Partner
+                  Build and Growth Partner
                 </span>
               </h2>
               <p className="text-gray-600 leading-relaxed mb-5 text-base md:text-lg">
                 Kraviona Tech Solutions is a Delhi-based{" "}
                 <strong>MERN Stack development agency</strong> and{" "}
                 <strong>Technical SEO company</strong> serving businesses across
-                India and globally. We specialise in building scalable,
-                high-performance web applications and implementing data-driven
-                SEO strategies that deliver measurable growth.
+                India and beyond. We build fast websites, reliable web
+                applications, clean backend systems, and SEO-ready foundations
+                that help your business earn attention and convert it.
               </p>
               <p className="text-gray-600 leading-relaxed mb-6 text-base md:text-lg">
                 From <strong>React.js frontends</strong> and{" "}
-                <strong>Node.js APIs</strong> to comprehensive{" "}
-                <strong>Core Web Vitals optimisation</strong> and structured
-                data implementation — we handle every layer of your digital
-                presence. Our Agile development process ensures transparent
-                communication, on-time delivery, and solutions that scale with
-                your business.
+                <strong>Node.js APIs</strong> to{" "}
+                <strong>Core Web Vitals optimisation</strong>, structured data,
+                admin panels, and search-friendly architecture, we handle the
+                technical layers that make a digital product useful after
+                launch.
               </p>
               <div className="grid grid-cols-2 gap-4 mb-8">
                 {[
-                  { value: "150+", label: "Projects Delivered" },
-                  { value: "99%", label: "Client Retention Rate" },
+                  { value: "50+", label: "Projects Delivered" },
                   { value: "5+", label: "Years of Experience" },
-                  { value: "24/7", label: "Post-Launch Support" },
+                  { value: "30d", label: "Launch Support Window" },
+                  { value: "SEO", label: "Built Into Delivery" },
                 ].map((stat) => (
                   <div
                     key={stat.label}
@@ -357,7 +355,7 @@ const Home = async () => {
                     Client Results
                   </span>
                   <h3 className="mt-2 text-2xl font-extrabold text-[#111A1F]">
-                    Trusted by founders and growth teams
+                    Built for founders and growth teams
                   </h3>
                 </div>
                 <div className="grid grid-cols-1 gap-4">
@@ -420,27 +418,27 @@ const Home = async () => {
               {[
                 {
                   title: "MERN Stack Development",
-                  desc: "We architect full-stack applications using MongoDB, Express.js, React.js, and Node.js. From MVP to enterprise-grade platforms, we build for performance, scalability, and maintainability.",
+                  desc: "Full-stack products built with MongoDB, Express.js, React.js, and Node.js, planned for speed, maintainability, and real business workflows.",
                   href: "/services/mern-stack-development",
                 },
                 {
                   title: "Technical SEO Services",
-                  desc: "Complete technical SEO audits covering Core Web Vitals, structured data, crawlability, site speed, canonical tags, schema markup, and GEO (Generative Engine Optimisation) for AI search.",
+                  desc: "Technical audits and implementation for Core Web Vitals, structured data, crawlability, indexing, schema markup, and AI-search readiness.",
                   href: "/services/technical-seo",
                 },
                 {
                   title: "React.js & Next.js Development",
-                  desc: "High-performance React.js SPAs, Server-Side Rendered (SSR) Next.js applications, and interactive dashboards built for speed, SEO, and exceptional user experience.",
+                  desc: "Fast React.js and Next.js interfaces for marketing sites, dashboards, portals, and SEO-sensitive web experiences.",
                   href: "/services/react-development",
                 },
                 {
                   title: "Node.js Backend Development",
-                  desc: "Scalable RESTful APIs, microservices architecture, real-time WebSocket systems, authentication, and cloud deployment on AWS, Vercel, or your preferred infrastructure.",
+                  desc: "REST APIs, authentication, integrations, admin workflows, database design, and deployment support for reliable backend systems.",
                   href: "/services/nodejs-development",
                 },
                 {
                   title: "UI/UX Design & Web Design",
-                  desc: "Conversion-optimised, mobile-first web designs that combine stunning aesthetics with intuitive user experience — designed to convert visitors into customers.",
+                  desc: "Mobile-first interfaces with clear content, strong navigation, and conversion-focused pages that make the next step obvious.",
                   href: "/services",
                 },
               ].map((service, i) => (
@@ -475,8 +473,7 @@ const Home = async () => {
         </div>
       </section>
 
-      <LatestBlog initialPosts={latestPosts} />
-      <DeferredHomeSections />
+      <DeferredHomeSections initialPosts={latestPosts} />
     </>
   );
 };

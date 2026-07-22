@@ -18,7 +18,7 @@ const TypesData = [
     icon: <Globe2 className="w-7 h-7" />,
     title: "Corporate & Business",
     description:
-      "Your digital 24/7 salesperson. We build professional sites that tell your story, build immense trust, and capture high-quality leads.",
+      "Professional websites that explain your offer clearly, build trust quickly, and make it easy for visitors to become qualified leads.",
     features: [
       "Custom Brand Integration & Identity",
       "Lead Generation Forms & CRM Sync",

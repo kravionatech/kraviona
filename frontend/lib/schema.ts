@@ -13,7 +13,7 @@ export const organizationSchema = {
     height: 60,
   },
   description:
-    "Kraviona Tech Solutions specialises in MERN Stack web development and Technical SEO for businesses across India.",
+    "Kraviona Tech Solutions builds MERN stack products, Next.js websites, backend APIs, and technical SEO systems for businesses across India.",
   foundingDate: "2019",
   numberOfEmployees: {
     "@type": "QuantitativeValue",
@@ -103,7 +103,7 @@ export const websiteSchema = {
   "@id": "https://kraviona.com/#website",
   url: "https://kraviona.com",
   name: "Kraviona Tech Solutions",
-  description: "MERN Stack Development & Technical SEO Agency India",
+  description: "MERN Stack, Next.js and Technical SEO Agency India",
   publisher: {
     "@id": "https://kraviona.com/#organization",
   },

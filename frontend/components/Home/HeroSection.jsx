@@ -2,9 +2,9 @@ import Image from "next/image";
 import Link from "next/link";
 
 const trustBadges = [
-  { icon: "⚡", label: "SEO Optimized" },
-  { icon: "🚀", label: "MERN Stack Experts" },
-  { icon: "✅", label: "Fast Delivery" },
+  { icon: "01", label: "SEO-Ready Builds" },
+  { icon: "02", label: "MERN & Next.js" },
+  { icon: "03", label: "Founder-Led Delivery" },
 ];
 
 const HeroSection = () => {
@@ -52,18 +52,19 @@ const HeroSection = () => {
             id="home-hero-heading"
             className="mb-5 text-4xl font-extrabold leading-[1.08] tracking-tight text-white sm:text-5xl md:mb-7 md:text-6xl lg:text-[4.5rem]"
           >
-            MERN Stack Development
+            Fast Websites & Web Apps
             <br />
             <span className="bg-gradient-to-r from-[#f4be78] via-[#e88c5a] to-[#d96c4e] bg-clip-text text-transparent">
-              &amp; Technical SEO
+              Built to Rank
             </span>
             <br />
-            <span className="text-white/90">Solutions</span>
+            <span className="text-white/90">and Convert</span>
           </h1>
 
           <p className="mb-9 max-w-2xl border-l-2 border-[#d96c4e]/60 pl-4 text-base leading-relaxed text-gray-300 md:mb-11 md:text-lg lg:text-xl">
-            Scalable web applications, SEO-first architecture, and
-            high-performance digital experiences built for modern businesses.
+            Kraviona builds MERN stack products, Next.js websites, backend
+            systems, and technical SEO foundations for brands that need speed,
+            search visibility, and clean execution.
           </p>
 
           <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:gap-4">
@@ -73,7 +74,7 @@ const HeroSection = () => {
               rel="noopener noreferrer"
               className="group relative inline-flex w-full items-center justify-center gap-2.5 rounded-xl bg-[#a9472f] px-7 py-4 text-sm font-bold text-white shadow-[0_6px_28px_rgba(169,71,47,0.34)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#953924] hover:shadow-[0_8px_32px_rgba(169,71,47,0.46)] sm:w-auto md:px-9 md:py-4.5 md:text-base"
             >
-              Book Free Consultation
+              Book a Free Strategy Call
               <svg
                 className="h-4 w-4 transition-transform group-hover:translate-x-1"
                 fill="none"
@@ -94,7 +95,7 @@ const HeroSection = () => {
               href="/services"
               className="inline-flex w-full items-center justify-center rounded-xl border border-white/20 bg-white/5 px-7 py-4 text-sm font-bold text-white backdrop-blur-sm transition-all duration-300 hover:border-[#f4be78]/60 hover:bg-white/10 sm:w-auto md:px-9 md:py-4.5 md:text-base"
             >
-              View Services
+              See What We Build
             </Link>
           </div>
         </div>
@@ -151,7 +152,7 @@ const HeroSection = () => {
             </svg>
             <p className="mb-1 text-3xl font-black md:text-4xl">Full-Stack</p>
             <p className="text-[10px] font-semibold uppercase tracking-widest text-white md:text-xs">
-              Development
+              Product Builds
             </p>
           </div>
 
@@ -172,7 +173,7 @@ const HeroSection = () => {
             </svg>
             <p className="mb-1 text-3xl font-black md:text-4xl">SEO</p>
             <p className="text-[10px] font-semibold uppercase tracking-widest text-gray-400 md:text-xs">
-              Optimization
+              Technical Growth
             </p>
           </div>
         </div>

@@ -108,12 +108,12 @@ export default function Footer() {
                 Build with Kraviona
               </p>
               <h2 className="text-2xl md:text-3xl font-black tracking-tight text-white">
-                Need a faster website, smarter SEO, or better seller growth?
+                Need a faster website, stronger SEO, or cleaner backend?
               </h2>
               <p className="mt-3 max-w-2xl text-sm leading-relaxed text-[#9fb6b7]">
-                Talk directly with a founder-led team for MERN development,
-                technical SEO, AI automation, digital marketing, and marketplace
-                support.
+                Talk directly with a founder-led team for MERN stack products,
+                Next.js websites, Node.js APIs, technical SEO, AI automation,
+                and practical launch support.
               </p>
             </div>
             <Link
@@ -154,11 +154,12 @@ export default function Footer() {
               </span>
             </Link>
             <p className="max-w-sm text-sm leading-relaxed text-[#9fb6b7]">
-              Performance-first web development, technical SEO, AI automation,
-              digital marketing, and marketplace support for growing businesses.
+              Founder-led web development, backend engineering, technical SEO,
+              AI automation, and digital growth support for businesses that need
+              practical execution.
             </p>
             <div className="mt-5 flex flex-wrap gap-2">
-              {["MERN", "SEO", "AI", "Seller Growth"].map((item) => (
+              {["MERN", "Next.js", "SEO", "AI"].map((item) => (
                 <span
                   key={item}
                   className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-[11px] font-bold text-[#c4d4d5]"
@@ -225,9 +226,6 @@ export default function Footer() {
                 );
               })}
             </div>
-            <p className="mt-2 text-xs text-gray-400">
-              GST: [Your GST Number Here]
-            </p>
             <div className="mt-6 rounded-2xl border border-white/10 bg-white/[0.04] p-4">
               <p className="text-[11px] font-black uppercase tracking-[0.18em] text-[#f4be78]">
                 Availability

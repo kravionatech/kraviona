@@ -276,12 +276,11 @@ export default function MERNStackPage() {
                 companies like LinkedIn, Netflix, and Uber.
               </p>
               <p className="text-gray-600 leading-relaxed mb-5">
-                At Kraviona, our MERN developers have shipped 150+ production
-                applications — from multi-tenant SaaS platforms and real-time
-                collaboration tools to headless e-commerce solutions and complex
-                admin dashboards. We follow Agile methodologies with bi-weekly
-                sprint reviews so you always know exactly where your project
-                stands.
+                At Kraviona, MERN projects are planned around real product
+                workflows: SaaS platforms, e-commerce systems, admin dashboards,
+                lead systems, and custom business tools. We work in clear
+                milestones so you always know what is built, what is next, and
+                what needs your review.
               </p>
               <ul className="space-y-3" aria-label="MERN Stack benefits">
                 {[

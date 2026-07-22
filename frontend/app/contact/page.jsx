@@ -13,9 +13,9 @@ const contactPageSchema = {
   "@type": "ContactPage",
   "@id": "https://kraviona.com/contact#webpage",
   url: "https://kraviona.com/contact",
-  name: "Contact Kraviona – Let's Build Something Great",
+  name: "Contact Kraviona - Start Your Web Development Project",
   description:
-    "Get in touch with Kraviona for high-performance web development, custom IT solutions, and digital scaling.",
+    "Contact Kraviona for MERN stack development, Next.js websites, backend APIs, technical SEO, AI automation, and web performance work.",
   isPartOf: { "@id": "https://kraviona.com/#website" },
   breadcrumb: {
     "@type": "BreadcrumbList",
@@ -45,7 +45,7 @@ const localBusinessSchema = {
   logo: "https://kraviona.com/logo.png",
   image: "https://kraviona.com/og-image.jpg",
   description:
-    "High-performance MERN stack development, technical SEO, and scalable IT solutions for businesses across India.",
+    "MERN stack development, Next.js websites, backend APIs, technical SEO, and AI automation for businesses across India.",
   email: "kravionatech@gmail.com",
   telephone: "+91-96085-53167",
   priceRange: "$$",
@@ -83,9 +83,9 @@ const localBusinessSchema = {
 };
 
 export const metadata = {
-  title: "Contact Kraviona for Web Development & SEO Help India",
+  title: "Contact Kraviona | Web Development & Technical SEO",
   description:
-    "Book a free consultation with Kraviona for MERN stack development, technical SEO, AI automation, web performance, and custom software projects.",
+    "Book a free consultation with Kraviona for MERN stack development, Next.js websites, technical SEO, AI automation, and custom software projects.",
   keywords: [
     "Contact Kraviona",
     "Hire Web Developers India",
@@ -100,9 +100,9 @@ export const metadata = {
   creator: "Kraviona Tech Solutions",
   alternates: { canonical: "https://kraviona.com/contact" },
   openGraph: {
-    title: "Contact Kraviona – Let's Build Something Great",
+    title: "Contact Kraviona - Start Your Web Development Project",
     description:
-      "Get in touch with Kraviona for high-performance web development and custom IT solutions. Start your project today.",
+      "Talk to Kraviona about MERN stack development, Next.js websites, backend APIs, technical SEO, and custom software work.",
     url: "https://kraviona.com/contact",
     siteName: "Kraviona Tech Solutions",
     type: "website",
@@ -121,9 +121,9 @@ export const metadata = {
     card: "summary_large_image",
     site: "@KravionaTech",
     creator: "@KravionaTech",
-    title: "Contact Kraviona – Let's Build Something Great",
+    title: "Contact Kraviona - Start Your Web Development Project",
     description:
-      "Get in touch for high-performance web development. Start your project with Kraviona today.",
+      "Talk to Kraviona about web development, backend APIs, technical SEO, and custom software work.",
     images: ["/og-image.jpg"],
   },
   robots: defaultRobots,

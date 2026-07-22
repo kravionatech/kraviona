@@ -26,17 +26,17 @@ const AboutBanner = () => {
           </div>
 
           <h1 className="text-5xl md:text-7xl font-black text-white tracking-tighter leading-[1.1] mb-8">
-            We engineer{" "}
+            We build{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#d96c4e] to-[#f4be78]">
-              digital ecosystems
+              digital systems
             </span>{" "}
-            that scale.
+            that stay useful.
           </h1>
 
           <p className="text-lg md:text-xl text-[#a4babb] leading-relaxed max-w-2xl mx-auto font-medium">
-            Kraviona is a team of passionate developers, designers, and
-            strategists. We don&apos;t just build websites; we build the digital
-            foundation for your business&apos;s future.
+            Kraviona is a founder-led technology team for businesses that need
+            fast websites, reliable web apps, clean backend systems, and
+            technical SEO that is planned from the first sprint.
           </p>
         </motion.div>
       </div>

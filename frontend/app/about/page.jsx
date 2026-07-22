@@ -14,7 +14,7 @@ const aboutPageSchema = {
   url: "https://kraviona.com/about",
   name: "About Kraviona – Engineering Digital Ecosystems",
   description:
-    "Learn about Kraviona, our mission, core values, and the expert team behind our scalable MERN stack and digital marketing solutions.",
+    "Learn about Kraviona, the founder-led team building MERN stack products, Next.js websites, backend systems, and technical SEO foundations.",
   isPartOf: { "@id": "https://kraviona.com/#website" },
   breadcrumb: {
     "@type": "BreadcrumbList",
@@ -36,9 +36,9 @@ const aboutPageSchema = {
 };
 
 export const metadata = {
-  title: "About Kraviona Team, Mission & MERN Expertise India",
+  title: "About Kraviona | Founder-Led Web Development Team",
   description:
-    "Meet Kraviona Tech Solutions, the MERN stack and technical SEO team building fast websites, scalable apps, and search-ready digital systems for growth.",
+    "Meet Kraviona Tech Solutions, a Delhi-based team building fast websites, scalable apps, backend APIs, and technical SEO systems for growing businesses.",
   keywords: [
     "About Kraviona",
     "Kraviona Team",
@@ -52,9 +52,9 @@ export const metadata = {
   creator: "Kraviona Tech Solutions",
   alternates: { canonical: "https://kraviona.com/about" },
   openGraph: {
-    title: "About Kraviona – Engineering Digital Ecosystems",
+    title: "About Kraviona | Founder-Led Web Development Team",
     description:
-      "Meet the passionate team solving complex business problems with cutting-edge technology. Discover our story, mission, and core values.",
+      "Meet the team behind Kraviona's MERN stack development, Next.js websites, backend systems, and technical SEO work.",
     url: "https://kraviona.com/about",
     siteName: "Kraviona Tech Solutions",
     type: "website",
@@ -73,9 +73,9 @@ export const metadata = {
     card: "summary_large_image",
     site: "@KravionaTech",
     creator: "@KravionaTech",
-    title: "About Kraviona – Engineering Digital Ecosystems",
+    title: "About Kraviona | Founder-Led Web Development Team",
     description:
-      "Meet the passionate team solving complex business problems with cutting-edge technology.",
+      "Meet the team behind Kraviona's development and technical SEO work.",
     images: ["/og-image.jpg"],
   },
   robots: defaultRobots,

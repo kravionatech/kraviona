@@ -54,22 +54,21 @@ const CTASection = () => {
             id="cta-heading"
             className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-white tracking-tight mb-6 leading-[1.12]"
           >
-            Ready to Transform Your <br className="hidden md:block" />
+            Ready to Build Something <br className="hidden md:block" />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#f4be78] to-[#d96c4e]">
-              Digital Presence?
+              Faster and Cleaner?
             </span>
           </h2>
 
           {/* Subtext */}
           <p className="text-base md:text-xl text-gray-300 mb-5 max-w-2xl mx-auto leading-relaxed">
-            Let&apos;s build scalable MERN applications, SEO-optimised
-            architectures, and high-converting digital experiences that
-            accelerate your business growth.
+            Let&apos;s plan the next version of your website, app, backend, or
+            SEO foundation with a clear scope and practical delivery path.
           </p>
 
           {/* Calendly placeholder */}
           <p className="text-[#f4be78]/70 text-sm mb-10 font-medium">
-            📅 Book directly in our calendar — no phone tag, no delays.
+            Book directly in our calendar. No back-and-forth, no delay.
           </p>
 
           {/* CTA Buttons */}
@@ -81,7 +80,7 @@ const CTASection = () => {
               aria-label="Book a free SEO audit and consultation"
             >
               <Calendar className="w-5 h-5" aria-hidden="true" />
-              Book Free Consultation
+              Book Free Strategy Call
               <ArrowRight
                 className="w-4 h-4 transform group-hover:translate-x-1 transition-transform"
                 aria-hidden="true"
@@ -93,7 +92,7 @@ const CTASection = () => {
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-9 py-4 bg-transparent text-white border-2 border-white/18 rounded-xl font-bold text-base hover:border-[#f4be78]/60 hover:bg-white/5 transition-all duration-300"
               aria-label="Get a free SEO audit for your website"
             >
-              Get Free SEO Audit
+              Request SEO Audit
             </Link>
           </div>
 

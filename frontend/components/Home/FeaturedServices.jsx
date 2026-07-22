@@ -22,7 +22,7 @@ const FALLBACK_SERVICES = [
     _id: "1",
     title: "MERN Stack Development",
     description:
-      "End-to-end full-stack applications built with MongoDB, Express.js, React.js, and Node.js — architected for performance, scalability, and long-term maintainability.",
+      "Full-stack applications built with MongoDB, Express.js, React.js, and Node.js for teams that need speed, clarity, and room to scale.",
     features: [
       "React.js Frontend",
       "Node.js API",
@@ -35,7 +35,7 @@ const FALLBACK_SERVICES = [
     _id: "2",
     title: "Technical SEO",
     description:
-      "Comprehensive technical SEO audits covering Core Web Vitals, structured data, crawlability, canonical tags, and GEO optimisation for AI search engines.",
+      "Technical SEO audits and fixes for Core Web Vitals, structured data, crawlability, canonical tags, indexing, and AI-search readiness.",
     features: [
       "Core Web Vitals",
       "Schema Markup",
@@ -48,7 +48,7 @@ const FALLBACK_SERVICES = [
     _id: "3",
     title: "Web Performance Optimization",
     description:
-      "Lighthouse score improvements, lazy loading, image optimisation, code splitting, and CDN integration for blazing-fast digital experiences.",
+      "Page-speed improvements, image optimisation, code splitting, lazy loading, and deployment cleanup for faster user experiences.",
     features: [
       "Lighthouse 90+ Score",
       "Image Optimisation",
@@ -61,7 +61,7 @@ const FALLBACK_SERVICES = [
     _id: "4",
     title: "AI Automation",
     description:
-      "Integrate LLMs, automated workflows, and intelligent agents into your business processes to save time, cut costs, and gain competitive advantage.",
+      "LLM integrations, workflow automation, chatbots, and internal tools that remove repetitive work from your day-to-day operations.",
     features: [
       "LLM Integration",
       "Workflow Automation",
@@ -74,7 +74,7 @@ const FALLBACK_SERVICES = [
     _id: "5",
     title: "Backend Architecture",
     description:
-      "Scalable microservices, RESTful APIs, real-time WebSocket systems, authentication layers, and cloud deployment on AWS, Vercel, or your preferred stack.",
+      "Node.js APIs, authentication, integrations, database structure, real-time features, and deployment support for reliable product foundations.",
     features: ["Microservices", "JWT Auth", "WebSockets", "Cloud Deploy"],
     slug: "nodejs-development",
   },
@@ -82,7 +82,7 @@ const FALLBACK_SERVICES = [
     _id: "6",
     title: "API Development",
     description:
-      "Well-documented, versioned RESTful and GraphQL APIs with rate limiting, caching, webhook support, and thorough Postman / OpenAPI documentation.",
+      "Documented REST and GraphQL APIs with versioning, rate limiting, caching, webhook support, and handover-ready documentation.",
     features: [
       "REST & GraphQL",
       "Rate Limiting",
@@ -181,17 +181,18 @@ const FeaturedServices = () => {
               id="services-heading"
               className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.25rem] font-extrabold text-[#111A1F] tracking-tight leading-[1.1]"
             >
-              Expert Services That{" "}
+              Services Built Around{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#d96c4e] to-[#f4be78]">
-                Drive Results
+                Real Outcomes
               </span>
             </h2>
           </div>
 
           <div className="md:border-l-2 border-[#f4be78]/60 md:pl-6 max-w-xs">
             <p className="text-gray-500 text-sm md:text-base leading-relaxed">
-              We engineer scalable digital experiences with SEO-first
-              architecture that deliver measurable ROI for your business.
+              We focus on the parts that make a digital product useful:
+              performance, structure, maintainability, search visibility, and a
+              clear path to launch.
             </p>
           </div>
         </div>

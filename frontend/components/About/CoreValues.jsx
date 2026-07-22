@@ -5,16 +5,16 @@ import { motion } from "framer-motion";
 
 const values = [
   {
-    title: "Uncompromising Quality",
-    desc: "We refuse to ship bad code. Every project goes through rigorous QA testing and code reviews.",
+    title: "Quality That Holds Up",
+    desc: "We care about clean structure, maintainable code, responsive UI, and the small details that make a site easier to run after launch.",
   },
   {
-    title: "Absolute Transparency",
-    desc: "No hidden fees, no tech jargon to confuse you. We keep you in the loop at every stage of the project.",
+    title: "Clear Communication",
+    desc: "You know what we are building, what we need from you, and what is coming next. No fog, no jargon walls, no surprise scope.",
   },
   {
-    title: "Continuous Innovation",
-    desc: "The tech world moves fast. We constantly upskill our team in AI, Next.js, and modern cloud architectures.",
+    title: "Modern, Practical Thinking",
+    desc: "We keep learning across AI, Next.js, SEO, automation, and cloud tools, then apply what actually helps the project.",
   },
 ];
 

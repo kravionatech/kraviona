@@ -103,16 +103,16 @@ const ContactFormDetails = () => {
           >
             <div className="inline-block mb-4">
               <span className="text-sm font-semibold tracking-wider text-[#d96c4e] uppercase bg-[#d96c4e]/10 px-4 py-2 rounded-full">
-                Get In Touch
+                Tell Us What You Need
               </span>
             </div>
             <h2 className="text-4xl md:text-5xl font-bold mb-8 leading-[1.15] text-[#1b3d3e]">
-              We&apos;d love to hear <br />
-              from you.
+              Let&apos;s make the next <br />
+              build clearer.
             </h2>
             <p className="text-gray-500 mb-12 text-lg max-w-md leading-relaxed">
-              Have a project in mind or just want to say hi? Fill out the form,
-              and our team will reach out to you shortly.
+              Share your website, app, SEO, or automation requirement. We will
+              review the details and reply with the most practical next step.
             </p>
 
             <div className="space-y-8">
@@ -146,14 +146,14 @@ const ContactFormDetails = () => {
                   name="firstName"
                   value={formData.firstName}
                   onChange={handleChange}
-                  placeholder="John"
+                  placeholder="Amar"
                 />
                 <FormInput
                   label="Last Name"
                   name="lastName"
                   value={formData.lastName}
                   onChange={handleChange}
-                  placeholder="Doe"
+                  placeholder="Kumar"
                 />
               </div>
 
@@ -181,7 +181,7 @@ const ContactFormDetails = () => {
                 name="subject"
                 value={formData.subject}
                 onChange={handleChange}
-                placeholder="e.g., Website Development"
+                placeholder="e.g. Next.js website or SEO audit"
               />
 
               <div>
@@ -192,7 +192,7 @@ const ContactFormDetails = () => {
                   name="message"
                   value={formData.message}
                   onChange={handleChange}
-                  placeholder="Tell us about your project..."
+                  placeholder="Tell us what you want to build, improve, or fix."
                   rows={4}
                   className="w-full bg-[#f8fafb] border border-gray-200 text-[#1b3d3e] px-5 py-4 rounded-xl outline-none focus:ring-2 focus:ring-[#295c5e]/30 focus:border-[#295c5e] transition-all font-medium resize-none placeholder-gray-400"
                   required
@@ -208,7 +208,7 @@ const ContactFormDetails = () => {
                     : "bg-[#1b3d3e] hover:bg-[#122b2c] hover:shadow-lg hover:-translate-y-0.5"
                 }`}
               >
-                {isSubmitting ? "Sending..." : "Send Message"}
+                {isSubmitting ? "Sending..." : "Send Project Details"}
                 {!isSubmitting && (
                   <svg
                     className="w-5 h-5"
@@ -247,7 +247,7 @@ const ContactFormDetails = () => {
                   d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
                 />
               </svg>
-              Book Free 30-Min Consultation
+              Book a Free 30-Min Strategy Call
             </a>
           </motion.div>
         </div>

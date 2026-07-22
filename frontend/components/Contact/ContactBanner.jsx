@@ -40,7 +40,7 @@ const ContactBanner = () => {
         >
           {/* Main Headline */}
           <h1 className="text-5xl md:text-6xl font-extrabold text-white mb-4 tracking-tight drop-shadow-lg">
-            Contact Us
+            Start a Project
           </h1>
 
           {/* Breadcrumbs (Home » Contact Us) */}
@@ -55,7 +55,7 @@ const ContactBanner = () => {
             {/* Kraviona Terracotta Divider */}
             <span className="text-[#d96c4e] font-bold mx-1">»</span>
 
-            <span className="text-[#f4be78]">Contact Us</span>
+            <span className="text-[#f4be78]">Start a Project</span>
           </div>
 
           {/* --- Direct Contact Info Pills --- */}

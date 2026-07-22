@@ -117,9 +117,9 @@ export default function ReactDevPage() {
             Company India
           </h1>
           <p className="text-gray-300 text-lg md:text-xl max-w-3xl mb-10 leading-relaxed">
-            Build blazing-fast, SEO-friendly React.js and Next.js applications
-            with Kraviona. We specialise in dynamic SPAs, admin dashboards,
-            headless CMS frontends, and enterprise-grade React architectures.
+            Build fast, SEO-friendly React.js and Next.js applications with
+            Kraviona. We specialise in dynamic SPAs, admin dashboards, headless
+            CMS frontends, and maintainable React architectures.
           </p>
           <div className="flex flex-col sm:flex-row gap-4">
             <Link

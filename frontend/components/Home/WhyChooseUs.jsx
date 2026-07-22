@@ -7,25 +7,25 @@ import Image from "next/image";
 
 const features = [
   {
-    title: "Agile Development Process",
+    title: "Clear Development Process",
     description:
-      "We iterate quickly and adapt to your changing business needs seamlessly.",
+      "You get practical milestones, direct communication, and enough structure to know what is happening at each stage.",
   },
   {
     title: "Scalable MERN Architecture",
     description:
-      "Future-proof applications engineered to handle massive growth and high traffic.",
+      "Applications are planned with clean APIs, maintainable code, and database decisions that do not trap you later.",
   },
   {
-    title: "Data-Driven Marketing",
+    title: "SEO Built Into the Work",
     description:
-      "ROI-focused SEO and digital marketing strategies that consistently convert.",
+      "Technical SEO, performance, metadata, and structure are handled during the build, not patched in as an afterthought.",
   },
 ];
 
 const stats = [
-  { value: "99%", label: "Client Retention", color: "text-[#d96c4e]" },
-  { value: "150+", label: "Projects Delivered", color: "text-[#f4be78]" },
+  { value: "5+", label: "Years Experience", color: "text-[#d96c4e]" },
+  { value: "50+", label: "Projects Delivered", color: "text-[#f4be78]" },
 ];
 
 const WhyChooseUs = () => {
@@ -170,17 +170,17 @@ const WhyChooseUs = () => {
               </div>
 
               <h2 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white tracking-tight mb-6 leading-[1.15]">
-                We Build Solutions That{" "}
+                We Build Systems That{" "}
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#f4be78] to-[#d96c4e] drop-shadow-md">
-                  Drive Growth
+                  Keep Working
                 </span>
               </h2>
 
               <p className="text-lg md:text-xl text-gray-400 font-light mb-10 leading-relaxed">
-                At Kraviona, we don’t just write code; we engineer success.
-                Whether you need a robust web application or a marketing
-                strategy that outranks competitors, our expert team delivers
-                excellence from concept to deployment.
+                Kraviona is built for businesses that want more than a pretty
+                launch. We combine product thinking, clean engineering, and
+                technical SEO so your website or application has a stronger
+                foundation from day one.
               </p>
             </motion.div>
 
@@ -236,7 +236,7 @@ const WhyChooseUs = () => {
                 href="/about"
                 className="w-full sm:w-auto px-8 py-4 bg-[#d96c4e] text-white rounded-xl font-bold hover:bg-[#c25e41] transition-all duration-300 shadow-[0_4px_20px_rgb(217,108,78,0.3)] hover:shadow-[0_8px_25px_rgb(217,108,78,0.5)] hover:-translate-y-0.5 flex items-center justify-center gap-2 group"
               >
-                Discover Our Story
+                Read Our Story
                 <svg
                   className="w-5 h-5 transform group-hover:translate-x-1 transition-transform duration-300"
                   fill="none"

@@ -3,6 +3,9 @@
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 
+const LatestBlog = dynamic(() => import("./LatestBlog").then((mod) => mod.default), {
+  ssr: false,
+});
 const FeaturedServices = dynamic(() => import("./FeaturedServices"), {
   ssr: false,
 });
@@ -11,7 +14,7 @@ const TechStack = dynamic(() => import("./TechStack"), { ssr: false });
 const CTASection = dynamic(() => import("./CTASection"), { ssr: false });
 const HomeFAQ = dynamic(() => import("./HomeFAQ"), { ssr: false });
 
-const DeferredHomeSections = () => {
+const DeferredHomeSections = ({ initialPosts = [] }) => {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
@@ -27,15 +30,18 @@ const DeferredHomeSections = () => {
     return () => window.clearTimeout(timer);
   }, []);
 
-  if (!ready) return null;
-
   return (
     <>
-      <FeaturedServices />
-      <WhyChooseUs />
-      <TechStack />
-      <CTASection />
-      <HomeFAQ />
+      <LatestBlog initialPosts={initialPosts} />
+      {ready && (
+        <>
+          <FeaturedServices />
+          <WhyChooseUs />
+          <TechStack />
+          <CTASection />
+          <HomeFAQ />
+        </>
+      )}
     </>
   );
 };
