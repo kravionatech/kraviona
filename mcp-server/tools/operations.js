@@ -405,7 +405,7 @@ export const handle = async (toolName, args = {}) => {
           server: {
             name: "kraviona-business-mcp",
             version: "2.0.0",
-            transport: "stdio",
+            transport: config.transport,
             readOnly: config.readOnly,
             deletesEnabled: config.allowDeletes && !config.readOnly,
           },
@@ -417,7 +417,7 @@ export const handle = async (toolName, args = {}) => {
           server: {
             name: "kraviona-business-mcp",
             version: "2.0.0",
-            transport: "stdio",
+            transport: config.transport,
             readOnly: config.readOnly,
             deletesEnabled: config.allowDeletes && !config.readOnly,
           },

@@ -27,6 +27,7 @@ export const config = Object.freeze({
     process.env.DATABASE_URL ||
     process.env.MONGODB_URI,
   databaseName: process.env.DB_NAME,
+  transport: process.env.VERCEL ? "streamable-http" : "stdio",
   readOnly: booleanFromEnv("MCP_READ_ONLY", false),
   allowDeletes: booleanFromEnv("MCP_ALLOW_DELETES", false),
   serverSelectionTimeoutMs: integerFromEnv(

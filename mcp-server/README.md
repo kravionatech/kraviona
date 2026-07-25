@@ -19,6 +19,9 @@ MongoDB models used by the backend.
 The server exposes 62 tools over local stdio. It does not expose a shell,
 arbitrary MongoDB queries, or credentials.
 
+It can also be deployed as a private stateless Streamable HTTP server on
+Vercel. The remote endpoint requires a bearer token.
+
 ## Install and verify
 
 Requirements: Node.js 20.19 or newer and access to the Kraviona MongoDB
@@ -62,6 +65,97 @@ Verify a manual installation with:
 claude mcp get kraviona
 claude mcp list
 ```
+
+## Deploy to Vercel
+
+The Vercel project must use the repository root, not `mcp-server`, because the
+MCP tools reuse models from `backend`.
+
+1. Open the Vercel project and go to **Settings > Build and Deployment**.
+2. Set **Root Directory** to the repository root (leave it empty).
+3. Set **Framework Preset** to `Other`.
+4. Clear any custom **Build Command** and **Output Directory**.
+5. Add these Production environment variables:
+
+| Variable | Value |
+| --- | --- |
+| `MONGO_URI` | The production MongoDB connection string |
+| `DB_NAME` | Database name, if it is not included in the URI |
+| `MCP_API_KEY` | A new random secret of at least 32 bytes |
+| `MCP_OAUTH_PASSWORD` | Password entered on the Claude authorization screen |
+| `MCP_PUBLIC_URL` | Canonical origin, for example `https://mcpserver.kraviona.com` |
+| `MCP_READ_ONLY` | `true` initially; change deliberately when writes are needed |
+| `MCP_ALLOW_DELETES` | `false` |
+
+Generate an API key locally:
+
+```bash
+openssl rand -hex 32
+```
+
+Deploy from the repository root:
+
+```bash
+cd /home/amar/Desktop/kraviona
+npx vercel --prod
+```
+
+After deployment:
+
+```text
+https://YOUR-PROJECT.vercel.app/       health information
+https://YOUR-PROJECT.vercel.app/mcp    protected MCP endpoint
+```
+
+Do not open `/mcp` as a normal webpage. MCP clients send authenticated `POST`
+requests. A browser `GET` receives `405 Method Not Allowed` by design.
+
+Test authentication without exposing the token in source control:
+
+```bash
+export MCP_API_KEY="the-same-value-configured-in-vercel"
+curl -i https://YOUR-PROJECT.vercel.app/mcp \
+  -X POST \
+  -H "Authorization: Bearer $MCP_API_KEY" \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json, text/event-stream" \
+  --data '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-11-25","capabilities":{},"clientInfo":{"name":"curl-test","version":"1.0.0"}}}'
+```
+
+Example remote MCP client configuration:
+
+```json
+{
+  "mcpServers": {
+    "kraviona-remote": {
+      "type": "http",
+      "url": "https://YOUR-PROJECT.vercel.app/mcp",
+      "headers": {
+        "Authorization": "Bearer ${MCP_API_KEY}"
+      }
+    }
+  }
+}
+```
+
+Keep the existing project-level `.mcp.json` configuration when using the local
+stdio server. Use the remote configuration only in a client that needs to
+connect through Vercel.
+
+### Connect Claude web
+
+1. In Claude, open **Settings > Connectors**.
+2. Remove the old Kraviona connector if it was added before OAuth was deployed.
+3. Add a custom connector with
+   `https://mcpserver.kraviona.com/mcp`.
+4. Leave the OAuth Client ID and Client Secret fields empty. The server supports
+   Dynamic Client Registration.
+5. Click **Connect**, enter `MCP_OAUTH_PASSWORD` on the Kraviona authorization
+   page, and approve access.
+
+If Claude has cached a failed DCR registration, remove and recreate the
+connector. As a fallback, set the advanced OAuth Client ID to `claude-web` and
+leave Client Secret empty.
 
 ## Connect Claude Desktop
 
