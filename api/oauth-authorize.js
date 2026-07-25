@@ -95,7 +95,7 @@ const sendPage = (response, options, status = 200) => {
   response.setHeader("Cache-Control", "no-store");
   response.setHeader(
     "Content-Security-Policy",
-    "default-src 'none'; style-src 'unsafe-inline'; form-action 'self'; base-uri 'none'; frame-ancestors 'none'",
+    "default-src 'none'; style-src 'unsafe-inline'; form-action 'self' https://claude.ai; base-uri 'none'; frame-ancestors 'none'",
   );
   response.end(page(options));
 };
