@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "kraviona": {
+      "type": "stdio",
+      "command": "node",
+      "args": [
+        "${CLAUDE_PROJECT_DIR:-.}/mcp-server/index.js"
+      ],
+      "env": {
+        "MCP_READ_ONLY": "false",
+        "MCP_ALLOW_DELETES": "false"
+      }
+    }
+  }
+}

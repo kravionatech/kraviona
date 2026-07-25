@@ -72,6 +72,7 @@
 .dynamodb/
 .env
 .env*
+!**/.env.example
 .env.development.local
 .env.local
 .env.production.local
