@@ -1,7 +1,5 @@
 "use client";
 
-import ErrorBox from "@/components/Error/ErrorBox";
-import { PageLoader } from "@/components/Loadingspinner";
 import Pagination from "@/components/Pagination";
 import { apiRequest } from "@/components/api";
 import {
@@ -14,6 +12,8 @@ import {
   FileText,
   TrendingUp,
   CalendarClock,
+  AlertCircle,
+  RefreshCw,
 } from "lucide-react";
 import Link from "next/link";
 import React, { useCallback, useEffect, useState } from "react";
@@ -73,6 +73,13 @@ const BlogPage = () => {
   });
 
   const fetchPosts = useCallback(async (signal) => {
+    const timeoutController = new AbortController();
+    const timeout = setTimeout(() => timeoutController.abort(), 12000);
+    const requestSignal =
+      signal && typeof AbortSignal.any === "function"
+        ? AbortSignal.any([signal, timeoutController.signal])
+        : timeoutController.signal;
+
     try {
       setLoading(true);
       setError(null);
@@ -84,7 +91,7 @@ const BlogPage = () => {
 
       const data = await apiRequest(
         `/private/posts?${params.toString()}`,
-        { signal },
+        { signal: requestSignal },
       );
       const nextPagination = data.pagination || {
         totalPosts: 0,
@@ -102,9 +109,14 @@ const BlogPage = () => {
       setPosts(Array.isArray(data.data) ? data.data : []);
       setPagination(nextPagination);
     } catch (error) {
-      if (error.name === "AbortError") return;
-      setError(error.message);
+      if (error.name === "AbortError" && signal?.aborted) return;
+      setError(
+        timeoutController.signal.aborted
+          ? "Posts request timed out. Check the API connection and retry."
+          : error.message,
+      );
     } finally {
+      clearTimeout(timeout);
       if (!signal?.aborted) setLoading(false);
     }
   }, [page, search]);
@@ -165,23 +177,58 @@ const BlogPage = () => {
 
   if (loading) {
     return (
-      <div className="w-full h-full flex flex-col items-center justify-center">
-        <PageLoader
-          section="Blog Engine"
-          title="Blog Posts"
-          message="Loading posts..."
-        />
-        <p className="mt-3 text-sm text-gray-400 animate-pulse">
-          Scanning posts...
-        </p>
+      <div className="min-h-full w-full bg-[#F8F9FB] p-8" aria-live="polite">
+        <div className="mb-8 flex items-center justify-between">
+          <div className="space-y-3">
+            <div className="h-3 w-32 animate-pulse rounded bg-orange-100" />
+            <div className="h-8 w-48 animate-pulse rounded-lg bg-slate-200" />
+          </div>
+          <div className="h-11 w-32 animate-pulse rounded-lg bg-orange-100" />
+        </div>
+        <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+          <div className="border-b border-slate-100 p-5">
+            <div className="h-10 max-w-sm animate-pulse rounded-lg bg-slate-100" />
+          </div>
+          <div className="space-y-px bg-slate-100">
+            {[0, 1, 2, 3, 4, 5].map((row) => (
+              <div
+                key={row}
+                className="grid grid-cols-[50px_2fr_1fr_100px_120px] gap-5 bg-white px-6 py-5"
+              >
+                {[0, 1, 2, 3, 4].map((cell) => (
+                  <div
+                    key={cell}
+                    className="h-4 animate-pulse rounded bg-slate-100"
+                  />
+                ))}
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="w-full h-full flex items-center justify-center">
-        <ErrorBox error={error} />
+      <div className="flex min-h-full w-full items-center justify-center bg-[#F8F9FB] p-8">
+        <div className="w-full max-w-md rounded-2xl border border-red-100 bg-white p-8 text-center shadow-sm">
+          <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-red-50 text-red-500">
+            <AlertCircle size={24} />
+          </span>
+          <h2 className="mt-4 text-xl font-bold text-slate-900">
+            Unable to load blog posts
+          </h2>
+          <p className="mt-2 text-sm leading-6 text-slate-500">{error}</p>
+          <button
+            type="button"
+            onClick={() => fetchPosts()}
+            className="mt-6 inline-flex items-center gap-2 rounded-lg bg-[#235056] px-5 py-2.5 text-sm font-semibold text-white"
+          >
+            <RefreshCw size={16} />
+            Retry
+          </button>
+        </div>
       </div>
     );
   }

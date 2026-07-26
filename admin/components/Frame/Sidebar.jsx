@@ -15,6 +15,28 @@ import {
   FiRepeat, FiAlertCircle, FiCheckSquare, FiSliders
 } from "react-icons/fi";
 
+// Only expose modules that have a real admin route and working backend flow.
+// Placeholder configuration links stay out of navigation until implemented.
+const WORKING_MENU_PATHS = new Set([
+  "/dashboard",
+  "/blog",
+  "/category",
+  "/comments",
+  "/content-decay",
+  "/team",
+  "/users",
+  "/leads",
+  "/messages",
+  "/newsletters",
+  "/media",
+  "/settings",
+]);
+
+const GROUP_TITLE_OVERRIDES = {
+  "Media & Notifications": "Media",
+  "Logs & Security": "System",
+};
+
 const SB = {
   root: {
     width: 256, minWidth: 256, maxWidth: 256,
@@ -241,12 +263,26 @@ export default function Sidebar({ onLogout }) {
     ]},
   ], []);
 
+  const visibleMenuGroups = useMemo(
+    () =>
+      menuGroups
+        .map((group) => ({
+          ...group,
+          title: GROUP_TITLE_OVERRIDES[group.title] || group.title,
+          items: group.items.filter((item) =>
+            WORKING_MENU_PATHS.has(item.path),
+          ),
+        }))
+        .filter((group) => group.items.length > 0),
+    [menuGroups],
+  );
+
   useEffect(() => {
     if (!pathname) return;
     const timeout = setTimeout(() => {
       setCollapsed((prev) => {
         const next = { ...prev };
-        for (const g of menuGroups) {
+        for (const g of visibleMenuGroups) {
           if (!g.collapsible) continue;
           const containsActive = g.items.some((i) => isActive(i.path));
           if (containsActive) next[g.title] = false;
@@ -256,7 +292,7 @@ export default function Sidebar({ onLogout }) {
     }, 0);
 
     return () => clearTimeout(timeout);
-  }, [pathname, menuGroups, isActive]);
+  }, [pathname, visibleMenuGroups, isActive]);
 
   const toggle = (title) =>
     setCollapsed((prev) => ({ ...prev, [title]: !prev[title] }));
@@ -268,17 +304,26 @@ export default function Sidebar({ onLogout }) {
 
       {/* Logo */}
       <div style={SB.logo}>
-        <img
-          src="https://kraviona.com/_next/image?url=%2Flogo.png&w=48&q=75"
-          alt="Kraviona Logo"
-          style={SB.logoImg}
-        />
+        <span
+          style={{
+            ...SB.logoImg,
+            display: "inline-flex",
+            alignItems: "center",
+            justifyContent: "center",
+            color: "#235056",
+            fontSize: 18,
+            fontWeight: 900,
+          }}
+          aria-label="Kraviona"
+        >
+          K
+        </span>
         <span style={SB.logoText}>Kraviona Admin</span>
       </div>
 
       {/* Scroll area */}
       <div className="__sb_scroll" style={SB.scroll}>
-        {menuGroups.map((group) => {
+        {visibleMenuGroups.map((group) => {
           const isCollapsible = group.collapsible;
           const isOpen = !isCollapsible || !collapsed[group.title];
 
