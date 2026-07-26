@@ -106,7 +106,13 @@ const SingleBlogView = () => {
   useEffect(() => {
     const fetchBlogDetails = async () => {
       try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/post/${slug}`)
+        const isPostId = /^[a-f\d]{24}$/i.test(slug)
+        const endpoint = isPostId
+          ? `${process.env.NEXT_PUBLIC_API_URL}/private/post/${slug}`
+          : `${process.env.NEXT_PUBLIC_API_URL}/post/${slug}`
+        const res = await fetch(endpoint, {
+          credentials: isPostId ? 'include' : 'same-origin',
+        })
         const data = await res.json()
         if (data.success) setBlog(data.data)
       } catch (error) {

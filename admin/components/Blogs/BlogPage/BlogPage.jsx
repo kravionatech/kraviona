@@ -3,6 +3,7 @@
 import ErrorBox from "@/components/Error/ErrorBox";
 import { PageLoader } from "@/components/Loadingspinner";
 import Pagination from "@/components/Pagination";
+import { apiRequest } from "@/components/api";
 import {
   Edit,
   Eye,
@@ -55,6 +56,7 @@ const BlogPage = () => {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
   const [deletingId, setDeletingId] = useState(null);
+  const [searchInput, setSearchInput] = useState("");
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [pagination, setPagination] = useState({
@@ -62,9 +64,15 @@ const BlogPage = () => {
     currentPage: 1,
     totalPages: 0,
     limit: 20,
+    statusCounts: {
+      published: 0,
+      draft: 0,
+      scheduled: 0,
+      archived: 0,
+    },
   });
 
-  const fetchPosts = useCallback(async () => {
+  const fetchPosts = useCallback(async (signal) => {
     try {
       setLoading(true);
       setError(null);
@@ -74,32 +82,30 @@ const BlogPage = () => {
       });
       if (search.trim()) params.set("search", search.trim());
 
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/private/posts?${params.toString()}`,
-        {
-          method: "GET",
-          headers: { "content-type": "application/json" },
-          credentials: "include",
-        },
+      const data = await apiRequest(
+        `/private/posts?${params.toString()}`,
+        { signal },
       );
-      const data = await res.json();
-      if (data.success) {
-        setPosts(Array.isArray(data.data) ? data.data : []);
-        setPagination(
-          data.pagination || {
-            totalPosts: 0,
-            currentPage: page,
-            totalPages: 0,
-            limit: 20,
-          },
-        );
-      } else {
-        setError(data.error || data.message || "Something went wrong");
+      const nextPagination = data.pagination || {
+        totalPosts: 0,
+        currentPage: page,
+        totalPages: 0,
+        limit: 20,
+        statusCounts: {},
+      };
+
+      if (nextPagination.totalPages > 0 && page > nextPagination.totalPages) {
+        setPage(nextPagination.totalPages);
+        return;
       }
+
+      setPosts(Array.isArray(data.data) ? data.data : []);
+      setPagination(nextPagination);
     } catch (error) {
+      if (error.name === "AbortError") return;
       setError(error.message);
     } finally {
-      setLoading(false);
+      if (!signal?.aborted) setLoading(false);
     }
   }, [page, search]);
 
@@ -117,21 +123,16 @@ const BlogPage = () => {
 
     try {
       setDeletingId(id);
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/post/${id}`, {
+      const data = await apiRequest(`/post/${id}`, {
         method: "DELETE",
-        credentials: "include",
       });
-      const data = await res.json();
-      if (data.success) {
-        await fetchPosts();
-        Swal.fire({ title: "Deleted", text: data.message, icon: "success" });
+
+      if (posts.length === 1 && page > 1) {
+        setPage((current) => current - 1);
       } else {
-        Swal.fire({
-          title: "Failed",
-          text: data.message || "Something went wrong",
-          icon: "error",
-        });
+        await fetchPosts();
       }
+      Swal.fire({ title: "Deleted", text: data.message, icon: "success" });
     } catch (error) {
       Swal.fire({ title: "Error", text: error.message, icon: "error" });
     } finally {
@@ -140,21 +141,27 @@ const BlogPage = () => {
   };
 
   useEffect(() => {
-    const timeout = setTimeout(fetchPosts, 0);
+    const timeout = setTimeout(() => {
+      setPage(1);
+      setSearch(searchInput.trim());
+    }, 350);
     return () => clearTimeout(timeout);
+  }, [searchInput]);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => fetchPosts(controller.signal), 0);
+    return () => {
+      clearTimeout(timeout);
+      controller.abort();
+    };
   }, [fetchPosts]);
 
   const filtered = posts;
 
-  const publishedCount = posts.filter(
-    (p) => (p.status || "").toLowerCase() === "published",
-  ).length;
-  const draftCount = posts.filter(
-    (p) => (p.status || "draft").toLowerCase() === "draft",
-  ).length;
-  const scheduledCount = posts.filter(
-    (p) => (p.status || "").toLowerCase() === "scheduled",
-  ).length;
+  const publishedCount = pagination.statusCounts?.published || 0;
+  const draftCount = pagination.statusCounts?.draft || 0;
+  const scheduledCount = pagination.statusCounts?.scheduled || 0;
 
   if (loading) {
     return (
@@ -243,10 +250,9 @@ const BlogPage = () => {
             />
             <input
               type="text"
-              value={search}
+              value={searchInput}
               onChange={(e) => {
-                setSearch(e.target.value);
-                setPage(1);
+                setSearchInput(e.target.value);
               }}
               placeholder="Search by title or author..."
               className="w-full pl-9 pr-4 py-2 text-sm bg-gray-50 border border-gray-200 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition"
@@ -254,7 +260,8 @@ const BlogPage = () => {
           </div>
           {search && (
             <span className="text-xs text-gray-400">
-              {filtered.length} result{filtered.length !== 1 ? "s" : ""}
+              {pagination.totalPosts} result
+              {pagination.totalPosts !== 1 ? "s" : ""}
             </span>
           )}
         </div>
@@ -282,7 +289,11 @@ const BlogPage = () => {
                     {/* Accent stripe on hover */}
                     <td className="px-6 py-4 text-center text-gray-400 text-sm">
                       <span className="font-mono">
-                        {String(index + 1).padStart(2, "0")}
+                        {String(
+                          (pagination.currentPage - 1) * pagination.limit +
+                            index +
+                            1,
+                        ).padStart(2, "0")}
                       </span>
                     </td>
 
@@ -320,7 +331,7 @@ const BlogPage = () => {
                       <div className="flex justify-center items-center gap-1">
                         {/* View */}
                         <Link
-                          href={`/blog/view/${post.slug}`}
+                          href={`/blog/view/${post._id}`}
                           title="View post"
                           className="p-2 rounded-lg text-gray-400 hover:text-blue-600 hover:bg-blue-50 transition-all duration-150"
                         >
@@ -338,6 +349,7 @@ const BlogPage = () => {
 
                         {/* Delete */}
                         <button
+                          type="button"
                           onClick={() => handleDeletePost(post._id)}
                           disabled={deletingId === post._id}
                           title="Delete post"

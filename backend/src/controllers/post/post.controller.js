@@ -444,29 +444,43 @@ export const privatePosts = async (req, res) => {
 
     // FIX: added pagination — the original fetched every post the user had
     // ever written in a single query with no limit at all.
-    const page = Math.max(1, parseInt(req.query.page, 10) || 1);
+    const requestedPage = Math.max(1, parseInt(req.query.page, 10) || 1);
     const limit = Math.min(50, Math.max(1, parseInt(req.query.limit, 10) || 20));
-    const skip = (page - 1) * limit;
 
     // Admin/super_admin manage everyone's posts; editors see their own.
-    const filter = FULL_ACCESS_ROLES.includes(user.role) ? {} : { userID: user.id };
+    const baseFilter = FULL_ACCESS_ROLES.includes(user.role)
+      ? {}
+      : { userID: user.id };
     const status = String(req.query.status || "").trim().toLowerCase();
     const search = String(req.query.search || "").trim();
 
-    if (status && ["draft", "published", "scheduled", "archived"].includes(status)) {
-      filter.status = status;
-    }
     if (search) {
       const searchRegex = { $regex: search, $options: "i" };
-      filter.$or = [
+      baseFilter.$or = [
         { title: searchRegex },
         { slug: searchRegex },
         { "author.name": searchRegex },
       ];
     }
 
-    const [posts, totalPosts] = await Promise.all([
-      PostModel.find(filter)
+    const filter = { ...baseFilter };
+    if (status && ["draft", "published", "scheduled", "archived"].includes(status)) {
+      filter.status = status;
+    }
+
+    const [totalPosts, published, draft, scheduled, archived] =
+      await Promise.all([
+        PostModel.countDocuments(filter),
+        PostModel.countDocuments({ ...baseFilter, status: "published" }),
+        PostModel.countDocuments({ ...baseFilter, status: "draft" }),
+        PostModel.countDocuments({ ...baseFilter, status: "scheduled" }),
+        PostModel.countDocuments({ ...baseFilter, status: "archived" }),
+      ]);
+    const totalPages = Math.ceil(totalPosts / limit);
+    const page = totalPages ? Math.min(requestedPage, totalPages) : 1;
+    const skip = (page - 1) * limit;
+
+    const posts = await PostModel.find(filter)
         // FIX: same `reaction` -> `reactions` typo as publicPosts.
         .select(
           "title slug excerpt author category reactions views featuredImage contentSourceType commentCount createdAt updatedAt publishedAt scheduledAt status"
@@ -474,9 +488,7 @@ export const privatePosts = async (req, res) => {
         .sort({ createdAt: -1 })
         .skip(skip)
         .limit(limit)
-        .lean(),
-      PostModel.countDocuments(filter),
-    ]);
+        .lean();
 
     return res.status(200).json({
       success: true,
@@ -485,8 +497,9 @@ export const privatePosts = async (req, res) => {
       pagination: {
         totalPosts,
         currentPage: page,
-        totalPages: Math.ceil(totalPosts / limit),
+        totalPages,
         limit,
+        statusCounts: { published, draft, scheduled, archived },
       },
     });
   } catch (error) {
