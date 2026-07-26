@@ -84,6 +84,7 @@ MCP tools reuse models from `backend`.
 | `MCP_API_KEY` | A new random secret of at least 32 bytes |
 | `MCP_OAUTH_PASSWORD` | Password entered on the Claude authorization screen |
 | `MCP_PUBLIC_URL` | Canonical origin, for example `https://mcpserver.kraviona.com` |
+| `MCP_OAUTH_CLIENT_IDS` | Optional comma-separated manual client IDs; DCR does not need this |
 | `MCP_READ_ONLY` | `true` initially; change deliberately when writes are needed |
 | `MCP_ALLOW_DELETES` | `false` |
 
@@ -149,13 +150,25 @@ connect through Vercel.
 3. Add a custom connector with
    `https://mcpserver.kraviona.com/mcp`.
 4. Leave the OAuth Client ID and Client Secret fields empty. The server supports
-   Dynamic Client Registration.
+   Dynamic Client Registration and issues a separate client ID for every Claude
+   account or connector installation.
 5. Click **Connect**, enter `MCP_OAUTH_PASSWORD` on the Kraviona authorization
    page, and approve access.
 
 If Claude has cached a failed DCR registration, remove and recreate the
-connector. As a fallback, set the advanced OAuth Client ID to `claude-web` and
-leave Client Secret empty.
+connector. As a fallback, set the advanced OAuth Client ID to
+`kraviona-claude` or `claude-web` and leave Client Secret empty. Both legacy
+IDs are accepted automatically. Additional manual IDs can be allowed with the
+comma-separated `MCP_OAUTH_CLIENT_IDS` environment variable.
+
+Manual public client IDs beginning with `kraviona-` are also registered on
+first authorization when they use Claude's official callback URL. This allows
+separate IDs such as `kraviona-personal`, `kraviona-team`, or `kraviona-mcp`
+without changing the deployment environment.
+
+Each Claude account completes its own authorization and receives an independent
+access/refresh token pair. Connecting a new account does not replace or revoke
+tokens belonging to an existing account.
 
 ## Connect Claude Desktop
 

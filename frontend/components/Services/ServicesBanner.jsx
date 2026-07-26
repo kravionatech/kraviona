@@ -11,10 +11,10 @@ const ServicesBanner = () => {
       {/* --- Background Image & Dark Overlay --- */}
       <div className="absolute inset-0 w-full h-full z-0">
         <Image
-          src="https://images.unsplash.com/photo-1690378820474-b468b8ee64d3?fm=jpg&q=60&w=3000&auto=format&fit=crop"
-          alt="Kraviona IT Team Working"
+          src="/images/office/services-strategy.webp"
+          alt="Kraviona consultants planning a digital transformation project"
           fill
-          className="object-cover opacity-40 mix-blend-overlay grayscale" // Grayscale makes the brand colors pop
+          className="object-cover opacity-55"
           priority
           fetchPriority="high"
         />

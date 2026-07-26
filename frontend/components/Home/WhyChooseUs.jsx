@@ -50,8 +50,8 @@ const WhyChooseUs = () => {
               className="absolute inset-0 rounded-[2rem] overflow-hidden bg-[#0f2425] z-10 w-[90%] h-[90%] mt-auto shadow-[0_8px_30px_rgb(0,0,0,0.3)] border border-white/5"
             >
               <Image
-                src="https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260"
-                alt="Kraviona Tech Team Working"
+                src="/images/office/team-collaboration.webp"
+                alt="Kraviona product team reviewing a digital product in the office"
                 fill
                 priority
                 sizes="(max-width: 768px) 100vw, 50vw"

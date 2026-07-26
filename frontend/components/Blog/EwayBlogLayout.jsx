@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import {
   ArrowRight,
+  BookOpenText,
   CalendarDays,
   Clock,
   Loader2,
@@ -142,6 +143,177 @@ function CategoryBadge({ children, light = false }) {
     >
       {children}
     </span>
+  );
+}
+
+function BlogHero({ latestPost, categories, articleCount }) {
+  const topicLinks =
+    categories.length > 0
+      ? categories.slice(0, 7)
+      : DEFAULT_CATEGORIES.map((name) => ({ name }));
+
+  return (
+    <section
+      className="relative overflow-hidden bg-[#0b2021] pt-[66px] text-white lg:pt-[78px]"
+      aria-labelledby="blog-hero-heading"
+    >
+      <div
+        className="pointer-events-none absolute inset-0 opacity-[0.055]"
+        aria-hidden="true"
+        style={{
+          backgroundImage:
+            "linear-gradient(rgba(255,255,255,.7) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.7) 1px, transparent 1px)",
+          backgroundSize: "52px 52px",
+        }}
+      />
+      <div
+        className="pointer-events-none absolute -right-40 -top-48 h-[540px] w-[540px] rounded-full bg-[#295c5e]/45 blur-[120px]"
+        aria-hidden="true"
+      />
+      <div
+        className="pointer-events-none absolute -bottom-52 left-[28%] h-[420px] w-[420px] rounded-full bg-[#d96c4e]/15 blur-[110px]"
+        aria-hidden="true"
+      />
+
+      <div className="relative mx-auto grid max-w-7xl gap-12 px-4 pb-12 pt-12 sm:px-6 sm:pb-14 sm:pt-16 lg:grid-cols-[minmax(0,0.92fr)_minmax(420px,0.78fr)] lg:items-center lg:gap-16 lg:px-8 lg:pb-16 lg:pt-20">
+        <div>
+          <div className="mb-6 flex items-center gap-3">
+            <span className="h-px w-9 bg-[#d96c4e]" aria-hidden="true" />
+            <p className="text-[11px] font-black uppercase tracking-[0.25em] text-[#f4be78]">
+              The Kraviona Journal
+            </p>
+          </div>
+
+          <h1
+            id="blog-hero-heading"
+            className="max-w-3xl text-4xl font-black leading-[1.04] tracking-[-0.04em] sm:text-5xl lg:text-[4rem]"
+          >
+            Ideas for building
+            <span className="block text-[#f4be78]">better digital products.</span>
+          </h1>
+
+          <p className="mt-6 max-w-xl text-base leading-7 text-white/68 sm:text-lg sm:leading-8">
+            Practical thinking on engineering, design, SEO, and AI—written by
+            the people doing the work.
+          </p>
+
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+            <a
+              href="#all-posts"
+              className="group inline-flex h-12 items-center justify-center gap-2 rounded-md bg-[#d96c4e] px-6 text-sm font-black text-white shadow-[0_12px_28px_rgba(217,108,78,0.2)] transition-all hover:-translate-y-0.5 hover:bg-[#c45f43] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f4be78] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b2021]"
+            >
+              Explore all articles
+              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+            </a>
+            <a
+              href="#blog-topics"
+              className="inline-flex h-12 items-center justify-center rounded-md border border-white/16 bg-white/[0.055] px-6 text-sm font-bold text-white backdrop-blur-sm transition-colors hover:border-white/30 hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
+            >
+              Browse by topic
+            </a>
+          </div>
+
+          <div className="mt-9 flex flex-wrap items-center gap-x-7 gap-y-4 border-t border-white/12 pt-6">
+            <div>
+              <p className="text-2xl font-black text-white">{articleCount}</p>
+              <p className="mt-0.5 text-[10px] font-bold uppercase tracking-[0.18em] text-white/45">
+                Published articles
+              </p>
+            </div>
+            <span className="hidden h-9 w-px bg-white/12 sm:block" aria-hidden="true" />
+            <div>
+              <p className="text-2xl font-black text-white">
+                {categories.length || DEFAULT_CATEGORIES.length}
+              </p>
+              <p className="mt-0.5 text-[10px] font-bold uppercase tracking-[0.18em] text-white/45">
+                Expert topics
+              </p>
+            </div>
+            <span className="hidden h-9 w-px bg-white/12 sm:block" aria-hidden="true" />
+            <div className="flex items-center gap-2 text-xs font-bold text-white/62">
+              <BookOpenText className="h-4 w-4 text-[#f4be78]" />
+              Practical, no-fluff insights
+            </div>
+          </div>
+        </div>
+
+        <div className="relative mx-auto w-full max-w-xl lg:mx-0">
+          <div
+            className="absolute -inset-4 translate-x-3 translate-y-3 rounded-xl border border-white/8 bg-white/[0.025]"
+            aria-hidden="true"
+          />
+          {latestPost?.slug ? (
+            <Link
+              href={`/blog/${latestPost.slug}`}
+              className="group relative block overflow-hidden rounded-xl border border-white/14 bg-[#102c2d] shadow-[0_28px_70px_rgba(0,0,0,0.28)]"
+            >
+              <PostImage
+                post={latestPost}
+                className="aspect-[16/10] w-full"
+                sizes="(max-width: 1024px) 92vw, 42vw"
+                priority
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#08191a] via-[#08191a]/28 to-transparent" />
+              <div className="absolute inset-x-0 bottom-0 p-5 sm:p-7">
+                <div className="mb-3 flex items-center justify-between gap-3">
+                  <span className="rounded-full border border-white/15 bg-[#0b2021]/75 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.18em] text-[#f4be78] backdrop-blur-md">
+                    Latest · {getCategoryName(latestPost)}
+                  </span>
+                  <span className="rounded-full bg-white/12 p-2.5 text-white backdrop-blur-md transition-colors group-hover:bg-[#d96c4e]">
+                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                  </span>
+                </div>
+                <h2 className="max-w-lg text-xl font-black leading-tight text-white sm:text-2xl">
+                  {latestPost.title || "Read our latest article"}
+                </h2>
+                <div className="mt-3">
+                  <MetaLine post={latestPost} light />
+                </div>
+              </div>
+            </Link>
+          ) : (
+            <div className="relative flex aspect-[16/10] items-center justify-center overflow-hidden rounded-xl border border-white/14 bg-[linear-gradient(135deg,#173b3c,#0c2526)] p-8 shadow-[0_28px_70px_rgba(0,0,0,0.28)]">
+              <div className="absolute left-8 top-8 h-16 w-16 rounded-full bg-[#d96c4e]/20 blur-xl" />
+              <div className="relative text-center">
+                <BookOpenText className="mx-auto h-10 w-10 text-[#f4be78]" />
+                <p className="mt-4 text-xl font-black">Fresh thinking is on the way.</p>
+                <p className="mt-2 text-sm text-white/55">
+                  Explore practical notes from the Kraviona team.
+                </p>
+              </div>
+            </div>
+          )}
+          <span
+            className="absolute -right-2 -top-2 h-10 w-10 border-r-2 border-t-2 border-[#d96c4e] sm:-right-3 sm:-top-3"
+            aria-hidden="true"
+          />
+        </div>
+      </div>
+
+      <div id="blog-topics" className="relative border-t border-white/10 bg-black/10">
+        <div className="mx-auto flex max-w-7xl items-center gap-4 px-4 py-4 sm:px-6 lg:px-8">
+          <span className="hidden shrink-0 text-[10px] font-black uppercase tracking-[0.2em] text-white/40 sm:block">
+            Explore topics
+          </span>
+          <span className="hidden h-5 w-px shrink-0 bg-white/12 sm:block" aria-hidden="true" />
+          <nav className="flex min-w-0 flex-1 gap-2 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            {topicLinks.map((category) => (
+              <Link
+                key={category.name}
+                href={
+                  category.slug
+                    ? `/category/${category.slug}`
+                    : `/category/${encodeURIComponent(category.name.toLowerCase())}`
+                }
+                className="shrink-0 rounded-full border border-white/10 bg-white/[0.045] px-4 py-2 text-[11px] font-bold text-white/72 transition-all hover:border-[#f4be78]/50 hover:bg-[#f4be78]/10 hover:text-[#f4be78]"
+              >
+                {category.name}
+              </Link>
+            ))}
+          </nav>
+        </div>
+      </div>
+    </section>
   );
 }
 
@@ -515,7 +687,8 @@ export default function EwayBlogLayout({ initialPosts = [] }) {
       : DEFAULT_CATEGORIES.map((name) => ({ name }));
 
   const leadPost = allPosts[0];
-  const popularPosts = allPosts.slice(1, 6);
+  const secondaryPost = allPosts[1] || leadPost;
+  const popularPosts = allPosts.slice(2, 7);
   const categorySections = categories
     .slice(0, 4)
     .map((category) => ({
@@ -542,38 +715,11 @@ export default function EwayBlogLayout({ initialPosts = [] }) {
 
   return (
     <main className="bg-[#fbfcfc] font-sans">
-      <section className="border-b border-[#e4e4e4] bg-white pt-[94px]">
-        <div className="mx-auto max-w-7xl px-4 pb-5 pt-7 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <p className="text-[10px] font-black uppercase tracking-[0.28em] text-[#d96c4e]">
-              Kraviona Insights
-            </p>
-            <h1 className="mt-2 text-4xl font-black tracking-tight text-[#10282a] sm:text-5xl">
-              Kraviona Blog
-            </h1>
-            <p className="mx-auto mt-3 max-w-2xl text-sm leading-6 text-[#5d6b70]">
-              Practical articles on web development, design, SEO, automation,
-              and digital growth.
-            </p>
-          </div>
-
-          <nav className="mt-6 flex gap-2 overflow-x-auto border-t border-[#ececec] pt-4 md:justify-center">
-            {navCategories.map((category) => (
-              <Link
-                key={category.name}
-                href={
-                  category.slug
-                    ? `/category/${category.slug}`
-                    : `/category/${encodeURIComponent(category.name.toLowerCase())}`
-                }
-                className="shrink-0 px-3 py-2 text-xs font-black uppercase tracking-widest text-[#295c5e] transition-colors hover:text-[#d96c4e]"
-              >
-                {category.name}
-              </Link>
-            ))}
-          </nav>
-        </div>
-      </section>
+      <BlogHero
+        latestPost={leadPost}
+        categories={navCategories}
+        articleCount={allPosts.length}
+      />
 
       {isLoading ? (
         <section className="flex min-h-[520px] items-center justify-center">
@@ -591,11 +737,11 @@ export default function EwayBlogLayout({ initialPosts = [] }) {
           <section className="mx-auto grid max-w-7xl gap-7 px-4 py-9 sm:px-6 lg:grid-cols-[minmax(0,1fr)_340px] lg:px-8">
             <div>
               <SectionHeading
-                label="Featured"
-                title="Latest from the blog"
+                label="Keep reading"
+                title="More insights to explore"
                 centered
               />
-              <LeadStory post={leadPost} />
+              <LeadStory post={secondaryPost} />
             </div>
             <div className="grid content-start gap-6 pt-0 lg:pt-[76px]">
               <PopularList posts={popularPosts} />

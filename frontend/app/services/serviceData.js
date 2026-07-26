@@ -14,8 +14,7 @@ export const SERVICE_EXPERT = {
   availability: "Monday to Saturday, 9:00 AM - 7:00 PM IST",
   responseTime: "Usually replies within 1 business day",
   consultation: "Free 30-minute discovery call",
-  image:
-    "https://res.cloudinary.com/dybydsegx/image/upload/v1782123780/kravionatech/images/klttfdsvzm6ou8tvrkq2.png",
+  image: "/amar.jpeg",
   bio: "Full-stack developer and founder of Kraviona Tech Solutions, focused on MERN stack engineering, technical SEO, marketplace growth, and performance-first digital systems.",
   credentials: [
     "Founder-led technical discovery",

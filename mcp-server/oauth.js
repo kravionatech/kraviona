@@ -6,6 +6,7 @@ const ACCESS_TOKEN_TTL_SECONDS = 60 * 60 * 24 * 30;
 const REFRESH_TOKEN_TTL_SECONDS = 60 * 60 * 24 * 90;
 const AUTHORIZATION_CODE_TTL_SECONDS = 5 * 60;
 const CLAUDE_REDIRECT_URI = "https://claude.ai/api/mcp/auth_callback";
+const LEGACY_CLAUDE_CLIENT_IDS = ["claude-web", "kraviona-claude"];
 
 let indexesReady;
 
@@ -45,6 +46,20 @@ const collections = async () => {
 const randomToken = (bytes = 32) => randomBytes(bytes).toString("base64url");
 const tokenHash = (token) =>
   createHash("sha256").update(token).digest("hex");
+
+const configuredStaticClientIds = () => {
+  const configured = [
+    process.env.MCP_OAUTH_CLIENT_ID,
+    ...(process.env.MCP_OAUTH_CLIENT_IDS || "").split(","),
+  ]
+    .map((value) => String(value || "").trim())
+    .filter(Boolean);
+
+  return new Set([...LEGACY_CLAUDE_CLIENT_IDS, ...configured]);
+};
+
+const isAllowedManualClientId = (clientId) =>
+  /^kraviona-[A-Za-z0-9._~-]{1,100}$/.test(String(clientId || ""));
 
 export const publicBaseUrl = (request) => {
   if (process.env.MCP_PUBLIC_URL) {
@@ -95,31 +110,24 @@ export const registerOAuthClient = async (metadata) => {
     throw new Error(`redirect_uris must contain only ${CLAUDE_REDIRECT_URI}`);
   }
 
+  const now = new Date();
   const client = {
-    clientId: process.env.MCP_OAUTH_CLIENT_ID || "claude-web",
+    // Every DCR request represents a distinct Claude connector installation.
+    // A unique ID lets multiple Claude accounts connect concurrently without
+    // overwriting one shared client record.
+    clientId: `kraviona-${randomToken(18)}`,
     clientName: String(metadata.client_name || "Claude").slice(0, 100),
     redirectUris,
     tokenEndpointAuthMethod: "none",
-    createdAt: new Date(),
+    createdAt: now,
   };
 
   const { clients } = await collections();
-  await clients.updateOne(
-    { clientId: client.clientId },
-    {
-      $set: {
-        clientName: client.clientName,
-        redirectUris: client.redirectUris,
-        tokenEndpointAuthMethod: client.tokenEndpointAuthMethod,
-      },
-      $setOnInsert: { createdAt: client.createdAt },
-    },
-    { upsert: true },
-  );
+  await clients.insertOne(client);
 
   return {
     client_id: client.clientId,
-    client_id_issued_at: Math.floor(client.createdAt.getTime() / 1000),
+    client_id_issued_at: Math.floor(now.getTime() / 1000),
     client_name: client.clientName,
     redirect_uris: client.redirectUris,
     grant_types: ["authorization_code", "refresh_token"],
@@ -131,7 +139,33 @@ export const registerOAuthClient = async (metadata) => {
 export const getOAuthClient = async (clientId) => {
   if (!clientId) return null;
   const { clients } = await collections();
-  return clients.findOne({ clientId });
+  const storedClient = await clients.findOne({ clientId });
+  if (storedClient) return storedClient;
+
+  // Keep advanced/manual Claude connector configurations working even when
+  // the client was configured before DCR or the clients collection existed.
+  if (
+    !configuredStaticClientIds().has(clientId) &&
+    !isAllowedManualClientId(clientId)
+  ) {
+    return null;
+  }
+
+  const client = {
+    clientId,
+    clientName: "Claude",
+    redirectUris: [CLAUDE_REDIRECT_URI],
+    tokenEndpointAuthMethod: "none",
+    createdAt: new Date(),
+  };
+
+  await clients.updateOne(
+    { clientId },
+    { $setOnInsert: client },
+    { upsert: true },
+  );
+
+  return client;
 };
 
 export const verifyOAuthPassword = (password) => {

@@ -31,7 +31,7 @@ const TeamSection = () => {
 
           <div className="relative aspect-square overflow-hidden rounded-[28px] shadow-xl ring-1 ring-black/5">
             <Image
-              src="https://res.cloudinary.com/dybydsegx/image/upload/v1782123780/kravionatech/images/klttfdsvzm6ou8tvrkq2.png"
+              src="/amar.jpeg"
               alt="Amar Kumar"
               fill
               sizes="360px"

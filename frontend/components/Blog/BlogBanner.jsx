@@ -177,8 +177,8 @@ const BlogBanner = () => {
           >
             <div className="absolute inset-0 rounded-sm overflow-hidden">
               <Image
-                src="https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=900&w=720"
-                alt="Kraviona team at work"
+                src="/images/office/team-collaboration.webp"
+                alt="Kraviona product team collaborating in a professional office"
                 fill
                 sizes="(max-width: 1024px) 80vw, 38vw"
                 className="object-cover"

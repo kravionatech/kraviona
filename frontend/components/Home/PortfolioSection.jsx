@@ -10,8 +10,7 @@ const projects = [
     id: 1,
     title: "CodesMentors",
     category: "EdTech Platform",
-    image:
-      "https://images.pexels.com/photos/414628/pexels-photo-414628.jpeg?auto=compress&cs=tinysrgb&w=800",
+    image: "/images/office/case-study-edtech.webp",
     description:
       "A comprehensive MERN stack e-learning platform featuring interactive video courses, student dashboards, and real-time progress tracking.",
     techStack: ["React", "Node.js", "MongoDB"],
@@ -21,8 +20,7 @@ const projects = [
     id: 2,
     title: "The Chai Biscuit",
     category: "Hospitality & Retail",
-    image:
-      "https://images.pexels.com/photos/1015568/pexels-photo-1015568.jpeg?auto=compress&cs=tinysrgb&w=800",
+    image: "/images/office/case-study-commerce.webp",
     description:
       "A visually stunning website and ordering system for a modern cafe, integrating seamless UI with a robust inventory backend.",
     techStack: ["Next.js", "Tailwind CSS", "Express"],
@@ -32,8 +30,7 @@ const projects = [
     id: 3,
     title: "Polytechub",
     category: "Digital Portfolio Hub",
-    image:
-      "https://images.pexels.com/photos/3182773/pexels-photo-3182773.jpeg?auto=compress&cs=tinysrgb&w=800",
+    image: "/images/office/case-study-product.webp",
     description:
       "A centralized digital hub designed for seamless navigation, dynamic content rendering, and high-performance SEO.",
     techStack: ["React", "Framer Motion", "API"],

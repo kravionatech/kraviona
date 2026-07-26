@@ -15,7 +15,7 @@ const HeroSection = () => {
     >
       <div className="pointer-events-none absolute inset-0 z-0 h-full w-full">
         <Image
-          src="/og-web-development.jpg"
+          src="/images/office/home-hero.webp"
           alt=""
           fill
           priority

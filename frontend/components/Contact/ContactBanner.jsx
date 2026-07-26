@@ -12,11 +12,10 @@ const ContactBanner = () => {
       {/* --- Background Image & Deep Brand Dark Overlay --- */}
       <div className="absolute inset-0 w-full h-full z-0">
         <Image
-          // Using a communication/business meeting related image for Contact Page
-          src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?fm=jpg&q=60&w=3000&auto=format&fit=crop"
-          alt="Contact Kraviona Tech Solutions"
+          src="/images/office/contact-consultation.webp"
+          alt="Kraviona consultant speaking with clients in a professional office"
           fill
-          className="object-cover opacity-40 mix-blend-overlay grayscale"
+          className="object-cover opacity-55"
           priority
           fetchPriority="high"
         />
