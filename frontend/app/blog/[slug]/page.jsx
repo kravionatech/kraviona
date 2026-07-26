@@ -20,6 +20,7 @@ import {
   defaultRobots,
   SITE_NAME,
   SITE_TWITTER,
+  normalizeStructuredData,
 } from "@/app/seoConfig.js";
 import { API_URL } from "@/utils/api";
 import { formatDate, getDate, getImageAlt, getImageUrl } from "@/utils/dataHelpers";
@@ -84,8 +85,8 @@ async function getBlog(slug) {
     const json = await res.json();
 
     const blog = json.data ?? json.post ?? json.blog;
-    if (blog && !Array.isArray(blog)) return blog;
-    if (json?.slug || json?.title) return json;
+    if (blog && !Array.isArray(blog)) return normalizeStructuredData(blog);
+    if (json?.slug || json?.title) return normalizeStructuredData(json);
 
     return null;
   } catch {
@@ -103,7 +104,7 @@ async function getRecommendedPosts() {
     if (!res.ok) return [];
 
     const json = await res.json();
-    return parsePosts(json);
+    return normalizeStructuredData(parsePosts(json));
   } catch {
     return [];
   }
@@ -371,10 +372,15 @@ const BlogDetail = async ({ params }) => {
     blog.structuredDataOverride &&
     typeof blog.structuredDataOverride === "object" &&
     !Array.isArray(blog.structuredDataOverride)
-      ? {
+      ? normalizeStructuredData({
           "@context": "https://schema.org",
           ...blog.structuredDataOverride,
-        }
+          url: canonicalUrl(`/blog/${slug}`),
+          mainEntityOfPage: {
+            "@type": "WebPage",
+            "@id": canonicalUrl(`/blog/${slug}`),
+          },
+        })
       : generatedArticleSchema;
 
   const videoSchema = blog.videoEmbedded?.hasVideo && blog.videoEmbedded?.videoUrl
@@ -438,7 +444,7 @@ const BlogDetail = async ({ params }) => {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify(articleSchema),
+          __html: JSON.stringify(normalizeStructuredData(articleSchema)),
         }}
       />
 
@@ -446,7 +452,7 @@ const BlogDetail = async ({ params }) => {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify(breadcrumbSchema),
+          __html: JSON.stringify(normalizeStructuredData(breadcrumbSchema)),
         }}
       />
 
@@ -454,7 +460,7 @@ const BlogDetail = async ({ params }) => {
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify(faqSchema),
+            __html: JSON.stringify(normalizeStructuredData(faqSchema)),
           }}
         />
       )}
@@ -463,7 +469,7 @@ const BlogDetail = async ({ params }) => {
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify(videoSchema),
+            __html: JSON.stringify(normalizeStructuredData(videoSchema)),
           }}
         />
       )}

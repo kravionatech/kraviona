@@ -15,7 +15,10 @@ const BlogContactForm = dynamic(
 const apiAssetOrigin = API_URL.replace(/\/api\/v1$/, "").replace(/\/+$/, "");
 
 const normalizeContentImages = (html = "") =>
-  html
+  String(html)
+    // CMS-authored content is rendered directly. Normalize legacy internal
+    // links here so new and existing posts cannot reintroduce the www host.
+    .replace(/https?:\/\/www\.kraviona\.com/gi, "https://kraviona.com")
     .replace(/src=(["'])\/api\/v1\/(uploads|images|media|storage)\//gi, `src=$1${apiAssetOrigin}/$2/`)
     .replace(/src=(["'])\/(uploads|images|media|storage)\//gi, `src=$1${apiAssetOrigin}/$2/`)
     .replace(/src=(["'])(?!https?:|data:|blob:|\/)([^"']+)/gi, `src=$1${apiAssetOrigin}/$2`)

@@ -18,6 +18,31 @@ export const defaultRobots = {
   },
 };
 
+export function normalizeSiteUrl(value = "") {
+  if (typeof value !== "string") return value;
+
+  return value
+    .replace(/https?:\/\/(?:www\.)?kraviona\.com/gi, SITE_URL)
+    .replace(/\bwww\.kraviona\.com\b/gi, "kraviona.com");
+}
+
+export function normalizeStructuredData(data) {
+  if (Array.isArray(data)) {
+    return data.map(normalizeStructuredData);
+  }
+
+  if (data && typeof data === "object") {
+    return Object.fromEntries(
+      Object.entries(data).map(([key, value]) => [
+        key,
+        normalizeStructuredData(value),
+      ]),
+    );
+  }
+
+  return normalizeSiteUrl(data);
+}
+
 // Canonical URL helper — always returns trailing-slash-free absolute URL
 export function canonicalUrl(path = "") {
   const cleanPath = path.startsWith("/") ? path : `/${path}`;
@@ -36,7 +61,7 @@ export function cleanExcerpt(raw = "", maxLen = 160) {
 
 export function absoluteImageUrl(image = DEFAULT_OG_IMAGE) {
   if (!image) return canonicalUrl(DEFAULT_OG_IMAGE);
-  if (/^https?:\/\//i.test(image)) return image;
+  if (/^https?:\/\//i.test(image)) return normalizeSiteUrl(image);
   return canonicalUrl(image.startsWith("/") ? image : `/${image}`);
 }
 

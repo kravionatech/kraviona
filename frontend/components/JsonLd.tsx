@@ -1,5 +1,7 @@
 // DO NOT add any UI - this server component injects schema markup.
 
+import { normalizeStructuredData } from "@/app/seoConfig.js";
+
 interface JsonLdProps {
   data: Record<string, unknown> | Record<string, unknown>[];
 }
@@ -18,11 +20,13 @@ function schemaId(data: JsonLdProps["data"]) {
 }
 
 export function JsonLd({ data }: JsonLdProps) {
+  const normalizedData = normalizeStructuredData(data);
+
   return (
     <script
-      id={schemaId(data)}
+      id={schemaId(normalizedData)}
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(normalizedData) }}
     />
   );
 }
