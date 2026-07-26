@@ -76,9 +76,9 @@ export const getAllUsers = async (req, res) => {
       return res.status(403).json({ success: false, message: "Forbidden" });
     }
 
-    const { role, status, search, page = 1, limit = 50 } = req.query;
+    const { role, status, search, page = 1, limit = 20 } = req.query;
     const currentPage = Math.max(Number.parseInt(page, 10) || 1, 1);
-    const perPage = Math.min(Math.max(Number.parseInt(limit, 10) || 50, 1), 100);
+    const perPage = Math.min(Math.max(Number.parseInt(limit, 10) || 20, 1), 50);
     const query = {};
 
     if (role && USER_ROLES.includes(role)) query.role = role;

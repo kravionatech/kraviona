@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import Swal from "sweetalert2";
+import Pagination from "@/components/Pagination";
 
 const STATUS_STYLES = {
   subscriber: "border-emerald-200 bg-emerald-50 text-emerald-700",
@@ -123,26 +124,32 @@ export default function MainNewslettersPage() {
   const [email, setEmail] = useState("");
   const [saving, setSaving] = useState(false);
   const [deletingId, setDeletingId] = useState("");
+  const [page, setPage] = useState(1);
+  const [pagination, setPagination] = useState(null);
 
   const fetchSubscribers = useCallback(async () => {
     setLoading(true);
     setError("");
 
     try {
-      const result = await apiRequest("/newslatter");
+      const params = new URLSearchParams({ page: String(page), limit: "20" });
+      if (search.trim()) params.set("search", search.trim());
+      if (statusFilter !== "All") params.set("status", statusFilter);
+      const result = await apiRequest(`/newslatter?${params.toString()}`);
       const nextSubscribers = Array.isArray(result.data) ? result.data : [];
       setSubscribers(
         nextSubscribers.sort(
           (a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0),
         ),
       );
+      setPagination(result.pagination || null);
     } catch (err) {
       setError(err.message || "Could not load subscribers.");
       setSubscribers([]);
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [page, search, statusFilter]);
 
   useEffect(() => {
     const timeout = setTimeout(fetchSubscribers, 0);
@@ -150,17 +157,8 @@ export default function MainNewslettersPage() {
   }, [fetchSubscribers]);
 
   const filteredSubscribers = useMemo(() => {
-    const q = search.trim().toLowerCase();
-
-    return subscribers.filter((subscriber) => {
-      const matchesStatus =
-        statusFilter === "All" || subscriber.status === statusFilter;
-      const matchesSearch =
-        !q || (subscriber.email || "").toLowerCase().includes(q);
-
-      return matchesStatus && matchesSearch;
-    });
-  }, [subscribers, search, statusFilter]);
+    return subscribers;
+  }, [subscribers]);
 
   const stats = useMemo(() => {
     const active = subscribers.filter(
@@ -171,8 +169,13 @@ export default function MainNewslettersPage() {
     ).length;
     const latest = subscribers[0]?.createdAt ? formatDate(subscribers[0].createdAt) : "-";
 
-    return { total: subscribers.length, active, blocked, latest };
-  }, [subscribers]);
+    return {
+      total: pagination?.total ?? subscribers.length,
+      active,
+      blocked,
+      latest,
+    };
+  }, [pagination, subscribers]);
 
   const handleAdd = async (event) => {
     event?.preventDefault?.();
@@ -181,17 +184,11 @@ export default function MainNewslettersPage() {
 
     setSaving(true);
     try {
-      const result = await apiRequest("/newslatter", {
+      await apiRequest("/newslatter", {
         method: "POST",
         body: JSON.stringify({ email: email.trim().toLowerCase() }),
       });
-      const created = result.data || {
-        _id: `${email}-${Date.now()}`,
-        email: email.trim().toLowerCase(),
-        status: "subscriber",
-        createdAt: new Date().toISOString(),
-      };
-      setSubscribers((prev) => [created, ...prev]);
+      await fetchSubscribers();
       setEmail("");
       setAddOpen(false);
       Swal.fire({
@@ -226,9 +223,7 @@ export default function MainNewslettersPage() {
     setDeletingId(subscriber._id);
     try {
       await apiRequest(`/newslatter/${subscriber._id}`, { method: "DELETE" });
-      setSubscribers((prev) =>
-        prev.filter((item) => item._id !== subscriber._id),
-      );
+      await fetchSubscribers();
       Swal.fire({
         icon: "success",
         title: "Subscriber deleted",
@@ -350,7 +345,10 @@ export default function MainNewslettersPage() {
             <input
               type="text"
               value={search}
-              onChange={(event) => setSearch(event.target.value)}
+              onChange={(event) => {
+                setSearch(event.target.value);
+                setPage(1);
+              }}
               placeholder="Search email..."
               className="w-full rounded-lg border border-slate-200 bg-slate-50 py-2 pl-9 pr-3 text-sm outline-none transition focus:border-[#235056] focus:bg-white focus:ring-2 focus:ring-[#235056]/10"
             />
@@ -361,7 +359,10 @@ export default function MainNewslettersPage() {
               <button
                 type="button"
                 key={status}
-                onClick={() => setStatusFilter(status)}
+                onClick={() => {
+                  setStatusFilter(status);
+                  setPage(1);
+                }}
                 className={`rounded-md px-3 py-1.5 text-xs font-semibold capitalize transition ${
                   statusFilter === status
                     ? "bg-white text-slate-900 shadow-sm"
@@ -459,11 +460,14 @@ export default function MainNewslettersPage() {
           </table>
         </div>
 
-        <div className="border-t border-slate-100 bg-slate-50 px-5 py-3">
-          <span className="text-xs text-slate-400">
-            Showing {filteredSubscribers.length} of {subscribers.length} subscribers
-          </span>
-        </div>
+        <Pagination
+          page={pagination?.page || page}
+          totalPages={pagination?.totalPages || 1}
+          total={pagination?.total || 0}
+          limit={pagination?.limit || 20}
+          itemLabel="subscribers"
+          onPageChange={setPage}
+        />
       </div>
 
       {addOpen && (

@@ -48,7 +48,7 @@ const parsePosts = (json) =>
 
 async function getInitialPosts() {
   try {
-    const url = `${API_URL}/public/posts?page=1&limit=100`;
+    const url = `${API_URL}/public/posts?page=1&limit=12`;
     console.warn("[Blog SSR] Fetching initial posts:", url);
     const response = await fetch(url, {
       next: { revalidate: 300 },
@@ -58,17 +58,17 @@ async function getInitialPosts() {
     console.warn("[Blog SSR] Response status:", response.status, response.ok);
     if (!response.ok) {
       console.warn("[Blog SSR] Response NOT OK");
-      return [];
+      return { posts: [], pagination: null };
     }
 
     const json = await response.json();
     console.warn("[Blog SSR] Response keys:", Object.keys(json));
     const posts = parsePosts(json).filter((post) => post?.slug);
     console.warn("[Blog SSR] Final posts count:", posts.length);
-    return posts;
+    return { posts, pagination: json.pagination || null };
   } catch (error) {
     console.warn("[Blog SSR] Fetch error:", error?.message || error);
-    return [];
+    return { posts: [], pagination: null };
   }
 }
 
@@ -123,7 +123,8 @@ export const metadata = {
 };
 
 const Blog = async () => {
-  const initialPosts = await getInitialPosts();
+  const { posts: initialPosts, pagination: initialPagination } =
+    await getInitialPosts();
 
   return (
     <div>
@@ -136,7 +137,10 @@ const Blog = async () => {
           ]),
         ]}
       />
-      <EwayBlogLayout initialPosts={initialPosts} />
+      <EwayBlogLayout
+        initialPosts={initialPosts}
+        initialPagination={initialPagination}
+      />
     </div>
   );
 };

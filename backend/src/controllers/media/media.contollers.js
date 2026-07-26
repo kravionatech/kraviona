@@ -113,13 +113,23 @@ export const getMyMedias = async (req, res) => {
         const user = req.user;
 
         const page = Math.max(parseInt(req.query.page) || 1, 1);
-        const limit = Math.max(parseInt(req.query.limit) || 25, 1);
+        const limit = Math.min(Math.max(parseInt(req.query.limit) || 24, 1), 48);
         const skip = (page - 1) * limit;
 
         const filter = {
             userID: user.id,
             isDeleted: false,
         };
+        const search = String(req.query.search || "").trim();
+        if (search) {
+            const regex = { $regex: search, $options: "i" };
+            filter.$or = [
+                { originalName: regex },
+                { fileName: regex },
+                { mediaType: regex },
+                { mimeType: regex },
+            ];
+        }
 
         const [media, total] = await Promise.all([
             mediaModel

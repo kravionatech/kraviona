@@ -15,6 +15,7 @@ import {
   X,
 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import Pagination from "@/components/Pagination";
 
 const ROLES = ["super_admin", "admin", "editor", "viewer", "user"];
 const STATUS_OPTIONS = ["all", "active", "inactive"];
@@ -308,6 +309,7 @@ export default function UsersPage() {
   const [editingUser, setEditingUser] = useState(null);
   const [form, setForm] = useState(EMPTY_USER);
   const [modalOpen, setModalOpen] = useState(false);
+  const [page, setPage] = useState(1);
 
   const countMap = useMemo(
     () =>
@@ -322,7 +324,7 @@ export default function UsersPage() {
     try {
       setLoading(true);
       setError("");
-      const params = new URLSearchParams({ limit: "80" });
+      const params = new URLSearchParams({ page: String(page), limit: "20" });
       if (search.trim()) params.set("search", search.trim());
       if (role !== "all") params.set("role", role);
       if (status !== "all") params.set("status", status);
@@ -336,7 +338,7 @@ export default function UsersPage() {
     } finally {
       setLoading(false);
     }
-  }, [role, search, status]);
+  }, [page, role, search, status]);
 
   useEffect(() => {
     const timeout = setTimeout(fetchUsers, 250);
@@ -490,7 +492,10 @@ export default function UsersPage() {
                 <button
                   key={item}
                   type="button"
-                  onClick={() => setRole(item)}
+                  onClick={() => {
+                    setRole(item);
+                    setPage(1);
+                  }}
                   className={`rounded-lg border px-3 py-2 text-sm font-semibold capitalize transition ${
                     role === item
                       ? "border-[#d26c51] bg-[#d26c51] text-white"
@@ -502,7 +507,13 @@ export default function UsersPage() {
               ))}
             </div>
             <div className="flex flex-col gap-3 sm:flex-row">
-              <Select value={status} onChange={(event) => setStatus(event.target.value)}>
+              <Select
+                value={status}
+                onChange={(event) => {
+                  setStatus(event.target.value);
+                  setPage(1);
+                }}
+              >
                 {STATUS_OPTIONS.map((item) => (
                   <option key={item} value={item}>
                     {item}
@@ -516,7 +527,10 @@ export default function UsersPage() {
                 />
                 <input
                   value={search}
-                  onChange={(event) => setSearch(event.target.value)}
+                  onChange={(event) => {
+                    setSearch(event.target.value);
+                    setPage(1);
+                  }}
                   placeholder="Search users..."
                   className="h-10 w-full rounded-lg border border-slate-200 bg-slate-50 pl-9 pr-3 text-sm outline-none transition focus:border-[#d26c51] focus:bg-white"
                 />
@@ -634,6 +648,14 @@ export default function UsersPage() {
               No users found.
             </div>
           )}
+          <Pagination
+            page={pagination.page || page}
+            totalPages={pagination.totalPages || 1}
+            total={pagination.total || 0}
+            limit={pagination.limit || 20}
+            itemLabel="users"
+            onPageChange={setPage}
+          />
         </div>
 
         {modalOpen && (

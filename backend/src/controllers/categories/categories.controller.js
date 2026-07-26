@@ -95,7 +95,9 @@ export const getAllCategories = async (req, res) => {
     const user = req.user;
     if (!user) return res.status(401).json({ message: "Unauthorized", success: false });
 
-    const { status, page = 1, limit = 10, search } = req.query;
+    const { status, page = 1, limit = 20, search } = req.query;
+    const currentPage = Math.max(Number.parseInt(page, 10) || 1, 1);
+    const perPage = Math.min(Math.max(Number.parseInt(limit, 10) || 20, 1), 50);
     const query = {
       userID: user.id,
     };
@@ -108,11 +110,8 @@ export const getAllCategories = async (req, res) => {
         const categories = await CategoryModel.find(query)
           .select("-__v")
           .sort({ createdAt: -1 })
-          .skip((page - 1) * limit)
-          .limit(parseInt(limit));
-        
-        console.log(categories,"cate");
-        
+          .skip((currentPage - 1) * perPage)
+          .limit(perPage);
 
         const total = await CategoryModel.countDocuments(query);
         return res.status(200).json({
@@ -121,9 +120,9 @@ export const getAllCategories = async (req, res) => {
           data: categories,
           pagination: {
             total,
-            page: parseInt(page),
-            limit: parseInt(limit),
-            totalPages: Math.ceil(total / limit),
+            page: currentPage,
+            limit: perPage,
+            totalPages: Math.ceil(total / perPage),
           },
         });
       }

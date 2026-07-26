@@ -30,7 +30,7 @@ const FeaturedAndTrending = () => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await fetch(`${API_URL}/public/posts?limit=100`, {
+        const response = await fetch(`${API_URL}/public/posts?limit=7`, {
           cache: "no-store",
           headers: { Accept: "application/json" },
         });

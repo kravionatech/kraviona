@@ -1,6 +1,13 @@
 /** @type {import('next').NextConfig} */
 
+const rawDeploymentId =
+  process.env.VERCEL_URL || process.env.VERCEL_GIT_COMMIT_SHA || "";
+const deploymentId = rawDeploymentId
+  .replace(/[^a-zA-Z0-9_-]/g, "-")
+  .slice(0, 32);
+
 const nextConfig = {
+  ...(deploymentId ? { deploymentId } : {}),
   reactStrictMode: true,
   poweredByHeader: false,
   compress: true,
@@ -54,24 +61,6 @@ const nextConfig = {
           {
             key: "Strict-Transport-Security",
             value: "max-age=63072000; includeSubDomains; preload",
-          },
-        ],
-      },
-      {
-        source: "/:all*(css|js|woff|woff2|jpg|jpeg|png|webp|avif|ico)",
-        headers: [
-          {
-            key: "Cache-Control",
-            value: "public, max-age=31536000, immutable",
-          },
-        ],
-      },
-      {
-        source: "/:path*.(jpg|jpeg|png|webp|avif|ico|woff|woff2)",
-        headers: [
-          {
-            key: "Cache-Control",
-            value: "public, max-age=31536000, immutable",
           },
         ],
       },

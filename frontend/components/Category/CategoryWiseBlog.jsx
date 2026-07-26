@@ -27,18 +27,22 @@ const cardVariants = {
   },
 };
 
-const CategoryWiseBlog = ({ category, initialPosts = [] }) => {
+const CategoryWiseBlog = ({
+  category,
+  initialPosts = [],
+  initialPagination = null,
+}) => {
   const [posts, setPosts] = useState(initialPosts);
+  const [page, setPage] = useState(1);
+  const [pagination, setPagination] = useState(initialPagination);
   const [isLoading, setIsLoading] = useState(initialPosts.length === 0);
 
   // 1. Fetch Posts based on the category slug
   useEffect(() => {
     const fetchCategoryPosts = async () => {
-      if (initialPosts.length > 0) return;
-
       setIsLoading(true);
       try {
-        const url = `${API_URL}/public/posts?category=${encodeURIComponent(category)}&limit=100`;
+        const url = `${API_URL}/public/posts?category=${encodeURIComponent(category)}&page=${page}&limit=12`;
         const response = await fetch(url, {
           cache: "no-store",
           headers: { Accept: "application/json" },
@@ -68,6 +72,7 @@ const CategoryWiseBlog = ({ category, initialPosts = [] }) => {
             return post?.slug && (slug === category || nameSlug === category);
           }),
         );
+        setPagination(result.pagination || null);
       } catch (error) {
         console.warn("[CategoryWiseBlog] Fetch error:", error?.message || error);
         setPosts([]);
@@ -78,7 +83,7 @@ const CategoryWiseBlog = ({ category, initialPosts = [] }) => {
     if (category) {
       fetchCategoryPosts();
     }
-  }, [category, initialPosts.length]);
+  }, [category, page]);
 
   // 2. Format the Category Name for the Header
   const formattedCategoryName =
@@ -186,6 +191,34 @@ const CategoryWiseBlog = ({ category, initialPosts = [] }) => {
               Back to All Articles
             </Link>
           </motion.div>
+        )}
+        {(pagination?.totalPages || 0) > 1 && (
+          <nav
+            className="mt-14 flex flex-wrap items-center justify-between gap-4 border-t border-gray-200 pt-6"
+            aria-label={`${formattedCategoryName} article pagination`}
+          >
+            <p className="text-sm font-semibold text-gray-500">
+              Page {pagination.currentPage} of {pagination.totalPages}
+            </p>
+            <div className="flex gap-2">
+              <button
+                type="button"
+                disabled={!pagination.hasPreviousPage || isLoading}
+                onClick={() => setPage((current) => Math.max(1, current - 1))}
+                className="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-bold text-[#295c5e] transition hover:border-[#295c5e] disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                Previous
+              </button>
+              <button
+                type="button"
+                disabled={!pagination.hasNextPage || isLoading}
+                onClick={() => setPage((current) => current + 1)}
+                className="rounded-lg bg-[#295c5e] px-4 py-2 text-sm font-bold text-white transition hover:bg-[#1d4648] disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                Next
+              </button>
+            </div>
+          </nav>
         )}
       </div>
     </section>

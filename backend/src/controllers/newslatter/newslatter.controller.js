@@ -27,10 +27,41 @@ export const getAllSubscribers = async (req,res)=>{
         const user = req.user;
         if(!user) return res.status(401).json({message:"Unauthorized",success:false})
         if(user.role !== "admin" && user.role !== "super_admin") return res.status(403).json({message:"Forbidden",success:false})
-            // check subscriber are exits
-const isSubscriber = await newsLatterModel.find({}).sort({ createdAt: -1 })
 
-return res.status(200).json({message:"Subscriber fetched successfully",success:true,data:isSubscriber})
+        const currentPage = Math.max(Number.parseInt(req.query.page, 10) || 1, 1);
+        const perPage = Math.min(
+            Math.max(Number.parseInt(req.query.limit, 10) || 20, 1),
+            50,
+        );
+        const search = String(req.query.search || "").trim();
+        const status = String(req.query.status || "").trim();
+        const query = {};
+        if (search) query.email = { $regex: search, $options: "i" };
+        if (status) query.status = status;
+
+        const [subscribers, total] = await Promise.all([
+            newsLatterModel
+                .find(query)
+                .sort({ createdAt: -1 })
+                .skip((currentPage - 1) * perPage)
+                .limit(perPage)
+                .lean(),
+            newsLatterModel.countDocuments(query),
+        ]);
+
+        return res.status(200).json({
+            message: subscribers.length
+                ? "Subscribers fetched successfully"
+                : "No subscribers found",
+            success: true,
+            data: subscribers,
+            pagination: {
+                total,
+                page: currentPage,
+                limit: perPage,
+                totalPages: Math.ceil(total / perPage),
+            },
+        })
     } catch (error) {
         return res.status(500).json({message:error.message,success:false})
        

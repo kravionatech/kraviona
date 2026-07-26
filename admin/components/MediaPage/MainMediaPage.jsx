@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
+import Pagination from "@/components/Pagination";
 
 // mediaType ke hisaab se icon + color decide karta hai
 const TYPE_META = {
@@ -47,19 +48,24 @@ const MainMediaPage = () => {
   const [copiedId, setCopiedId] = useState(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [deleting, setDeleting] = useState(false);
+  const [page, setPage] = useState(1);
+  const [pagination, setPagination] = useState(null);
 
   const fetchMedias = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      const data = await apiRequest("/media/me");
+      const params = new URLSearchParams({ page: String(page), limit: "24" });
+      if (search.trim()) params.set("search", search.trim());
+      const data = await apiRequest(`/media/me?${params.toString()}`);
       setMediasFile(data.data || []);
+      setPagination(data.pagination || null);
     } catch (err) {
       setError(err.message);
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [page, search]);
 
   useEffect(() => {
     const timeout = setTimeout(fetchMedias, 0);
@@ -79,14 +85,7 @@ const MainMediaPage = () => {
     }));
   }, [mediasFile]);
 
-  const filteredMedia = useMemo(() => {
-    const q = search.trim().toLowerCase();
-    if (!q) return mediasFile;
-    return mediasFile.filter((item) => {
-      const name = item.originalName || item.fileName || "";
-      return name.toLowerCase().includes(q);
-    });
-  }, [mediasFile, search]);
+  const filteredMedia = mediasFile;
 
   const handleCopy = async (url, id) => {
     try {
@@ -103,7 +102,7 @@ const MainMediaPage = () => {
     setDeleting(true);
     try {
       await apiRequest(`/media/${deleteTarget._id}`, { method: "DELETE" });
-      setMediasFile((prev) => prev.filter((item) => item._id !== deleteTarget._id));
+      await fetchMedias();
       setDeleteTarget(null);
     } catch (err) {
       setError(err.message);
@@ -160,7 +159,10 @@ const MainMediaPage = () => {
           <input
             type="text"
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setPage(1);
+            }}
             placeholder="Search files by name..."
             className="w-full bg-transparent text-sm text-slate-800 placeholder:text-slate-400 outline-none"
           />
@@ -254,6 +256,15 @@ const MainMediaPage = () => {
     );
   })}
       </div>
+      <Pagination
+        className="mt-5 rounded-xl border border-slate-200 bg-white"
+        page={pagination?.currentPage || page}
+        totalPages={pagination?.totalPages || 1}
+        total={pagination?.totalItems || 0}
+        limit={pagination?.perPage || 24}
+        itemLabel="files"
+        onPageChange={setPage}
+      />
 
       {/* Delete confirm modal */}
       {deleteTarget && (

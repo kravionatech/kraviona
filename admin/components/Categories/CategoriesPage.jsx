@@ -18,6 +18,7 @@ import Swal from "sweetalert2"; // Make sure you have this installed
 import Link from "next/link";
 import PreviewCat from "./PreviewCat";
 import EditCategory from "./EditCategory";
+import Pagination from "../Pagination";
 
 /* ----------------------------------------------------------------------
  * KRAVIONA — Admin · Categories 
@@ -97,6 +98,14 @@ export default function CategoriesPage() {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState("All");
+  const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
+  const [pagination, setPagination] = useState({
+    total: 0,
+    page: 1,
+    limit: 20,
+    totalPages: 1,
+  });
   const [prevCatID,setPrevCatID]= useState('')
   const [prevCat,setPrevCat]=useState(false)
 
@@ -108,8 +117,16 @@ export default function CategoriesPage() {
   const fetchCategories = useCallback(async () => {
     try {
       setLoading(true);
+      const params = new URLSearchParams({
+        page: String(page),
+        limit: "20",
+      });
+      if (statusFilter !== "All") {
+        params.set("status", statusFilter.toLowerCase());
+      }
+      if (search.trim()) params.set("search", search.trim());
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/categories/all`,
+        `${process.env.NEXT_PUBLIC_API_URL}/categories/all?${params}`,
         {
           method: "GET",
           credentials: "include", // Required if relying on HTTPOnly Cookies
@@ -119,6 +136,14 @@ export default function CategoriesPage() {
       
       if (result.success) {
         setCategories(result.data || []);
+        setPagination(
+          result.pagination || {
+            total: result.data?.length || 0,
+            page,
+            limit: 20,
+            totalPages: 1,
+          },
+        );
       } else {
         throw new Error(result.message || "Failed to load categories.");
       }
@@ -133,7 +158,7 @@ export default function CategoriesPage() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [page, search, statusFilter]);
 
 
 const deleteCategory = async (id) => {
@@ -151,7 +176,7 @@ const deleteCategory = async (id) => {
 
     if (response.ok && result.success !== false) {
       
-      setCategories((prev) => prev.filter((category) => category._id !== id));
+      await fetchCategories();
 
 
       Swal.fire({
@@ -183,17 +208,13 @@ const deleteCategory = async (id) => {
   }, [fetchCategories]);
 
   // Calculate Metrics safely from real data
-  const totalCategories = categories.length;
+  const totalCategories = pagination.total;
   const publishedCount = categories.filter((c) => c.status?.toLowerCase() === "published").length;
   const draftCount = categories.filter((c) => c.status?.toLowerCase() === "draft").length;
   const archivedCount = categories.filter((c) => c.status?.toLowerCase() === "archived").length;
   const totalTaggedPosts = categories.reduce((sum, c) => sum + (c.postCount || 0), 0);
 
-  // Filter Data
-  const displayCategories = categories.filter((c) => {
-    if (statusFilter === "All") return true;
-    return c.status?.toLowerCase() === statusFilter.toLowerCase();
-  });
+  const displayCategories = categories;
 
   return (
     <>
@@ -258,6 +279,11 @@ const deleteCategory = async (id) => {
             <input
               type="text"
               placeholder="Search by name, slug..."
+              value={search}
+              onChange={(event) => {
+                setSearch(event.target.value);
+                setPage(1);
+              }}
               className="w-full rounded-lg border border-slate-200 bg-white py-2.5 pl-10 pr-4 text-sm text-slate-900 placeholder:text-slate-400 outline-none transition-shadow focus:border-[#235056] focus:ring-1 focus:ring-[#235056]"
             />
           </div>
@@ -274,7 +300,10 @@ const deleteCategory = async (id) => {
               return (
                 <button
                   key={tab.label}
-                  onClick={() => setStatusFilter(tab.label)}
+                  onClick={() => {
+                    setStatusFilter(tab.label);
+                    setPage(1);
+                  }}
                   className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-semibold transition-all ${
                     isActive
                       ? "bg-white text-slate-800 shadow-sm border border-slate-200/50"
@@ -382,6 +411,14 @@ const deleteCategory = async (id) => {
               </tbody>
             </table>
           </div>
+          <Pagination
+            page={pagination.page}
+            totalPages={pagination.totalPages}
+            total={pagination.total}
+            limit={pagination.limit}
+            itemLabel="categories"
+            onPageChange={setPage}
+          />
         </div>
 
       </div>

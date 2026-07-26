@@ -2,6 +2,7 @@
 
 import ErrorBox from "@/components/Error/ErrorBox";
 import { PageLoader } from "@/components/Loadingspinner";
+import Pagination from "@/components/Pagination";
 import {
   Edit,
   Eye,
@@ -55,13 +56,26 @@ const BlogPage = () => {
   const [loading, setLoading] = useState(true);
   const [deletingId, setDeletingId] = useState(null);
   const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
+  const [pagination, setPagination] = useState({
+    totalPosts: 0,
+    currentPage: 1,
+    totalPages: 0,
+    limit: 20,
+  });
 
   const fetchPosts = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
+      const params = new URLSearchParams({
+        page: String(page),
+        limit: "20",
+      });
+      if (search.trim()) params.set("search", search.trim());
+
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/private/posts`,
+        `${process.env.NEXT_PUBLIC_API_URL}/private/posts?${params.toString()}`,
         {
           method: "GET",
           headers: { "content-type": "application/json" },
@@ -71,6 +85,14 @@ const BlogPage = () => {
       const data = await res.json();
       if (data.success) {
         setPosts(Array.isArray(data.data) ? data.data : []);
+        setPagination(
+          data.pagination || {
+            totalPosts: 0,
+            currentPage: page,
+            totalPages: 0,
+            limit: 20,
+          },
+        );
       } else {
         setError(data.error || data.message || "Something went wrong");
       }
@@ -79,7 +101,7 @@ const BlogPage = () => {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [page, search]);
 
   const handleDeletePost = async (id) => {
     const confirm = await Swal.fire({
@@ -101,7 +123,7 @@ const BlogPage = () => {
       });
       const data = await res.json();
       if (data.success) {
-        setPosts((prev) => prev.filter((p) => p._id !== id));
+        await fetchPosts();
         Swal.fire({ title: "Deleted", text: data.message, icon: "success" });
       } else {
         Swal.fire({
@@ -122,11 +144,7 @@ const BlogPage = () => {
     return () => clearTimeout(timeout);
   }, [fetchPosts]);
 
-  const filtered = posts.filter(
-    (p) =>
-      (p.title || "").toLowerCase().includes(search.toLowerCase()) ||
-      (p.author?.name || "").toLowerCase().includes(search.toLowerCase()),
-  );
+  const filtered = posts;
 
   const publishedCount = posts.filter(
     (p) => (p.status || "").toLowerCase() === "published",
@@ -186,7 +204,7 @@ const BlogPage = () => {
           <div className="flex items-center gap-2 bg-white border border-gray-200 rounded-lg px-4 py-2.5 shadow-sm">
             <FileText size={15} className="text-gray-400" />
             <span className="text-sm font-semibold text-gray-800">
-              {posts.length}
+              {pagination.totalPosts || 0}
             </span>
             <span className="text-xs text-gray-400">total</span>
           </div>
@@ -226,7 +244,10 @@ const BlogPage = () => {
             <input
               type="text"
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setPage(1);
+              }}
               placeholder="Search by title or author..."
               className="w-full pl-9 pr-4 py-2 text-sm bg-gray-50 border border-gray-200 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition"
             />
@@ -360,15 +381,14 @@ const BlogPage = () => {
           </table>
         </div>
 
-        {/* Footer */}
-        {filtered.length > 0 && (
-          <div className="px-6 py-3 border-t border-gray-100 bg-gray-50/50 flex items-center justify-between">
-            <span className="text-xs text-gray-400">
-              Showing {filtered.length} of {posts.length} post
-              {posts.length !== 1 ? "s" : ""}
-            </span>
-          </div>
-        )}
+        <Pagination
+          page={pagination.currentPage || page}
+          totalPages={pagination.totalPages || 0}
+          total={pagination.totalPosts || 0}
+          limit={pagination.limit || 20}
+          itemLabel="posts"
+          onPageChange={setPage}
+        />
       </div>
     </div>
   );

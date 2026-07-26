@@ -16,6 +16,7 @@ import {
   X,
 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import Pagination from "@/components/Pagination";
 
 const STATUS_OPTIONS = ["all", "active", "inactive"];
 
@@ -280,6 +281,7 @@ export default function TeamPage() {
   const [editingMember, setEditingMember] = useState(null);
   const [form, setForm] = useState(EMPTY_MEMBER);
   const [modalOpen, setModalOpen] = useState(false);
+  const [page, setPage] = useState(1);
 
   const countMap = useMemo(
     () =>
@@ -299,7 +301,7 @@ export default function TeamPage() {
     try {
       setLoading(true);
       setError("");
-      const params = new URLSearchParams({ limit: "80" });
+      const params = new URLSearchParams({ page: String(page), limit: "20" });
       if (search.trim()) params.set("search", search.trim());
       if (status !== "all") params.set("status", status);
 
@@ -312,7 +314,7 @@ export default function TeamPage() {
     } finally {
       setLoading(false);
     }
-  }, [search, status]);
+  }, [page, search, status]);
 
   useEffect(() => {
     const timeout = setTimeout(fetchMembers, 250);
@@ -466,7 +468,10 @@ export default function TeamPage() {
                 <button
                   key={item}
                   type="button"
-                  onClick={() => setStatus(item)}
+                  onClick={() => {
+                    setStatus(item);
+                    setPage(1);
+                  }}
                   className={`rounded-lg border px-3 py-2 text-sm font-semibold capitalize transition ${
                     status === item
                       ? "border-[#d26c51] bg-[#d26c51] text-white"
@@ -485,7 +490,10 @@ export default function TeamPage() {
               />
               <input
                 value={search}
-                onChange={(event) => setSearch(event.target.value)}
+                onChange={(event) => {
+                  setSearch(event.target.value);
+                  setPage(1);
+                }}
                 placeholder="Search team..."
                 className="h-10 w-full rounded-lg border border-slate-200 bg-slate-50 pl-9 pr-3 text-sm outline-none transition focus:border-[#d26c51] focus:bg-white"
               />
@@ -621,6 +629,14 @@ export default function TeamPage() {
               No team members found.
             </div>
           )}
+          <Pagination
+            page={pagination.page || page}
+            totalPages={pagination.totalPages || 1}
+            total={pagination.total || 0}
+            limit={pagination.limit || 20}
+            itemLabel="team members"
+            onPageChange={setPage}
+          />
         </div>
 
         {modalOpen && (

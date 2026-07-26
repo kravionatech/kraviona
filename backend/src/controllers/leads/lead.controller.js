@@ -101,8 +101,8 @@ export const getAllLeads = async (req, res) => {
       ];
     }
 
-    const currentPage = parseInt(page);
-    const perPage = parseInt(limit);
+    const currentPage = Math.max(Number.parseInt(page, 10) || 1, 1);
+    const perPage = Math.min(Math.max(Number.parseInt(limit, 10) || 10, 1), 50);
 
     const leads = await Lead.find(query)
       .select("-__v")

@@ -42,7 +42,7 @@ export const getAllComments = async (req, res) => {
 
     const { status, search, page = 1, limit = 20 } = req.query;
     const currentPage = toPositiveInt(page, 1);
-    const perPage = Math.min(toPositiveInt(limit, 20), 100);
+    const perPage = Math.min(toPositiveInt(limit, 20), 50);
     const query = {};
 
     if (status && COMMENT_STATUSES.includes(status)) {

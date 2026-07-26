@@ -13,6 +13,7 @@ import {
   Trash2,
 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import Pagination from "@/components/Pagination";
 
 const STATUS_OPTIONS = ["all", "approved", "pending", "spam", "trash"];
 
@@ -60,6 +61,7 @@ export default function CommentsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [busyId, setBusyId] = useState("");
+  const [page, setPage] = useState(1);
 
   const countMap = useMemo(
     () =>
@@ -75,7 +77,7 @@ export default function CommentsPage() {
       setLoading(true);
       setError("");
 
-      const params = new URLSearchParams({ limit: "50" });
+      const params = new URLSearchParams({ page: String(page), limit: "20" });
       if (status !== "all") params.set("status", status);
       if (search.trim()) params.set("search", search.trim());
 
@@ -89,7 +91,7 @@ export default function CommentsPage() {
     } finally {
       setLoading(false);
     }
-  }, [search, status]);
+  }, [page, search, status]);
 
   useEffect(() => {
     const timeout = setTimeout(fetchComments, 250);
@@ -191,7 +193,10 @@ export default function CommentsPage() {
                 <button
                   key={option}
                   type="button"
-                  onClick={() => setStatus(option)}
+                  onClick={() => {
+                    setStatus(option);
+                    setPage(1);
+                  }}
                   className={`rounded-lg border px-3 py-2 text-sm font-semibold capitalize transition ${
                     status === option
                       ? "border-[#d26c51] bg-[#d26c51] text-white"
@@ -210,7 +215,10 @@ export default function CommentsPage() {
               />
               <input
                 value={search}
-                onChange={(event) => setSearch(event.target.value)}
+                onChange={(event) => {
+                  setSearch(event.target.value);
+                  setPage(1);
+                }}
                 placeholder="Search author, email, slug..."
                 className="h-10 w-full rounded-lg border border-slate-200 bg-slate-50 pl-9 pr-3 text-sm outline-none transition focus:border-[#d26c51] focus:bg-white"
               />
@@ -325,6 +333,14 @@ export default function CommentsPage() {
               No comments found.
             </div>
           )}
+          <Pagination
+            page={pagination.page || page}
+            totalPages={pagination.totalPages || 1}
+            total={pagination.total || 0}
+            limit={pagination.limit || 20}
+            itemLabel="comments"
+            onPageChange={setPage}
+          />
         </div>
       </div>
     </Frame>

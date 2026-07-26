@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import Pagination from "@/components/Pagination";
 
 const DAY = 24 * 60 * 60 * 1000;
 
@@ -134,22 +135,27 @@ export default function ContentDecayPage() {
   const [filter, setFilter] = useState("all");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [page, setPage] = useState(1);
+  const [pagination, setPagination] = useState({ totalPosts: 0 });
 
   const fetchPosts = useCallback(async () => {
     try {
       setLoading(true);
       setError("");
 
-      const response = await apiRequest("/private/posts?limit=100");
+      const params = new URLSearchParams({ page: String(page), limit: "20" });
+      if (search.trim()) params.set("search", search.trim());
+      const response = await apiRequest(`/private/posts?${params.toString()}`);
       const rawPosts = Array.isArray(response.data) ? response.data : [];
 
       setPosts(rawPosts.map(analyzePost).sort((a, b) => b.decayScore - a.decayScore));
+      setPagination(response.pagination || { totalPosts: 0 });
     } catch (err) {
       setError(err.message || "Unable to load content decay data");
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [page, search]);
 
   useEffect(() => {
     const timeout = setTimeout(fetchPosts, 0);
@@ -264,7 +270,10 @@ export default function ContentDecayPage() {
               />
               <input
                 value={search}
-                onChange={(event) => setSearch(event.target.value)}
+                onChange={(event) => {
+                  setSearch(event.target.value);
+                  setPage(1);
+                }}
                 placeholder="Search title, slug, category..."
                 className="h-10 w-full rounded-lg border border-slate-200 bg-slate-50 pl-9 pr-3 text-sm outline-none transition focus:border-[#d26c51] focus:bg-white"
               />
@@ -388,6 +397,14 @@ export default function ContentDecayPage() {
               No posts matched this content decay filter.
             </div>
           )}
+          <Pagination
+            page={pagination.currentPage || page}
+            totalPages={pagination.totalPages || 1}
+            total={pagination.totalPosts || 0}
+            limit={pagination.limit || 20}
+            itemLabel="posts"
+            onPageChange={setPage}
+          />
         </div>
       </div>
     </Frame>

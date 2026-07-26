@@ -24,7 +24,7 @@ import {
 } from "@/utils/dataHelpers";
 import { API_URL } from "@/utils/api";
 
-const POSTS_FETCH_LIMIT = 100;
+const POSTS_FETCH_LIMIT = 12;
 const DEFAULT_CATEGORIES = [
   "Web Development",
   "UI/UX Design",
@@ -622,8 +622,15 @@ function NewsletterPanel() {
   );
 }
 
-export default function EwayBlogLayout({ initialPosts = [] }) {
+export default function EwayBlogLayout({
+  initialPosts = [],
+  initialPagination = null,
+}) {
   const [allPosts, setAllPosts] = useState(initialPosts);
+  const [archivePosts, setArchivePosts] = useState(initialPosts);
+  const [archivePagination, setArchivePagination] = useState(initialPagination);
+  const [archivePage, setArchivePage] = useState(1);
+  const [archiveLoading, setArchiveLoading] = useState(false);
   const [isLoading, setIsLoading] = useState(initialPosts.length === 0);
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
@@ -631,54 +638,50 @@ export default function EwayBlogLayout({ initialPosts = [] }) {
   console.warn("[EwayBlogLayout] initialPosts.length:", initialPosts.length);
 
   useEffect(() => {
-    if (initialPosts.length > 0) {
-      console.warn("[EwayBlogLayout] Using server-provided initialPosts, skipping client fetch");
-      return;
-    }
-
     const fetchPosts = async () => {
+      setArchiveLoading(true);
       try {
-        const posts = [];
-        let pageToFetch = 1;
-        let hasNextPage = true;
-
-        while (hasNextPage) {
-          const url = `${API_URL}/public/posts?page=${pageToFetch}&limit=${POSTS_FETCH_LIMIT}`;
-          console.warn("[EwayBlogLayout] Fetching page:", pageToFetch, url);
-          const response = await fetch(url, {
+        const params = new URLSearchParams({
+          page: String(archivePage),
+          limit: String(POSTS_FETCH_LIMIT),
+        });
+        if (searchQuery.trim()) params.set("search", searchQuery.trim());
+        if (selectedCategory !== "all") {
+          params.set("category", selectedCategory);
+        }
+        const response = await fetch(
+          `${API_URL}/public/posts?${params.toString()}`,
+          {
             cache: "no-store",
             headers: { Accept: "application/json" },
-          });
-          console.warn("[EwayBlogLayout] Response status:", response.status, response.ok);
+          },
+        );
+        if (!response.ok) throw new Error("Unable to load articles");
 
-          if (!response.ok) {
-            console.warn("[EwayBlogLayout] Response NOT OK, breaking");
-            break;
-          }
-
-          const json = await response.json();
-          console.warn("[EwayBlogLayout] Response keys:", Object.keys(json));
-          const pagePosts = parsePosts(json);
-          console.warn("[EwayBlogLayout] Page", pageToFetch, "posts:", pagePosts.length);
-          posts.push(...pagePosts);
-
-          hasNextPage = Boolean(json?.pagination?.hasNextPage);
-          pageToFetch += 1;
+        const json = await response.json();
+        const posts = parsePosts(json).filter((post) => post?.slug);
+        setArchivePosts(posts);
+        setArchivePagination(json.pagination || null);
+        if (
+          allPosts.length === 0 &&
+          archivePage === 1 &&
+          selectedCategory === "all" &&
+          !searchQuery.trim()
+        ) {
+          setAllPosts(posts);
         }
-
-        const finalPosts = posts.filter((post) => post?.slug);
-        console.warn("[EwayBlogLayout] Total posts after filter:", finalPosts.length);
-        setAllPosts(finalPosts);
       } catch (error) {
         console.warn("[EwayBlogLayout] Fetch error:", error?.message || error);
-        setAllPosts([]);
+        setArchivePosts([]);
       } finally {
         setIsLoading(false);
+        setArchiveLoading(false);
       }
     };
 
-    fetchPosts();
-  }, [initialPosts.length]);
+    const timeout = setTimeout(fetchPosts, searchQuery.trim() ? 300 : 0);
+    return () => clearTimeout(timeout);
+  }, [allPosts.length, archivePage, searchQuery, selectedCategory]);
 
   const categories = useMemo(() => buildCategories(allPosts), [allPosts]);
   const navCategories =
@@ -697,28 +700,18 @@ export default function EwayBlogLayout({ initialPosts = [] }) {
     }))
     .filter((section) => section.posts.length >= 2);
 
-  const filteredPosts = useMemo(() => {
-    const query = searchQuery.trim().toLowerCase();
-
-    return allPosts.filter((post) => {
-      const matchesCategory =
-        selectedCategory === "all" || getCategoryId(post) === selectedCategory;
-      const matchesSearch =
-        !query ||
-        post.title?.toLowerCase().includes(query) ||
-        getExcerpt(post).toLowerCase().includes(query) ||
-        getCategoryName(post).toLowerCase().includes(query);
-
-      return matchesCategory && matchesSearch;
-    });
-  }, [allPosts, searchQuery, selectedCategory]);
+  const filteredPosts = archivePosts;
+  const totalArticles =
+    initialPagination?.totalPosts ||
+    archivePagination?.totalPosts ||
+    allPosts.length;
 
   return (
     <main className="bg-[#fbfcfc] font-sans">
       <BlogHero
         latestPost={leadPost}
         categories={navCategories}
-        articleCount={allPosts.length}
+        articleCount={totalArticles}
       />
 
       {isLoading ? (
@@ -773,7 +766,10 @@ export default function EwayBlogLayout({ initialPosts = [] }) {
                   type="search"
                   placeholder="Search articles..."
                   value={searchQuery}
-                  onChange={(event) => setSearchQuery(event.target.value)}
+                  onChange={(event) => {
+                    setSearchQuery(event.target.value);
+                    setArchivePage(1);
+                  }}
                   className="h-12 w-full rounded-md border border-[#dfe8e7] bg-white pl-11 pr-4 text-sm text-[#10282a] outline-none transition-all placeholder:text-[#9aa6a9] focus:border-[#295c5e] focus:ring-2 focus:ring-[#295c5e]/20"
                 />
               </label>
@@ -781,12 +777,18 @@ export default function EwayBlogLayout({ initialPosts = [] }) {
                 <SlidersHorizontal className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[#7d8a8e]" />
                 <select
                   value={selectedCategory}
-                  onChange={(event) => setSelectedCategory(event.target.value)}
+                  onChange={(event) => {
+                    setSelectedCategory(event.target.value);
+                    setArchivePage(1);
+                  }}
                   className="h-12 w-full appearance-none rounded-md border border-[#dfe8e7] bg-white pl-11 pr-10 text-sm font-semibold text-[#10282a] outline-none transition-all focus:border-[#295c5e] focus:ring-2 focus:ring-[#295c5e]/20"
                 >
                   <option value="all">All Categories</option>
                   {categories.map((category) => (
-                    <option key={category.id} value={category.id}>
+                    <option
+                      key={category.id}
+                      value={category.slug || category.name}
+                    >
                       {category.name}
                     </option>
                   ))}
@@ -794,7 +796,11 @@ export default function EwayBlogLayout({ initialPosts = [] }) {
               </label>
             </div>
 
-            {filteredPosts.length === 0 ? (
+            {archiveLoading ? (
+              <div className="flex min-h-64 items-center justify-center">
+                <Loader2 className="h-8 w-8 animate-spin text-[#295c5e]" />
+              </div>
+            ) : filteredPosts.length === 0 ? (
               <div className="rounded-lg border border-[#dfe8e7] bg-white px-5 py-14 text-center">
                 <p className="text-lg font-bold text-[#10282a]">
                   No articles found.
@@ -804,6 +810,7 @@ export default function EwayBlogLayout({ initialPosts = [] }) {
                   onClick={() => {
                     setSearchQuery("");
                     setSelectedCategory("all");
+                    setArchivePage(1);
                   }}
                   className="mt-4 rounded-md bg-[#10282a] px-5 py-2.5 text-xs font-black uppercase tracking-widest text-white transition-colors hover:bg-[#d96c4e]"
                 >
@@ -816,6 +823,37 @@ export default function EwayBlogLayout({ initialPosts = [] }) {
                   <ArticleCard key={getId(post._id) || post.slug} post={post} />
                 ))}
               </div>
+            )}
+            {(archivePagination?.totalPages || 0) > 1 && (
+              <nav
+                className="mt-10 flex flex-wrap items-center justify-between gap-4 border-t border-[#dfe8e7] pt-6"
+                aria-label="Blog archive pagination"
+              >
+                <p className="text-sm font-semibold text-[#687478]">
+                  Page {archivePagination.currentPage} of{" "}
+                  {archivePagination.totalPages}
+                </p>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    disabled={!archivePagination.hasPreviousPage || archiveLoading}
+                    onClick={() =>
+                      setArchivePage((current) => Math.max(1, current - 1))
+                    }
+                    className="rounded-md border border-[#cfdcda] bg-white px-4 py-2 text-sm font-bold text-[#295c5e] transition hover:border-[#295c5e] disabled:cursor-not-allowed disabled:opacity-40"
+                  >
+                    Previous
+                  </button>
+                  <button
+                    type="button"
+                    disabled={!archivePagination.hasNextPage || archiveLoading}
+                    onClick={() => setArchivePage((current) => current + 1)}
+                    className="rounded-md bg-[#295c5e] px-4 py-2 text-sm font-bold text-white transition hover:bg-[#1d4648] disabled:cursor-not-allowed disabled:opacity-40"
+                  >
+                    Next
+                  </button>
+                </div>
+              </nav>
             )}
           </section>
         </>

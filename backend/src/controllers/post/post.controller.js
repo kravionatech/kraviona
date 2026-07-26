@@ -336,12 +336,24 @@ export const publicPosts = async (req, res) => {
     await publishDueScheduledPosts();
 
     const page = Math.max(1, parseInt(req.query.page, 10) || 1);
-    const limit = Math.min(100, Math.max(1, parseInt(req.query.limit, 10) || 10));
+    const limit = Math.min(24, Math.max(1, parseInt(req.query.limit, 10) || 12));
     const skip = (page - 1) * limit;
     const filter = publicPostFilter();
     const category = req.query.category
       ? normalizeSlug(req.query.category)
       : null;
+    const search = String(req.query.search || "").trim();
+
+    if (search) {
+      const searchRegex = { $regex: search, $options: "i" };
+      filter.$or = [
+        { title: searchRegex },
+        { excerpt: searchRegex },
+        { tags: searchRegex },
+        { primaryTopicCluster: searchRegex },
+        { "category.name": searchRegex },
+      ];
+    }
 
     // Category feeds must be filtered by MongoDB before pagination. Filtering
     // a generic page of posts in the browser drops valid results as soon as a
@@ -432,12 +444,26 @@ export const privatePosts = async (req, res) => {
 
     // FIX: added pagination — the original fetched every post the user had
     // ever written in a single query with no limit at all.
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 100;
+    const page = Math.max(1, parseInt(req.query.page, 10) || 1);
+    const limit = Math.min(50, Math.max(1, parseInt(req.query.limit, 10) || 20));
     const skip = (page - 1) * limit;
 
     // Admin/super_admin manage everyone's posts; editors see their own.
     const filter = FULL_ACCESS_ROLES.includes(user.role) ? {} : { userID: user.id };
+    const status = String(req.query.status || "").trim().toLowerCase();
+    const search = String(req.query.search || "").trim();
+
+    if (status && ["draft", "published", "scheduled", "archived"].includes(status)) {
+      filter.status = status;
+    }
+    if (search) {
+      const searchRegex = { $regex: search, $options: "i" };
+      filter.$or = [
+        { title: searchRegex },
+        { slug: searchRegex },
+        { "author.name": searchRegex },
+      ];
+    }
 
     const [posts, totalPosts] = await Promise.all([
       PostModel.find(filter)

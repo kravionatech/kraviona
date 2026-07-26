@@ -95,7 +95,7 @@ async function getBlog(slug) {
 
 async function getRecommendedPosts() {
   try {
-    const res = await fetch(`${API_URL}/public/posts?limit=100`, {
+    const res = await fetch(`${API_URL}/public/posts?limit=12`, {
       cache: "no-store",
       headers: { Accept: "application/json" },
     });

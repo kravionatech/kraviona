@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import Swal from "sweetalert2";
+import Pagination from "@/components/Pagination";
 
 const STATUSES = ["unread", "read", "replied", "archived"];
 
@@ -186,13 +187,14 @@ export default function MainMessagesPage() {
   const [selectedMessage, setSelectedMessage] = useState(null);
   const [savingStatusId, setSavingStatusId] = useState("");
   const [deletingId, setDeletingId] = useState("");
+  const [page, setPage] = useState(1);
 
   const fetchMessages = useCallback(async () => {
     setLoading(true);
     setError("");
 
     try {
-      const params = new URLSearchParams({ limit: "100" });
+      const params = new URLSearchParams({ page: String(page), limit: "20" });
       if (search.trim()) params.set("search", search.trim());
       if (statusFilter !== "All") params.set("status", statusFilter);
 
@@ -206,7 +208,7 @@ export default function MainMessagesPage() {
     } finally {
       setLoading(false);
     }
-  }, [search, statusFilter]);
+  }, [page, search, statusFilter]);
 
   useEffect(() => {
     const timeout = setTimeout(fetchMessages, search.trim() ? 300 : 0);
@@ -349,7 +351,10 @@ export default function MainMessagesPage() {
             <input
               type="text"
               value={search}
-              onChange={(event) => setSearch(event.target.value)}
+              onChange={(event) => {
+                setSearch(event.target.value);
+                setPage(1);
+              }}
               placeholder="Search sender, phone, subject..."
               className="w-full rounded-lg border border-slate-200 bg-slate-50 py-2 pl-9 pr-3 text-sm outline-none transition focus:border-[#235056] focus:bg-white focus:ring-2 focus:ring-[#235056]/10"
             />
@@ -360,7 +365,10 @@ export default function MainMessagesPage() {
               <button
                 type="button"
                 key={status}
-                onClick={() => setStatusFilter(status)}
+                onClick={() => {
+                  setStatusFilter(status);
+                  setPage(1);
+                }}
                 className={`rounded-md px-3 py-1.5 text-xs font-semibold capitalize transition ${
                   statusFilter === status
                     ? "bg-white text-slate-900 shadow-sm"
@@ -497,11 +505,14 @@ export default function MainMessagesPage() {
           </table>
         </div>
 
-        <div className="border-t border-slate-100 bg-slate-50 px-5 py-3">
-          <span className="text-xs text-slate-400">
-            Showing {messages.length} of {pagination?.total ?? messages.length} messages
-          </span>
-        </div>
+        <Pagination
+          page={pagination?.page || page}
+          totalPages={pagination?.totalPages || 1}
+          total={pagination?.total || 0}
+          limit={pagination?.limit || 20}
+          itemLabel="messages"
+          onPageChange={setPage}
+        />
       </div>
 
       {selectedMessage && (

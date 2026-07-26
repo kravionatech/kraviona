@@ -11,7 +11,7 @@ async function getCategoryData(slug) {
         headers: { Accept: "application/json" },
       }),
       fetch(
-        `${API_URL}/public/posts?category=${encodeURIComponent(slug)}&page=1&limit=100`,
+        `${API_URL}/public/posts?category=${encodeURIComponent(slug)}&page=1&limit=12`,
         {
           next: { revalidate: 300 },
           headers: { Accept: "application/json" },
@@ -34,9 +34,10 @@ async function getCategoryData(slug) {
     return {
       category: categoryJson?.data || null,
       posts: categoryPosts,
+      pagination: postsJson?.pagination || null,
     };
   } catch {
-    return { category: null, posts: [] };
+    return { category: null, posts: [], pagination: null };
   }
 }
 
@@ -97,7 +98,11 @@ export async function generateMetadata({ params }) {
 
 const CategoryPage = async ({ params }) => {
   const { category } = await params;
-  const { category: categoryData, posts } = await getCategoryData(category);
+  const {
+    category: categoryData,
+    posts,
+    pagination,
+  } = await getCategoryData(category);
 
   const formattedTitle = category
     .replace(/-/g, " ")
@@ -156,7 +161,11 @@ const CategoryPage = async ({ params }) => {
   return (
     <main className="min-h-screen bg-[#f9fafb]">
       <JsonLd data={[breadcrumbSchema, collectionSchema]} />
-      <CategoryWiseBlog category={category} initialPosts={posts} />
+      <CategoryWiseBlog
+        category={category}
+        initialPosts={posts}
+        initialPagination={pagination}
+      />
     </main>
   );
 };
