@@ -52,6 +52,7 @@ const featuredServicePriorities = new Map([
 const canonicalStaticRoutes = [
   { path: "/", changeFrequency: "weekly", priority: 1.0 },
   { path: "/services", changeFrequency: "weekly", priority: 0.95 },
+  { path: "/solutions", changeFrequency: "monthly", priority: 0.88 },
   { path: "/blog", changeFrequency: "daily", priority: 0.93 },
   { path: "/case-studies", changeFrequency: "monthly", priority: 0.86 },
   { path: "/contact", changeFrequency: "monthly", priority: 0.85 },

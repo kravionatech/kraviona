@@ -238,6 +238,7 @@ const SIMPLE_MENUS = {
   ],
   Company: [
     { name: "About Us", path: "/about" },
+    { name: "Solutions", path: "/solutions" },
     { name: "Portfolio", path: "/gallery" },
     { name: "Pricing", path: "/pricing" },
   ],
