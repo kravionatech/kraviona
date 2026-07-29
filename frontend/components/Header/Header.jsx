@@ -30,7 +30,7 @@ import {
 const SERVICE_CATEGORIES = [
   {
     label: "Web Development",
-    color: "text-blue-500",
+    color: "text-[#295c5e]",
     services: [
       {
         name: "MERN Stack Development",
@@ -60,7 +60,7 @@ const SERVICE_CATEGORIES = [
   },
   {
     label: "Backend & Architecture",
-    color: "text-violet-500",
+    color: "text-[#1b3d3e]",
     services: [
       {
         name: "Backend Development",
@@ -90,7 +90,7 @@ const SERVICE_CATEGORIES = [
   },
   {
     label: "Performance & AI",
-    color: "text-emerald-500",
+    color: "text-[#3a7a7c]",
     services: [
       {
         name: "Technical SEO",
@@ -120,7 +120,7 @@ const SERVICE_CATEGORIES = [
   },
   {
     label: "Branding & Marketing",
-    color: "text-orange-500",
+    color: "text-[#d96c4e]",
     services: [
       {
         name: "Digital Marketing",
@@ -150,7 +150,7 @@ const SERVICE_CATEGORIES = [
   },
   {
     label: "Marketplace & Seller",
-    color: "text-rose-500",
+    color: "text-[#a9472f]",
     services: [
       {
         name: "E-Commerce Dev & Marketing",
@@ -202,28 +202,28 @@ const FEATURED = [
     name: "Technical SEO",
     path: "/services/technical-seo",
     badge: "Popular",
-    badgeColor: "bg-orange-50 text-orange-600",
+    badgeColor: "bg-[#fff0e8] text-[#b94f35]",
     Icon: SearchCheck,
   },
   {
     name: "MERN Stack Development",
     path: "/services/mern-stack-development",
     badge: "Top Rated",
-    badgeColor: "bg-amber-50 text-amber-700",
+    badgeColor: "bg-[#fff5e5] text-[#9a6427]",
     Icon: Layers3,
   },
   {
     name: "Account Management",
     path: "/services/account-management",
     badge: "New",
-    badgeColor: "bg-rose-50 text-rose-600",
+    badgeColor: "bg-[#fbe9e3] text-[#a9472f]",
     Icon: BriefcaseBusiness,
   },
   {
     name: "AI Automation",
     path: "/services/ai-automation",
     badge: "Trending",
-    badgeColor: "bg-teal-50 text-teal-700",
+    badgeColor: "bg-[#e8f1ef] text-[#295c5e]",
     Icon: Bot,
   },
 ];

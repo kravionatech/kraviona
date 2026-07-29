@@ -231,7 +231,7 @@ const ContactFormDetails = () => {
               target="_blank"
               rel="noopener noreferrer"
               className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-lg px-6 py-3 font-semibold text-white transition-colors"
-              style={{ backgroundColor: "#0069FF" }}
+              style={{ backgroundColor: "#295c5e" }}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"

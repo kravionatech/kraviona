@@ -12,9 +12,9 @@ const techCategories = [
     title: "Frontend Engineering",
     description:
       "Building ultra-fast, responsive, and interactive user interfaces optimised for SEO and conversion.",
-    icon: <Terminal className="w-5 h-5 text-orange-500" />,
+    icon: <Terminal className="w-5 h-5 text-[#d96c4e]" />,
     colSpan: "md:col-span-2",
-    accentColor: "orange",
+    accentColor: "coral",
     techs: [
       {
         name: "React",
@@ -39,9 +39,9 @@ const techCategories = [
     label: "Backend",
     title: "Backend Architecture",
     description: "Scalable server-side logic, RESTful APIs, and microservices.",
-    icon: <Database className="w-5 h-5 text-rose-500" />,
+    icon: <Database className="w-5 h-5 text-[#295c5e]" />,
     colSpan: "md:col-span-1",
-    accentColor: "rose",
+    accentColor: "teal",
     techs: [
       {
         name: "Node.js",
@@ -67,9 +67,9 @@ const techCategories = [
     title: "Database & Storage",
     description:
       "Reliable, high-performance data management and storage solutions.",
-    icon: <Server className="w-5 h-5 text-purple-500" />,
+    icon: <Server className="w-5 h-5 text-[#1b3d3e]" />,
     colSpan: "md:col-span-1",
-    accentColor: "purple",
+    accentColor: "ink",
     techs: [
       {
         name: "MongoDB",
@@ -95,7 +95,7 @@ const techCategories = [
     title: "Cloud & DevOps",
     description:
       "Secure, scalable deployments and CI/CD pipelines for maximum uptime and reliability.",
-    icon: <Cloud className="w-5 h-5 text-teal-600" />,
+    icon: <Cloud className="w-5 h-5 text-[#3a7a7c]" />,
     colSpan: "md:col-span-2",
     accentColor: "teal",
     techs: [
@@ -120,28 +120,24 @@ const techCategories = [
 ];
 
 const accentClasses = {
-  orange: {
-    badge: "bg-orange-50 text-orange-600 border-orange-200",
-    hover: "group-hover:bg-orange-50/60",
-  },
-  rose: {
-    badge: "bg-rose-50 text-rose-600 border-rose-200",
-    hover: "group-hover:bg-rose-50/60",
-  },
-  purple: {
-    badge: "bg-purple-50 text-purple-600 border-purple-200",
-    hover: "group-hover:bg-purple-50/60",
+  coral: {
+    badge: "bg-[#fff0e8] text-[#b94f35] border-[#f2d2c6]",
+    hover: "group-hover:bg-[#fff5f0]",
   },
   teal: {
-    badge: "bg-teal-50 text-teal-700 border-teal-200",
-    hover: "group-hover:bg-teal-50/60",
+    badge: "bg-[#e8f1ef] text-[#295c5e] border-[#cbdedb]",
+    hover: "group-hover:bg-[#f0f7f5]",
+  },
+  ink: {
+    badge: "bg-[#e1ecea] text-[#1b3d3e] border-[#c4d8d5]",
+    hover: "group-hover:bg-[#edf5f3]",
   },
 };
 
 const TechStack = () => {
   return (
     <section
-      className="py-20 md:py-28 bg-gray-50/80 relative overflow-hidden"
+      className="py-20 md:py-28 bg-[#f8fbfa] relative overflow-hidden"
       aria-labelledby="techstack-heading"
     >
       {/* Background blobs */}
@@ -149,8 +145,8 @@ const TechStack = () => {
         className="absolute inset-0 z-0 pointer-events-none"
         aria-hidden="true"
       >
-        <div className="absolute top-0 right-0 w-[36rem] h-[36rem] bg-teal-200/30 blur-[110px] rounded-full" />
-        <div className="absolute bottom-0 left-0 w-[28rem] h-[28rem] bg-rose-200/30 blur-[110px] rounded-full" />
+        <div className="absolute top-0 right-0 w-[36rem] h-[36rem] bg-[#c9e0dc]/45 blur-[110px] rounded-full" />
+        <div className="absolute bottom-0 left-0 w-[28rem] h-[28rem] bg-[#f7d6c7]/55 blur-[110px] rounded-full" />
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">

@@ -178,7 +178,7 @@ const TeamPage = async () => {
             <h1 className="mt-5 max-w-4xl text-4xl font-black leading-tight tracking-tight text-[#1b3d3e] sm:text-5xl lg:text-6xl">
               The people building fast, search-ready digital systems.
             </h1>
-            <p className="mt-6 max-w-2xl text-base leading-8 text-slate-600">
+            <p className="mt-6 max-w-2xl text-base leading-8 text-[#5e787a]">
               Kraviona is a founder-led technology team focused on MERN stack
               development, Next.js websites, backend APIs, automation, and
               technical SEO for businesses that need dependable execution.
@@ -205,7 +205,7 @@ const TeamPage = async () => {
                 <dt className="text-3xl font-black text-[#d96c4e]">
                   {members.length}+
                 </dt>
-                <dd className="mt-1 text-xs font-semibold uppercase tracking-wider text-slate-500">
+                <dd className="mt-1 text-xs font-semibold uppercase tracking-wider text-[#5e787a]">
                   Team members
                 </dd>
               </div>
@@ -213,13 +213,13 @@ const TeamPage = async () => {
                 <dt className="text-3xl font-black text-[#d96c4e]">
                   {departments.length || 1}
                 </dt>
-                <dd className="mt-1 text-xs font-semibold uppercase tracking-wider text-slate-500">
+                <dd className="mt-1 text-xs font-semibold uppercase tracking-wider text-[#5e787a]">
                   Disciplines
                 </dd>
               </div>
               <div>
                 <dt className="text-3xl font-black text-[#d96c4e]">MERN</dt>
-                <dd className="mt-1 text-xs font-semibold uppercase tracking-wider text-slate-500">
+                <dd className="mt-1 text-xs font-semibold uppercase tracking-wider text-[#5e787a]">
                   Core stack
                 </dd>
               </div>
@@ -246,11 +246,11 @@ const TeamPage = async () => {
                 <h2 className="mt-2 text-2xl font-black text-[#1b3d3e]">
                   {featured.name}
                 </h2>
-                <p className="mt-1 text-sm font-semibold text-slate-500">
+                <p className="mt-1 text-sm font-semibold text-[#5e787a]">
                   {featured.designation}
                 </p>
                 {featured.bio && (
-                  <p className="mt-4 text-sm leading-7 text-slate-600">
+                  <p className="mt-4 text-sm leading-7 text-[#5e787a]">
                     {featured.bio}
                   </p>
                 )}
@@ -260,15 +260,15 @@ const TeamPage = async () => {
         </div>
       </section>
 
-      <section className="border-b border-slate-200 bg-white">
+      <section className="border-b border-[#d4e2e0] bg-white">
         <div className="mx-auto grid max-w-7xl gap-5 px-6 py-12 md:grid-cols-3 lg:px-8">
           {pillars.map(({ title, description, icon: Icon }) => (
-            <div key={title} className="rounded-lg border border-slate-200 p-6">
+            <div key={title} className="rounded-lg border border-[#d4e2e0] p-6">
               <Icon className="h-6 w-6 text-[#d96c4e]" />
               <h2 className="mt-5 text-lg font-black text-[#1b3d3e]">
                 {title}
               </h2>
-              <p className="mt-3 text-sm leading-7 text-slate-600">
+              <p className="mt-3 text-sm leading-7 text-[#5e787a]">
                 {description}
               </p>
             </div>
@@ -287,7 +287,7 @@ const TeamPage = async () => {
                 Builders, strategists, and technical problem solvers.
               </h2>
             </div>
-            <div className="inline-flex w-fit items-center gap-2 rounded-lg border border-[#1b3d3e]/10 bg-white px-4 py-2 text-sm font-semibold text-slate-600">
+            <div className="inline-flex w-fit items-center gap-2 rounded-lg border border-[#1b3d3e]/10 bg-white px-4 py-2 text-sm font-semibold text-[#5e787a]">
               <Users className="h-4 w-4 text-[#d96c4e]" />
               {departments.join(" / ") || "Engineering"}
             </div>
@@ -297,10 +297,10 @@ const TeamPage = async () => {
             {members.map((member) => (
               <article
                 key={member._id || member.slug || member.name}
-                className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm transition-transform duration-200 hover:-translate-y-1"
+                className="rounded-lg border border-[#d4e2e0] bg-white p-5 shadow-sm transition-transform duration-200 hover:-translate-y-1"
               >
                 <div className="flex items-start gap-4">
-                  <div className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-lg bg-slate-100">
+                  <div className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-lg bg-[#e8f1ef]">
                     <Image
                       src={getImageSrc(member)}
                       alt={member.name}
@@ -317,7 +317,7 @@ const TeamPage = async () => {
                       {member.designation}
                     </p>
                     {member.department && (
-                      <p className="mt-1 text-xs font-semibold uppercase tracking-wider text-slate-400">
+                      <p className="mt-1 text-xs font-semibold uppercase tracking-wider text-[#789092]">
                         {member.department}
                       </p>
                     )}
@@ -325,7 +325,7 @@ const TeamPage = async () => {
                 </div>
 
                 {member.bio && (
-                  <p className="mt-5 line-clamp-4 text-sm leading-7 text-slate-600">
+                  <p className="mt-5 line-clamp-4 text-sm leading-7 text-[#5e787a]">
                     {member.bio}
                   </p>
                 )}
@@ -345,7 +345,7 @@ const TeamPage = async () => {
 
                 {Array.isArray(member.socialLinks) &&
                   member.socialLinks.length > 0 && (
-                    <div className="mt-6 flex items-center gap-2 border-t border-slate-100 pt-4">
+                    <div className="mt-6 flex items-center gap-2 border-t border-[#e7f0ee] pt-4">
                       {member.socialLinks
                         .filter((link) => link.url)
                         .slice(0, 4)
@@ -358,7 +358,7 @@ const TeamPage = async () => {
                               aria-label={`${member.name} on ${link.name || "social"}`}
                               target="_blank"
                               rel="noreferrer"
-                              className="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 text-slate-500 transition-colors hover:border-[#d96c4e] hover:text-[#d96c4e]"
+                              className="flex h-9 w-9 items-center justify-center rounded-lg border border-[#d4e2e0] text-[#5e787a] transition-colors hover:border-[#d96c4e] hover:text-[#d96c4e]"
                             >
                               <Icon className="h-4 w-4" />
                             </a>

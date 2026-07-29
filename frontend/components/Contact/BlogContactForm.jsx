@@ -161,7 +161,7 @@ const BlogContactForm = ({ initialSubject = "" }) => {
   };
 
   return (
-    <section className="mt-12 bg-gradient-to-br from-white to-gray-50 rounded-xl shadow-lg p-6 md:p-10 border border-gray-200">
+    <section className="mt-12 bg-gradient-to-br from-white to-[#f8fbfa] rounded-xl shadow-lg p-6 md:p-10 border border-[#d4e2e0]">
       <h3 className="text-2xl md:text-3xl font-bold text-[#0f2425] mb-3">
         Need help with a related service?
       </h3>

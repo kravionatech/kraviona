@@ -2,20 +2,24 @@
 @plugin "@tailwindcss/typography";
 @layer base {
   :root {
-    /* Logo Primary Dark Teal */
+    /* Kraviona logo palette: deep teal, coral and warm sand. */
+    --brand-ink: #163d3f;
     --primary-teal: #295c5e;
     --primary-teal-dark: #1b3d3e;
     --primary-teal-light: #3a7a7c;
-
-    /* Logo Terracotta / Coral (Orange-ish) */
-    --accent-coral: #a9472f;
-    --accent-coral-hover: #953924;
-
-    /* Logo Peach / Sand (Yellow-ish) */
+    --accent-coral: #d96c4e;
+    --accent-coral-deep: #a9472f;
+    --accent-coral-hover: #b94f35;
     --accent-peach: #f4be78;
-
-    /* Backgrounds */
-    --bg-dark: #0f2425; /* Hero section ke liye darker teal */
+    --surface: #f8fbfa;
+    --surface-teal: #e8f1ef;
+    --surface-coral: #fff0e8;
+    --surface-sand: #fff5e5;
+    --border: #d4e2e0;
+    --text: #294f52;
+    --text-muted: #5e787a;
+    --text-subtle: #789092;
+    --bg-dark: #0f2425;
     --bg-light: #fdfdfd;
   }
 }
@@ -29,7 +33,37 @@ body {
     BlinkMacSystemFont,
     "Segoe UI",
     sans-serif;
+  background: var(--bg-light);
+  color: var(--text);
 }
+
+/*
+ * Neutral surface aliases. They tint shared cards and dividers toward the
+ * logo's teal family while preserving the contrast of text on dark sections.
+ */
+.bg-gray-50,
+.bg-gray-50\/80,
+.bg-slate-100 {
+  background-color: var(--surface) !important;
+}
+
+.bg-gray-100,
+.bg-slate-50 {
+  background-color: var(--surface-teal) !important;
+}
+
+.border-gray-50,
+.border-gray-100,
+.border-slate-100 {
+  border-color: #e7f0ee !important;
+}
+
+.border-gray-200,
+.border-slate-200,
+.border-gray-300 {
+  border-color: var(--border) !important;
+}
+
 
 @keyframes slow-bounce {
   0%,

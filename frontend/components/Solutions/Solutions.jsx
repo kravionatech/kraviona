@@ -35,8 +35,8 @@ const industries = [
     title: "E-Commerce & Retail",
     description:
       "Scale your sales with high-converting online stores, automated inventory management, and personalized AI shopping experiences.",
-    color: "from-[#53C2B3]/20 to-transparent",
-    iconColor: "text-[#53C2B3]",
+    color: "from-[#f4be78]/25 to-transparent",
+    iconColor: "text-[#b57930]",
   },
   {
     id: "healthcare",
@@ -71,8 +71,8 @@ const industries = [
     title: "Travel & Logistics",
     description:
       "Smart booking engines, fleet tracking dashboards, and supply chain management software to keep your business moving efficiently.",
-    color: "from-[#53C2B3]/20 to-transparent",
-    iconColor: "text-[#53C2B3]",
+    color: "from-[#f4be78]/25 to-transparent",
+    iconColor: "text-[#b57930]",
   },
 ];
 
@@ -269,7 +269,7 @@ export default function Solutions() {
                   variants={fadeUp}
                   className="bg-white/5 backdrop-blur-md border border-white/10 p-8 rounded-[2rem] hover:bg-white/10 transition-colors"
                 >
-                  <div className="w-12 h-12 bg-[#295c5e] text-[#53C2B3] rounded-xl flex items-center justify-center mb-6">
+                  <div className="w-12 h-12 bg-[#295c5e] text-[#f4be78] rounded-xl flex items-center justify-center mb-6">
                     {challenge.icon}
                   </div>
                   <h3 className="text-xl font-bold text-white mb-3">
@@ -348,7 +348,7 @@ export default function Solutions() {
       </section>
 
       {/* 5. BOTTOM CTA */}
-      <section className="py-24 relative overflow-hidden bg-gradient-to-tr from-[#1b3d3e] via-[#295c5e] to-[#1b3d3e] text-center border-t border-[#53C2B3]/20">
+      <section className="py-24 relative overflow-hidden bg-gradient-to-tr from-[#1b3d3e] via-[#295c5e] to-[#1b3d3e] text-center border-t border-[#f4be78]/20">
         <div className="max-w-3xl mx-auto px-4 relative z-10">
           <h2 className="text-4xl md:text-6xl font-extrabold text-white mb-6">
             Ready to Disrupt <br className="hidden md:block" /> Your Industry?
