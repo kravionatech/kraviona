@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 import {
   ArrowUpRight,
   BadgeCheck,
@@ -63,16 +63,17 @@ export function generateStaticParams() {
     .map((category) => ({ category }));
 }
 
+// Every service slug comes from the local service catalogue. Treat any other
+// path as a genuine 404 instead of redirecting it to the service index.
+export const dynamicParams = false;
+
 export async function generateMetadata({ params }) {
   const { category } = await params;
   const slug = category?.toLowerCase()?.trim();
   const service = getService(slug);
 
   if (!service) {
-    return {
-      title: "Services",
-      alternates: { canonical: canonicalUrl("/services") },
-    };
+    notFound();
   }
 
   const pageUrl = canonicalUrl(`/services/${slug}`);
@@ -123,7 +124,7 @@ export default async function ServicesDetails({ params }) {
   const service = getService(slug);
 
   if (!service) {
-    redirect("/services");
+    notFound();
   }
 
   const pageUrl = canonicalUrl(`/services/${slug}`);

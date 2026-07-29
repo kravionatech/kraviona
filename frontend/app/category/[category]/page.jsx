@@ -1,6 +1,7 @@
 import CategoryWiseBlog from "@/components/Category/CategoryWiseBlog";
 import { JsonLd } from "@/components/JsonLd";
-import { defaultRobots } from "@/app/seoConfig.js";
+import { notFound } from "next/navigation";
+import { canonicalUrl, defaultRobots } from "@/app/seoConfig.js";
 import { API_URL } from "@/utils/api";
 
 async function getCategoryData(slug) {
@@ -45,6 +46,8 @@ export async function generateMetadata({ params }) {
   const { category } = await params;
   const { category: categoryData } = await getCategoryData(category);
 
+  if (!categoryData) notFound();
+
   const formattedTitle = category
     .replace(/-/g, " ")
     .replace(/\b\w/g, (l) => l.toUpperCase());
@@ -65,12 +68,12 @@ export async function generateMetadata({ params }) {
       "Kraviona Blog",
       "Tech Articles India",
     ],
-    authors: [{ name: "Kraviona Team", url: "https://kraviona.com" }],
-    alternates: { canonical: `https://kraviona.com/category/${category}` },
+    authors: [{ name: "Kraviona Team", url: canonicalUrl("/") }],
+    alternates: { canonical: canonicalUrl(`/category/${category}`) },
     openGraph: {
       title: `${formattedTitle} | Kraviona Insights`,
       description: `Explore our expert articles on ${formattedTitle}. In-depth tutorials and insights from the Kraviona team.`,
-      url: `https://kraviona.com/category/${category}`,
+      url: canonicalUrl(`/category/${category}`),
       siteName: "Kraviona Tech Solutions",
       type: "website",
       locale: "en_IN",
@@ -104,10 +107,13 @@ const CategoryPage = async ({ params }) => {
     pagination,
   } = await getCategoryData(category);
 
+  if (!categoryData) notFound();
+
   const formattedTitle = category
     .replace(/-/g, " ")
     .replace(/\b\w/g, (l) => l.toUpperCase());
 
+  const pageUrl = canonicalUrl(`/category/${category}`);
   const breadcrumbSchema = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
@@ -128,12 +134,11 @@ const CategoryPage = async ({ params }) => {
         "@type": "ListItem",
         position: 3,
         name: formattedTitle,
-        item: `https://kraviona.com/category/${category}`,
+        item: pageUrl,
       },
     ],
   };
 
-  const pageUrl = `https://kraviona.com/category/${category}`;
   const collectionSchema = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
@@ -152,7 +157,7 @@ const CategoryPage = async ({ params }) => {
       itemListElement: posts.map((post, index) => ({
         "@type": "ListItem",
         position: index + 1,
-        url: `https://kraviona.com/blog/${post.slug}`,
+        url: canonicalUrl(`/blog/${post.slug}`),
         name: post.title,
       })),
     },

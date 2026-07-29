@@ -12,20 +12,16 @@ export function proxy(request) {
     .trim()
     .split(":")[0]
     .toLowerCase();
-  const protocol = (
-    request.headers.get("x-forwarded-proto") || url.protocol
-  )
-    .split(",")[0]
-    .trim()
-    .replace(/:$/, "")
-    .toLowerCase();
-
-  if (host === WWW_HOST || protocol !== "https") {
+  // Vercel/Cloudflare performs the HTTP-to-HTTPS upgrade before this proxy.
+  // Restrict hostname canonicalization to the production www hostname so local
+  // development and Vercel preview deployments remain usable and are not sent
+  // to production.
+  if (host === WWW_HOST) {
     url.hostname = CANONICAL_HOST;
     url.protocol = "https:";
     url.port = "";
 
-    return NextResponse.redirect(url, 301);
+    return NextResponse.redirect(url, 308);
   }
 
   return NextResponse.next();

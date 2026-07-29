@@ -44,11 +44,6 @@ const nextConfig = {
           { key: "Cross-Origin-Resource-Policy", value: "same-origin" },
           { key: "X-DNS-Prefetch-Control", value: "on" },
           {
-            key: "X-Robots-Tag",
-            value:
-              "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1",
-          },
-          {
             key: "Permissions-Policy",
             value:
               "camera=(), microphone=(), geolocation=(self), interest-cohort=(), browsing-topics=()",
@@ -62,6 +57,27 @@ const nextConfig = {
             key: "Strict-Transport-Security",
             value: "max-age=63072000; includeSubDomains; preload",
           },
+        ],
+      },
+      // API and framework responses are not landing pages. Keep crawl-control
+      // headers off public HTML pages, where App Router metadata emits the
+      // page-specific robots directive and canonical URL.
+      {
+        source: "/api/:path*",
+        headers: [
+          { key: "X-Robots-Tag", value: "noindex, nofollow, noarchive" },
+        ],
+      },
+      {
+        source: "/_next/:path*",
+        headers: [
+          { key: "X-Robots-Tag", value: "noindex, nofollow, noarchive" },
+        ],
+      },
+      {
+        source: "/:path(robots.txt|sitemap.xml|rss.xml|llms.txt|ai.txt)",
+        headers: [
+          { key: "X-Robots-Tag", value: "noindex, follow, noarchive" },
         ],
       },
     ];

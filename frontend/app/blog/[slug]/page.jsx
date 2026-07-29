@@ -13,6 +13,7 @@ import {
 import BlogEngagement from "@/components/Blog/BlogEngagement";
 import BlogDetailPage from "@/components/Blog/BlogDetails/BlogDetailPage";
 import PostCard from "@/components/Card/PostCard";
+import { JsonLd } from "@/components/JsonLd";
 import {
   canonicalUrl,
   cleanExcerpt,
@@ -212,7 +213,9 @@ export async function generateMetadata({ params }) {
       site: SITE_TWITTER,
     },
 
-    robots: defaultRobots,
+    robots: blog.isNoIndex
+      ? { index: false, follow: true }
+      : defaultRobots,
   };
 }
 
@@ -440,39 +443,11 @@ const BlogDetail = async ({ params }) => {
 
   return (
     <main className="min-h-screen bg-white">
-      {/* ─── Article Schema ───────────────────────────────────────────── */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(normalizeStructuredData(articleSchema)),
-        }}
+      <JsonLd
+        data={[articleSchema, breadcrumbSchema, faqSchema, videoSchema].filter(
+          Boolean,
+        )}
       />
-
-      {/* ─── Breadcrumb Schema ────────────────────────────────────────── */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(normalizeStructuredData(breadcrumbSchema)),
-        }}
-      />
-
-      {faqSchema && (
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify(normalizeStructuredData(faqSchema)),
-          }}
-        />
-      )}
-
-      {videoSchema && (
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify(normalizeStructuredData(videoSchema)),
-          }}
-        />
-      )}
 
       {/* ─── Article Header ───────────────────────────────────────────── */}
       <section className="relative overflow-hidden bg-gradient-to-br from-[#081314] via-[#0f2425] to-[#1b3d3e] px-4 pb-24 pt-40 sm:px-6 lg:px-8">

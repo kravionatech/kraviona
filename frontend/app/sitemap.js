@@ -3,7 +3,6 @@ import { canonicalUrl } from "./seoConfig.js";
 import { SERVICE_LINKS } from "./services/serviceData.js";
 
 export const revalidate = 3600;
-export const dynamic = "force-dynamic";
 
 const POSTS_FETCH_LIMIT = 100;
 const MAX_POST_PAGES = 20;
@@ -50,12 +49,6 @@ const featuredServicePriorities = new Map([
   ["/services/ai-automation", 0.9],
 ]);
 
-const fallbackBlogCategories = [
-  "mern-stack",
-  "technical-seo",
-  "web-performance",
-];
-
 const canonicalStaticRoutes = [
   { path: "/", changeFrequency: "weekly", priority: 1.0 },
   { path: "/services", changeFrequency: "weekly", priority: 0.95 },
@@ -65,6 +58,7 @@ const canonicalStaticRoutes = [
   { path: "/about", changeFrequency: "monthly", priority: 0.82 },
   { path: "/pricing", changeFrequency: "monthly", priority: 0.8 },
   { path: "/gallery", changeFrequency: "monthly", priority: 0.78 },
+  { path: "/team", changeFrequency: "monthly", priority: 0.76 },
   { path: "/category", changeFrequency: "weekly", priority: 0.7 },
   { path: "/privacy-policy", changeFrequency: "yearly", priority: 0.35 },
   { path: "/terms", changeFrequency: "yearly", priority: 0.35 },
@@ -186,18 +180,13 @@ function buildBlogPostRoutes(posts) {
 function buildCategoryRoutes(posts, categories) {
   const categoryMap = new Map();
 
-  fallbackBlogCategories.forEach((slug) => {
-    categoryMap.set(slug, { slug, priority: 0.72 });
-  });
-
   categories.forEach((category) => {
     const hasPosts = Number(category.postCount || 0) > 0;
-    const isFallback = fallbackBlogCategories.includes(category.slug);
 
-    if (hasPosts || isFallback) {
+    if (hasPosts) {
       categoryMap.set(category.slug, {
         slug: category.slug,
-        priority: isFallback ? 0.74 : 0.7,
+        priority: 0.7,
         lastModified: getNewestIsoDate(category.updatedAt, category.createdAt),
       });
     }

@@ -26,7 +26,11 @@ export function JsonLd({ data }: JsonLdProps) {
     <script
       id={schemaId(normalizedData)}
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(normalizedData) }}
+      dangerouslySetInnerHTML={{
+        // Prevent CMS-provided text such as </script> from terminating this
+        // JSON-LD element and leaving Google with malformed structured data.
+        __html: JSON.stringify(normalizedData).replace(/</g, "\\u003c"),
+      }}
     />
   );
 }
