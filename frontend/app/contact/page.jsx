@@ -91,7 +91,7 @@ export const metadata = {
     "Hire Web Developers India",
     "IT Consulting Contact",
     "Get a Quote Web Development",
-    "MERN Stack Agency Contact",
+    "MERN Stack Company Contact",
     "Web Development Inquiry",
     "Kraviona Contact Details",
     "Hire Next.js Developer",

@@ -31,7 +31,7 @@ export const metadata = {
   keywords: [
     "UI UX Design Services India",
     "Web Design Company India",
-    "UX Design Agency India",
+    "UX Design Company India",
     "Mobile UI Design",
     "Conversion Optimised Design",
     "Web Design Delhi",

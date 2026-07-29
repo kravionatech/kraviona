@@ -68,7 +68,7 @@ const faqSchema = {
 };
 
 export const metadata = {
-  title: "Full-Stack Development Services India | MERN Stack Agency | Kraviona",
+  title: "Full-Stack Development Services India | MERN Stack Company | Kraviona",
   description:
     "Kraviona delivers complete full-stack web development services in India. From MongoDB databases to React frontends and Node.js backends — we build integrated, scalable applications that grow with your business.",
   keywords: [

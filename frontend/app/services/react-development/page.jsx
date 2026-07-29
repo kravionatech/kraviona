@@ -48,10 +48,10 @@ export const metadata = {
   keywords: [
     "React.js Development Company India",
     "React Developer India",
-    "Next.js Development Agency",
+    "Next.js Development Company",
     "React SPA Development",
     "React.js Web Application",
-    "Next.js SSR Agency",
+    "Next.js SSR Company",
   ],
   alternates: { canonical: PAGE_URL },
   openGraph: {

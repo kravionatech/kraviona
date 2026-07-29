@@ -76,7 +76,7 @@ export const metadata = {
     "Kraviona provides expert Technical SEO services in India — Core Web Vitals fixes, structured data implementation, schema markup, crawlability improvements, and GEO optimisation for AI search. Measurable results, not just audits.",
   keywords: [
     "Technical SEO Services India",
-    "Technical SEO Agency India",
+    "Technical SEO Company India",
     "Core Web Vitals Optimisation",
     "Schema Markup SEO",
     "Site Speed Optimisation",

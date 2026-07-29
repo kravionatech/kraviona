@@ -23,7 +23,7 @@ const faqs = [
   {
     question: "Do you provide SEO services along with web development?",
     answer:
-      "Yes. Kraviona is uniquely positioned as both a web development agency and a Technical SEO agency. Every website we build is SEO-optimised from day one — including semantic HTML structure, proper heading hierarchy, performance optimisation, structured data markup, and keyword-targeted meta content.",
+      "Yes. Kraviona is uniquely positioned as both a web development company and a Technical SEO company. Every website we build is SEO-optimised from day one — including semantic HTML structure, proper heading hierarchy, performance optimisation, structured data markup, and keyword-targeted meta content.",
   },
   {
     question:

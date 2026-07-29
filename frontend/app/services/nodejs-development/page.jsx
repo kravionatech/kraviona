@@ -39,7 +39,7 @@ export const metadata = {
     "Express.js API Development",
     "Node.js REST API",
     "Microservices Node.js India",
-    "Node.js Express Agency Delhi",
+    "Node.js Express Company Delhi",
   ],
   alternates: { canonical: PAGE_URL },
   openGraph: {

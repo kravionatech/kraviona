@@ -116,7 +116,7 @@ export const metadata = {
     "Full Stack MERN Development",
     "React Node.js Developer India",
     "MongoDB Express React Node",
-    "MERN Stack Agency Delhi",
+    "MERN Stack Company Delhi",
   ],
   alternates: { canonical: PAGE_URL },
   openGraph: {

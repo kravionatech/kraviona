@@ -39,7 +39,7 @@ export const metadata = {
   metadataBase: new URL(SITE_URL),
 
   title: {
-    default: "MERN Stack, Next.js & Technical SEO Agency | Kraviona",
+    default: "MERN Stack, Next.js & Technical SEO Company | Kraviona",
     template: `%s | Kraviona`,
   },
 
@@ -75,7 +75,7 @@ export const metadata = {
 
     url: SITE_URL,
 
-    title: "MERN Stack, Next.js & Technical SEO Agency | Kraviona",
+    title: "MERN Stack, Next.js & Technical SEO Company | Kraviona",
 
     description:
       "Kraviona builds MERN stack products, Next.js websites, backend APIs, and technical SEO systems for businesses that need speed and search visibility.",
@@ -99,7 +99,7 @@ export const metadata = {
 
     creator: SITE_TWITTER,
 
-    title: "MERN Stack, Next.js & Technical SEO Agency | Kraviona",
+    title: "MERN Stack, Next.js & Technical SEO Company | Kraviona",
 
     description:
       "MERN stack products, Next.js websites, backend APIs, and technical SEO systems for cleaner digital growth.",

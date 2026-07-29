@@ -89,7 +89,7 @@ const homePageSchema = {
   "@type": "WebPage",
   "@id": "https://kraviona.com/#webpage",
   url: "https://kraviona.com",
-  name: "MERN Stack Development & Technical SEO Agency | Kraviona",
+  name: "MERN Stack Development & Technical SEO Company | Kraviona",
   isPartOf: { "@id": "https://kraviona.com/#website" },
   about: { "@id": "https://kraviona.com/#organization" },
   description:
@@ -201,7 +201,7 @@ const testimonials = [
 // ─── Homepage Metadata ────────────────────────────────────────────────────────
 export const metadata = {
   // title.default inherited from layout; override only the page-specific title
-  title: "MERN Stack, Next.js & Technical SEO Agency | Kraviona",
+  title: "MERN Stack, Next.js & Technical SEO Company | Kraviona",
   description:
     "Kraviona Tech Solutions builds fast MERN stack products, Next.js websites, backend APIs, and technical SEO systems for businesses across India and beyond.",
   keywords: [
@@ -209,14 +209,14 @@ export const metadata = {
     "Kraviona Tech Solutions",
     "MERN Stack Development Company",
     "MERN Stack Development India",
-    "Technical SEO Agency India",
-    "Web Development Agency Delhi",
+    "Technical SEO Company India",
+    "Web Development Company Delhi",
     "React.js Development Company",
     "Node.js Development Services",
-    "Next.js Development Agency",
+    "Next.js Development Company",
     "Full Stack Web Development",
     "Custom Web Application Development",
-    "SEO Agency India",
+    "SEO Company India",
     "IT Solutions Delhi India",
     "Web App Development Company",
     "UI UX Design Services",
@@ -229,7 +229,7 @@ export const metadata = {
     type: "website",
     locale: "en_IN",
     url: SITE_URL,
-    title: "MERN Stack, Next.js & Technical SEO Agency | Kraviona",
+    title: "MERN Stack, Next.js & Technical SEO Company | Kraviona",
     description:
       "Fast MERN stack products, Next.js websites, backend APIs, and technical SEO foundations for businesses that want cleaner digital growth.",
     siteName: SITE_NAME,
@@ -238,7 +238,7 @@ export const metadata = {
         url: DEFAULT_OG_IMAGE,
         width: 1200,
         height: 630,
-        alt: `${SITE_NAME} – MERN Stack & SEO Agency`,
+        alt: `${SITE_NAME} – MERN Stack & SEO Company`,
         type: "image/jpeg",
       },
     ],
@@ -247,7 +247,7 @@ export const metadata = {
     card: "summary_large_image",
     site: SITE_TWITTER,
     creator: SITE_TWITTER,
-    title: "MERN Stack, Next.js & Technical SEO Agency | Kraviona",
+    title: "MERN Stack, Next.js & Technical SEO Company | Kraviona",
     description:
       "MERN stack, Next.js, backend APIs, and technical SEO from a founder-led technology team.",
     images: [DEFAULT_OG_IMAGE],
@@ -315,7 +315,7 @@ const Home = async () => {
               </h2>
               <p className="text-gray-600 leading-relaxed mb-5 text-base md:text-lg">
                 Kraviona Tech Solutions is a Delhi-based{" "}
-                <strong>MERN Stack development agency</strong> and{" "}
+                <strong>MERN Stack development company</strong> and{" "}
                 <strong>Technical SEO company</strong> serving businesses across
                 India and beyond. We build fast websites, reliable web
                 applications, clean backend systems, and SEO-ready foundations

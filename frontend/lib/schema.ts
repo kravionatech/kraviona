@@ -103,7 +103,7 @@ export const websiteSchema = {
   "@id": "https://kraviona.com/#website",
   url: "https://kraviona.com",
   name: "Kraviona Tech Solutions",
-  description: "MERN Stack, Next.js and Technical SEO Agency India",
+  description: "MERN Stack, Next.js and Technical SEO Company India",
   publisher: {
     "@id": "https://kraviona.com/#organization",
   },
