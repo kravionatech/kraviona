@@ -22,7 +22,7 @@ export default function RootLayout({ children }) {
     >
       <body
         suppressHydrationWarning
-        className="min-h-full flex flex-col"
+        className="min-h-full flex flex-col bg-[#0a1018]"
       >
         {children}
         <ToastContainer />

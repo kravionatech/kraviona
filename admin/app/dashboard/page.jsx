@@ -40,20 +40,20 @@ import Frame from "@/components/Frame/Frame";
 import { apiRequest, formatCurrency, formatDate } from "@/components/api";
 
 const COLORS = {
-  ink: "#111827",
-  soft: "#64748b",
-  faint: "#94a3b8",
-  border: "#e5e7eb",
-  surface: "#ffffff",
-  bg: "#f4f6f8",
-  primary: "#235056",
-  accent: "#d26c51",
-  amber: "#f59e0b",
-  blue: "#2563eb",
-  green: "#16a34a",
-  violet: "#7c3aed",
-  rose: "#e11d48",
-  cyan: "#0891b2",
+  ink: "#e7edf5",
+  soft: "#93a4b8",
+  faint: "#728399",
+  border: "rgba(148, 163, 184, 0.16)",
+  surface: "#111b28",
+  bg: "#0a1018",
+  primary: "#49b9ad",
+  accent: "#f0a46f",
+  amber: "#f8c15a",
+  blue: "#68a8ff",
+  green: "#56c998",
+  violet: "#ad8cff",
+  rose: "#fb7185",
+  cyan: "#55d9e8",
 };
 
 const CHART_COLORS = [
@@ -127,7 +127,7 @@ function EmptyState({ label = "No data yet" }) {
 function LoadingDashboard() {
   return (
     <Frame>
-      <div className="min-h-full bg-[#f4f6f8] p-6 lg:p-8">
+      <div className="min-h-full bg-[#0a1018] p-6 lg:p-8">
         <div className="mb-6 h-24 animate-pulse rounded-lg bg-white" />
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
           {Array.from({ length: 8 }).map((_, index) => (
@@ -344,7 +344,7 @@ export default function DashboardPage() {
 
   return (
     <Frame>
-      <div className="min-h-full bg-[#f4f6f8] text-slate-950">
+      <div className="min-h-full bg-[#0a1018] text-slate-950">
         <main className="px-4 py-6 sm:px-6 lg:px-8">
           <div className="mb-6 rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
             <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">

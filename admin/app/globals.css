@@ -1,4 +1,150 @@
 @import "tailwindcss";
+
+:root {
+  color-scheme: dark;
+}
+
+html,
+body {
+  background: #0a1018;
+}
+
+body {
+  color: #e7edf5;
+}
+
+/* Shared admin palette. Most screens use Tailwind surface utilities, so these
+   scoped tokens keep every CRUD page, modal and table visually consistent. */
+.admin-shell {
+  --admin-canvas: #0a1018;
+  --admin-surface: #111b28;
+  --admin-surface-raised: #162231;
+  --admin-surface-muted: #0d1520;
+  --admin-border: rgba(148, 163, 184, 0.16);
+  --admin-text: #e7edf5;
+  --admin-text-muted: #93a4b8;
+  --admin-accent: #49b9ad;
+  background:
+    radial-gradient(circle at 80% -10%, rgba(73, 185, 173, 0.12), transparent 30rem),
+    radial-gradient(circle at -10% 20%, rgba(210, 108, 81, 0.09), transparent 26rem),
+    var(--admin-canvas);
+}
+
+.admin-shell .bg-white,
+.admin-shell .bg-\[\#fefefe\] {
+  background-color: var(--admin-surface);
+}
+
+.admin-shell .bg-slate-50,
+.admin-shell .bg-gray-50,
+.admin-shell .bg-\[\#f4f6f8\],
+.admin-shell .bg-\[\#F8F9FB\],
+.admin-shell .bg-\[\#F7F8FA\] {
+  background-color: var(--admin-canvas);
+}
+
+.admin-shell .bg-slate-100,
+.admin-shell .bg-gray-100,
+.admin-shell .bg-gray-200 {
+  background-color: var(--admin-surface-raised);
+}
+
+.admin-shell .border-slate-200,
+.admin-shell .border-slate-100,
+.admin-shell .border-gray-200,
+.admin-shell .border-gray-100,
+.admin-shell .border-gray-300 {
+  border-color: var(--admin-border);
+}
+
+.admin-shell .text-slate-950,
+.admin-shell .text-slate-900,
+.admin-shell .text-gray-900,
+.admin-shell .text-slate-800,
+.admin-shell .text-gray-800 {
+  color: var(--admin-text);
+}
+
+.admin-shell .text-slate-700,
+.admin-shell .text-gray-700 {
+  color: #cbd6e3;
+}
+
+.admin-shell .text-slate-600,
+.admin-shell .text-gray-600 {
+  color: #aebdce;
+}
+
+.admin-shell .text-slate-500,
+.admin-shell .text-gray-500 {
+  color: var(--admin-text-muted);
+}
+
+.admin-shell .text-slate-400,
+.admin-shell .text-gray-400 {
+  color: #728399;
+}
+
+.admin-shell input,
+.admin-shell textarea,
+.admin-shell select {
+  color: var(--admin-text);
+  background-color: var(--admin-surface-muted);
+  border-color: var(--admin-border);
+}
+
+.admin-shell input::placeholder,
+.admin-shell textarea::placeholder {
+  color: #64748b;
+}
+
+.admin-shell select option {
+  color: var(--admin-text);
+  background-color: #111b28;
+}
+
+.admin-shell input:focus,
+.admin-shell textarea:focus,
+.admin-shell select:focus {
+  border-color: rgba(112, 210, 199, 0.75);
+  box-shadow: 0 0 0 3px rgba(73, 185, 173, 0.13);
+}
+
+.admin-shell .bg-blue-50,
+.admin-shell .bg-violet-50,
+.admin-shell .bg-cyan-50,
+.admin-shell .bg-emerald-50,
+.admin-shell .bg-amber-50,
+.admin-shell .bg-rose-50,
+.admin-shell .bg-red-50,
+.admin-shell .bg-orange-50,
+.admin-shell .bg-teal-50 {
+  background-color: rgba(30, 41, 59, 0.72);
+}
+
+.admin-shell .shadow-sm,
+.admin-shell .shadow-md,
+.admin-shell .shadow-lg,
+.admin-shell .shadow-xl {
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.16);
+}
+
+.admin-shell table tr {
+  border-color: var(--admin-border);
+}
+
+.admin-shell .ql-toolbar.ql-snow,
+.admin-shell .ql-container.ql-snow,
+.admin-shell .ProseMirror {
+  border-color: var(--admin-border);
+  color: var(--admin-text);
+  background: var(--admin-surface-muted);
+}
+
+.admin-shell .ql-snow .ql-stroke { stroke: #aebdce; }
+.admin-shell .ql-snow .ql-fill { fill: #aebdce; }
+.admin-shell .ql-snow .ql-picker { color: #aebdce; }
+.admin-shell .ql-snow .ql-picker-options { background: #111b28; border-color: var(--admin-border); }
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
@@ -28,9 +174,9 @@
 }
 
 .ProseMirror blockquote {
-  border-left: 4px solid #111827;
+  border-left: 4px solid #49b9ad;
   padding-left: 16px;
-  color: #4b5563;
+  color: #aebdce;
 }
 
 .ProseMirror pre {
@@ -51,7 +197,7 @@
 
 .ProseMirror td,
 .ProseMirror th {
-  border: 1px solid #d1d5db;
+  border: 1px solid rgba(148, 163, 184, 0.2);
   box-sizing: border-box;
   min-width: 1em;
   padding: 8px;
@@ -60,7 +206,7 @@
 }
 
 .ProseMirror th {
-  background: #f3f4f6;
+  background: #162231;
   font-weight: bold;
 }
 

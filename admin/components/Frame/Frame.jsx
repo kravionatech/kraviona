@@ -104,45 +104,45 @@ export default function Frame({ children }) {
   };
 
   return (
-    <div className="flex min-h-screen bg-[#f5f7f8] font-sans text-slate-950">
+    <div className="admin-shell flex min-h-screen bg-[#0a1018] font-sans text-slate-100">
       <Sidebar onLogout={handleLogout} isOpen={mobileNavOpen} onClose={() => setMobileNavOpen(false)} />
 
       <div className="min-w-0 flex-1">
-        <header className="sticky top-0 z-20 border-b border-slate-200/80 bg-white/90 px-4 py-3 backdrop-blur-xl sm:px-6 lg:px-8">
+        <header className="sticky top-0 z-20 border-b border-white/[0.07] bg-[#0d1520]/90 px-4 py-3 backdrop-blur-xl sm:px-6 lg:px-8">
           <div className="flex items-center justify-between gap-3">
             <div className="flex min-w-0 items-center gap-3">
               <button
                 type="button"
                 onClick={() => setMobileNavOpen(true)}
-                className="rounded-xl border border-slate-200 p-2 text-slate-600 lg:hidden"
+                className="rounded-xl border border-white/10 bg-white/[0.03] p-2 text-slate-300 transition hover:bg-white/[0.08] lg:hidden"
                 aria-label="Open navigation"
               >
                 <Menu size={19} />
               </button>
               <div className="hidden min-w-0 sm:block">
-                <p className="text-[10px] font-bold uppercase tracking-[0.17em] text-[#d26c51]">Kraviona admin</p>
-                <h1 className="truncate text-sm font-bold text-slate-900">{pageName(pathname)}</h1>
+                <p className="text-[10px] font-bold uppercase tracking-[0.17em] text-[#f0a46f]">Kraviona admin</p>
+                <h1 className="truncate text-sm font-bold text-white">{pageName(pathname)}</h1>
               </div>
             </div>
 
             <div className="relative hidden max-w-lg flex-1 md:block">
-              <Search className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={17} />
+                <Search className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500" size={17} />
               <input
                 ref={searchRef}
                 value={search}
                 onFocus={() => setSearchOpen(true)}
                 onChange={(event) => { setSearch(event.target.value); setSearchOpen(true); }}
                 placeholder="Search pages, content, actions..."
-                className="w-full rounded-xl border border-slate-200 bg-slate-50 py-2.5 pl-10 pr-16 text-sm outline-none transition focus:border-[#235056] focus:bg-white focus:ring-4 focus:ring-[#235056]/8"
+                className="w-full rounded-xl border border-white/10 bg-white/[0.04] py-2.5 pl-10 pr-16 text-sm text-slate-100 outline-none transition placeholder:text-slate-500 focus:border-[#70d2c7]/60 focus:bg-white/[0.06] focus:ring-4 focus:ring-[#70d2c7]/10"
               />
-              <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 rounded-md border border-slate-200 bg-white px-1.5 py-0.5 text-[10px] font-semibold text-slate-400">
+              <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 rounded-md border border-white/10 bg-white/[0.06] px-1.5 py-0.5 text-[10px] font-semibold text-slate-400">
                 ⌘ K
               </span>
               {searchOpen && <CommandMenu results={results} onClose={() => setSearchOpen(false)} />}
             </div>
 
             <div className="flex items-center gap-2 sm:gap-3">
-              <Link href="/blog/new" className="hidden items-center gap-2 rounded-xl bg-[#235056] px-3.5 py-2.5 text-sm font-bold text-white shadow-lg shadow-[#235056]/15 transition hover:bg-[#173f45] sm:flex">
+              <Link href="/blog/new" className="hidden items-center gap-2 rounded-xl bg-[#49b9ad] px-3.5 py-2.5 text-sm font-bold text-[#071216] shadow-lg shadow-[#49b9ad]/15 transition hover:bg-[#70d2c7] sm:flex">
                 <FilePlus2 size={16} />
                 New post
               </Link>
@@ -150,7 +150,7 @@ export default function Frame({ children }) {
                 <button
                   type="button"
                   onClick={() => setNotificationsOpen((open) => !open)}
-                  className="relative rounded-xl border border-slate-200 bg-white p-2.5 text-slate-600 transition hover:border-[#235056]/25 hover:text-[#235056]"
+                  className="relative rounded-xl border border-white/10 bg-white/[0.04] p-2.5 text-slate-300 transition hover:border-[#70d2c7]/40 hover:bg-white/[0.08] hover:text-[#70d2c7]"
                   aria-label="Open notifications"
                   aria-expanded={notificationsOpen}
                 >
@@ -159,9 +159,9 @@ export default function Frame({ children }) {
                 </button>
                 {notificationsOpen && <NotificationMenu unreadMessages={unreadMessages} newLeads={newLeads} onClose={() => setNotificationsOpen(false)} />}
               </div>
-              <div className="hidden items-center gap-2 border-l border-slate-200 pl-3 sm:flex">
-                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#f3c78e] text-xs font-black text-[#153f45]">AA</span>
-                <span className="hidden text-sm font-bold text-slate-700 xl:block">Amar Admin</span>
+              <div className="hidden items-center gap-2 border-l border-white/10 pl-3 sm:flex">
+                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-[#f3c78e] to-[#d26c51] text-xs font-black text-[#0a1018]">AA</span>
+                <span className="hidden text-sm font-bold text-slate-200 xl:block">Amar Admin</span>
               </div>
             </div>
           </div>
@@ -175,14 +175,14 @@ export default function Frame({ children }) {
 
 function CommandMenu({ results, onClose }) {
   return (
-    <div className="absolute left-0 right-0 top-[calc(100%+8px)] overflow-hidden rounded-2xl border border-slate-200 bg-white p-2 shadow-2xl shadow-slate-900/12">
-      <p className="px-3 py-2 text-[10px] font-bold uppercase tracking-[0.16em] text-slate-400">Quick navigation</p>
+    <div className="absolute left-0 right-0 top-[calc(100%+8px)] overflow-hidden rounded-2xl border border-white/10 bg-[#111b28] p-2 shadow-2xl shadow-black/30">
+      <p className="px-3 py-2 text-[10px] font-bold uppercase tracking-[0.16em] text-slate-500">Quick navigation</p>
       {results.length ? results.map((item) => (
-        <Link key={item.href} href={item.href} onClick={onClose} className="flex items-center justify-between rounded-xl px-3 py-2.5 transition hover:bg-slate-50">
-          <span><span className="block text-sm font-semibold text-slate-800">{item.label}</span><span className="block text-xs text-slate-400">{item.hint}</span></span>
-          <Command size={15} className="text-slate-300" />
+        <Link key={item.href} href={item.href} onClick={onClose} className="flex items-center justify-between rounded-xl px-3 py-2.5 transition hover:bg-white/[0.06]">
+          <span><span className="block text-sm font-semibold text-slate-100">{item.label}</span><span className="block text-xs text-slate-500">{item.hint}</span></span>
+          <Command size={15} className="text-slate-600" />
         </Link>
-      )) : <p className="px-3 py-5 text-center text-sm text-slate-400">No matching pages found.</p>}
+      )) : <p className="px-3 py-5 text-center text-sm text-slate-500">No matching pages found.</p>}
     </div>
   );
 }
@@ -193,10 +193,10 @@ function NotificationMenu({ unreadMessages, newLeads, onClose }) {
     { href: "/leads", icon: Inbox, label: newLeads ? `${newLeads} new lead${newLeads === 1 ? "" : "s"}` : "No new leads", tone: "text-[#d26c51] bg-orange-50" },
   ];
   return (
-    <div className="absolute right-0 top-[calc(100%+8px)] w-80 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl shadow-slate-900/12">
-      <div className="border-b border-slate-100 px-4 py-3"><p className="text-sm font-bold text-slate-900">Priority activity</p><p className="text-xs text-slate-400">Live from your admin API</p></div>
+    <div className="absolute right-0 top-[calc(100%+8px)] w-80 overflow-hidden rounded-2xl border border-white/10 bg-[#111b28] shadow-2xl shadow-black/30">
+      <div className="border-b border-white/[0.07] px-4 py-3"><p className="text-sm font-bold text-white">Priority activity</p><p className="text-xs text-slate-500">Live from your admin API</p></div>
       <div className="p-2">
-        {items.map(({ href, icon: Icon, label, tone }) => <Link key={href} href={href} onClick={onClose} className="flex items-center gap-3 rounded-xl p-3 transition hover:bg-slate-50"><span className={`flex h-9 w-9 items-center justify-center rounded-xl ${tone}`}><Icon size={16} /></span><span className="text-sm font-semibold text-slate-700">{label}</span></Link>)}
+        {items.map(({ href, icon: Icon, label, tone }) => <Link key={href} href={href} onClick={onClose} className="flex items-center gap-3 rounded-xl p-3 transition hover:bg-white/[0.06]"><span className={`flex h-9 w-9 items-center justify-center rounded-xl ${tone}`}><Icon size={16} /></span><span className="text-sm font-semibold text-slate-200">{label}</span></Link>)}
       </div>
     </div>
   );
