@@ -92,7 +92,7 @@ function PostImage({ post, className = "", sizes, priority = false }) {
   const imageUrl = getImageUrl(post);
 
   return (
-    <div className={`relative overflow-hidden bg-[#eef4f3] ${className}`}>
+    <div className={`relative overflow-hidden bg-[#E8F2F4] ${className}`}>
       {imageUrl ? (
         <Image
           src={imageUrl}
@@ -103,8 +103,8 @@ function PostImage({ post, className = "", sizes, priority = false }) {
           className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
         />
       ) : (
-        <div className="flex h-full w-full items-center justify-center bg-[linear-gradient(135deg,#edf6f5,#f8eadf)]">
-          <span className="text-5xl font-black text-[#295c5e]/15">K</span>
+        <div className="flex h-full w-full items-center justify-center bg-[linear-gradient(135deg,#E8F2F4,#FEF0E9)]">
+          <span className="text-5xl font-black text-[#2A4A52]/15">K</span>
         </div>
       )}
     </div>
@@ -112,8 +112,8 @@ function PostImage({ post, className = "", sizes, priority = false }) {
 }
 
 function MetaLine({ post, light = false }) {
-  const textClass = light ? "text-white/80" : "text-[#687478]";
-  const iconClass = light ? "text-[#f4be78]" : "text-[#d96c4e]";
+  const textClass = light ? "text-white/80" : "text-[#5C7A82]";
+  const iconClass = light ? "text-[#F28C5E]" : "text-[#E8622A]";
   const date = getPostDate(post, "long");
 
   return (
@@ -137,8 +137,8 @@ function CategoryBadge({ children, light = false }) {
     <span
       className={`inline-flex w-fit rounded-md px-3 py-1.5 text-[10px] font-black uppercase tracking-widest ${
         light
-          ? "bg-white/12 text-[#f4be78]"
-          : "bg-[#d96c4e]/10 text-[#a9472f]"
+          ? "bg-white/12 text-[#F28C5E]"
+          : "bg-[#E8622A]/10 text-[#E8622A]"
       }`}
     >
       {children}
@@ -154,7 +154,7 @@ function BlogHero({ latestPost, categories, articleCount }) {
 
   return (
     <section
-      className="relative overflow-hidden bg-[#0b2021] pt-[66px] text-white lg:pt-[78px]"
+      className="relative overflow-hidden bg-[#1A2E33] pt-[66px] text-white lg:pt-[78px]"
       aria-labelledby="blog-hero-heading"
     >
       <div
@@ -167,19 +167,19 @@ function BlogHero({ latestPost, categories, articleCount }) {
         }}
       />
       <div
-        className="pointer-events-none absolute -right-40 -top-48 h-[540px] w-[540px] rounded-full bg-[#295c5e]/45 blur-[120px]"
+        className="pointer-events-none absolute -right-40 -top-48 h-[540px] w-[540px] rounded-full bg-[#2A4A52]/45 blur-[120px]"
         aria-hidden="true"
       />
       <div
-        className="pointer-events-none absolute -bottom-52 left-[28%] h-[420px] w-[420px] rounded-full bg-[#d96c4e]/15 blur-[110px]"
+        className="pointer-events-none absolute -bottom-52 left-[28%] h-[420px] w-[420px] rounded-full bg-[#E8622A]/15 blur-[110px]"
         aria-hidden="true"
       />
 
       <div className="relative mx-auto grid max-w-7xl gap-12 px-4 pb-12 pt-12 sm:px-6 sm:pb-14 sm:pt-16 lg:grid-cols-[minmax(0,0.92fr)_minmax(420px,0.78fr)] lg:items-center lg:gap-16 lg:px-8 lg:pb-16 lg:pt-20">
         <div>
           <div className="mb-6 flex items-center gap-3">
-            <span className="h-px w-9 bg-[#d96c4e]" aria-hidden="true" />
-            <p className="text-[11px] font-black uppercase tracking-[0.25em] text-[#f4be78]">
+            <span className="h-px w-9 bg-[#E8622A]" aria-hidden="true" />
+            <p className="text-[11px] font-black uppercase tracking-[0.25em] text-[#F28C5E]">
               The Kraviona Journal
             </p>
           </div>
@@ -189,7 +189,7 @@ function BlogHero({ latestPost, categories, articleCount }) {
             className="max-w-3xl text-4xl font-black leading-[1.04] tracking-[-0.04em] sm:text-5xl lg:text-[4rem]"
           >
             Ideas for building
-            <span className="block text-[#f4be78]">better digital products.</span>
+            <span className="block text-[#F28C5E]">better digital products.</span>
           </h1>
 
           <p className="mt-6 max-w-xl text-base leading-7 text-white/68 sm:text-lg sm:leading-8">
@@ -200,7 +200,7 @@ function BlogHero({ latestPost, categories, articleCount }) {
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <a
               href="#all-posts"
-              className="group inline-flex h-12 items-center justify-center gap-2 rounded-md bg-[#d96c4e] px-6 text-sm font-black text-white shadow-[0_12px_28px_rgba(217,108,78,0.2)] transition-all hover:-translate-y-0.5 hover:bg-[#c45f43] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f4be78] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b2021]"
+              className="group inline-flex h-12 items-center justify-center gap-2 rounded-md bg-[#E8622A] px-6 text-sm font-black text-white shadow-[0_12px_28px_rgba(232,98,42,0.2)] transition-all hover:-translate-y-0.5 hover:bg-[#B84A1A] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F28C5E] focus-visible:ring-offset-2 focus-visible:ring-offset-[#1A2E33]"
             >
               Explore all articles
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
@@ -231,7 +231,7 @@ function BlogHero({ latestPost, categories, articleCount }) {
             </div>
             <span className="hidden h-9 w-px bg-white/12 sm:block" aria-hidden="true" />
             <div className="flex items-center gap-2 text-xs font-bold text-white/62">
-              <BookOpenText className="h-4 w-4 text-[#f4be78]" />
+              <BookOpenText className="h-4 w-4 text-[#F28C5E]" />
               Practical, no-fluff insights
             </div>
           </div>
@@ -245,7 +245,7 @@ function BlogHero({ latestPost, categories, articleCount }) {
           {latestPost?.slug ? (
             <Link
               href={`/blog/${latestPost.slug}`}
-              className="group relative block overflow-hidden rounded-xl border border-white/14 bg-[#102c2d] shadow-[0_28px_70px_rgba(0,0,0,0.28)]"
+              className="group relative block overflow-hidden rounded-xl border border-white/14 bg-[#1A2E33] shadow-[0_28px_70px_rgba(42,74,82,0.28)]"
             >
               <PostImage
                 post={latestPost}
@@ -253,13 +253,13 @@ function BlogHero({ latestPost, categories, articleCount }) {
                 sizes="(max-width: 1024px) 92vw, 42vw"
                 priority
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#08191a] via-[#08191a]/28 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#1A2E33] via-[#1A2E33]/28 to-transparent" />
               <div className="absolute inset-x-0 bottom-0 p-5 sm:p-7">
                 <div className="mb-3 flex items-center justify-between gap-3">
-                  <span className="rounded-full border border-white/15 bg-[#0b2021]/75 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.18em] text-[#f4be78] backdrop-blur-md">
+                  <span className="rounded-full border border-white/15 bg-[#1A2E33]/75 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.18em] text-[#F28C5E] backdrop-blur-md">
                     Latest · {getCategoryName(latestPost)}
                   </span>
-                  <span className="rounded-full bg-white/12 p-2.5 text-white backdrop-blur-md transition-colors group-hover:bg-[#d96c4e]">
+                  <span className="rounded-full bg-white/12 p-2.5 text-white backdrop-blur-md transition-colors group-hover:bg-[#E8622A]">
                     <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
                   </span>
                 </div>
@@ -272,10 +272,10 @@ function BlogHero({ latestPost, categories, articleCount }) {
               </div>
             </Link>
           ) : (
-            <div className="relative flex aspect-[16/10] items-center justify-center overflow-hidden rounded-xl border border-white/14 bg-[linear-gradient(135deg,#173b3c,#0c2526)] p-8 shadow-[0_28px_70px_rgba(0,0,0,0.28)]">
-              <div className="absolute left-8 top-8 h-16 w-16 rounded-full bg-[#d96c4e]/20 blur-xl" />
+            <div className="relative flex aspect-[16/10] items-center justify-center overflow-hidden rounded-xl border border-white/14 bg-[linear-gradient(135deg,#2A4A52,#1A2E33)] p-8 shadow-[0_28px_70px_rgba(42,74,82,0.28)]">
+              <div className="absolute left-8 top-8 h-16 w-16 rounded-full bg-[#E8622A]/20 blur-xl" />
               <div className="relative text-center">
-                <BookOpenText className="mx-auto h-10 w-10 text-[#f4be78]" />
+                <BookOpenText className="mx-auto h-10 w-10 text-[#F28C5E]" />
                 <p className="mt-4 text-xl font-black">Fresh thinking is on the way.</p>
                 <p className="mt-2 text-sm text-white/55">
                   Explore practical notes from the Kraviona team.
@@ -284,7 +284,7 @@ function BlogHero({ latestPost, categories, articleCount }) {
             </div>
           )}
           <span
-            className="absolute -right-2 -top-2 h-10 w-10 border-r-2 border-t-2 border-[#d96c4e] sm:-right-3 sm:-top-3"
+            className="absolute -right-2 -top-2 h-10 w-10 border-r-2 border-t-2 border-[#E8622A] sm:-right-3 sm:-top-3"
             aria-hidden="true"
           />
         </div>
@@ -305,7 +305,7 @@ function BlogHero({ latestPost, categories, articleCount }) {
                     ? `/category/${category.slug}`
                     : `/category/${encodeURIComponent(category.name.toLowerCase())}`
                 }
-                className="shrink-0 rounded-full border border-white/10 bg-white/[0.045] px-4 py-2 text-[11px] font-bold text-white/72 transition-all hover:border-[#f4be78]/50 hover:bg-[#f4be78]/10 hover:text-[#f4be78]"
+                className="shrink-0 rounded-full border border-white/10 bg-white/[0.045] px-4 py-2 text-[11px] font-bold text-white/72 transition-all hover:border-[#F28C5E]/50 hover:bg-[#F28C5E]/10 hover:text-[#F28C5E]"
               >
                 {category.name}
               </Link>
@@ -323,7 +323,7 @@ function LeadStory({ post }) {
   return (
     <Link
       href={`/blog/${post.slug}`}
-      className="group grid overflow-hidden rounded-md border border-[#e4e4e4] bg-white md:grid-cols-[52%_1fr]"
+      className="group grid overflow-hidden rounded-md border border-[#D6E0E2] bg-white md:grid-cols-[52%_1fr]"
     >
       <PostImage
         post={post}
@@ -333,17 +333,17 @@ function LeadStory({ post }) {
       />
       <div className="flex flex-col p-6 sm:p-8">
         <CategoryBadge>{getCategoryName(post)}</CategoryBadge>
-        <h2 className="mt-5 text-2xl font-black leading-tight text-[#10282a] sm:text-3xl lg:text-4xl">
+        <h2 className="mt-5 text-2xl font-black leading-tight text-[#1A2E33] sm:text-3xl lg:text-4xl">
           {post.title || "Untitled Article"}
         </h2>
         {getExcerpt(post) && (
-          <p className="mt-4 line-clamp-4 text-sm leading-7 text-[#5d6b70]">
+          <p className="mt-4 line-clamp-4 text-sm leading-7 text-[#5C7A82]">
             {getExcerpt(post)}
           </p>
         )}
-        <div className="mt-auto flex flex-wrap items-center justify-between gap-5 border-t border-[#ececec] pt-5">
+        <div className="mt-auto flex flex-wrap items-center justify-between gap-5 border-t border-[#D6E0E2] pt-5">
           <MetaLine post={post} />
-          <span className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-widest text-[#295c5e] transition-colors group-hover:text-[#d96c4e]">
+          <span className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-widest text-[#2A4A52] transition-colors group-hover:text-[#E8622A]">
             Read article
             <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
           </span>
@@ -355,30 +355,30 @@ function LeadStory({ post }) {
 
 function PopularList({ posts }) {
   return (
-    <aside className="border border-[#e4e4e4] bg-white p-5 lg:p-6">
-      <div className="mb-5 border-b border-[#ececec] pb-4">
-        <h2 className="text-xl font-black text-[#10282a]">
+    <aside className="border border-[#D6E0E2] bg-white p-5 lg:p-6">
+      <div className="mb-5 border-b border-[#D6E0E2] pb-4">
+        <h2 className="text-xl font-black text-[#1A2E33]">
           Most Popular Posts
         </h2>
       </div>
-      <div className="divide-y divide-[#ececec]">
+      <div className="divide-y divide-[#D6E0E2]">
         {posts.map((post, index) => (
           <Link
             key={`${post.slug}-${index}`}
             href={`/blog/${post.slug}`}
             className="group grid grid-cols-[34px_minmax(0,1fr)] gap-4 py-4 first:pt-0 last:pb-0"
           >
-            <span className="pt-0.5 text-lg font-black text-[#d96c4e]">
+            <span className="pt-0.5 text-lg font-black text-[#E8622A]">
               {String(index + 1).padStart(2, "0")}
             </span>
             <span className="min-w-0">
-              <span className="mb-1 block truncate text-[10px] font-black uppercase tracking-widest text-[#7d8a8e]">
+              <span className="mb-1 block truncate text-[10px] font-black uppercase tracking-widest text-[#5C7A82]">
                 {getCategoryName(post)}
               </span>
-              <span className="line-clamp-2 text-sm font-black leading-snug text-[#10282a] transition-colors group-hover:text-[#d96c4e]">
+              <span className="line-clamp-2 text-sm font-black leading-snug text-[#1A2E33] transition-colors group-hover:text-[#E8622A]">
                 {post.title || "Untitled Article"}
               </span>
-              <span className="mt-2 block text-xs font-semibold text-[#879195]">
+              <span className="mt-2 block text-xs font-semibold text-[#8FA8B0]">
                 {getPostDate(post, "long")}
               </span>
             </span>
@@ -396,17 +396,17 @@ function ArticleCard({ post, compact = false }) {
     return (
       <Link
         href={`/blog/${post.slug}`}
-        className="group grid grid-cols-[92px_minmax(0,1fr)] gap-4 border-b border-[#ececec] bg-white py-4 transition-colors hover:border-[#d96c4e]/50"
+        className="group grid grid-cols-[92px_minmax(0,1fr)] gap-4 border-b border-[#D6E0E2] bg-white py-4 transition-colors hover:border-[#E8622A]/50"
       >
         <PostImage post={post} className="h-20 rounded-sm" sizes="92px" />
         <div className="min-w-0">
-          <p className="mb-2 truncate text-[10px] font-black uppercase tracking-widest text-[#d96c4e]">
+          <p className="mb-2 truncate text-[10px] font-black uppercase tracking-widest text-[#E8622A]">
             {getCategoryName(post)}
           </p>
-          <h3 className="line-clamp-2 text-sm font-black leading-snug text-[#10282a] transition-colors group-hover:text-[#d96c4e]">
+          <h3 className="line-clamp-2 text-sm font-black leading-snug text-[#1A2E33] transition-colors group-hover:text-[#E8622A]">
             {post.title || "Untitled Article"}
           </h3>
-          <p className="mt-2 text-xs font-semibold text-[#879195]">
+          <p className="mt-2 text-xs font-semibold text-[#8FA8B0]">
             {getPostDate(post, "numeric")}
           </p>
         </div>
@@ -415,7 +415,7 @@ function ArticleCard({ post, compact = false }) {
   }
 
   return (
-    <article className="group flex h-full flex-col overflow-hidden border border-[#e4e4e4] bg-white transition-all duration-300 hover:-translate-y-1 hover:border-[#d96c4e]/45 hover:shadow-[0_18px_34px_rgba(16,40,42,0.08)]">
+    <article className="group flex h-full flex-col overflow-hidden border border-[#D6E0E2] bg-white transition-all duration-300 hover:-translate-y-1 hover:border-[#E8622A]/45 hover:shadow-[0_18px_34px_rgba(42,74,82,0.08)]">
       <Link href={`/blog/${post.slug}`} className="block">
         <PostImage
           post={post}
@@ -426,16 +426,16 @@ function ArticleCard({ post, compact = false }) {
       <div className="flex flex-1 flex-col p-5">
         <CategoryBadge>{getCategoryName(post)}</CategoryBadge>
         <Link href={`/blog/${post.slug}`}>
-          <h3 className="mt-4 line-clamp-2 text-lg font-black leading-snug text-[#10282a] transition-colors group-hover:text-[#d96c4e]">
+          <h3 className="mt-4 line-clamp-2 text-lg font-black leading-snug text-[#1A2E33] transition-colors group-hover:text-[#E8622A]">
             {post.title || "Untitled Article"}
           </h3>
         </Link>
         {getExcerpt(post) && (
-          <p className="mt-3 line-clamp-3 flex-1 text-sm leading-6 text-[#5d6b70]">
+          <p className="mt-3 line-clamp-3 flex-1 text-sm leading-6 text-[#5C7A82]">
             {getExcerpt(post)}
           </p>
         )}
-        <div className="mt-5 border-t border-[#ececec] pt-4">
+        <div className="mt-5 border-t border-[#D6E0E2] pt-4">
           <MetaLine post={post} />
         </div>
       </div>
@@ -446,25 +446,25 @@ function ArticleCard({ post, compact = false }) {
 function SectionHeading({ label, title, href, centered = false }) {
   return (
     <div
-      className={`mb-8 flex flex-col gap-4 border-b border-[#ececec] pb-4 sm:flex-row sm:items-end sm:justify-between ${
+      className={`mb-8 flex flex-col gap-4 border-b border-[#D6E0E2] pb-4 sm:flex-row sm:items-end sm:justify-between ${
         centered ? "text-center sm:text-left" : ""
       }`}
     >
       <div>
         <div className={`mb-3 flex items-center gap-3 ${centered ? "justify-center sm:justify-start" : ""}`}>
-          <span className="h-px w-8 bg-[#d96c4e]" />
-          <span className="text-[10px] font-black uppercase tracking-[0.24em] text-[#d96c4e]">
+          <span className="h-px w-8 bg-[#E8622A]" />
+          <span className="text-[10px] font-black uppercase tracking-[0.24em] text-[#E8622A]">
             {label}
           </span>
         </div>
-        <h2 className="text-2xl font-black tracking-tight text-[#10282a] sm:text-3xl">
+        <h2 className="text-2xl font-black tracking-tight text-[#1A2E33] sm:text-3xl">
           {title}
         </h2>
       </div>
       {href && (
         <Link
           href={href}
-          className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-widest text-[#295c5e] transition-colors hover:text-[#d96c4e]"
+          className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-widest text-[#2A4A52] transition-colors hover:text-[#E8622A]"
         >
           See more
           <ArrowRight className="h-4 w-4" />
@@ -503,8 +503,8 @@ function CategorySection({ category, posts }) {
 
 function PromoPanel() {
   return (
-    <div className="bg-[#10282a] p-6 text-white">
-      <p className="text-[10px] font-black uppercase tracking-[0.24em] text-[#f4be78]">
+    <div className="bg-[#1A2E33] p-6 text-white">
+      <p className="text-[10px] font-black uppercase tracking-[0.24em] text-[#F28C5E]">
         Kraviona Guide
       </p>
       <h2 className="mt-4 text-2xl font-black leading-tight">
@@ -516,7 +516,7 @@ function PromoPanel() {
       </p>
       <Link
         href="/contact"
-        className="mt-6 inline-flex items-center gap-2 rounded-md bg-[#d96c4e] px-5 py-3 text-sm font-bold text-white transition-colors hover:bg-[#c45f43]"
+        className="mt-6 inline-flex items-center gap-2 rounded-md bg-[#E8622A] px-5 py-3 text-sm font-bold text-white transition-colors hover:bg-[#B84A1A]"
       >
         Talk to us
         <ArrowRight className="h-4 w-4" />
@@ -537,7 +537,7 @@ function NewsletterPanel() {
         icon: "warning",
         title: "Email required",
         text: "Please enter your email address.",
-        confirmButtonColor: "#d96c4e",
+        confirmButtonColor: "#E8622A",
       });
     }
 
@@ -561,14 +561,14 @@ function NewsletterPanel() {
           icon: "success",
           title: "Subscribed",
           text: data?.message || "Successfully subscribed!",
-          confirmButtonColor: "#d96c4e",
+          confirmButtonColor: "#E8622A",
         });
       } else {
         Swal.fire({
           icon: "error",
           title: "Subscription failed",
           text: data?.message || "Subscription failed.",
-          confirmButtonColor: "#d96c4e",
+          confirmButtonColor: "#E8622A",
         });
       }
     } catch (error) {
@@ -578,7 +578,7 @@ function NewsletterPanel() {
         text:
           error.message ||
           "Something went wrong. Please check your connection.",
-        confirmButtonColor: "#d96c4e",
+        confirmButtonColor: "#E8622A",
       });
     } finally {
       setIsSubmitting(false);
@@ -586,33 +586,38 @@ function NewsletterPanel() {
   };
 
   return (
-    <section className="bg-[#eef4f3] py-12">
+    <section className="bg-[#E8F2F4] py-12">
       <div className="mx-auto grid max-w-7xl gap-8 px-4 sm:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:px-8">
         <div>
-          <p className="text-[10px] font-black uppercase tracking-[0.24em] text-[#d96c4e]">
+          <p className="text-[10px] font-black uppercase tracking-[0.24em] text-[#E8622A]">
             Subscribe for success
           </p>
-          <h2 className="mt-3 text-3xl font-black tracking-tight text-[#10282a]">
+          <h2 className="mt-3 text-3xl font-black tracking-tight text-[#1A2E33]">
             Get sharper product and web growth notes.
           </h2>
         </div>
         <form onSubmit={handleSubmit} className="flex flex-col gap-3 sm:flex-row lg:self-end">
           <label className="relative flex-1">
-            <Mail className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[#7d8a8e]" />
+            <span className="sr-only">Email address</span>
+            <Mail
+              aria-hidden="true"
+              className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[#5C7A82]"
+            />
             <input
               type="email"
               value={email}
               onChange={(event) => setEmail(event.target.value)}
               placeholder="hello@example.com"
+              autoComplete="email"
               required
               disabled={isSubmitting}
-              className="h-12 w-full rounded-md border border-[#cfdcda] bg-white pl-11 pr-4 text-sm text-[#10282a] outline-none transition-all placeholder:text-[#9aa6a9] focus:border-[#295c5e] focus:ring-2 focus:ring-[#295c5e]/20 disabled:opacity-60"
+              className="h-12 w-full rounded-md border border-[#D6E0E2] bg-white pl-11 pr-4 text-sm text-[#1A2E33] outline-none transition-all placeholder:text-[#8FA8B0] focus:border-[#2A4A52] focus:ring-2 focus:ring-[#2A4A52]/20 disabled:opacity-60"
             />
           </label>
           <button
             type="submit"
             disabled={isSubmitting}
-            className="h-12 rounded-md bg-[#d96c4e] px-7 text-sm font-bold text-white transition-colors hover:bg-[#c45f43] disabled:cursor-not-allowed disabled:opacity-70"
+            className="h-12 rounded-md bg-[#E8622A] px-7 text-sm font-bold text-white transition-colors hover:bg-[#B84A1A] disabled:cursor-not-allowed disabled:opacity-70"
           >
             {isSubmitting ? "Subscribing..." : "Subscribe"}
           </button>
@@ -707,7 +712,7 @@ export default function EwayBlogLayout({
     allPosts.length;
 
   return (
-    <main className="bg-[#fbfcfc] font-sans">
+    <section className="bg-[#F5F7F8] font-sans">
       <BlogHero
         latestPost={leadPost}
         categories={navCategories}
@@ -716,14 +721,14 @@ export default function EwayBlogLayout({
 
       {isLoading ? (
         <section className="flex min-h-[520px] items-center justify-center">
-          <Loader2 className="h-10 w-10 animate-spin text-[#295c5e]" />
+          <Loader2 className="h-10 w-10 animate-spin text-[#2A4A52]" />
         </section>
       ) : allPosts.length === 0 ? (
         <section className="mx-auto max-w-7xl px-4 py-24 text-center sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-black text-[#10282a]">
+          <h2 className="text-3xl font-black text-[#1A2E33]">
             No articles available yet.
           </h2>
-          <p className="mt-3 text-[#5d6b70]">Check back soon for new posts.</p>
+          <p className="mt-3 text-[#5C7A82]">Check back soon for new posts.</p>
         </section>
       ) : (
         <>
@@ -761,7 +766,7 @@ export default function EwayBlogLayout({
             <SectionHeading label="Archive" title="All Articles" />
             <div className="mb-9 flex flex-col gap-3 md:flex-row">
               <label className="relative flex-1">
-                <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[#7d8a8e]" />
+                <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[#5C7A82]" />
                 <input
                   type="search"
                   placeholder="Search articles..."
@@ -770,18 +775,18 @@ export default function EwayBlogLayout({
                     setSearchQuery(event.target.value);
                     setArchivePage(1);
                   }}
-                  className="h-12 w-full rounded-md border border-[#dfe8e7] bg-white pl-11 pr-4 text-sm text-[#10282a] outline-none transition-all placeholder:text-[#9aa6a9] focus:border-[#295c5e] focus:ring-2 focus:ring-[#295c5e]/20"
+                  className="h-12 w-full rounded-md border border-[#E8F2F4] bg-white pl-11 pr-4 text-sm text-[#1A2E33] outline-none transition-all placeholder:text-[#8FA8B0] focus:border-[#2A4A52] focus:ring-2 focus:ring-[#2A4A52]/20"
                 />
               </label>
               <label className="relative md:w-72">
-                <SlidersHorizontal className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[#7d8a8e]" />
+                <SlidersHorizontal className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[#5C7A82]" />
                 <select
                   value={selectedCategory}
                   onChange={(event) => {
                     setSelectedCategory(event.target.value);
                     setArchivePage(1);
                   }}
-                  className="h-12 w-full appearance-none rounded-md border border-[#dfe8e7] bg-white pl-11 pr-10 text-sm font-semibold text-[#10282a] outline-none transition-all focus:border-[#295c5e] focus:ring-2 focus:ring-[#295c5e]/20"
+                  className="h-12 w-full appearance-none rounded-md border border-[#E8F2F4] bg-white pl-11 pr-10 text-sm font-semibold text-[#1A2E33] outline-none transition-all focus:border-[#2A4A52] focus:ring-2 focus:ring-[#2A4A52]/20"
                 >
                   <option value="all">All Categories</option>
                   {categories.map((category) => (
@@ -798,11 +803,11 @@ export default function EwayBlogLayout({
 
             {archiveLoading ? (
               <div className="flex min-h-64 items-center justify-center">
-                <Loader2 className="h-8 w-8 animate-spin text-[#295c5e]" />
+                <Loader2 className="h-8 w-8 animate-spin text-[#2A4A52]" />
               </div>
             ) : filteredPosts.length === 0 ? (
-              <div className="rounded-lg border border-[#dfe8e7] bg-white px-5 py-14 text-center">
-                <p className="text-lg font-bold text-[#10282a]">
+              <div className="rounded-lg border border-[#E8F2F4] bg-white px-5 py-14 text-center">
+                <p className="text-lg font-bold text-[#1A2E33]">
                   No articles found.
                 </p>
                 <button
@@ -812,7 +817,7 @@ export default function EwayBlogLayout({
                     setSelectedCategory("all");
                     setArchivePage(1);
                   }}
-                  className="mt-4 rounded-md bg-[#10282a] px-5 py-2.5 text-xs font-black uppercase tracking-widest text-white transition-colors hover:bg-[#d96c4e]"
+                  className="mt-4 rounded-md bg-[#1A2E33] px-5 py-2.5 text-xs font-black uppercase tracking-widest text-white transition-colors hover:bg-[#E8622A]"
                 >
                   Clear filters
                 </button>
@@ -826,10 +831,10 @@ export default function EwayBlogLayout({
             )}
             {(archivePagination?.totalPages || 0) > 1 && (
               <nav
-                className="mt-10 flex flex-wrap items-center justify-between gap-4 border-t border-[#dfe8e7] pt-6"
+                className="mt-10 flex flex-wrap items-center justify-between gap-4 border-t border-[#E8F2F4] pt-6"
                 aria-label="Blog archive pagination"
               >
-                <p className="text-sm font-semibold text-[#687478]">
+                <p className="text-sm font-semibold text-[#5C7A82]">
                   Page {archivePagination.currentPage} of{" "}
                   {archivePagination.totalPages}
                 </p>
@@ -840,7 +845,7 @@ export default function EwayBlogLayout({
                     onClick={() =>
                       setArchivePage((current) => Math.max(1, current - 1))
                     }
-                    className="rounded-md border border-[#cfdcda] bg-white px-4 py-2 text-sm font-bold text-[#295c5e] transition hover:border-[#295c5e] disabled:cursor-not-allowed disabled:opacity-40"
+                    className="rounded-md border border-[#D6E0E2] bg-white px-4 py-2 text-sm font-bold text-[#2A4A52] transition hover:border-[#2A4A52] disabled:cursor-not-allowed disabled:opacity-40"
                   >
                     Previous
                   </button>
@@ -848,7 +853,7 @@ export default function EwayBlogLayout({
                     type="button"
                     disabled={!archivePagination.hasNextPage || archiveLoading}
                     onClick={() => setArchivePage((current) => current + 1)}
-                    className="rounded-md bg-[#295c5e] px-4 py-2 text-sm font-bold text-white transition hover:bg-[#1d4648] disabled:cursor-not-allowed disabled:opacity-40"
+                    className="rounded-md bg-[#2A4A52] px-4 py-2 text-sm font-bold text-white transition hover:bg-[#2A4A52] disabled:cursor-not-allowed disabled:opacity-40"
                   >
                     Next
                   </button>
@@ -858,6 +863,6 @@ export default function EwayBlogLayout({
           </section>
         </>
       )}
-    </main>
+    </section>
   );
 }

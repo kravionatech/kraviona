@@ -66,20 +66,20 @@ const CategoryDiscovery = () => {
   }, []);
 
   return (
-    <section className="py-24 bg-[#fdfdfd] font-sans relative">
+    <section className="py-24 bg-[#F5F7F8] font-sans relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header Section */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
           <div className="space-y-3">
             <div className="flex items-center gap-3">
-              <span className="w-8 h-[2px] bg-[#d96c4e]"></span>
-              <span className="text-[#d96c4e] font-bold tracking-[0.2em] text-[10px] uppercase">
+              <span className="w-8 h-[2px] bg-[#E8622A]"></span>
+              <span className="text-[#E8622A] font-bold tracking-[0.2em] text-[10px] uppercase">
                 Explore Topics
               </span>
             </div>
-            <h2 className="text-4xl md:text-5xl font-black text-[#1b3d3e] tracking-tight">
+            <h2 className="text-4xl md:text-5xl font-black text-[#1A2E33] tracking-tight">
               Browse by{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#295c5e] to-[#d96c4e]">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#2A4A52] to-[#E8622A]">
                 Category
               </span>
             </h2>
@@ -91,7 +91,7 @@ const CategoryDiscovery = () => {
         {/* Loading State */}
         {isLoading ? (
           <div className="flex justify-center items-center h-64">
-            <div className="w-8 h-8 border-4 border-[#295c5e]/20 border-t-[#295c5e] rounded-full animate-spin"></div>
+            <div className="w-8 h-8 border-4 border-[#2A4A52]/20 border-t-[#2A4A52] rounded-full animate-spin"></div>
           </div>
         ) : (
           /* Category Cards */
@@ -109,13 +109,13 @@ const CategoryDiscovery = () => {
               >
                 <Link
                   href={category.link}
-                  className="group block min-h-32 rounded-xl border border-gray-200 bg-white p-6 transition-all duration-300 hover:-translate-y-1 hover:border-[#d96c4e]/40 hover:shadow-[0_18px_35px_rgba(15,36,37,0.08)]"
+                  className="group block min-h-32 rounded-xl border border-gray-200 bg-white p-6 transition-all duration-300 hover:-translate-y-1 hover:border-[#E8622A]/40 hover:shadow-[0_18px_35px_rgba(42,74,82,0.08)]"
                 >
-                  <h3 className="truncate text-2xl font-black capitalize tracking-tight text-[#1b3d3e] transition-colors group-hover:text-[#d96c4e]">
+                  <h3 className="truncate text-2xl font-black capitalize tracking-tight text-[#1A2E33] transition-colors group-hover:text-[#E8622A]">
                     {category.name}
                   </h3>
 
-                  <span className="mt-5 inline-flex rounded-md bg-[#d96c4e]/10 px-3 py-1.5 text-[11px] font-black uppercase tracking-widest text-[#a9472f]">
+                  <span className="mt-5 inline-flex rounded-md bg-[#E8622A]/10 px-3 py-1.5 text-[11px] font-black uppercase tracking-widest text-[#E8622A]">
                     {category.count} {category.count === 1 ? "Article" : "Articles"}
                   </span>
                 </Link>
@@ -134,10 +134,10 @@ const CategoryDiscovery = () => {
         >
           <Link
             href="/contact"
-            className="inline-flex items-center gap-2 text-[11px] font-black text-gray-500 uppercase tracking-[0.2em] group hover:text-[#1b3d3e] transition-colors"
+            className="inline-flex items-center gap-2 text-[11px] font-black text-gray-500 uppercase tracking-[0.2em] group hover:text-[#1A2E33] transition-colors"
           >
             Looking for something specific?
-            <span className="text-[#d96c4e] border-b border-[#d96c4e] pb-0.5 group-hover:border-[#1b3d3e] group-hover:text-[#1b3d3e] transition-colors">
+            <span className="text-[#E8622A] border-b border-[#E8622A] pb-0.5 group-hover:border-[#1A2E33] group-hover:text-[#1A2E33] transition-colors">
               Contact Us
             </span>
           </Link>

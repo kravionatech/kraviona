@@ -8,30 +8,30 @@ import { Zap, CodeXml, Target, Users } from "lucide-react";
 const reasons = [
   {
     id: "performance",
-    icon: <Zap className="w-6 h-6 text-[#f4be78]" />,
+    icon: <Zap className="w-6 h-6 text-[#F28C5E]" />,
     title: "Zero Bloatware",
     description:
       "We don't rely on slow, heavy drag-and-drop builders. Every line of code is optimized for raw speed, giving you perfect Core Web Vitals and lightning-fast load times.",
-    borderHover: "hover:border-[#f4be78]/50",
-    glowColor: "bg-[#f4be78]",
+    borderHover: "hover:border-[#F28C5E]/50",
+    glowColor: "bg-[#F28C5E]",
   },
   {
     id: "architecture",
-    icon: <CodeXml className="w-6 h-6 text-[#d96c4e]" />,
+    icon: <CodeXml className="w-6 h-6 text-[#E8622A]" />,
     title: "Scalable by Design",
     description:
       "Built on robust architectures like the MERN stack and Next.js, our solutions are engineered to handle your business's traffic spikes without breaking a sweat.",
-    borderHover: "hover:border-[#d96c4e]/50",
-    glowColor: "bg-[#d96c4e]",
+    borderHover: "hover:border-[#E8622A]/50",
+    glowColor: "bg-[#E8622A]",
   },
   {
     id: "roi",
-    icon: <Target className="w-6 h-6 text-[#295c5e]" />,
+    icon: <Target className="w-6 h-6 text-[#2A4A52]" />,
     title: "Conversion Obsessed",
     description:
       "A pretty website is useless if it doesn't sell. We bake technical SEO and high-converting UX into the core DNA of your project to turn passive traffic into revenue.",
-    borderHover: "hover:border-[#295c5e]/50",
-    glowColor: "bg-[#295c5e]",
+    borderHover: "hover:border-[#2A4A52]/50",
+    glowColor: "bg-[#2A4A52]",
   },
   {
     id: "communication",
@@ -63,10 +63,10 @@ const itemVariants = {
 
 const WhyChooseUs = () => {
   return (
-    <section className="py-24 bg-[#081314] font-sans relative overflow-hidden border-t border-white/5">
+    <section className="py-24 bg-[#1A2E33] font-sans relative overflow-hidden border-t border-white/5">
       {/* Background Decor */}
       <div className="absolute inset-0 z-0 pointer-events-none flex justify-center items-center">
-        <div className="absolute w-[40rem] h-[40rem] bg-[#295c5e] opacity-[0.08] blur-[150px] rounded-full mix-blend-screen"></div>
+        <div className="absolute w-[40rem] h-[40rem] bg-[#2A4A52] opacity-[0.08] blur-[150px] rounded-full mix-blend-screen"></div>
         {/* Subtle dot grid for tech vibe */}
         <div
           className="absolute inset-0 opacity-[0.03]"
@@ -85,10 +85,10 @@ const WhyChooseUs = () => {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#d96c4e]/10 border border-[#d96c4e]/20 mb-6 backdrop-blur-md"
+            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#E8622A]/10 border border-[#E8622A]/20 mb-6 backdrop-blur-md"
           >
-            <span className="w-2 h-2 rounded-full bg-[#d96c4e] animate-pulse"></span>
-            <span className="text-[#d96c4e] font-bold tracking-widest text-xs uppercase">
+            <span className="w-2 h-2 rounded-full bg-[#E8622A] animate-pulse"></span>
+            <span className="text-[#E8622A] font-bold tracking-widest text-xs uppercase">
               The Kraviona Edge
             </span>
           </motion.div>
@@ -101,7 +101,7 @@ const WhyChooseUs = () => {
             className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-[1.1] mb-6"
           >
             We Engineer Results, <br className="hidden md:block" />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#f4be78] to-[#d96c4e]">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#F28C5E] to-[#E8622A]">
               Not Just Websites.
             </span>
           </motion.h2>

@@ -86,7 +86,7 @@ export default function Types() {
   };
 
   return (
-    <section className="py-32 relative bg-[#FAFCFC] overflow-hidden">
+    <section className="py-32 relative bg-[#F5F7F8] overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* --- Header Section --- */}
         <motion.div
@@ -96,7 +96,7 @@ export default function Types() {
           variants={fadeUp}
           className="text-center max-w-3xl mx-auto mb-20"
         >
-          <h2 className="text-4xl md:text-5xl font-extrabold text-[#111A1F] mb-6 tracking-tight">
+          <h2 className="text-4xl md:text-5xl font-extrabold text-[#1A2E33] mb-6 tracking-tight">
             What Are You Looking To Build?
           </h2>
           <p className="text-gray-500 text-lg md:text-xl font-light">
@@ -125,19 +125,19 @@ export default function Types() {
                 onClick={() => toggleExpand(type.id)}
                 className={`group bg-white p-8 md:p-10 rounded-[2rem] border transition-all duration-500 relative overflow-hidden flex flex-col cursor-pointer ${
                   isExpanded
-                    ? "border-[#d96c4e] shadow-[0_20px_40px_rgb(217,108,78,0.15)] ring-2 ring-[#d96c4e]/20"
-                    : "border-gray-100 hover:border-[#d96c4e]/30 shadow-sm hover:shadow-[0_20px_40px_rgb(217,108,78,0.08)]"
+                    ? "border-[#E8622A] shadow-[0_20px_40px_rgb(232,98,42,0.15)] ring-2 ring-[#E8622A]/20"
+                    : "border-gray-100 hover:border-[#E8622A]/30 shadow-sm hover:shadow-[0_20px_40px_rgb(232,98,42,0.08)]"
                 }`}
               >
                 {/* Background Glow on Hover/Active */}
                 <div
-                  className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-[#f4be78]/20 to-transparent transition-opacity duration-500 rounded-bl-[100px] ${isExpanded ? "opacity-100" : "opacity-0 group-hover:opacity-100"}`}
+                  className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-[#F28C5E]/20 to-transparent transition-opacity duration-500 rounded-bl-[100px] ${isExpanded ? "opacity-100" : "opacity-0 group-hover:opacity-100"}`}
                 ></div>
 
                 <motion.div layout className="relative z-10 flex-grow">
                   {/* Icon Box */}
                   <div
-                    className={`w-16 h-16 rounded-2xl flex items-center justify-center mb-8 transition-colors duration-500 shadow-sm ${isExpanded ? "bg-[#d96c4e] text-white" : "bg-gray-50 text-[#295c5e] group-hover:bg-[#d96c4e] group-hover:text-white group-hover:shadow-md"}`}
+                    className={`w-16 h-16 rounded-2xl flex items-center justify-center mb-8 transition-colors duration-500 shadow-sm ${isExpanded ? "bg-[#E8622A] text-white" : "bg-gray-50 text-[#2A4A52] group-hover:bg-[#E8622A] group-hover:text-white group-hover:shadow-md"}`}
                   >
                     {type.icon}
                   </div>
@@ -145,7 +145,7 @@ export default function Types() {
                   {/* Text Content */}
                   <motion.h3
                     layout
-                    className={`text-2xl font-bold mb-4 transition-colors ${isExpanded ? "text-[#d96c4e]" : "text-[#111A1F] group-hover:text-[#d96c4e]"}`}
+                    className={`text-2xl font-bold mb-4 transition-colors ${isExpanded ? "text-[#E8622A]" : "text-[#1A2E33] group-hover:text-[#E8622A]"}`}
                   >
                     {type.title}
                   </motion.h3>
@@ -168,7 +168,7 @@ export default function Types() {
                       transition={{ duration: 0.4, ease: "easeInOut" }}
                       className="relative z-10 overflow-hidden border-t border-gray-100 pt-6"
                     >
-                      <h4 className="text-sm font-bold text-[#295c5e] uppercase tracking-widest mb-4">
+                      <h4 className="text-sm font-bold text-[#2A4A52] uppercase tracking-widest mb-4">
                         What&apos;s Included:
                       </h4>
                       <ul className="space-y-3">
@@ -180,7 +180,7 @@ export default function Types() {
                             key={i}
                             className="flex items-start text-gray-600"
                           >
-                            <CheckCircle2 className="w-5 h-5 text-[#f4be78] mr-3 flex-shrink-0 mt-0.5" />
+                            <CheckCircle2 className="w-5 h-5 text-[#F28C5E] mr-3 flex-shrink-0 mt-0.5" />
                             <span className="font-medium text-sm md:text-base">
                               {feature}
                             </span>
@@ -194,7 +194,7 @@ export default function Types() {
                 {/* Interactive Action Text */}
                 <motion.div
                   layout
-                  className={`relative z-10 flex items-center font-bold text-sm transition-all duration-300 mt-6 pt-4 border-t ${isExpanded ? "text-gray-400 border-gray-100" : "text-[#d96c4e] border-transparent opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 group-hover:border-gray-50"}`}
+                  className={`relative z-10 flex items-center font-bold text-sm transition-all duration-300 mt-6 pt-4 border-t ${isExpanded ? "text-gray-400 border-gray-100" : "text-[#E8622A] border-transparent opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 group-hover:border-gray-50"}`}
                 >
                   {isExpanded ? "Close Details" : "View Full Details"}
                   <motion.div

@@ -2,6 +2,29 @@ import { NextResponse } from "next/server";
 
 const CANONICAL_HOST = "kraviona.com";
 const WWW_HOST = "www.kraviona.com";
+const SESSION_QUERY_PARAMETERS = new Set([
+  "sid",
+  "session",
+  "sessionid",
+  "session_id",
+  "session-id",
+  "jsessionid",
+  "phpsessid",
+  "php_session_id",
+  "asp.net_sessionid",
+  "asp.net_session_id",
+  "asp_sessionid",
+]);
+const SESSION_PATH_PARAMETER =
+  /;(?:sid|session(?:[_-]?id)?|jsessionid|phpsessid|php_session_id|asp(?:\.net)?[_-]?session[_-]?id|aspsessionid[a-z0-9]*)=[^/;?]*/gi;
+
+const isSessionQueryParameter = (key) => {
+  const normalizedKey = key.toLowerCase();
+  return (
+    SESSION_QUERY_PARAMETERS.has(normalizedKey) ||
+    /^aspsessionid[a-z0-9]*$/.test(normalizedKey)
+  );
+};
 
 export function proxy(request) {
   const url = request.nextUrl;
@@ -16,10 +39,29 @@ export function proxy(request) {
   // Restrict hostname canonicalization to the production www hostname so local
   // development and Vercel preview deployments remain usable and are not sent
   // to production.
-  if (host === WWW_HOST) {
-    url.hostname = CANONICAL_HOST;
-    url.protocol = "https:";
-    url.port = "";
+  const sessionQueryKeys = Array.from(url.searchParams.keys()).filter(
+    isSessionQueryParameter,
+  );
+  const cleanedPathname = url.pathname.replace(SESSION_PATH_PARAMETER, "");
+  const hasPathSessionId = cleanedPathname !== url.pathname;
+  const hasSessionId = sessionQueryKeys.length > 0 || hasPathSessionId;
+
+  if (hasSessionId) {
+    for (const key of sessionQueryKeys) {
+      url.searchParams.delete(key);
+    }
+
+    if (hasPathSessionId) {
+      url.pathname = cleanedPathname || "/";
+    }
+  }
+
+  if (host === WWW_HOST || hasSessionId) {
+    if (host === WWW_HOST) {
+      url.hostname = CANONICAL_HOST;
+      url.protocol = "https:";
+      url.port = "";
+    }
 
     return NextResponse.redirect(url, 308);
   }

@@ -1,6 +1,9 @@
+import { fileURLToPath } from "node:url";
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  /* config options here */
+  // Keep production tracing scoped to this independently deployable admin app.
+  outputFileTracingRoot: fileURLToPath(new URL("./", import.meta.url)),
 };
 
 export default nextConfig;

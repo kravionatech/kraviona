@@ -1,4 +1,9 @@
 import "./globals.css";
+import "@fontsource/poppins/400.css";
+import "@fontsource/poppins/500.css";
+import "@fontsource/poppins/600.css";
+import "@fontsource/poppins/700.css";
+import "@fontsource/poppins/800.css";
 
 import Header from "@/components/Header/Header";
 import Footer from "@/components/Footer/Footer";
@@ -12,10 +17,6 @@ import {
   websiteSchema,
 } from "@/lib/schema";
 
-import { Poppins } from "next/font/google";
-
-
-
 import {
   SITE_URL,
   SITE_NAME,
@@ -25,39 +26,41 @@ import {
   defaultRobots,
 } from "./seoConfig.js";
 
-/* Fonts */
-const poppins = Poppins({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
-  variable: "--font-poppins",
-  display: "swap",
-  preload: true,
-});
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#2A4A52" },
+    { media: "(prefers-color-scheme: dark)", color: "#1A2E33" },
+  ],
+};
 
 /* SEO Metadata */
 export const metadata = {
   metadataBase: new URL(SITE_URL),
 
   title: {
-    default: "MERN Stack, Next.js & Technical SEO Company | Kraviona",
-    template: `%s | Kraviona`,
+    default: "Kraviona Tech Solutions — Web Dev & SEO Agency Delhi NCR",
+    template: "%s | Kraviona Tech Solutions",
   },
 
   description:
-    "Kraviona builds MERN stack products, Next.js websites, backend APIs, and technical SEO systems for businesses that need speed, clarity, and search visibility.",
+    "Kraviona is a Delhi NCR agency for Next.js, MERN stack web development, backend APIs, and technical SEO services built for speed and search visibility.",
 
   keywords: [
+    "web development Delhi NCR",
+    "Next.js development India",
+    "technical SEO agency",
+    "MERN stack developer",
+    "React.js company Delhi",
+    "SEO services Noida",
     "Kraviona",
-    "MERN Stack Development",
-    "Technical SEO",
-    "React.js Development",
-    "Node.js Backend",
-    "Next.js Development",
   ],
 
   authors: [
     {
-      name: "Kraviona Tech",
+      name: "Kraviona Tech Solutions",
       url: SITE_URL,
     },
   ],
@@ -75,10 +78,10 @@ export const metadata = {
 
     url: SITE_URL,
 
-    title: "MERN Stack, Next.js & Technical SEO Company | Kraviona",
+    title: "Kraviona Tech Solutions | Web Dev & SEO Agency Delhi NCR",
 
     description:
-      "Kraviona builds MERN stack products, Next.js websites, backend APIs, and technical SEO systems for businesses that need speed and search visibility.",
+      "Top MERN Stack, Next.js and Technical SEO agency in Delhi NCR. Building fast, scalable websites that rank on Google.",
 
     siteName: SITE_NAME,
 
@@ -99,16 +102,19 @@ export const metadata = {
 
     creator: SITE_TWITTER,
 
-    title: "MERN Stack, Next.js & Technical SEO Company | Kraviona",
+    title: "Kraviona Tech Solutions | Web Dev & SEO Delhi NCR",
 
     description:
-      "MERN stack products, Next.js websites, backend APIs, and technical SEO systems for cleaner digital growth.",
+      "Expert Next.js development and Technical SEO for growth-focused businesses in Delhi NCR.",
 
     images: [DEFAULT_OG_IMAGE],
   },
 
   alternates: {
     canonical: SITE_URL,
+    languages: {
+      "en-IN": SITE_URL,
+    },
     types: {
       "application/rss+xml": `${SITE_URL}/rss.xml`,
       "text/plain": `${SITE_URL}/llms.txt`,
@@ -117,11 +123,17 @@ export const metadata = {
 
   icons: {
     icon: [
-      { url: "/favicon.ico", sizes: "any" },
-      { url: "/favicon-32x32.png", type: "image/png", sizes: "32x32" },
-      { url: "/favicon-16x16.png", type: "image/png", sizes: "16x16" },
+      { url: "/favicon.ico", sizes: "32x32", type: "image/x-icon" },
+      { url: "/icon-192.png", type: "image/png", sizes: "192x192" },
+      { url: "/icon-512.png", type: "image/png", sizes: "512x512" },
     ],
-    apple: [{ url: "/apple-touch-icon.png" }],
+    apple: [
+      {
+        url: "/apple-touch-icon.png",
+        sizes: "180x180",
+        type: "image/png",
+      },
+    ],
   },
 
   manifest: "/site.webmanifest",
@@ -129,16 +141,28 @@ export const metadata = {
   verification: {
     google: "yYmrp2HizDB-EGRruieHxpCxHFLCqmFsQblkGULJHtc",
   },
+
+  category: "technology",
+  classification: "Web Development & SEO Services",
 };
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en" dir="ltr">
       <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
+        <link rel="dns-prefetch" href="https://cdn.kraviona.com" />
         <meta name="google-adsense-account" content="ca-pub-9100707044750397"></meta>
       </head>
 
-      <body className={`${poppins.variable} font-sans antialiased bg-gray-100`}>
+      <body className="font-sans antialiased bg-surface">
+        <a
+          href="#main-content"
+          className="sr-only fixed left-4 top-4 z-[100] rounded-lg bg-primary px-4 py-3 font-bold text-white focus:not-sr-only focus:outline-none focus:ring-4 focus:ring-accent/40"
+        >
+          Skip to main content
+        </a>
         <JsonLd
           data={[organizationSchema, localBusinessSchema, websiteSchema]}
         />
@@ -158,7 +182,7 @@ export default function RootLayout({ children }) {
 
         <Header />
 
-        <main>{children}</main>
+        <main id="main-content">{children}</main>
 
         <Footer />
 

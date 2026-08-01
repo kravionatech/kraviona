@@ -68,7 +68,7 @@ const LatestBlog = ({ initialPosts = [] }) => {
 
   return (
     <section
-      className="py-20 md:py-28 bg-[#FAFCFC] relative overflow-hidden"
+      className="py-20 md:py-28 bg-[#F5F7F8] relative overflow-hidden"
       aria-labelledby="blog-heading"
     >
       {/* Background decorative blobs */}
@@ -76,8 +76,8 @@ const LatestBlog = ({ initialPosts = [] }) => {
         className="absolute inset-0 overflow-hidden pointer-events-none z-0"
         aria-hidden="true"
       >
-        <div className="absolute top-[-8%] right-[-4%] w-[36rem] h-[36rem] bg-[#f4be78]/12 rounded-full blur-[110px]" />
-        <div className="absolute bottom-[-8%] left-[-4%] w-[30rem] h-[30rem] bg-[#295c5e]/8 rounded-full blur-[110px]" />
+        <div className="absolute top-[-8%] right-[-4%] w-[36rem] h-[36rem] bg-[#F28C5E]/12 rounded-full blur-[110px]" />
+        <div className="absolute bottom-[-8%] left-[-4%] w-[30rem] h-[30rem] bg-[#2A4A52]/8 rounded-full blur-[110px]" />
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -90,22 +90,22 @@ const LatestBlog = ({ initialPosts = [] }) => {
           className="flex flex-col md:flex-row md:items-end justify-between mb-12 md:mb-16 gap-8"
         >
           <div className="max-w-2xl">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#d96c4e]/8 border border-[#d96c4e]/18 mb-5">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#E8622A]/8 border border-[#E8622A]/18 mb-5">
               <PenTool
-                className="w-3.5 h-3.5 text-[#d96c4e]"
+                className="w-3.5 h-3.5 text-[#E8622A]"
                 aria-hidden="true"
               />
-              <span className="text-[#d96c4e] font-bold tracking-widest text-[11px] uppercase">
+              <span className="text-[#E8622A] font-bold tracking-widest text-[11px] uppercase">
                 Our Insights
               </span>
             </div>
 
             <h2
               id="blog-heading"
-              className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.25rem] font-extrabold text-[#111A1F] tracking-tight mb-4 leading-[1.1]"
+              className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.25rem] font-extrabold text-[#1A2E33] tracking-tight mb-4 leading-[1.1]"
             >
               Tech &amp;{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#295c5e] to-[#d96c4e]">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#2A4A52] to-[#E8622A]">
                 Resources
               </span>
             </h2>
@@ -118,7 +118,7 @@ const LatestBlog = ({ initialPosts = [] }) => {
           <div className="flex-shrink-0">
             <Link
               href="/blog"
-              className="group flex items-center justify-center gap-2.5 px-7 py-3.5 bg-[#295c5e] text-white rounded-full font-semibold shadow-sm hover:shadow-[0_4px_20px_rgba(41,92,94,0.35)] hover:bg-[#1f4546] hover:-translate-y-0.5 transition-all duration-300 text-sm"
+              className="group flex items-center justify-center gap-2.5 px-7 py-3.5 bg-[#2A4A52] text-white rounded-full font-semibold shadow-sm hover:shadow-[0_4px_20px_rgba(42,74,82,0.35)] hover:bg-[#3D6B77] hover:-translate-y-0.5 transition-all duration-300 text-sm"
               aria-label="View all blog posts"
             >
               View All Posts
@@ -138,10 +138,10 @@ const LatestBlog = ({ initialPosts = [] }) => {
             aria-busy="true"
           >
             <div className="relative mb-5">
-              <div className="absolute inset-0 bg-[#295c5e] blur-xl opacity-15 rounded-full animate-pulse" />
+              <div className="absolute inset-0 bg-[#2A4A52] blur-xl opacity-15 rounded-full animate-pulse" />
               <Loader2
                 size={44}
-                className="animate-spin text-[#295c5e] relative z-10"
+                className="animate-spin text-[#2A4A52] relative z-10"
               />
             </div>
             <p className="font-medium text-gray-400 tracking-wide text-sm animate-pulse">

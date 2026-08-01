@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Swal from "sweetalert2";
@@ -113,6 +113,7 @@ const LeadGenerationPopup = () => {
     success: "",
     error: "",
   });
+  const dialogRef = useRef(null);
 
   const serviceLabel = useMemo(
     () => getServiceFromPath(pathname) || "your service requirement",
@@ -127,7 +128,12 @@ const LeadGenerationPopup = () => {
   }, [pathname]);
 
   useEffect(() => {
-    if (!shouldShowOnPage) return undefined;
+    if (
+      !shouldShowOnPage ||
+      window.matchMedia("(max-width: 767px)").matches
+    ) {
+      return undefined;
+    }
 
     const timer = window.setTimeout(() => {
       setIsOpen(true);
@@ -139,6 +145,61 @@ const LeadGenerationPopup = () => {
   const closePopup = () => {
     setIsOpen(false);
   };
+
+  useEffect(() => {
+    if (!isOpen) return undefined;
+
+    const previouslyFocused = document.activeElement;
+    const focusableSelector = [
+      "a[href]",
+      "button:not([disabled])",
+      "input:not([disabled])",
+      "select:not([disabled])",
+      "textarea:not([disabled])",
+      '[tabindex]:not([tabindex="-1"])',
+    ].join(", ");
+
+    const handleKeyDown = (event) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        setIsOpen(false);
+        return;
+      }
+
+      if (event.key !== "Tab") return;
+
+      const focusable = Array.from(
+        dialogRef.current?.querySelectorAll(focusableSelector) || [],
+      );
+      if (!focusable.length) return;
+
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+
+    const focusFrame = window.requestAnimationFrame(() => {
+      dialogRef.current?.querySelector(focusableSelector)?.focus();
+    });
+
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.cancelAnimationFrame(focusFrame);
+      document.removeEventListener("keydown", handleKeyDown);
+
+      if (previouslyFocused instanceof HTMLElement && previouslyFocused.isConnected) {
+        previouslyFocused.focus();
+      }
+    };
+  }, [isOpen]);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -186,7 +247,7 @@ const LeadGenerationPopup = () => {
         text:
           data.message ||
           "Thanks. Kraviona team will contact you shortly.",
-        confirmButtonColor: "#d96c4e",
+        confirmButtonColor: "#E8622A",
       });
       setIsOpen(false);
     } catch (error) {
@@ -203,7 +264,7 @@ const LeadGenerationPopup = () => {
         text:
           error.message ||
           "Something went wrong. Please try again or contact us directly.",
-        confirmButtonColor: "#d96c4e",
+        confirmButtonColor: "#E8622A",
       });
     }
   };
@@ -211,44 +272,54 @@ const LeadGenerationPopup = () => {
   if (!shouldShowOnPage || !isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[80] flex items-center justify-center bg-[#081314]/70 px-4 py-6 backdrop-blur-sm">
-      <div className="relative max-h-[92vh] w-full max-w-6xl overflow-y-auto rounded-2xl border border-white/15 bg-white shadow-[0_28px_80px_-24px_rgba(8,19,20,0.55)]">
+    <div className="fixed inset-0 z-[80] flex items-center justify-center bg-[#1A2E33]/70 px-4 py-6 backdrop-blur-sm">
+      <div
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="lead-form-title"
+        aria-describedby="lead-form-description"
+        className="relative max-h-[92vh] w-full max-w-6xl overflow-y-auto rounded-2xl border border-white/15 bg-white shadow-[0_28px_80px_-24px_rgba(26,46,51,0.55)]"
+      >
         <button
           type="button"
           onClick={closePopup}
           aria-label="Close lead form"
-          className="absolute right-4 top-4 z-10 flex h-10 w-10 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-500 transition-colors hover:border-[#d96c4e]/50 hover:bg-[#d96c4e] hover:text-white"
+          className="absolute right-4 top-4 z-10 flex h-11 w-11 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-500 transition-colors hover:border-[#E8622A]/50 hover:bg-[#E8622A] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E8622A]/35"
         >
           <X className="h-4 w-4" />
         </button>
 
         <div className="grid grid-cols-1 lg:grid-cols-[0.82fr_1.18fr]">
-          <div className="bg-[#0f2425] p-6 text-white sm:p-7">
-            <span className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-[#f4be78]">
+          <div className="bg-[#2A4A52] p-6 text-white sm:p-7">
+            <span className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-[#F28C5E]">
               <BriefcaseBusiness className="h-3.5 w-3.5" />
               Service Lead
             </span>
-            <h2 className="text-2xl font-black leading-tight sm:text-3xl">
+            <h2 id="lead-form-title" className="text-2xl font-black leading-tight sm:text-3xl">
               Need help with {serviceLabel}?
             </h2>
-            <p className="mt-4 text-sm leading-relaxed text-[#c5d3d4]">
+            <p
+              id="lead-form-description"
+              className="mt-4 text-sm leading-relaxed text-[#D6E0E2]"
+            >
               Share your requirement and we will review the project context
               before contacting you.
             </p>
-            <div className="mt-6 space-y-3 text-sm text-[#d9e4e5]">
+            <div className="mt-6 space-y-3 text-sm text-[#D6E0E2]">
               {[
                 "Clear response within one business day",
                 "Service-specific discussion, no generic pitch",
                 "WhatsApp, call, or email follow-up",
               ].map((item) => (
                 <p key={item} className="flex items-start gap-2">
-                  <CheckCircle2 className="mt-0.5 h-4 w-4 flex-shrink-0 text-[#f4be78]" />
+                  <CheckCircle2 className="mt-0.5 h-4 w-4 flex-shrink-0 text-[#F28C5E]" />
                   <span>{item}</span>
                 </p>
               ))}
             </div>
             <div className="mt-7 rounded-xl border border-white/10 bg-white/5 p-4">
-              <p className="text-xs font-bold uppercase tracking-widest text-[#f4be78]">
+              <p className="text-xs font-bold uppercase tracking-widest text-[#F28C5E]">
                 Direct Contact
               </p>
               <a
@@ -270,10 +341,10 @@ const LeadGenerationPopup = () => {
 
           <form onSubmit={handleSubmit} className="space-y-4 p-6 sm:p-7">
             <div className="pr-12">
-              <p className="text-xs font-black uppercase tracking-[0.18em] text-[#d96c4e]">
+              <p className="text-xs font-black uppercase tracking-[0.18em] text-[#E8622A]">
                 Quick Inquiry
               </p>
-              <h3 className="mt-2 text-xl font-black text-[#111A1F]">
+              <h3 className="mt-2 text-xl font-black text-[#1A2E33]">
                 Tell us what you need
               </h3>
             </div>
@@ -282,7 +353,7 @@ const LeadGenerationPopup = () => {
               <span className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-gray-500">
                 Full Name
               </span>
-              <span className="flex items-center gap-2 rounded-xl border border-gray-200 bg-[#FAFCFC] px-4 py-3 focus-within:border-[#295c5e] focus-within:ring-2 focus-within:ring-[#295c5e]/15">
+              <span className="flex items-center gap-2 rounded-xl border border-gray-200 bg-[#F5F7F8] px-4 py-3 focus-within:border-[#2A4A52] focus-within:ring-2 focus-within:ring-[#2A4A52]/15">
                 <User className="h-4 w-4 flex-shrink-0 text-gray-400" />
                 <input
                   name="name"
@@ -290,7 +361,7 @@ const LeadGenerationPopup = () => {
                   onChange={handleChange}
                   required
                   placeholder="Your name"
-                  className="w-full bg-transparent text-sm font-medium text-[#111A1F] outline-none placeholder:text-gray-400"
+                  className="w-full bg-transparent text-sm font-medium text-[#1A2E33] outline-none placeholder:text-gray-400"
                 />
               </span>
             </label>
@@ -307,7 +378,7 @@ const LeadGenerationPopup = () => {
                   onChange={handleChange}
                   required
                   placeholder="you@example.com"
-                  className="w-full rounded-xl border border-gray-200 bg-[#FAFCFC] px-4 py-3 text-sm font-medium text-[#111A1F] outline-none transition focus:border-[#295c5e] focus:ring-2 focus:ring-[#295c5e]/15"
+                  className="w-full rounded-xl border border-gray-200 bg-[#F5F7F8] px-4 py-3 text-sm font-medium text-[#1A2E33] outline-none transition focus:border-[#2A4A52] focus:ring-2 focus:ring-[#2A4A52]/15"
                 />
               </label>
               <label className="block">
@@ -321,7 +392,7 @@ const LeadGenerationPopup = () => {
                   onChange={handleChange}
                   required
                   placeholder="+91..."
-                  className="w-full rounded-xl border border-gray-200 bg-[#FAFCFC] px-4 py-3 text-sm font-medium text-[#111A1F] outline-none transition focus:border-[#295c5e] focus:ring-2 focus:ring-[#295c5e]/15"
+                  className="w-full rounded-xl border border-gray-200 bg-[#F5F7F8] px-4 py-3 text-sm font-medium text-[#1A2E33] outline-none transition focus:border-[#2A4A52] focus:ring-2 focus:ring-[#2A4A52]/15"
                 />
               </label>
             </div>
@@ -335,7 +406,7 @@ const LeadGenerationPopup = () => {
                   name="service"
                   value={form.service}
                   onChange={handleChange}
-                  className="w-full rounded-xl border border-gray-200 bg-[#FAFCFC] px-4 py-3 text-sm font-medium text-[#111A1F] outline-none transition focus:border-[#295c5e] focus:ring-2 focus:ring-[#295c5e]/15"
+                  className="w-full rounded-xl border border-gray-200 bg-[#F5F7F8] px-4 py-3 text-sm font-medium text-[#1A2E33] outline-none transition focus:border-[#2A4A52] focus:ring-2 focus:ring-[#2A4A52]/15"
                 >
                   {SERVICE_OPTIONS.map((service) => (
                     <option key={service} value={service}>
@@ -352,7 +423,7 @@ const LeadGenerationPopup = () => {
                   name="budget"
                   value={form.budget}
                   onChange={handleChange}
-                  className="w-full rounded-xl border border-gray-200 bg-[#FAFCFC] px-4 py-3 text-sm font-medium text-[#111A1F] outline-none transition focus:border-[#295c5e] focus:ring-2 focus:ring-[#295c5e]/15"
+                  className="w-full rounded-xl border border-gray-200 bg-[#F5F7F8] px-4 py-3 text-sm font-medium text-[#1A2E33] outline-none transition focus:border-[#2A4A52] focus:ring-2 focus:ring-[#2A4A52]/15"
                 >
                   {BUDGET_OPTIONS.map((budget) => (
                     <option key={budget} value={budget}>
@@ -372,7 +443,7 @@ const LeadGenerationPopup = () => {
                 value={form.company}
                 onChange={handleChange}
                 placeholder="Company or website"
-                className="w-full rounded-xl border border-gray-200 bg-[#FAFCFC] px-4 py-3 text-sm font-medium text-[#111A1F] outline-none transition focus:border-[#295c5e] focus:ring-2 focus:ring-[#295c5e]/15"
+                className="w-full rounded-xl border border-gray-200 bg-[#F5F7F8] px-4 py-3 text-sm font-medium text-[#1A2E33] outline-none transition focus:border-[#2A4A52] focus:ring-2 focus:ring-[#2A4A52]/15"
               />
             </label>
 
@@ -380,7 +451,7 @@ const LeadGenerationPopup = () => {
               <span className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-gray-500">
                 Requirement
               </span>
-              <span className="flex items-start gap-2 rounded-xl border border-gray-200 bg-[#FAFCFC] px-4 py-3 focus-within:border-[#295c5e] focus-within:ring-2 focus-within:ring-[#295c5e]/15">
+              <span className="flex items-start gap-2 rounded-xl border border-gray-200 bg-[#F5F7F8] px-4 py-3 focus-within:border-[#2A4A52] focus-within:ring-2 focus-within:ring-[#2A4A52]/15">
                 <MessageSquareText className="mt-0.5 h-4 w-4 flex-shrink-0 text-gray-400" />
                 <textarea
                   name="message"
@@ -389,13 +460,15 @@ const LeadGenerationPopup = () => {
                   required
                   rows={3}
                   placeholder="Tell us about your goal, timeline, or current issue."
-                  className="w-full resize-none bg-transparent text-sm font-medium text-[#111A1F] outline-none placeholder:text-gray-400"
+                  className="w-full resize-none bg-transparent text-sm font-medium text-[#1A2E33] outline-none placeholder:text-gray-400"
                 />
               </span>
             </label>
 
             {(status.success || status.error) && (
               <p
+                role={status.error ? "alert" : "status"}
+                aria-live="polite"
                 className={`rounded-xl px-4 py-3 text-sm font-semibold ${
                   status.success
                     ? "bg-green-50 text-green-700"
@@ -409,7 +482,7 @@ const LeadGenerationPopup = () => {
             <button
               type="submit"
               disabled={status.loading}
-              className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#d96c4e] px-5 py-3.5 text-sm font-black uppercase tracking-widest text-white transition-all hover:bg-[#c25e41] disabled:cursor-not-allowed disabled:bg-gray-400"
+              className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#E8622A] px-5 py-3.5 text-sm font-black uppercase tracking-widest text-white transition-all hover:bg-[#B84A1A] disabled:cursor-not-allowed disabled:bg-gray-400"
             >
               {status.loading ? "Sending..." : "Send Lead Request"}
               {!status.loading && <ArrowRight className="h-4 w-4" />}
@@ -419,7 +492,7 @@ const LeadGenerationPopup = () => {
               By submitting, you agree to our{" "}
               <Link
                 href="/privacy-policy"
-                className="font-semibold text-[#d96c4e] hover:underline"
+                className="font-semibold text-[#E8622A] hover:underline"
               >
                 Privacy Policy
               </Link>

@@ -12,7 +12,7 @@ export default function LegalDocumentPage({
   relatedLabel,
 }) {
   return (
-    <main className="min-h-screen bg-[#071314] text-white">
+    <section className="min-h-screen bg-[#1A2E33] text-white">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
@@ -23,8 +23,8 @@ export default function LegalDocumentPage({
           className="absolute inset-0 pointer-events-none"
           aria-hidden="true"
         >
-          <div className="absolute top-0 right-0 h-80 w-80 rounded-full bg-[#d96c4e]/12 blur-3xl" />
-          <div className="absolute bottom-0 left-0 h-96 w-96 rounded-full bg-[#295c5e]/25 blur-3xl" />
+          <div className="absolute top-0 right-0 h-80 w-80 rounded-full bg-[#E8622A]/12 blur-3xl" />
+          <div className="absolute bottom-0 left-0 h-96 w-96 rounded-full bg-[#2A4A52]/25 blur-3xl" />
           <div
             className="absolute inset-0 opacity-[0.035]"
             style={{
@@ -36,34 +36,34 @@ export default function LegalDocumentPage({
         </div>
 
         <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <nav aria-label="Breadcrumb" className="mb-8 text-sm text-[#8ba5a6]">
+          <nav aria-label="Breadcrumb" className="mb-8 text-sm text-[#8FA8B0]">
             <ol className="flex flex-wrap items-center gap-2">
               <li>
                 <Link
                   href="/"
-                  className="hover:text-[#f4be78] transition-colors"
+                  className="hover:text-[#F28C5E] transition-colors"
                 >
                   Home
                 </Link>
               </li>
               <li aria-hidden="true">/</li>
-              <li className="text-[#f4be78]" aria-current="page">
+              <li className="text-[#F28C5E]" aria-current="page">
                 {title}
               </li>
             </ol>
           </nav>
 
           <div className="max-w-4xl">
-            <p className="mb-4 text-[11px] font-black uppercase tracking-[0.28em] text-[#f4be78]">
+            <p className="mb-4 text-[11px] font-black uppercase tracking-[0.28em] text-[#F28C5E]">
               {eyebrow}
             </p>
             <h1 className="text-4xl font-black leading-tight tracking-tight sm:text-5xl lg:text-6xl">
               {title}
-              <span className="block pt-3 text-2xl text-[#d96c4e] sm:text-3xl">
+              <span className="block pt-3 text-2xl text-[#E8622A] sm:text-3xl">
                 {hindiTitle}
               </span>
             </h1>
-            <p className="mt-6 max-w-3xl text-base leading-8 text-[#b8c8c9] md:text-lg">
+            <p className="mt-6 max-w-3xl text-base leading-8 text-[#8FA8B0] md:text-lg">
               {description}
             </p>
           </div>
@@ -71,19 +71,19 @@ export default function LegalDocumentPage({
           <div className="mt-8 flex flex-wrap items-center gap-3">
             <a
               href="#english"
-              className="rounded-full border border-white/10 bg-white/[0.08] px-4 py-2 text-sm font-semibold text-white hover:border-[#f4be78]/50 hover:text-[#f4be78] transition-colors"
+              className="rounded-full border border-white/10 bg-white/[0.08] px-4 py-2 text-sm font-semibold text-white hover:border-[#F28C5E]/50 hover:text-[#F28C5E] transition-colors"
             >
               English
             </a>
             <a
               href="#hindi"
-              className="rounded-full border border-white/10 bg-white/[0.08] px-4 py-2 text-sm font-semibold text-white hover:border-[#f4be78]/50 hover:text-[#f4be78] transition-colors"
+              className="rounded-full border border-white/10 bg-white/[0.08] px-4 py-2 text-sm font-semibold text-white hover:border-[#F28C5E]/50 hover:text-[#F28C5E] transition-colors"
             >
               Hindi
             </a>
             <a
               href="#contents"
-              className="rounded-full border border-[#d96c4e]/35 bg-[#d96c4e]/12 px-4 py-2 text-sm font-semibold text-[#f4be78] hover:bg-[#d96c4e]/20 transition-colors"
+              className="rounded-full border border-[#E8622A]/35 bg-[#E8622A]/12 px-4 py-2 text-sm font-semibold text-[#F28C5E] hover:bg-[#E8622A]/20 transition-colors"
             >
               Contents
             </a>
@@ -91,15 +91,15 @@ export default function LegalDocumentPage({
 
           <dl className="mt-10 grid gap-4 text-sm sm:grid-cols-3">
             <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-5">
-              <dt className="text-[#7ea0a1]">Effective Date</dt>
+              <dt className="text-[#8FA8B0]">Effective Date</dt>
               <dd className="mt-1 font-bold text-white">June 1, 2025</dd>
             </div>
             <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-5">
-              <dt className="text-[#7ea0a1]">Last Updated</dt>
+              <dt className="text-[#8FA8B0]">Last Updated</dt>
               <dd className="mt-1 font-bold text-white">June 1, 2025</dd>
             </div>
             <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-5">
-              <dt className="text-[#7ea0a1]">Canonical</dt>
+              <dt className="text-[#8FA8B0]">Canonical</dt>
               <dd className="mt-1 break-all font-bold text-white">
                 {canonical}
               </dd>
@@ -108,13 +108,13 @@ export default function LegalDocumentPage({
         </div>
       </section>
 
-      <section className="border-y border-white/10 bg-[#0f2425]" id="contents">
+      <section className="border-y border-white/10 bg-[#2A4A52]" id="contents">
         <div className="mx-auto grid max-w-7xl gap-8 px-4 py-8 sm:px-6 lg:grid-cols-[280px_1fr] lg:px-8">
           <aside className="lg:sticky lg:top-28 lg:h-fit">
-            <p className="mb-4 text-[11px] font-black uppercase tracking-[0.24em] text-[#d96c4e]">
+            <p className="mb-4 text-[11px] font-black uppercase tracking-[0.24em] text-[#E8622A]">
               Internal Navigation
             </p>
-            <ol className="space-y-2 text-sm text-[#b8c8c9]">
+            <ol className="space-y-2 text-sm text-[#8FA8B0]">
               {sections.map((section, idx) => (
                 <li key={`${section.id}-${idx}`}>
                   <a
@@ -139,12 +139,12 @@ export default function LegalDocumentPage({
               <section
                 key={`${section.id}-${idx}`}
                 id={section.id}
-                className="scroll-mt-28 rounded-2xl border border-white/10 bg-[#071314]/70 p-6 shadow-2xl shadow-black/10 md:p-8"
+                className="scroll-mt-28 rounded-2xl border border-white/10 bg-[#1A2E33]/70 p-6 shadow-2xl shadow-black/10 md:p-8"
               >
-                <p className="mb-3 text-[10px] font-black uppercase tracking-[0.22em] text-[#d96c4e]">
+                <p className="mb-3 text-[10px] font-black uppercase tracking-[0.22em] text-[#E8622A]">
                   Section {idx + 1}
                 </p>
-                <h2 className="text-2xl font-black text-[#f4be78] md:text-3xl">
+                <h2 className="text-2xl font-black text-[#F28C5E] md:text-3xl">
                   {section.title}
                 </h2>
                 {section.hindiTitle && (
@@ -152,7 +152,7 @@ export default function LegalDocumentPage({
                     {section.hindiTitle}
                   </p>
                 )}
-                <div className="mt-5 space-y-4 text-[15px] leading-7 text-[#cbd6d7]">
+                <div className="mt-5 space-y-4 text-[15px] leading-7 text-[#D6E0E2]">
                   {section.body.map((paragraph, paragraphIdx) => (
                     <p key={`${section.id}-p-${paragraphIdx}`}>{paragraph}</p>
                   ))}
@@ -165,7 +165,7 @@ export default function LegalDocumentPage({
                         className="rounded-xl border border-white/10 bg-white/[0.04] p-4"
                       >
                         <h3 className="font-bold text-white">{item.label}</h3>
-                        <p className="mt-1 text-sm leading-6 text-[#9fb4b5]">
+                        <p className="mt-1 text-sm leading-6 text-[#8FA8B0]">
                           {item.text}
                         </p>
                       </li>
@@ -175,9 +175,9 @@ export default function LegalDocumentPage({
               </section>
             ))}
 
-            <section className="rounded-2xl border border-[#d96c4e]/30 bg-[#d96c4e]/10 p-6 md:p-8">
+            <section className="rounded-2xl border border-[#E8622A]/30 bg-[#E8622A]/10 p-6 md:p-8">
               <h2 className="text-2xl font-black text-white">Need Help?</h2>
-              <p className="mt-3 text-[#f2d7c2]">
+              <p className="mt-3 text-[#FEF0E9]">
                 For questions about this document, contact Kraviona at{" "}
                 <a
                   className="font-bold text-white underline-offset-4 hover:underline"
@@ -190,20 +190,20 @@ export default function LegalDocumentPage({
               <div className="mt-6 flex flex-wrap gap-3">
                 <Link
                   href="/contact"
-                  className="rounded-full bg-[#d96c4e] px-5 py-3 text-sm font-bold text-white hover:bg-[#c25e41] transition-colors"
+                  className="rounded-full bg-[#E8622A] px-5 py-3 text-sm font-bold text-white hover:bg-[#B84A1A] transition-colors"
                 >
                   Contact Kraviona
                 </Link>
                 <Link
                   href={relatedHref}
-                  className="rounded-full border border-white/20 px-5 py-3 text-sm font-bold text-white hover:border-[#f4be78] hover:text-[#f4be78] transition-colors"
+                  className="rounded-full border border-white/20 px-5 py-3 text-sm font-bold text-white hover:border-[#F28C5E] hover:text-[#F28C5E] transition-colors"
                 >
                   {relatedLabel}
                 </Link>
                 <Link
                   href="/pdf/PRIVACY_POLICY_KRAVIONA.pdf"
                   target="_blank"
-                  className="rounded-full border border-white/20 px-5 py-3 text-sm font-bold text-white hover:border-[#f4be78] hover:text-[#f4be78] transition-colors"
+                  className="rounded-full border border-white/20 px-5 py-3 text-sm font-bold text-white hover:border-[#F28C5E] hover:text-[#F28C5E] transition-colors"
                 >
                   Download PDF
                 </Link>
@@ -212,6 +212,6 @@ export default function LegalDocumentPage({
           </article>
         </div>
       </section>
-    </main>
+    </section>
   );
 }

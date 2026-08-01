@@ -70,12 +70,12 @@ const HomeFAQ = () => {
           className="absolute inset-0 opacity-[0.022]"
           style={{
             backgroundImage:
-              "radial-gradient(#111A1F 1.5px, transparent 1.5px)",
+              "radial-gradient(#1A2E33 1.5px, transparent 1.5px)",
             backgroundSize: "26px 26px",
           }}
         />
-        <div className="absolute top-0 right-0 w-80 h-80 bg-[#d96c4e]/5 blur-3xl rounded-full" />
-        <div className="absolute bottom-0 left-0 w-72 h-72 bg-[#295c5e]/5 blur-3xl rounded-full" />
+        <div className="absolute top-0 right-0 w-80 h-80 bg-[#E8622A]/5 blur-3xl rounded-full" />
+        <div className="absolute bottom-0 left-0 w-72 h-72 bg-[#2A4A52]/5 blur-3xl rounded-full" />
       </div>
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -87,11 +87,11 @@ const HomeFAQ = () => {
             viewport={{ once: true }}
             className="inline-flex items-center gap-3 mb-5"
           >
-            <span className="w-8 h-[2px] bg-[#d96c4e]" aria-hidden="true" />
-            <span className="text-[#d96c4e] font-bold uppercase tracking-[0.2em] text-xs">
+            <span className="w-8 h-[2px] bg-[#E8622A]" aria-hidden="true" />
+            <span className="text-[#E8622A] font-bold uppercase tracking-[0.2em] text-xs">
               Got Questions?
             </span>
-            <span className="w-8 h-[2px] bg-[#d96c4e]" aria-hidden="true" />
+            <span className="w-8 h-[2px] bg-[#E8622A]" aria-hidden="true" />
           </motion.div>
 
           <motion.h2
@@ -100,10 +100,10 @@ const HomeFAQ = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-[#111A1F] tracking-tight mb-4"
+            className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-[#1A2E33] tracking-tight mb-4"
           >
             Frequently Asked{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#d96c4e] to-[#f4be78]">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#E8622A] to-[#F28C5E]">
               Questions
             </span>
           </motion.h2>
@@ -131,7 +131,7 @@ const HomeFAQ = () => {
               transition={{ delay: index * 0.055 }}
               className={`border rounded-2xl overflow-hidden transition-all duration-300 ${
                 openIndex === index
-                  ? "border-[#d96c4e]/45 shadow-[0_4px_28px_rgba(217,108,78,0.1)]"
+                  ? "border-[#E8622A]/45 shadow-[0_4px_28px_rgba(232,98,42,0.1)]"
                   : "border-gray-200 hover:border-gray-300 hover:shadow-sm"
               }`}
               itemScope
@@ -143,14 +143,14 @@ const HomeFAQ = () => {
                 id={`faq-btn-${index}`}
                 aria-expanded={openIndex === index}
                 aria-controls={`faq-answer-${index}`}
-                className="w-full flex items-center justify-between gap-4 px-6 py-5 text-left bg-white hover:bg-gray-50/50 transition-colors duration-200 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#d96c4e]/40 rounded-t-2xl"
+                className="w-full flex items-center justify-between gap-4 px-6 py-5 text-left bg-white hover:bg-gray-50/50 transition-colors duration-200 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E8622A]/40 rounded-t-2xl"
               >
                 <span
                   itemProp="name"
                   className={`font-semibold text-base md:text-[17px] leading-snug transition-colors duration-200 pr-2 ${
                     openIndex === index
-                      ? "text-[#d96c4e]"
-                      : "text-[#111A1F] group-hover:text-[#295c5e]"
+                      ? "text-[#E8622A]"
+                      : "text-[#1A2E33] group-hover:text-[#2A4A52]"
                   }`}
                 >
                   {faq.question}
@@ -158,8 +158,8 @@ const HomeFAQ = () => {
                 <div
                   className={`flex-shrink-0 w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300 ${
                     openIndex === index
-                      ? "bg-[#d96c4e] text-white"
-                      : "bg-gray-100 text-gray-500 group-hover:bg-[#f4be78]/20 group-hover:text-[#d96c4e]"
+                      ? "bg-[#E8622A] text-white"
+                      : "bg-gray-100 text-gray-500 group-hover:bg-[#F28C5E]/20 group-hover:text-[#E8622A]"
                   }`}
                   aria-hidden="true"
                 >
@@ -208,7 +208,7 @@ const HomeFAQ = () => {
           className="mt-12 md:mt-14 text-center"
         >
           <div className="inline-flex items-center gap-3 px-5 py-3 bg-gray-50 rounded-2xl border border-gray-200 mb-6">
-            <HelpCircle className="w-5 h-5 text-[#d96c4e]" aria-hidden="true" />
+            <HelpCircle className="w-5 h-5 text-[#E8622A]" aria-hidden="true" />
             <p className="text-gray-500 text-sm font-medium">
               Still have questions? We&apos;re happy to help.
             </p>
@@ -216,7 +216,7 @@ const HomeFAQ = () => {
           <div>
             <a
               href="/contact"
-              className="inline-flex items-center gap-2.5 px-8 py-4 bg-[#111A1F] text-white font-bold rounded-xl hover:bg-[#d96c4e] transition-all duration-300 shadow-sm hover:shadow-[0_6px_24px_rgba(217,108,78,0.3)] hover:-translate-y-0.5 text-sm"
+              className="inline-flex items-center gap-2.5 px-8 py-4 bg-[#1A2E33] text-white font-bold rounded-xl hover:bg-[#E8622A] transition-all duration-300 shadow-sm hover:shadow-[0_6px_24px_rgba(232,98,42,0.3)] hover:-translate-y-0.5 text-sm"
             >
               Contact Our Team
               <svg

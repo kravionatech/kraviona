@@ -164,14 +164,14 @@ const CategoryPage = async ({ params }) => {
   };
 
   return (
-    <main className="min-h-screen bg-[#f9fafb]">
+    <div className="min-h-screen bg-[#F5F7F8]">
       <JsonLd data={[breadcrumbSchema, collectionSchema]} />
       <CategoryWiseBlog
         category={category}
         initialPosts={posts}
         initialPagination={pagination}
       />
-    </main>
+    </div>
   );
 };
 

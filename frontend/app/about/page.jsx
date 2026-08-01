@@ -83,7 +83,7 @@ export const metadata = {
 
 const AboutPage = () => {
   return (
-    <main className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white">
       <JsonLd
         data={[
           aboutPageSchema,
@@ -99,7 +99,7 @@ const AboutPage = () => {
       <CoreValues />
       <TeamSection />
       <BlogCTA />
-    </main>
+    </div>
   );
 };
 

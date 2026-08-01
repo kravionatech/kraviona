@@ -2,32 +2,95 @@
 
 :root {
   color-scheme: dark;
+  --kraviona-dark: #1a2e33;
+  --kraviona-primary: #2a4a52;
+  --kraviona-primary-hover: #3d6b77;
+  --kraviona-primary-light: #5c9baa;
+  --kraviona-accent: #e8622a;
+  --kraviona-accent-hover: #f28c5e;
+  --kraviona-accent-dark: #b84a1a;
+  --kraviona-surface: #f5f7f8;
+
+  /* Legacy aliases keep older admin utility classes on the shared palette. */
+  --kraviona-ink: var(--kraviona-dark);
+  --kraviona-deep-teal: var(--kraviona-primary);
+  --kraviona-teal: var(--kraviona-primary);
+  --kraviona-teal-light: var(--kraviona-primary-light);
+  --kraviona-coral: var(--kraviona-accent);
+  --kraviona-coral-deep: var(--kraviona-accent-dark);
+  --kraviona-sand: var(--kraviona-accent-hover);
+  --kraviona-sand-light: #ffd8c8;
 }
 
 html,
 body {
-  background: #0a1018;
+  background: var(--kraviona-ink);
 }
 
 body {
-  color: #e7edf5;
+  color: var(--kraviona-surface);
 }
 
 /* Shared admin palette. Most screens use Tailwind surface utilities, so these
    scoped tokens keep every CRUD page, modal and table visually consistent. */
 .admin-shell {
-  --admin-canvas: #0a1018;
-  --admin-surface: #111b28;
-  --admin-surface-raised: #162231;
-  --admin-surface-muted: #0d1520;
-  --admin-border: rgba(148, 163, 184, 0.16);
-  --admin-text: #e7edf5;
-  --admin-text-muted: #93a4b8;
-  --admin-accent: #49b9ad;
+  --admin-canvas: var(--kraviona-ink);
+  --admin-surface: #213b42;
+  --admin-surface-raised: var(--kraviona-primary);
+  --admin-surface-muted: #20383e;
+  --admin-border: rgba(92, 155, 170, 0.32);
+  --admin-text: var(--kraviona-surface);
+  --admin-text-muted: #b4c9ce;
+  --admin-accent: var(--kraviona-coral);
   background:
-    radial-gradient(circle at 80% -10%, rgba(73, 185, 173, 0.12), transparent 30rem),
-    radial-gradient(circle at -10% 20%, rgba(210, 108, 81, 0.09), transparent 26rem),
+    radial-gradient(circle at 80% -10%, rgba(92, 155, 170, 0.18), transparent 30rem),
+    radial-gradient(circle at -10% 20%, rgba(232, 98, 42, 0.13), transparent 26rem),
     var(--admin-canvas);
+}
+
+/* Map legacy admin utility colours to the public site's logo palette. */
+.admin-shell .bg-\[\#0a1018\],
+.admin-shell .bg-\[\#08191a\],
+.admin-shell .bg-\[\#F8F9FB\],
+.admin-shell .bg-\[\#f4f6f8\],
+.admin-shell .bg-\[\#f8f9fa\] {
+  background-color: var(--admin-canvas) !important;
+}
+
+.admin-shell .bg-\[\#0d1520\],
+.admin-shell .bg-\[\#111b28\],
+.admin-shell .bg-\[\#0b2021\] {
+  background-color: var(--admin-surface-muted) !important;
+}
+
+.admin-shell .bg-\[\#162231\] {
+  background-color: var(--admin-surface-raised) !important;
+}
+
+.admin-shell .bg-\[\#235056\],
+.admin-shell .bg-\[\#284043\],
+.admin-shell .bg-\[\#295c5e\],
+.admin-shell .bg-\[\#49b9ad\] {
+  background-color: var(--kraviona-teal) !important;
+}
+
+.admin-shell .text-\[\#235056\],
+.admin-shell .text-\[\#284043\],
+.admin-shell .text-\[\#295c5e\],
+.admin-shell .text-\[\#49b9ad\] {
+  color: var(--kraviona-teal) !important;
+}
+
+.admin-shell .bg-\[\#d26c51\],
+.admin-shell .bg-\[\#d96c4e\],
+.admin-shell .bg-\[\#f0a46f\] {
+  background-color: var(--kraviona-coral) !important;
+}
+
+.admin-shell .text-\[\#d26c51\],
+.admin-shell .text-\[\#d96c4e\],
+.admin-shell .text-\[\#f0a46f\] {
+  color: var(--kraviona-coral) !important;
 }
 
 .admin-shell .bg-white,
@@ -67,12 +130,12 @@ body {
 
 .admin-shell .text-slate-700,
 .admin-shell .text-gray-700 {
-  color: #cbd6e3;
+  color: #d0e0e3;
 }
 
 .admin-shell .text-slate-600,
 .admin-shell .text-gray-600 {
-  color: #aebdce;
+  color: #a4babb;
 }
 
 .admin-shell .text-slate-500,
@@ -82,7 +145,7 @@ body {
 
 .admin-shell .text-slate-400,
 .admin-shell .text-gray-400 {
-  color: #728399;
+  color: #89abb3;
 }
 
 .admin-shell input,
@@ -95,19 +158,19 @@ body {
 
 .admin-shell input::placeholder,
 .admin-shell textarea::placeholder {
-  color: #64748b;
+  color: #8eabb1;
 }
 
 .admin-shell select option {
   color: var(--admin-text);
-  background-color: #111b28;
+  background-color: var(--admin-surface);
 }
 
 .admin-shell input:focus,
 .admin-shell textarea:focus,
 .admin-shell select:focus {
-  border-color: rgba(112, 210, 199, 0.75);
-  box-shadow: 0 0 0 3px rgba(73, 185, 173, 0.13);
+  border-color: rgba(242, 140, 94, 0.8);
+  box-shadow: 0 0 0 3px rgba(242, 140, 94, 0.16);
 }
 
 .admin-shell .bg-blue-50,
@@ -119,7 +182,24 @@ body {
 .admin-shell .bg-red-50,
 .admin-shell .bg-orange-50,
 .admin-shell .bg-teal-50 {
-  background-color: rgba(30, 41, 59, 0.72);
+  background-color: rgba(42, 74, 82, 0.72);
+}
+
+.admin-shell .text-blue-700,
+.admin-shell .text-cyan-700,
+.admin-shell .text-teal-700,
+.admin-shell .text-emerald-700 {
+  color: #c6e1e6;
+}
+
+.admin-shell .text-violet-700,
+.admin-shell .text-amber-700 {
+  color: var(--kraviona-sand-light);
+}
+
+.admin-shell .text-rose-700,
+.admin-shell .text-orange-700 {
+  color: var(--kraviona-accent-hover);
 }
 
 .admin-shell .shadow-sm,
@@ -141,10 +221,10 @@ body {
   background: var(--admin-surface-muted);
 }
 
-.admin-shell .ql-snow .ql-stroke { stroke: #aebdce; }
-.admin-shell .ql-snow .ql-fill { fill: #aebdce; }
-.admin-shell .ql-snow .ql-picker { color: #aebdce; }
-.admin-shell .ql-snow .ql-picker-options { background: #111b28; border-color: var(--admin-border); }
+.admin-shell .ql-snow .ql-stroke { stroke: #b8c8c9; }
+.admin-shell .ql-snow .ql-fill { fill: #b8c8c9; }
+.admin-shell .ql-snow .ql-picker { color: #b8c8c9; }
+.admin-shell .ql-snow .ql-picker-options { background: var(--admin-surface); border-color: var(--admin-border); }
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
@@ -163,7 +243,7 @@ body {
 .ProseMirror p.is-editor-empty:first-child::before {
   content: attr(data-placeholder);
   float: left;
-  color: #9ca3af;
+  color: #9bb7be;
   pointer-events: none;
   height: 0;
 }
@@ -174,13 +254,13 @@ body {
 }
 
 .ProseMirror blockquote {
-  border-left: 4px solid #49b9ad;
+  border-left: 4px solid var(--kraviona-coral);
   padding-left: 16px;
-  color: #aebdce;
+  color: #c8dbe0;
 }
 
 .ProseMirror pre {
-  background: #111827;
+  background: var(--admin-surface-muted);
   color: #f9fafb;
   padding: 16px;
   border-radius: 10px;
@@ -206,7 +286,7 @@ body {
 }
 
 .ProseMirror th {
-  background: #162231;
+  background: var(--kraviona-primary);
   font-weight: bold;
 }
 

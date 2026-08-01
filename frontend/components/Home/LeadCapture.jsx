@@ -33,13 +33,13 @@ const LeadCapture = () => {
 
   return (
     <section
-      className="py-20 md:py-24 bg-gradient-to-br from-[#0b1e20] via-[#0f2425] to-[#071314] relative overflow-hidden border-y border-white/5"
+      className="py-20 md:py-24 bg-gradient-to-br from-[#1A2E33] via-[#2A4A52] to-[#1A2E33] relative overflow-hidden border-y border-white/5"
       aria-labelledby="lead-capture-heading"
     >
       {/* Background decorative */}
       <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
-        <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-[#d96c4e]/6 rounded-full blur-[120px]" />
-        <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] bg-[#295c5e]/12 rounded-full blur-[100px]" />
+        <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-[#E8622A]/6 rounded-full blur-[120px]" />
+        <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] bg-[#2A4A52]/12 rounded-full blur-[100px]" />
       </div>
 
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -51,9 +51,9 @@ const LeadCapture = () => {
             viewport={{ once: true }}
             transition={{ duration: 0.7 }}
           >
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#d96c4e]/12 border border-[#d96c4e]/25 backdrop-blur-sm mb-6">
-              <Sparkles className="w-4 h-4 text-[#f4be78]" aria-hidden="true" />
-              <span className="text-[#f4be78] text-xs font-bold uppercase tracking-widest">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#E8622A]/12 border border-[#E8622A]/25 backdrop-blur-sm mb-6">
+              <Sparkles className="w-4 h-4 text-[#F28C5E]" aria-hidden="true" />
+              <span className="text-[#F28C5E] text-xs font-bold uppercase tracking-widest">
                 Free SEO Audit
               </span>
             </div>
@@ -63,7 +63,7 @@ const LeadCapture = () => {
               className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white mb-5 leading-[1.1] tracking-tight"
             >
               Get Your Free{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#f4be78] to-[#d96c4e]">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#F28C5E] to-[#E8622A]">
                 SEO Audit
               </span>{" "}
               Report
@@ -82,7 +82,7 @@ const LeadCapture = () => {
                   className="flex items-start gap-3 text-gray-300 text-sm font-medium"
                 >
                   <CheckCircle
-                    className="w-5 h-5 text-[#f4be78] flex-shrink-0 mt-0.5"
+                    className="w-5 h-5 text-[#F28C5E] flex-shrink-0 mt-0.5"
                     aria-hidden="true"
                   />
                   {perk}
@@ -100,8 +100,8 @@ const LeadCapture = () => {
           >
             {submitted ? (
               <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-10 text-center">
-                <div className="w-16 h-16 rounded-full bg-[#f4be78]/15 flex items-center justify-center mx-auto mb-5">
-                  <CheckCircle className="w-8 h-8 text-[#f4be78]" />
+                <div className="w-16 h-16 rounded-full bg-[#F28C5E]/15 flex items-center justify-center mx-auto mb-5">
+                  <CheckCircle className="w-8 h-8 text-[#F28C5E]" />
                 </div>
                 <h3 className="text-2xl font-extrabold text-white mb-3">
                   Request Received!
@@ -115,7 +115,7 @@ const LeadCapture = () => {
             ) : (
               <form
                 onSubmit={handleSubmit}
-                className="bg-white/[0.04] backdrop-blur-md border border-white/10 rounded-3xl p-8 md:p-10 shadow-[0_24px_60px_rgba(0,0,0,0.25)]"
+                className="bg-white/[0.04] backdrop-blur-md border border-white/10 rounded-3xl p-8 md:p-10 shadow-[0_24px_60px_rgba(42,74,82,0.25)]"
                 aria-label="Free SEO audit request form"
                 noValidate
               >
@@ -138,7 +138,7 @@ const LeadCapture = () => {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="you@company.com"
-                      className="w-full bg-white/5 border border-white/10 focus:border-[#d96c4e]/50 rounded-xl px-4 py-3.5 text-white placeholder:text-gray-500 text-sm outline-none transition-all duration-200 focus:bg-white/8 focus:ring-2 focus:ring-[#d96c4e]/20"
+                      className="w-full bg-white/5 border border-white/10 focus:border-[#E8622A]/50 rounded-xl px-4 py-3.5 text-white placeholder:text-gray-500 text-sm outline-none transition-all duration-200 focus:bg-white/8 focus:ring-2 focus:ring-[#E8622A]/20"
                       aria-required="true"
                     />
                   </div>
@@ -156,7 +156,7 @@ const LeadCapture = () => {
                       value={website}
                       onChange={(e) => setWebsite(e.target.value)}
                       placeholder="https://yourwebsite.com"
-                      className="w-full bg-white/5 border border-white/10 focus:border-[#d96c4e]/50 rounded-xl px-4 py-3.5 text-white placeholder:text-gray-500 text-sm outline-none transition-all duration-200 focus:bg-white/8 focus:ring-2 focus:ring-[#d96c4e]/20"
+                      className="w-full bg-white/5 border border-white/10 focus:border-[#E8622A]/50 rounded-xl px-4 py-3.5 text-white placeholder:text-gray-500 text-sm outline-none transition-all duration-200 focus:bg-white/8 focus:ring-2 focus:ring-[#E8622A]/20"
                     />
                   </div>
 
@@ -164,7 +164,7 @@ const LeadCapture = () => {
                     type="submit"
                     disabled={isSubmitting}
                     id="audit-submit-btn"
-                    className="w-full flex items-center justify-center gap-2.5 px-6 py-4 bg-gradient-to-r from-[#d96c4e] to-[#c25e41] text-white font-bold rounded-xl hover:shadow-[0_6px_24px_rgba(217,108,78,0.45)] transition-all duration-300 hover:-translate-y-0.5 disabled:opacity-60 disabled:pointer-events-none text-sm mt-2"
+                    className="w-full flex items-center justify-center gap-2.5 px-6 py-4 bg-gradient-to-r from-[#E8622A] to-[#B84A1A] text-white font-bold rounded-xl hover:shadow-[0_6px_24px_rgba(232,98,42,0.45)] transition-all duration-300 hover:-translate-y-0.5 disabled:opacity-60 disabled:pointer-events-none text-sm mt-2"
                     aria-label="Get my free SEO audit"
                   >
                     {isSubmitting ? (

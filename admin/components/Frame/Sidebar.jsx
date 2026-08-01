@@ -44,19 +44,19 @@ export default function Sidebar({ onLogout, isOpen, onClose }) {
       {isOpen && (
         <button
           type="button"
-          className="fixed inset-0 z-30 bg-black/70 backdrop-blur-sm lg:hidden"
+          className="fixed inset-0 z-30 bg-[#1a2e33]/75 backdrop-blur-sm lg:hidden"
           onClick={onClose}
           aria-label="Close navigation"
         />
       )}
       <aside
-        className={`fixed inset-y-0 left-0 z-40 flex w-[280px] flex-col overflow-hidden border-r border-white/[0.08] bg-[#0d1520] text-white shadow-2xl shadow-black/30 transition-transform duration-300 lg:static lg:translate-x-0 lg:shadow-none ${
+        className={`fixed inset-y-0 left-0 z-40 flex w-[280px] flex-col overflow-hidden border-r border-white/[0.08] bg-[#20383e] text-white shadow-2xl shadow-[#1a2e33]/40 transition-transform duration-300 lg:static lg:translate-x-0 lg:shadow-none ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
         <div className="flex items-center justify-between border-b border-white/[0.08] px-5 py-5">
           <Link href="/dashboard" className="flex items-center gap-3" onClick={onClose}>
-            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[#f3c78e] to-[#d26c51] text-lg font-black text-[#0a1018] shadow-lg shadow-black/20">
+            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[#f28c5e] to-[#e8622a] text-lg font-black text-[#1a2e33] shadow-lg shadow-[#1a2e33]/30">
               K
             </span>
             <span>
@@ -77,7 +77,7 @@ export default function Sidebar({ onLogout, isOpen, onClose }) {
         </div>
 
         <div className="no-scrollbar flex-1 overflow-y-auto px-3 py-5">
-          <p className="px-3 pb-2 text-[10px] font-bold uppercase tracking-[0.18em] text-[#f3c78e]/70">
+          <p className="px-3 pb-2 text-[10px] font-bold uppercase tracking-[0.18em] text-[#f28c5e]/70">
             Workspace
           </p>
           <nav className="space-y-1" aria-label="Admin navigation">
@@ -87,7 +87,7 @@ export default function Sidebar({ onLogout, isOpen, onClose }) {
           </nav>
 
           <div className="my-5 border-t border-white/[0.08]" />
-          <p className="px-3 pb-2 text-[10px] font-bold uppercase tracking-[0.18em] text-[#f3c78e]/70">
+          <p className="px-3 pb-2 text-[10px] font-bold uppercase tracking-[0.18em] text-[#f28c5e]/70">
             Publish
           </p>
           <nav className="space-y-1" aria-label="Content navigation">
@@ -97,7 +97,7 @@ export default function Sidebar({ onLogout, isOpen, onClose }) {
           </nav>
 
           <div className="my-5 border-t border-white/[0.08]" />
-          <p className="px-3 pb-2 text-[10px] font-bold uppercase tracking-[0.18em] text-[#f3c78e]/70">
+          <p className="px-3 pb-2 text-[10px] font-bold uppercase tracking-[0.18em] text-[#f28c5e]/70">
             Workspace
           </p>
           <nav className="space-y-1" aria-label="Workspace navigation">
@@ -116,7 +116,7 @@ export default function Sidebar({ onLogout, isOpen, onClose }) {
           <Link
             href="/blog/new"
             onClick={onClose}
-            className="mb-3 flex items-center justify-between rounded-xl bg-[#49b9ad] px-4 py-3 text-sm font-bold text-[#071216] shadow-lg shadow-black/20 transition hover:bg-[#70d2c7]"
+            className="mb-3 flex items-center justify-between rounded-xl bg-[#b84a1a] px-4 py-3 text-sm font-bold text-white shadow-lg shadow-[#1a2e33]/30 transition hover:bg-[#e8622a]"
           >
             Create new post <ChevronRight size={16} />
           </Link>
@@ -142,13 +142,13 @@ function NavItem({ item, active, onClick }) {
       onClick={onClick}
       className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition ${
         active
-          ? "bg-[#49b9ad] text-[#071216] shadow-lg shadow-[#49b9ad]/10"
+          ? "bg-[#2a4a52] text-white shadow-lg shadow-[#2a4a52]/30"
           : "text-white/60 hover:bg-white/[0.07] hover:text-white"
       }`}
     >
       <Icon size={17} strokeWidth={active ? 2.5 : 2} />
       <span className="flex-1">{item.label}</span>
-      {active && <BarChart3 size={14} className="text-[#0a4e49]" />}
+      {active && <BarChart3 size={14} className="text-[#f28c5e]" />}
     </Link>
   );
 }

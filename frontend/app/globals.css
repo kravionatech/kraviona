@@ -1,40 +1,115 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
+
+/*
+ * Tailwind v4 theme variables.  Unlike a legacy tailwind.config.js extension,
+ * these generate semantic utilities such as `bg-primary`, `text-accent`, and
+ * `shadow-card` directly from the same tokens used by plain CSS.
+ */
+@theme {
+  --color-primary: #2a4a52;
+  --color-primary-hover: #3d6b77;
+  --color-primary-light: #5c9baa;
+  --color-primary-tint: #e8f2f4;
+  --color-accent: #e8622a;
+  --color-accent-hover: #f28c5e;
+  --color-accent-tint: #fef0e9;
+  --color-accent-dark: #b84a1a;
+  --color-surface: #f5f7f8;
+  --color-surface-2: #eaeff0;
+  --color-dark: #1a2e33;
+  --color-dark-hover: #243e45;
+  --color-brand-text: #1a2e33;
+  --color-brand-muted: #5c7a82;
+  --color-success: #22805a;
+  --color-warning: #d97706;
+  --color-error: #dc2626;
+  --color-info: #5c9baa;
+  --shadow-brand-sm: 0 1px 3px rgba(42, 74, 82, 0.08);
+  --shadow-brand-md: 0 4px 12px rgba(42, 74, 82, 0.12);
+  --shadow-brand-lg: 0 8px 24px rgba(42, 74, 82, 0.16);
+  --shadow-card: 0 2px 8px rgba(42, 74, 82, 0.1);
+  --background-image-hero-gradient: linear-gradient(135deg, #2a4a52 0%, #1a2e33 100%);
+  --background-image-cta-gradient: linear-gradient(135deg, #e8622a 0%, #f28c5e 100%);
+}
+
 @layer base {
   :root {
-    /* Kraviona logo palette: deep teal, coral and warm sand. */
-    --brand-ink: #163d3f;
-    --primary-teal: #295c5e;
-    --primary-teal-dark: #1b3d3e;
-    --primary-teal-light: #3a7a7c;
-    --accent-coral: #d96c4e;
-    --accent-coral-deep: #a9472f;
-    --accent-coral-hover: #b94f35;
-    --accent-peach: #f4be78;
-    --surface: #f8fbfa;
-    --surface-teal: #e8f1ef;
-    --surface-coral: #fff0e8;
-    --surface-sand: #fff5e5;
-    --border: #d4e2e0;
-    --text: #294f52;
-    --text-muted: #5e787a;
-    --text-subtle: #789092;
-    --bg-dark: #0f2425;
-    --bg-light: #fdfdfd;
+    /* Kraviona brand palette */
+    --color-primary: #2a4a52;
+    --color-primary-hover: #3d6b77;
+    --color-primary-light: #5c9baa;
+    --color-primary-tint: #e8f2f4;
+    --color-accent: #e8622a;
+    --color-accent-hover: #f28c5e;
+    --color-accent-tint: #fef0e9;
+    --color-accent-dark: #b84a1a;
+    --color-surface: #f5f7f8;
+    --color-surface-2: #eaeff0;
+    --color-dark: #1a2e33;
+    --color-dark-hover: #243e45;
+    --color-white: #ffffff;
+    --color-text-body: #1a2e33;
+    --color-text-muted: #5c7a82;
+    --color-text-light: #8fa8b0;
+    --color-border: rgba(42, 74, 82, 0.15);
+    --color-border-strong: rgba(42, 74, 82, 0.3);
+
+    /* Semantic roles */
+    --color-success: #22805a;
+    --color-warning: #d97706;
+    --color-error: #dc2626;
+    --color-info: #5c9baa;
+
+    /* Brand-aware elevation */
+    --shadow-sm: 0 1px 3px rgba(42, 74, 82, 0.08);
+    --shadow-md: 0 4px 12px rgba(42, 74, 82, 0.12);
+    --shadow-lg: 0 8px 24px rgba(42, 74, 82, 0.16);
+    --shadow-card: 0 2px 8px rgba(42, 74, 82, 0.1);
+
+    /* Keep the loaded site font as a reliable fallback for the brand stack. */
+    --font-poppins: "Poppins";
+    --font-heading: Inter, var(--font-poppins), system-ui, sans-serif;
+    --font-body: Inter, var(--font-poppins), system-ui, sans-serif;
+    --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+    /* Compatibility aliases used by older page modules. */
+    --brand-ink: #1a2e33;
+    --primary-teal: #2a4a52;
+    --primary-teal-dark: #1a2e33;
+    --primary-teal-light: #5c9baa;
+    --accent-coral: #e8622a;
+    --accent-coral-deep: #b84a1a;
+    --accent-coral-hover: #f28c5e;
+    --accent-peach: #f28c5e;
+    --surface: #f5f7f8;
+    --surface-teal: #e8f2f4;
+    --surface-coral: #fef0e9;
+    --surface-sand: #fff6eb;
+    --border: #d6e0e2;
+    --text: #1a2e33;
+    --text-muted: #5c7a82;
+    --text-subtle: #8fa8b0;
+    --bg-dark: #1a2e33;
+    --bg-light: #f5f7f8;
+  }
+
+[data-theme="dark"] {
+  --color-primary: #5c9baa;
+  --color-accent: #f28c5e;
+  --color-surface: #1a2e33;
+  --color-dark: #f5f7f8;
+  --color-white: #ffffff;
+    --color-text-body: #e8f2f4;
+    --color-text-muted: #8fa8b0;
+    --color-border: rgba(92, 155, 170, 0.2);
   }
 }
 body {
-  font-family:
-    Arial,
-    Helvetica,
-    ui-sans-serif,
-    system-ui,
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    sans-serif;
-  background: var(--bg-light);
-  color: var(--text);
+  font-family: var(--font-body);
+  background: var(--color-surface);
+  color: var(--color-text-body);
+  font-size: 16px;
 }
 
 /*
@@ -52,6 +127,11 @@ body {
   background-color: var(--surface-teal) !important;
 }
 
+.bg-gray-900,
+.bg-slate-900 {
+  background-color: var(--color-dark) !important;
+}
+
 .border-gray-50,
 .border-gray-100,
 .border-slate-100 {
@@ -62,6 +142,39 @@ body {
 .border-slate-200,
 .border-gray-300 {
   border-color: var(--border) !important;
+}
+
+.text-gray-900,
+.text-gray-800,
+.text-slate-900,
+.text-slate-800 {
+  color: var(--color-dark) !important;
+}
+
+.text-gray-700,
+.text-gray-600,
+.text-slate-700,
+.text-slate-600 {
+  color: var(--color-text-body) !important;
+}
+
+.text-gray-500,
+.text-slate-500 {
+  color: var(--color-brand-muted) !important;
+}
+
+.text-gray-400,
+.text-slate-400 {
+  color: var(--color-text-light) !important;
+}
+
+.text-gray-300,
+.text-gray-200,
+.text-gray-100,
+.text-slate-300,
+.text-slate-200,
+.text-slate-100 {
+  color: var(--color-primary-tint) !important;
 }
 
 
@@ -85,13 +198,13 @@ body {
   0%,
   100% {
     box-shadow:
-      0 12px 26px rgba(15, 36, 37, 0.16),
-      0 0 0 0 rgba(217, 108, 78, 0.38);
+      0 12px 26px rgba(42, 74, 82, 0.16),
+      0 0 0 0 rgba(232, 98, 42, 0.38);
   }
   48% {
     box-shadow:
-      0 14px 30px rgba(15, 36, 37, 0.2),
-      0 0 0 14px rgba(217, 108, 78, 0);
+      0 14px 30px rgba(42, 74, 82, 0.2),
+      0 0 0 14px rgba(232, 98, 42, 0);
   }
 }
 
@@ -142,7 +255,7 @@ body {
   border-radius: 18px !important;
   overflow: hidden !important;
   box-sizing: border-box !important;
-  box-shadow: 0 18px 55px rgba(15, 36, 37, 0.22) !important;
+  box-shadow: 0 18px 55px rgba(42, 74, 82, 0.22) !important;
 }
 
 #chatbase-bubble-button {

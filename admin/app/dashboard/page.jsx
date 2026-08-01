@@ -40,20 +40,20 @@ import Frame from "@/components/Frame/Frame";
 import { apiRequest, formatCurrency, formatDate } from "@/components/api";
 
 const COLORS = {
-  ink: "#e7edf5",
-  soft: "#93a4b8",
-  faint: "#728399",
-  border: "rgba(148, 163, 184, 0.16)",
-  surface: "#111b28",
-  bg: "#0a1018",
-  primary: "#49b9ad",
-  accent: "#f0a46f",
-  amber: "#f8c15a",
-  blue: "#68a8ff",
-  green: "#56c998",
-  violet: "#ad8cff",
-  rose: "#fb7185",
-  cyan: "#55d9e8",
+  ink: "#f5f7f8",
+  soft: "#b4c9ce",
+  faint: "#89abb3",
+  border: "rgba(92, 155, 170, 0.32)",
+  surface: "#213b42",
+  bg: "#1a2e33",
+  primary: "#2a4a52",
+  accent: "#e8622a",
+  amber: "#f28c5e",
+  blue: "#5c9baa",
+  green: "#7ba4a2",
+  violet: "#b84a1a",
+  rose: "#b84a1a",
+  cyan: "#8eb9c2",
 };
 
 const CHART_COLORS = [
@@ -127,7 +127,7 @@ function EmptyState({ label = "No data yet" }) {
 function LoadingDashboard() {
   return (
     <Frame>
-      <div className="min-h-full bg-[#0a1018] p-6 lg:p-8">
+      <div className="min-h-full bg-[#1a2e33] p-6 lg:p-8">
         <div className="mb-6 h-24 animate-pulse rounded-lg bg-white" />
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
           {Array.from({ length: 8 }).map((_, index) => (
@@ -344,12 +344,12 @@ export default function DashboardPage() {
 
   return (
     <Frame>
-      <div className="min-h-full bg-[#0a1018] text-slate-950">
+      <div className="min-h-full bg-[#1a2e33] text-slate-950">
         <main className="px-4 py-6 sm:px-6 lg:px-8">
           <div className="mb-6 rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
             <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
               <div>
-                <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#d26c51]">
+                <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#e8622a]">
                   Admin analytics
                 </p>
                 <h1 className="mt-2 text-2xl font-black tracking-tight text-slate-950">
@@ -368,7 +368,7 @@ export default function DashboardPage() {
                   type="button"
                   onClick={loadAnalytics}
                   disabled={isLoading}
-                  className="inline-flex items-center gap-2 rounded-lg bg-[#235056] px-4 py-2 text-sm font-bold text-white transition hover:bg-[#1b4247] disabled:cursor-not-allowed disabled:opacity-60"
+                  className="inline-flex items-center gap-2 rounded-lg bg-[#2a4a52] px-4 py-2 text-sm font-bold text-white transition hover:bg-[#3d6b77] disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   <RefreshCw
                     size={16}
@@ -688,7 +688,7 @@ export default function DashboardPage() {
                 </div>
                 <Link
                   href="/leads"
-                  className="text-xs font-bold text-[#d26c51] hover:text-[#235056]"
+                  className="text-xs font-bold text-[#f28c5e] hover:text-[#5c9baa]"
                 >
                   View all
                 </Link>

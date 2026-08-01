@@ -26,16 +26,16 @@ const Support = () => {
       name: "Call Support",
       href: "tel:+919608553167",
       icon: <PhoneCall className="w-5 h-5 text-white" />,
-      bg: "bg-[#d96c4e]", // Kraviona Terracotta
-      hover: "hover:bg-[#c25e41]",
+      bg: "bg-[#E8622A]", // Kraviona Terracotta
+      hover: "hover:bg-[#B84A1A]",
     },
     {
       id: "email",
       name: "Email Us",
       href: "mailto:kravionatech@gmail.com",
-      icon: <Mail className="w-5 h-5 text-[#295c5e]" />, // Dark Teal icon for contrast
-      bg: "bg-[#f4be78]", // Kraviona Peach
-      hover: "hover:bg-[#e0ad6a]",
+      icon: <Mail className="w-5 h-5 text-[#2A4A52]" />, // Dark Teal icon for contrast
+      bg: "bg-[#F28C5E]", // Kraviona Peach
+      hover: "hover:bg-[#F28C5E]",
     },
   ];
 
@@ -78,7 +78,7 @@ const Support = () => {
       {/* Main Toggle Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="relative flex items-center justify-center w-14 h-14 rounded-full bg-[#295c5e] text-white shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-[#f4be78]/20 hover:scale-105 transition-transform duration-300 z-50"
+        className="relative flex items-center justify-center w-14 h-14 rounded-full bg-[#2A4A52] text-white shadow-[0_8px_30px_rgb(42,74,82,0.12)] border border-[#F28C5E]/20 hover:scale-105 transition-transform duration-300 z-50"
         aria-label="Support Menu"
       >
         <AnimatePresence mode="wait">
@@ -90,7 +90,7 @@ const Support = () => {
               exit={{ rotate: 90, opacity: 0 }}
               transition={{ duration: 0.2 }}
             >
-              <X className="w-6 h-6 text-[#f4be78]" />
+              <X className="w-6 h-6 text-[#F28C5E]" />
             </motion.div>
           ) : (
             <motion.div
@@ -100,14 +100,14 @@ const Support = () => {
               exit={{ rotate: -90, opacity: 0 }}
               transition={{ duration: 0.2 }}
             >
-              <HeadphonesIcon className="w-6 h-6 text-[#f4be78]" />
+              <HeadphonesIcon className="w-6 h-6 text-[#F28C5E]" />
             </motion.div>
           )}
         </AnimatePresence>
 
         {/* Ping Animation Ring */}
         {!isOpen && (
-          <span className="absolute -inset-1 rounded-full border border-[#f4be78]/40 animate-ping opacity-75"></span>
+          <span className="absolute -inset-1 rounded-full border border-[#F28C5E]/40 animate-ping opacity-75"></span>
         )}
       </button>
     </div>

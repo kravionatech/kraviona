@@ -7,7 +7,7 @@ import { JsonLd } from "@/components/JsonLd";
 import { breadcrumbSchema, contactFaqSchema } from "@/lib/schema";
 import { defaultRobots } from "@/app/seoConfig.js";
 
-// JSON-LD: ContactPage + LocalBusiness
+// JSON-LD: ContactPage
 const contactPageSchema = {
   "@context": "https://schema.org",
   "@type": "ContactPage",
@@ -34,52 +34,6 @@ const contactPageSchema = {
       },
     ],
   },
-};
-
-const localBusinessSchema = {
-  "@context": "https://schema.org",
-  "@type": ["ProfessionalService", "LocalBusiness"],
-  "@id": "https://kraviona.com/#organization",
-  name: "Kraviona Tech Solutions",
-  url: "https://kraviona.com",
-  logo: "https://kraviona.com/logo.png",
-  image: "https://kraviona.com/og-image.jpg",
-  description:
-    "MERN stack development, Next.js websites, backend APIs, technical SEO, and AI automation for businesses across India.",
-  email: "kravionatech@gmail.com",
-  telephone: "+91-96085-53167",
-  priceRange: "$$",
-  address: {
-    "@type": "PostalAddress",
-    streetAddress: "East Delhi",
-    addressLocality: "Delhi",
-    addressRegion: "Delhi",
-    postalCode: "110092",
-    addressCountry: "IN",
-  },
-  geo: {
-    "@type": "GeoCoordinates",
-    latitude: 28.628,
-    longitude: 77.3141,
-  },
-  openingHoursSpecification: {
-    "@type": "OpeningHoursSpecification",
-    dayOfWeek: [
-      "Monday",
-      "Tuesday",
-      "Wednesday",
-      "Thursday",
-      "Friday",
-      "Saturday",
-    ],
-    opens: "09:00",
-    closes: "19:00",
-  },
-  sameAs: [
-    "https://www.linkedin.com/company/kravionai",
-    "https://twitter.com/KravionaTech",
-    "https://www.facebook.com/profile.php?id=61570716181916",
-  ],
 };
 
 export const metadata = {
@@ -131,11 +85,10 @@ export const metadata = {
 
 const Contact = () => {
   return (
-    <main className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white">
       <JsonLd
         data={[
           contactPageSchema,
-          localBusinessSchema,
           contactFaqSchema,
           breadcrumbSchema([
             { name: "Home", url: "https://kraviona.com" },
@@ -148,7 +101,7 @@ const Contact = () => {
       <ContactMap />
       <BlogCTA />
       <ContactFAQ />
-    </main>
+    </div>
   );
 };
 

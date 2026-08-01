@@ -57,11 +57,11 @@ const itemVariants = {
 
 const PortfolioSection = () => {
   return (
-    <section className="py-24 bg-gradient-to-b from-[#0f2425] to-[#1b3d3e] font-sans relative overflow-hidden">
+    <section className="py-24 bg-gradient-to-b from-[#2A4A52] to-[#1A2E33] font-sans relative overflow-hidden">
       {/* Abstract Background Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-        <div className="absolute top-1/4 -right-[10%] w-[500px] h-[500px] bg-[#295c5e]/20 rounded-full blur-[120px] mix-blend-screen" />
-        <div className="absolute bottom-1/4 -left-[10%] w-[400px] h-[400px] bg-[#d96c4e]/10 rounded-full blur-[100px] mix-blend-screen" />
+        <div className="absolute top-1/4 -right-[10%] w-[500px] h-[500px] bg-[#2A4A52]/20 rounded-full blur-[120px] mix-blend-screen" />
+        <div className="absolute bottom-1/4 -left-[10%] w-[400px] h-[400px] bg-[#E8622A]/10 rounded-full blur-[100px] mix-blend-screen" />
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -75,14 +75,14 @@ const PortfolioSection = () => {
         >
           <div className="max-w-2xl">
             <div className="flex items-center gap-3 mb-4">
-              <span className="w-8 h-[2px] bg-[#f4be78]"></span>
-              <span className="text-[#f4be78] font-bold tracking-[0.2em] text-xs uppercase">
+              <span className="w-8 h-[2px] bg-[#F28C5E]"></span>
+              <span className="text-[#F28C5E] font-bold tracking-[0.2em] text-xs uppercase">
                 Our Portfolio
               </span>
             </div>
             <h2 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-tight">
               Featured{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#f4be78] to-[#d96c4e]">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#F28C5E] to-[#E8622A]">
                 Case Studies
               </span>
             </h2>
@@ -91,7 +91,7 @@ const PortfolioSection = () => {
           <div className="flex-shrink-0">
             <Link
               href="/gallery"
-              className="group inline-flex items-center gap-3 px-6 py-3 rounded-xl bg-white/5 border border-white/10 text-white font-bold hover:bg-[#d96c4e] hover:border-[#d96c4e] hover:shadow-[0_4px_20px_rgb(217,108,78,0.3)] transition-all duration-300"
+              className="group inline-flex items-center gap-3 px-6 py-3 rounded-xl bg-white/5 border border-white/10 text-white font-bold hover:bg-[#E8622A] hover:border-[#E8622A] hover:shadow-[0_4px_20px_rgb(232,98,42,0.3)] transition-all duration-300"
             >
               View All Projects
               <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center group-hover:bg-white/20 transition-colors">
@@ -125,13 +125,13 @@ const PortfolioSection = () => {
             <motion.div
               key={project.id}
               variants={itemVariants}
-              className="group relative overflow-hidden rounded-3xl aspect-[4/5] bg-[#0f2425] border border-white/10 cursor-pointer shadow-lg hover:shadow-[0_8px_30px_rgb(41,92,94,0.3)] transition-all duration-500"
+              className="group relative overflow-hidden rounded-3xl aspect-[4/5] bg-[#2A4A52] border border-white/10 cursor-pointer shadow-lg hover:shadow-[0_8px_30px_rgb(42,74,82,0.3)] transition-all duration-500"
             >
               {/* Project Image with Deep Zoom Effect */}
               <div className="absolute inset-0 w-full h-full bg-gray-900">
                 <Image
                   src={project.image}
-                  alt={project.title}
+                  alt={`${project.title} — ${project.category} project by Kraviona Tech Solutions`}
                   className="object-cover transition-transform duration-1000 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] group-hover:scale-110 opacity-60 group-hover:opacity-100"
                   fill
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -139,12 +139,12 @@ const PortfolioSection = () => {
               </div>
 
               {/* Multi-layered Premium Gradient Overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-[#0f2425] via-[#0f2425]/60 to-transparent opacity-90 group-hover:opacity-100 transition-opacity duration-500"></div>
-              <div className="absolute inset-0 bg-gradient-to-b from-[#295c5e]/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+              <div className="absolute inset-0 bg-gradient-to-t from-[#2A4A52] via-[#2A4A52]/60 to-transparent opacity-90 group-hover:opacity-100 transition-opacity duration-500"></div>
+              <div className="absolute inset-0 bg-gradient-to-b from-[#2A4A52]/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
 
               {/* Category Glass Badge (Top Right) */}
               <div className="absolute top-6 right-6 z-20 translate-y-0 group-hover:-translate-y-1 transition-transform duration-500">
-                <span className="px-4 py-2 bg-[#0f2425]/60 backdrop-blur-md border border-white/10 text-[#f4be78] text-[10px] font-black uppercase tracking-widest rounded-full shadow-sm">
+                <span className="px-4 py-2 bg-[#2A4A52]/60 backdrop-blur-md border border-white/10 text-[#F28C5E] text-[10px] font-black uppercase tracking-widest rounded-full shadow-sm">
                   {project.category}
                 </span>
               </div>
@@ -163,7 +163,7 @@ const PortfolioSection = () => {
                   ))}
                 </div>
 
-                <h3 className="text-3xl font-extrabold text-white mb-2 leading-tight drop-shadow-md group-hover:text-[#f4be78] transition-colors duration-300">
+                <h3 className="text-3xl font-extrabold text-white mb-2 leading-tight drop-shadow-md group-hover:text-[#F28C5E] transition-colors duration-300">
                   {project.title}
                 </h3>
 
@@ -175,11 +175,11 @@ const PortfolioSection = () => {
                 </div>
 
                 {/* Animated Arrow CTA */}
-                <div className="mt-6 flex items-center font-bold text-[#d96c4e] group-hover:text-white transition-colors duration-300">
+                <div className="mt-6 flex items-center font-bold text-[#E8622A] group-hover:text-white transition-colors duration-300">
                   <span className="text-sm uppercase tracking-wider">
                     Explore Case Study
                   </span>
-                  <div className="ml-3 w-8 h-8 rounded-full border border-[#d96c4e] flex items-center justify-center group-hover:bg-[#d96c4e] group-hover:border-transparent transition-all duration-300">
+                  <div className="ml-3 w-8 h-8 rounded-full border border-[#E8622A] flex items-center justify-center group-hover:bg-[#E8622A] group-hover:border-transparent transition-all duration-300">
                     <svg
                       className="w-4 h-4 transform group-hover:translate-x-0.5 transition-transform"
                       fill="none"

@@ -30,7 +30,7 @@ import {
 const SERVICE_CATEGORIES = [
   {
     label: "Web Development",
-    color: "text-[#295c5e]",
+    color: "text-primary",
     services: [
       {
         name: "MERN Stack Development",
@@ -60,7 +60,7 @@ const SERVICE_CATEGORIES = [
   },
   {
     label: "Backend & Architecture",
-    color: "text-[#1b3d3e]",
+    color: "text-primary-hover",
     services: [
       {
         name: "Backend Development",
@@ -90,7 +90,7 @@ const SERVICE_CATEGORIES = [
   },
   {
     label: "Performance & AI",
-    color: "text-[#3a7a7c]",
+    color: "text-primary-light",
     services: [
       {
         name: "Technical SEO",
@@ -120,7 +120,7 @@ const SERVICE_CATEGORIES = [
   },
   {
     label: "Branding & Marketing",
-    color: "text-[#d96c4e]",
+    color: "text-accent-dark",
     services: [
       {
         name: "Digital Marketing",
@@ -150,7 +150,7 @@ const SERVICE_CATEGORIES = [
   },
   {
     label: "Marketplace & Seller",
-    color: "text-[#a9472f]",
+    color: "text-accent-dark",
     services: [
       {
         name: "E-Commerce Dev & Marketing",
@@ -202,28 +202,28 @@ const FEATURED = [
     name: "Technical SEO",
     path: "/services/technical-seo",
     badge: "Popular",
-    badgeColor: "bg-[#fff0e8] text-[#b94f35]",
+    badgeColor: "bg-accent-tint text-accent-dark",
     Icon: SearchCheck,
   },
   {
     name: "MERN Stack Development",
     path: "/services/mern-stack-development",
     badge: "Top Rated",
-    badgeColor: "bg-[#fff5e5] text-[#9a6427]",
+    badgeColor: "bg-surface-2 text-primary",
     Icon: Layers3,
   },
   {
     name: "Account Management",
     path: "/services/account-management",
     badge: "New",
-    badgeColor: "bg-[#fbe9e3] text-[#a9472f]",
+    badgeColor: "bg-accent-tint text-accent-dark",
     Icon: BriefcaseBusiness,
   },
   {
     name: "AI Automation",
     path: "/services/ai-automation",
     badge: "Trending",
-    badgeColor: "bg-[#e8f1ef] text-[#295c5e]",
+    badgeColor: "bg-primary-tint text-primary",
     Icon: Bot,
   },
 ];
@@ -263,12 +263,70 @@ export default function Header() {
   const pathname = usePathname();
   const megaTimer = useRef(null);
   const dropTimer = useRef(null);
+  const mobileDialogRef = useRef(null);
+  const desktopTriggerRefs = useRef({});
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  useEffect(() => {
+    if (!mobileOpen) return undefined;
+
+    const previouslyFocused = document.activeElement;
+    const focusableSelector = [
+      "a[href]",
+      "button:not([disabled])",
+      "input:not([disabled])",
+      "select:not([disabled])",
+      "textarea:not([disabled])",
+      '[tabindex]:not([tabindex="-1"])',
+    ].join(", ");
+
+    const handleKeyDown = (event) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        setMobileOpen(false);
+        setMobileAcc(null);
+        return;
+      }
+
+      if (event.key !== "Tab") return;
+
+      const focusable = Array.from(
+        mobileDialogRef.current?.querySelectorAll(focusableSelector) || [],
+      );
+      if (!focusable.length) return;
+
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+
+    const focusFrame = window.requestAnimationFrame(() => {
+      mobileDialogRef.current?.querySelector(focusableSelector)?.focus();
+    });
+
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.cancelAnimationFrame(focusFrame);
+      document.removeEventListener("keydown", handleKeyDown);
+
+      if (previouslyFocused instanceof HTMLElement && previouslyFocused.isConnected) {
+        previouslyFocused.focus();
+      }
+    };
+  }, [mobileOpen]);
 
   useEffect(() => {
     document.body.style.overflow = mobileOpen ? "hidden" : "";
@@ -282,12 +340,15 @@ export default function Header() {
     setMobileAcc(null);
   };
   const closeMenus = () => {
+    clearTimeout(megaTimer.current);
+    clearTimeout(dropTimer.current);
     setMegaOpen(false);
     setOpenDropdown(null);
   };
 
   const onMegaEnter = () => {
     clearTimeout(megaTimer.current);
+    setOpenDropdown(null);
     setMegaOpen(true);
   };
   const onMegaLeave = () => {
@@ -295,10 +356,62 @@ export default function Header() {
   };
   const onDropEnter = (idx) => {
     clearTimeout(dropTimer.current);
+    setMegaOpen(false);
     setOpenDropdown(idx);
   };
   const onDropLeave = () => {
     dropTimer.current = setTimeout(() => setOpenDropdown(null), 120);
+  };
+
+  const toggleMega = () => {
+    clearTimeout(megaTimer.current);
+    clearTimeout(dropTimer.current);
+    setOpenDropdown(null);
+    setMegaOpen((current) => !current);
+  };
+
+  const toggleDropdown = (idx) => {
+    clearTimeout(megaTimer.current);
+    clearTimeout(dropTimer.current);
+    setMegaOpen(false);
+    setOpenDropdown((current) => (current === idx ? null : idx));
+  };
+
+  const closeMenuAfterBlur = (event, menu) => {
+    const menuItem = event.currentTarget;
+
+    window.setTimeout(() => {
+      if (menuItem.contains(document.activeElement)) return;
+
+      if (menu === "mega") {
+        setMegaOpen(false);
+        return;
+      }
+
+      setOpenDropdown((current) => (current === menu ? null : current));
+    }, 0);
+  };
+
+  const handleDesktopMenuKeyDown = (event) => {
+    if (event.key !== "Escape" || (!megaOpen && openDropdown === null)) {
+      return;
+    }
+
+    event.preventDefault();
+    const triggerKey = megaOpen ? "services" : `dropdown-${openDropdown}`;
+    const trigger = desktopTriggerRefs.current[triggerKey];
+
+    closeMenus();
+    window.requestAnimationFrame(() => trigger?.focus());
+  };
+
+  const setDesktopTriggerRef = (key) => (node) => {
+    if (node) {
+      desktopTriggerRefs.current[key] = node;
+      return;
+    }
+
+    delete desktopTriggerRefs.current[key];
   };
 
   const isActive = (path) =>
@@ -312,8 +425,8 @@ export default function Header() {
           px-8 xl:px-12 transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]
           ${
             scrolled
-              ? "h-[66px] border-gray-200/90 bg-white/96 backdrop-blur-xl shadow-[0_10px_30px_rgba(15,36,37,0.08)]"
-              : "h-[78px] border-white/70 bg-white/90 backdrop-blur-xl shadow-[0_1px_0_rgba(15,36,37,0.05)]"
+              ? "h-[66px] border-gray-200/90 bg-white/96 backdrop-blur-xl shadow-[0_10px_30px_rgba(42,74,82,0.08)]"
+              : "h-[78px] border-white/70 bg-white/90 backdrop-blur-xl shadow-[0_1px_0_rgba(42,74,82,0.05)]"
           }`}
         role="banner"
       >
@@ -326,18 +439,19 @@ export default function Header() {
           <span className="flex h-10 w-10 items-center justify-center rounded-lg border border-gray-200 bg-white shadow-sm">
             <Image
               src="/logo.png"
-              alt="Kraviona"
+              alt="Kraviona Tech Solutions logo"
               width={44}
               height={40}
               priority
+              sizes="44px"
               className="h-auto w-8 object-contain transition-transform duration-200 group-hover:scale-105"
             />
           </span>
           <span className="min-w-0">
-            <span className="block text-[15px] font-extrabold leading-none text-[#111A1F]">
+            <span className="block text-[15px] font-extrabold leading-none text-[#1A2E33]">
               Kraviona
             </span>
-            <span className="mt-1 block text-[10px] font-semibold uppercase tracking-[0.18em] text-[#295c5e]">
+            <span className="mt-1 block text-[10px] font-semibold uppercase tracking-[0.18em] text-[#2A4A52]">
               Tech Solutions
             </span>
           </span>
@@ -347,6 +461,7 @@ export default function Header() {
         <nav
           aria-label="Main navigation"
           className="mx-6 flex min-w-0 flex-1 justify-center"
+          onKeyDown={handleDesktopMenuKeyDown}
         >
           <ul className="flex items-center gap-1">
             {NAV_ITEMS.map((item, idx) => {
@@ -360,53 +475,61 @@ export default function Header() {
                     className="relative"
                     onMouseEnter={onMegaEnter}
                     onMouseLeave={onMegaLeave}
+                    onBlur={(event) => closeMenuAfterBlur(event, "mega")}
                   >
-                    <Link
-                      href={item.path}
-                      onClick={closeMenus}
+                    <button
+                      id="desktop-services-trigger"
+                      ref={setDesktopTriggerRef("services")}
+                      type="button"
+                      onClick={toggleMega}
                       aria-haspopup="true"
                       aria-expanded={megaOpen}
-                      className={`group flex items-center gap-1.5 rounded-md px-3.5 py-2 text-[13.5px] font-semibold transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#d96c4e]/30
-                      ${active ? "bg-[#f6faf9] text-[#295c5e]" : "text-gray-600 hover:bg-gray-50 hover:text-[#111A1F]"}`}
+                      aria-controls="desktop-services-panel"
+                      aria-current={active ? "page" : undefined}
+                      className={`group flex items-center gap-1.5 rounded-md border-b-2 border-transparent px-3.5 py-2 text-[13.5px] font-semibold transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40
+                      ${active ? "border-accent text-accent-dark" : "text-primary hover:bg-primary-tint hover:text-accent-dark"}`}
                     >
                       Services
                       <ChevronDown
                         size={15}
                         strokeWidth={2.2}
-                        className={`transition-transform duration-300 ${megaOpen ? "rotate-180 text-[#d96c4e]" : "text-gray-400 group-hover:text-gray-600"}`}
+                        className={`transition-transform duration-300 ${megaOpen ? "rotate-180 text-accent-dark" : "text-primary-light group-hover:text-accent-dark"}`}
                       />
-                    </Link>
+                    </button>
 
                     {/* ── Mega panel ── */}
                     <div
+                      id="desktop-services-panel"
                       className={`absolute top-[calc(100%+18px)] left-1/2 z-50 w-[min(1120px,calc(100vw-48px))] -translate-x-1/2
                       transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]
                       ${megaOpen ? "opacity-100 translate-y-0 pointer-events-auto" : "opacity-0 -translate-y-3 pointer-events-none"}`}
-                      aria-label="Services menu"
+                      aria-hidden={!megaOpen}
+                      aria-labelledby="desktop-services-trigger"
+                      inert={!megaOpen}
                     >
-                      <div className="max-h-[calc(100vh-112px)] overflow-y-auto rounded-lg border border-gray-200 bg-white shadow-[0_24px_70px_rgba(15,36,37,0.14)]">
+                      <div className="max-h-[calc(100vh-112px)] overflow-y-auto rounded-lg border border-gray-200 bg-white shadow-[0_24px_70px_rgba(42,74,82,0.14)]">
                         {/* ── Top bar ── */}
-                        <div className="flex items-center justify-between border-b border-gray-200 bg-[#FAFCFC] px-5 py-4">
+                        <div className="flex items-center justify-between border-b border-gray-200 bg-[#F5F7F8] px-5 py-4">
                           <div className="flex items-center gap-2.5">
-                            <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-white text-[#295c5e] ring-1 ring-gray-200">
+                            <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-white text-[#2A4A52] ring-1 ring-gray-200">
                               <Grid3X3 size={17} strokeWidth={2.1} />
                             </span>
                             <span>
-                              <span className="block text-[13px] font-bold text-[#111A1F]">
+                              <span className="block text-[13px] font-bold text-[#1A2E33]">
                                 Services
                               </span>
                               <span className="block text-[11px] font-medium text-gray-500">
                                 Development, marketing, AI, and seller support
                               </span>
                             </span>
-                            <span className="ml-1 rounded-full bg-white px-2 py-0.5 text-[10px] font-bold text-[#295c5e] ring-1 ring-gray-200">
+                            <span className="ml-1 rounded-full bg-white px-2 py-0.5 text-[10px] font-bold text-[#2A4A52] ring-1 ring-gray-200">
                               {TOTAL_SERVICES} services
                             </span>
                           </div>
                           <Link
                             href="/services"
                             onClick={closeMenus}
-                            className="flex items-center gap-1.5 text-[12px] font-semibold text-[#295c5e] transition-colors hover:text-[#d96c4e]"
+                            className="flex items-center gap-1.5 text-[12px] font-semibold text-primary transition-colors hover:text-accent-dark"
                           >
                             View all services <ArrowRight size={14} strokeWidth={2.2} />
                           </Link>
@@ -432,13 +555,13 @@ export default function Header() {
                                         <Link
                                           href={svc.path}
                                           onClick={closeMenus}
-                                          className="group/item flex items-start gap-2.5 rounded-md px-2 py-2 transition-colors duration-150 hover:bg-[#FAFCFC]"
+                                          className="group/item flex items-start gap-2.5 rounded-md px-2 py-2 transition-colors duration-150 hover:bg-[#F5F7F8]"
                                         >
-                                          <span className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-md border border-gray-200 bg-white text-[#295c5e] transition-colors group-hover/item:border-[#d96c4e]/35 group-hover/item:text-[#d96c4e]">
+                                          <span className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-md border border-gray-200 bg-white text-[#2A4A52] transition-colors group-hover/item:border-[#E8622A]/35 group-hover/item:text-[#E8622A]">
                                             <ServiceIcon size={14} strokeWidth={2.1} />
                                           </span>
                                           <span className="min-w-0">
-                                            <span className="block text-[11.5px] font-semibold leading-snug text-gray-800 transition-colors group-hover/item:text-[#d96c4e]">
+                                            <span className="block text-[11.5px] font-semibold leading-snug text-gray-800 transition-colors group-hover/item:text-[#E8622A]">
                                               {svc.name}
                                             </span>
                                             <span className="mt-0.5 block truncate text-[10px] leading-tight text-gray-500">
@@ -455,7 +578,7 @@ export default function Header() {
                           </div>
 
                           {/* ── Right sidebar: Featured + CTA ── */}
-                          <div className="flex flex-col gap-3 border-l border-gray-100 bg-[#FAFCFC] p-4">
+                          <div className="flex flex-col gap-3 border-l border-gray-100 bg-[#F5F7F8] p-4">
                             <p className="text-[9px] font-extrabold uppercase tracking-[0.15em] text-gray-500">
                               Featured
                             </p>
@@ -468,13 +591,13 @@ export default function Header() {
                                     <Link
                                       href={f.path}
                                       onClick={closeMenus}
-                                      className="group/feat flex items-center gap-2 rounded-md border border-gray-200 bg-white px-2.5 py-2 transition-colors duration-200 hover:border-[#d96c4e]/35"
+                                      className="group/feat flex items-center gap-2 rounded-md border border-gray-200 bg-white px-2.5 py-2 transition-colors duration-200 hover:border-[#E8622A]/35"
                                     >
-                                      <span className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-md bg-[#f6faf9] text-[#295c5e]">
+                                      <span className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-md bg-[#F5F7F8] text-[#2A4A52]">
                                         <FeaturedIcon size={14} strokeWidth={2.1} />
                                       </span>
                                       <span className="min-w-0 flex-1">
-                                        <span className="block truncate text-[11px] font-semibold text-gray-700 transition-colors group-hover/feat:text-[#d96c4e]">
+                                        <span className="block truncate text-[11px] font-semibold text-gray-700 transition-colors group-hover/feat:text-[#E8622A]">
                                           {f.name}
                                         </span>
                                       </span>
@@ -494,7 +617,7 @@ export default function Header() {
                               <Link
                                 href="/contact"
                                 onClick={closeMenus}
-                                className="flex w-full items-center justify-center gap-1.5 rounded-md bg-[#111A1F] py-2.5 text-[12px] font-bold text-white shadow-sm transition-colors duration-200 hover:bg-[#d96c4e]"
+                                className="flex w-full items-center justify-center gap-1.5 rounded-md bg-accent-dark py-2.5 text-[12px] font-bold text-white shadow-sm transition-all duration-200 hover:brightness-90"
                               >
                                 Start a Project
                                 <ArrowRight size={13} strokeWidth={2.2} />
@@ -522,29 +645,38 @@ export default function Header() {
                     className="relative"
                     onMouseEnter={() => onDropEnter(idx)}
                     onMouseLeave={onDropLeave}
+                    onBlur={(event) => closeMenuAfterBlur(event, idx)}
                   >
                     <button
+                      id={`desktop-${item.name.toLowerCase()}-trigger`}
+                      ref={setDesktopTriggerRef(`dropdown-${idx}`)}
                       type="button"
+                      onClick={() => toggleDropdown(idx)}
                       aria-haspopup="true"
                       aria-expanded={openDropdown === idx}
-                      className={`group flex items-center gap-1.5 rounded-md px-3.5 py-2 text-[13.5px] font-semibold transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#d96c4e]/30
-                      ${isActive(item.path) ? "bg-[#f6faf9] text-[#295c5e]" : "text-gray-600 hover:bg-gray-50 hover:text-[#111A1F]"}`}
+                      aria-controls={`desktop-${item.name.toLowerCase()}-panel`}
+                      aria-current={active ? "page" : undefined}
+                      className={`group flex items-center gap-1.5 rounded-md border-b-2 border-transparent px-3.5 py-2 text-[13.5px] font-semibold transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40
+                      ${active ? "border-accent text-accent-dark" : "text-primary hover:bg-primary-tint hover:text-accent-dark"}`}
                     >
                       {item.name}
                       <ChevronDown
                         size={15}
                         strokeWidth={2.2}
-                        className={`transition-transform duration-300 ${openDropdown === idx ? "rotate-180 text-[#d96c4e]" : "text-gray-400 group-hover:text-gray-600"}`}
+                        className={`transition-transform duration-300 ${openDropdown === idx ? "rotate-180 text-accent-dark" : "text-primary-light group-hover:text-accent-dark"}`}
                       />
                     </button>
 
                     <div
+                      id={`desktop-${item.name.toLowerCase()}-panel`}
                       className={`absolute top-[calc(100%+14px)] left-0 min-w-[210px]
                       transition-all duration-250 ease-[cubic-bezier(0.4,0,0.2,1)]
                       ${openDropdown === idx ? "opacity-100 translate-y-0 pointer-events-auto" : "opacity-0 -translate-y-3 pointer-events-none"}`}
-                      aria-label={`${item.name} links`}
+                      aria-hidden={openDropdown !== idx}
+                      aria-labelledby={`desktop-${item.name.toLowerCase()}-trigger`}
+                      inert={openDropdown !== idx}
                     >
-                      <div className="rounded-lg border border-gray-200 bg-white p-1.5 shadow-[0_16px_46px_rgba(15,36,37,0.12)]">
+                      <div className="rounded-lg border border-gray-200 bg-white p-1.5 shadow-[0_16px_46px_rgba(42,74,82,0.12)]">
                         {item.dropdown.map((sub) => (
                           <Link
                             key={sub.name}
@@ -567,8 +699,8 @@ export default function Header() {
                     href={item.path}
                     onClick={closeMenus}
                     aria-current={active ? "page" : undefined}
-                    className={`flex items-center rounded-md px-3.5 py-2 text-[13.5px] font-semibold transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#d96c4e]/30
-                      ${active ? "bg-[#f6faf9] text-[#295c5e]" : "text-gray-600 hover:bg-gray-50 hover:text-[#111A1F]"}`}
+                    className={`flex items-center rounded-md border-b-2 border-transparent px-3.5 py-2 text-[13.5px] font-semibold transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40
+                      ${active ? "border-accent text-accent-dark" : "text-primary hover:bg-primary-tint hover:text-accent-dark"}`}
                   >
                     {item.name}
                   </Link>
@@ -581,7 +713,7 @@ export default function Header() {
         {/* Desktop CTA */}
         <Link
           href="/contact"
-          className="flex items-center gap-2 rounded-md bg-[#111A1F] px-5 py-2.5 text-[13px] font-bold text-white shadow-[0_10px_22px_rgba(17,26,31,0.14)] transition-colors duration-200 hover:bg-[#d96c4e] whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#d96c4e]/35"
+          className="flex items-center gap-2 rounded-md bg-accent-dark px-5 py-2.5 text-[13px] font-bold text-white shadow-brand-sm transition-all duration-200 hover:brightness-90 whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40"
           aria-label="Start a project"
         >
           Start Project
@@ -594,7 +726,7 @@ export default function Header() {
         className={`lg:hidden fixed top-0 left-0 w-full z-50 flex items-center justify-between px-4 transition-all duration-300
           ${
             scrolled
-              ? "h-[60px] border-b border-gray-200 bg-white/96 backdrop-blur-xl shadow-[0_8px_24px_rgba(15,36,37,0.08)]"
+              ? "h-[60px] border-b border-gray-200 bg-white/96 backdrop-blur-xl shadow-[0_8px_24px_rgba(42,74,82,0.08)]"
               : "h-[66px] border-b border-gray-100 bg-white/94 backdrop-blur-lg"
           }`}
         role="banner"
@@ -608,26 +740,28 @@ export default function Header() {
           <span className="flex h-10 w-10 items-center justify-center rounded-lg border border-gray-200 bg-white shadow-sm">
             <Image
               src="/logo.png"
-              alt="Kraviona"
+              alt="Kraviona Tech Solutions logo"
               width={36}
               height={33}
               priority
+              sizes="36px"
               className="h-auto w-8 object-contain"
             />
           </span>
           <span>
-            <span className="block text-sm font-extrabold leading-none text-[#111A1F]">
+            <span className="block text-sm font-extrabold leading-none text-[#1A2E33]">
               Kraviona
             </span>
-            <span className="mt-1 block text-[9px] font-semibold uppercase tracking-[0.16em] text-[#295c5e]">
+            <span className="mt-1 block text-[9px] font-semibold uppercase tracking-[0.16em] text-[#2A4A52]">
               Tech Solutions
             </span>
           </span>
         </Link>
 
         <button
+          type="button"
           onClick={() => setMobileOpen(true)}
-          className="flex h-10 w-10 items-center justify-center rounded-md bg-[#111A1F] text-white shadow-[0_10px_22px_rgba(17,26,31,0.16)] transition-colors hover:bg-[#d96c4e] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#d96c4e]/35"
+          className="flex h-11 w-11 items-center justify-center rounded-md bg-primary text-white shadow-brand-sm transition-colors hover:bg-primary-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40"
           aria-label="Open navigation"
           aria-expanded={mobileOpen}
           aria-controls="mobile-nav"
@@ -646,38 +780,43 @@ export default function Header() {
       {/* ─────────────── MOBILE DRAWER ───────────────────────────────── */}
       <div
         id="mobile-nav"
+        ref={mobileDialogRef}
         role="dialog"
         aria-modal="true"
         aria-label="Navigation"
-        className={`fixed top-0 right-0 h-full w-[88%] max-w-[370px] bg-white z-[70] lg:hidden flex flex-col
-          shadow-[-16px_0_48px_rgba(15,36,37,0.14)]
+        aria-hidden={!mobileOpen}
+        inert={!mobileOpen}
+        className={`fixed top-0 right-0 h-full w-[88%] max-w-[370px] bg-primary text-white z-[70] lg:hidden flex flex-col
+          shadow-[-16px_0_48px_rgba(42,74,82,0.14)]
           transition-transform duration-350 ease-[cubic-bezier(0.4,0,0.2,1)]
           ${mobileOpen ? "translate-x-0" : "translate-x-full"}`}
       >
         {/* Drawer header */}
-        <div className="flex h-[70px] items-center justify-between border-b border-gray-200 bg-[#FAFCFC] px-5">
+        <div className="flex h-[70px] items-center justify-between border-b border-white/15 bg-primary px-5">
           <div className="flex items-center gap-2.5">
             <span className="flex h-10 w-10 items-center justify-center rounded-lg border border-gray-200 bg-white shadow-sm">
               <Image
                 src="/logo.png"
-                alt="Kraviona"
+                alt="Kraviona Tech Solutions logo"
                 width={36}
                 height={33}
+                sizes="36px"
                 className="h-auto w-8 object-contain"
               />
             </span>
             <span>
-              <span className="block text-sm font-extrabold leading-none text-[#111A1F]">
+              <span className="block text-sm font-extrabold leading-none text-white">
                 Kraviona
               </span>
-              <span className="mt-1 block text-[9px] font-semibold uppercase tracking-[0.16em] text-[#295c5e]">
+              <span className="mt-1 block text-[9px] font-semibold uppercase tracking-[0.16em] text-white/70">
                 Menu
               </span>
             </span>
           </div>
           <button
+            type="button"
             onClick={closeMobile}
-            className="flex h-9 w-9 items-center justify-center rounded-md text-gray-500 transition-colors hover:bg-white hover:text-gray-800"
+            className="flex h-11 w-11 items-center justify-center rounded-md text-white/80 transition-colors hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
             aria-label="Close navigation"
           >
             <X size={20} strokeWidth={2.1} />
@@ -709,17 +848,17 @@ export default function Header() {
               <Link
                 href="/services"
                 onClick={closeMobile}
-                className="flex items-center justify-between border-b border-gray-100 px-4 py-3 text-[13px] font-bold text-[#295c5e] transition-colors hover:bg-[#f6faf9]"
+                className="flex items-center justify-between border-b border-white/15 px-4 py-3 text-[13px] font-bold text-white transition-colors hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
               >
                 View All Services <ArrowRight size={15} strokeWidth={2.2} />
               </Link>
               {SERVICE_CATEGORIES.map((cat) => (
                 <div
                   key={cat.label}
-                  className="border-b border-gray-100/70 last:border-0"
+                  className="border-b border-white/10 last:border-0"
                 >
                   <p
-                    className={`px-4 pt-3.5 pb-1.5 text-[10px] font-black uppercase tracking-[0.2em] ${cat.color}`}
+                    className="px-4 pt-3.5 pb-1.5 text-[10px] font-black uppercase tracking-[0.2em] text-white/60"
                   >
                     {cat.label}
                   </p>
@@ -731,9 +870,9 @@ export default function Header() {
                         key={svc.name}
                         href={svc.path}
                         onClick={closeMobile}
-                        className="flex items-center gap-3 px-4 py-2.5 text-[13.5px] font-medium text-gray-700 transition-colors hover:bg-[#f6faf9] hover:text-[#d96c4e]"
+                        className="flex items-center gap-3 px-4 py-2.5 text-[13.5px] font-medium text-white/80 transition-colors hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-accent/50"
                       >
-                        <span className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-md border border-gray-200 bg-white text-[#295c5e]">
+                        <span className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-md border border-white/15 bg-white/10 text-white/80">
                           <ServiceIcon size={14} strokeWidth={2.1} />
                         </span>
                         <span className="min-w-0">{svc.name}</span>
@@ -757,7 +896,7 @@ export default function Header() {
                   key={s.name}
                   href={s.path}
                   onClick={closeMobile}
-                  className="block px-4 py-3 text-[13.5px] font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 border-b border-gray-100/70 last:border-0 transition-colors"
+                  className="block border-b border-white/10 px-4 py-3 text-[13.5px] font-medium text-white/80 transition-colors hover:bg-white/10 hover:text-white last:border-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-accent/50"
                 >
                   {s.name}
                 </Link>
@@ -785,7 +924,7 @@ export default function Header() {
                   key={s.name}
                   href={s.path}
                   onClick={closeMobile}
-                  className="block px-4 py-3 text-[13.5px] font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 border-b border-gray-100/70 last:border-0 transition-colors"
+                  className="block border-b border-white/10 px-4 py-3 text-[13.5px] font-medium text-white/80 transition-colors hover:bg-white/10 hover:text-white last:border-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-accent/50"
                 >
                   {s.name}
                 </Link>
@@ -803,18 +942,18 @@ export default function Header() {
         </nav>
 
         {/* Drawer footer */}
-        <div className="p-4 border-t border-gray-100 space-y-2.5 flex-shrink-0">
+        <div className="flex-shrink-0 space-y-2.5 border-t border-white/15 p-4">
           <Link
             href="/contact"
             onClick={closeMobile}
-            className="flex w-full items-center justify-center gap-2 rounded-md bg-[#111A1F] py-3.5 text-[13.5px] font-bold text-white shadow-sm transition-colors hover:bg-[#d96c4e]"
+            className="flex w-full items-center justify-center gap-2 rounded-md bg-accent-dark py-3.5 text-[13.5px] font-bold text-white shadow-sm transition-all hover:brightness-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 focus-visible:ring-offset-2 focus-visible:ring-offset-primary"
           >
             Start Project <ArrowRight size={15} strokeWidth={2.2} />
           </Link>
           <a
             href="tel:+919608553167"
             onClick={closeMobile}
-            className="flex w-full items-center justify-center gap-2 rounded-md border border-gray-200 py-3 text-[13.5px] font-semibold text-gray-600 transition-colors hover:bg-gray-50 hover:text-gray-900"
+            className="flex w-full items-center justify-center gap-2 rounded-md border border-white/25 py-3 text-[13.5px] font-semibold text-white/85 transition-colors hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
           >
             <Phone size={16} strokeWidth={2.1} />
             +91 96085 53167
@@ -832,8 +971,8 @@ function MobileLink({ href, active, onClick, children }) {
       <Link
         href={href}
         onClick={onClick}
-        className={`block rounded-md px-4 py-3 text-[14.5px] font-semibold transition-colors
-          ${active ? "bg-[#f6faf9] text-[#295c5e]" : "text-gray-800 hover:bg-gray-50"}`}
+        className={`block rounded-md px-4 py-3 text-[14.5px] font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50
+          ${active ? "bg-white/10 text-white" : "text-white/80 hover:bg-white/10 hover:text-white"}`}
       >
         {children}
       </Link>
@@ -842,26 +981,33 @@ function MobileLink({ href, active, onClick, children }) {
 }
 
 function MobileAccordion({ label, open, onToggle, children }) {
+  const panelId = `mobile-${label.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-panel`;
+
   return (
     <li>
       <button
+        type="button"
         onClick={onToggle}
-        className="flex w-full items-center justify-between rounded-md px-4 py-3 text-[14.5px] font-semibold text-gray-800 transition-colors hover:bg-gray-50"
+        className="flex w-full items-center justify-between rounded-md px-4 py-3 text-[14.5px] font-semibold text-white/80 transition-colors hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
         aria-expanded={open}
+        aria-controls={panelId}
       >
         {label}
         <ChevronDown
           size={16}
           strokeWidth={2.2}
-          className={`transition-transform duration-300 ${open ? "rotate-180 text-[#d96c4e]" : "text-gray-400"}`}
+          className={`transition-transform duration-300 ${open ? "rotate-180 text-accent-hover" : "text-white/60"}`}
         />
       </button>
 
       <div
+        id={panelId}
+        aria-hidden={!open}
+        inert={!open}
         className={`grid transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] ${open ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"}`}
       >
         <div className="overflow-hidden">
-          <div className="mx-2 mb-2 overflow-hidden rounded-md border border-gray-100 bg-white shadow-sm">
+          <div className="mx-2 mb-2 overflow-hidden rounded-md border border-white/15 bg-primary-hover shadow-sm">
             {children}
           </div>
         </div>

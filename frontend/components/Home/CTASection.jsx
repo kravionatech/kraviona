@@ -8,7 +8,7 @@ import { Calendar, CheckCircle, ArrowRight } from "lucide-react";
 const CTASection = () => {
   return (
     <section
-      className="relative py-24 lg:py-32 bg-gradient-to-b from-[#0f2425] to-[#1b3d3e] overflow-hidden border-t border-white/5"
+      className="relative py-24 lg:py-32 bg-gradient-to-b from-[#2A4A52] to-[#1A2E33] overflow-hidden border-t border-white/5"
       aria-labelledby="cta-heading"
     >
       {/* Animated Background Rings */}
@@ -24,11 +24,11 @@ const CTASection = () => {
         <motion.div
           animate={{ rotate: -360 }}
           transition={{ duration: 55, repeat: Infinity, ease: "linear" }}
-          className="absolute -bottom-[45%] -left-[8%] w-[750px] h-[750px] rounded-full border border-[#f4be78]/8"
+          className="absolute -bottom-[45%] -left-[8%] w-[750px] h-[750px] rounded-full border border-[#F28C5E]/8"
         />
         {/* Glow */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[65%] h-[65%] bg-[#295c5e] blur-[140px] opacity-25 rounded-full" />
-        <div className="absolute top-[18%] right-[8%] w-[38%] h-[38%] bg-[#d96c4e] blur-[110px] opacity-8 rounded-full" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[65%] h-[65%] bg-[#2A4A52] blur-[140px] opacity-25 rounded-full" />
+        <div className="absolute top-[18%] right-[8%] w-[38%] h-[38%] bg-[#E8622A] blur-[110px] opacity-8 rounded-full" />
       </div>
 
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
@@ -41,8 +41,8 @@ const CTASection = () => {
           {/* Live availability badge */}
           <div className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-white/[0.06] border border-white/10 backdrop-blur-md mb-8 shadow-sm">
             <span className="flex h-2.5 w-2.5 relative" aria-hidden="true">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#f4be78] opacity-75" />
-              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#f4be78]" />
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#F28C5E] opacity-75" />
+              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#F28C5E]" />
             </span>
             <span className="text-white/90 text-xs font-bold tracking-[0.15em] uppercase">
               Available for New Projects
@@ -55,7 +55,7 @@ const CTASection = () => {
             className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-white tracking-tight mb-6 leading-[1.12]"
           >
             Ready to Build Something <br className="hidden md:block" />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#f4be78] to-[#d96c4e]">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#F28C5E] to-[#E8622A]">
               Faster and Cleaner?
             </span>
           </h2>
@@ -67,7 +67,7 @@ const CTASection = () => {
           </p>
 
           {/* Calendly placeholder */}
-          <p className="text-[#f4be78]/70 text-sm mb-10 font-medium">
+          <p className="text-[#F28C5E]/70 text-sm mb-10 font-medium">
             Book directly in our calendar. No back-and-forth, no delay.
           </p>
 
@@ -76,7 +76,7 @@ const CTASection = () => {
             <Link
               href="/contact"
               id="cta-primary-btn"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-9 py-4 bg-[#d96c4e] text-white rounded-xl font-bold text-base hover:bg-[#c25e41] transition-all duration-300 shadow-[0_4px_24px_rgba(217,108,78,0.35)] hover:shadow-[0_8px_32px_rgba(217,108,78,0.52)] group hover:-translate-y-0.5"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-9 py-4 bg-[#E8622A] text-white rounded-xl font-bold text-base hover:bg-[#B84A1A] transition-all duration-300 shadow-[0_4px_24px_rgba(232,98,42,0.35)] hover:shadow-[0_8px_32px_rgba(232,98,42,0.52)] group hover:-translate-y-0.5"
               aria-label="Book a free SEO audit and consultation"
             >
               <Calendar className="w-5 h-5" aria-hidden="true" />
@@ -89,7 +89,7 @@ const CTASection = () => {
 
             <Link
               href="/services"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-9 py-4 bg-transparent text-white border-2 border-white/18 rounded-xl font-bold text-base hover:border-[#f4be78]/60 hover:bg-white/5 transition-all duration-300"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-9 py-4 bg-transparent text-white border-2 border-white/18 rounded-xl font-bold text-base hover:border-[#F28C5E]/60 hover:bg-white/5 transition-all duration-300"
               aria-label="Get a free SEO audit for your website"
             >
               Request SEO Audit
@@ -105,7 +105,7 @@ const CTASection = () => {
             ].map((item) => (
               <div key={item} className="flex items-center gap-2">
                 <CheckCircle
-                  className="w-4 h-4 text-[#f4be78]"
+                  className="w-4 h-4 text-[#F28C5E]"
                   aria-hidden="true"
                 />
                 <span>{item}</span>

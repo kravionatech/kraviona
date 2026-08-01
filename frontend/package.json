@@ -6,7 +6,8 @@
     "dev": "next dev --webpack",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "seo:check-orphans": "node scripts/check-orphans.js"
   },
   "dependencies": {
     "@fontsource/poppins": "^5.2.7",

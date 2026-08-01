@@ -6,6 +6,7 @@ export const revalidate = 3600;
 
 const POSTS_FETCH_LIMIT = 100;
 const MAX_POST_PAGES = 20;
+const RECENT_POST_UPDATE_WINDOW_MS = 30 * 24 * 60 * 60 * 1000;
 
 const frequencyRank = {
   always: 7,
@@ -17,52 +18,20 @@ const frequencyRank = {
   never: 1,
 };
 
-const headerServicePaths = new Set([
-  "/services/mern-stack-development",
-  "/services/full-stack-development",
-  "/services/react-development",
-  "/services/nodejs-development",
-  "/services/backend-development",
-  "/services/api-development",
-  "/services/database-architecture",
-  "/services/saas-development",
-  "/services/technical-seo",
-  "/services/web-performance-optimization",
-  "/services/ai-automation",
-  "/services/ai-chatbot-development",
-  "/services/digital-marketing",
-  "/services/social-media-marketing",
-  "/services/email-marketing",
-  "/services/brand-identity",
-  "/services/ecommerce-development-marketing",
-  "/services/account-management",
-  "/services/cataloging",
-  "/services/accounting",
-  "/services/advertising",
-  "/services/seller-training",
-]);
-
-const featuredServicePriorities = new Map([
-  ["/services/technical-seo", 0.92],
-  ["/services/mern-stack-development", 0.92],
-  ["/services/account-management", 0.9],
-  ["/services/ai-automation", 0.9],
-]);
-
 const canonicalStaticRoutes = [
   { path: "/", changeFrequency: "weekly", priority: 1.0 },
   { path: "/services", changeFrequency: "weekly", priority: 0.95 },
-  { path: "/solutions", changeFrequency: "monthly", priority: 0.88 },
-  { path: "/blog", changeFrequency: "daily", priority: 0.93 },
+  { path: "/solutions", changeFrequency: "monthly", priority: 0.9 },
+  { path: "/blog", changeFrequency: "daily", priority: 0.85 },
   { path: "/case-studies", changeFrequency: "monthly", priority: 0.86 },
-  { path: "/contact", changeFrequency: "monthly", priority: 0.85 },
-  { path: "/about", changeFrequency: "monthly", priority: 0.82 },
-  { path: "/pricing", changeFrequency: "monthly", priority: 0.8 },
-  { path: "/gallery", changeFrequency: "monthly", priority: 0.78 },
-  { path: "/team", changeFrequency: "monthly", priority: 0.76 },
+  { path: "/pricing", changeFrequency: "monthly", priority: 0.9 },
+  { path: "/about", changeFrequency: "monthly", priority: 0.75 },
+  { path: "/team", changeFrequency: "monthly", priority: 0.75 },
+  { path: "/gallery", changeFrequency: "monthly", priority: 0.75 },
+  { path: "/contact", changeFrequency: "monthly", priority: 0.7 },
   { path: "/category", changeFrequency: "weekly", priority: 0.7 },
-  { path: "/privacy-policy", changeFrequency: "yearly", priority: 0.35 },
-  { path: "/terms", changeFrequency: "yearly", priority: 0.35 },
+  { path: "/privacy-policy", changeFrequency: "yearly", priority: 0.7 },
+  { path: "/terms", changeFrequency: "yearly", priority: 0.7 },
 ];
 
 const parseCollection = (json) =>
@@ -92,6 +61,16 @@ const getNewestIsoDate = (...values) => {
   return new Date(Math.max(...dates.map((date) => date.getTime()))).toISOString();
 };
 
+const getBlogChangeFrequency = (lastModified) => {
+  const validLastModified = getValidIsoDate(lastModified);
+  if (!validLastModified) return "monthly";
+
+  const age = Date.now() - new Date(validLastModified).getTime();
+  return age >= 0 && age <= RECENT_POST_UPDATE_WINDOW_MS
+    ? "weekly"
+    : "monthly";
+};
+
 const createRoute = ({ path, changeFrequency, priority, lastModified }) => {
   const route = {
     url: canonicalUrl(path),
@@ -107,15 +86,11 @@ const createRoute = ({ path, changeFrequency, priority, lastModified }) => {
   return route;
 };
 
-const getServicePriority = (path) =>
-  featuredServicePriorities.get(path) ||
-  (headerServicePaths.has(path) ? 0.86 : 0.76);
-
 const serviceRoutes = SERVICE_LINKS.map((service) =>
   createRoute({
     path: service.href,
     changeFrequency: "monthly",
-    priority: getServicePriority(service.href),
+    priority: 0.92,
   }),
 );
 
@@ -164,18 +139,20 @@ async function getPublishedCategories() {
 }
 
 function buildBlogPostRoutes(posts) {
-  return posts.map((post) =>
-    createRoute({
+  return posts.map((post) => {
+    const lastModified = getNewestIsoDate(
+      post.updatedAt,
+      post.publishedAt,
+      post.createdAt,
+    );
+
+    return createRoute({
       path: `/blog/${post.slug}`,
-      changeFrequency: "weekly",
-      priority: 0.74,
-      lastModified: getNewestIsoDate(
-        post.updatedAt,
-        post.publishedAt,
-        post.createdAt,
-      ),
-    }),
-  );
+      changeFrequency: getBlogChangeFrequency(lastModified),
+      priority: 0.85,
+      lastModified,
+    });
+  });
 }
 
 function buildCategoryRoutes(posts, categories) {

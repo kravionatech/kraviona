@@ -4,21 +4,21 @@ import { Linkedin, Twitter, ArrowUpRight } from "lucide-react";
 
 const TeamSection = () => {
   return (
-    <section className="relative overflow-hidden bg-[#f9fafb] py-24">
+    <section className="relative overflow-hidden bg-[#F5F7F8] py-24">
       {/* Ambient glow */}
-      <div className="pointer-events-none absolute -top-24 right-0 h-72 w-72 rounded-full bg-[#295c5e]/10 blur-3xl" />
-      <div className="pointer-events-none absolute bottom-0 left-0 h-64 w-64 rounded-full bg-[#d96c4e]/10 blur-3xl" />
+      <div className="pointer-events-none absolute -top-24 right-0 h-72 w-72 rounded-full bg-[#2A4A52]/10 blur-3xl" />
+      <div className="pointer-events-none absolute bottom-0 left-0 h-64 w-64 rounded-full bg-[#E8622A]/10 blur-3xl" />
 
       <div className="relative mx-auto flex max-w-4xl flex-col items-center px-6 text-center">
-        <span className="mb-4 flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.25em] text-[#d96c4e]">
-          <span className="h-px w-5 bg-[#d96c4e]" />
+        <span className="mb-4 flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.25em] text-[#E8622A]">
+          <span className="h-px w-5 bg-[#E8622A]" />
           Founder Spotlight
-          <span className="h-px w-5 bg-[#d96c4e]" />
+          <span className="h-px w-5 bg-[#E8622A]" />
         </span>
 
-        <h2 className="text-4xl font-black tracking-tight text-[#1b3d3e] sm:text-5xl">
+        <h2 className="text-4xl font-black tracking-tight text-[#1A2E33] sm:text-5xl">
           The brain behind{" "}
-          <span className="font-serif italic font-medium text-[#d96c4e]">
+          <span className="font-serif italic font-medium text-[#E8622A]">
             Kraviona.
           </span>
         </h2>
@@ -26,13 +26,13 @@ const TeamSection = () => {
         {/* Portrait */}
         <div className="group relative mt-12 w-90">
           {/* Corner brackets — signature detail */}
-          <span className="absolute -top-3 -left-3 h-8 w-8 rounded-tl-2xl border-t-2 border-l-2 border-[#d96c4e]" />
-          <span className="absolute -bottom-3 -right-3 h-8 w-8 rounded-br-2xl border-b-2 border-r-2 border-[#d96c4e]" />
+          <span className="absolute -top-3 -left-3 h-8 w-8 rounded-tl-2xl border-t-2 border-l-2 border-[#E8622A]" />
+          <span className="absolute -bottom-3 -right-3 h-8 w-8 rounded-br-2xl border-b-2 border-r-2 border-[#E8622A]" />
 
           <div className="relative aspect-square overflow-hidden rounded-[28px] shadow-xl ring-1 ring-black/5">
             <Image
               src="/amar.jpeg"
-              alt="Amar Kumar"
+              alt="Amar Kumar — Founder and Lead Engineer at Kraviona Tech Solutions"
               fill
               sizes="360px"
               className="h-full w-full object-cover saturate-150 brightness-95 transition-transform duration-700 group-hover:scale-105"
@@ -40,8 +40,8 @@ const TeamSection = () => {
           </div>
         </div>
 
-        <h3 className="mt-7 text-2xl font-bold text-[#1b3d3e]">Amar Kumar</h3>
-        <p className="mt-1 text-[10px] font-black uppercase tracking-widest text-[#d96c4e]">
+        <h3 className="mt-7 text-2xl font-bold text-[#1A2E33]">Amar Kumar</h3>
+        <p className="mt-1 text-[10px] font-black uppercase tracking-widest text-[#E8622A]">
           Founder &amp; Lead Engineer
         </p>
         <p className="mx-auto mt-4 max-w-sm text-sm leading-relaxed text-gray-500">
@@ -54,20 +54,20 @@ const TeamSection = () => {
           <a
             href="https://www.linkedin.com/in/amarkumar96085/"
             aria-label="Amar Kumar on LinkedIn"
-            className="flex h-9 w-9 items-center justify-center rounded-full bg-[#1b3d3e]/5 text-[#1b3d3e] transition-colors hover:bg-[#1b3d3e] hover:text-white"
+            className="flex h-9 w-9 items-center justify-center rounded-full bg-[#1A2E33]/5 text-[#1A2E33] transition-colors hover:bg-[#1A2E33] hover:text-white"
           >
             <Linkedin className="h-4 w-4" />
           </a>
           <a
             href="https://twitter.com/kraviona"
             aria-label="Kraviona on Twitter"
-            className="flex h-9 w-9 items-center justify-center rounded-full bg-[#1b3d3e]/5 text-[#1b3d3e] transition-colors hover:bg-[#1b3d3e] hover:text-white"
+            className="flex h-9 w-9 items-center justify-center rounded-full bg-[#1A2E33]/5 text-[#1A2E33] transition-colors hover:bg-[#1A2E33] hover:text-white"
           >
             <Twitter className="h-4 w-4" />
           </a>
           <a
             href="/contact"
-            className="ml-2 flex items-center gap-1.5 rounded-full bg-[#1b3d3e] px-5 py-2 text-xs font-bold text-white transition-opacity hover:opacity-90"
+            className="ml-2 flex items-center gap-1.5 rounded-full bg-[#1A2E33] px-5 py-2 text-xs font-bold text-white transition-opacity hover:opacity-90"
           >
             Work with him
             <ArrowUpRight className="h-3.5 w-3.5" />

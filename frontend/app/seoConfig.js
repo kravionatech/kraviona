@@ -2,16 +2,18 @@
 export const SITE_URL = "https://kraviona.com";
 export const SITE_NAME = "Kraviona Tech Solutions";
 export const SITE_TWITTER = "@KravionaTech";
-export const DEFAULT_OG_IMAGE = "/og-image.jpg";
+export const DEFAULT_OG_IMAGE = "/opengraph-image";
 export const DEFAULT_OG_IMAGE_ALT =
   "Kraviona Tech Solutions MERN stack and technical SEO team";
 
 export const defaultRobots = {
   index: true,
   follow: true,
+  nocache: false,
   googleBot: {
     index: true,
     follow: true,
+    noimageindex: false,
     "max-image-preview": "large",
     "max-snippet": -1,
     "max-video-preview": -1,

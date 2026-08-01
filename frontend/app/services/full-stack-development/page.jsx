@@ -1,6 +1,8 @@
 import Link from "next/link";
 import ContactFormDetails from "@/components/Contact/ContactFormDetails";
+import { JsonLd } from "@/components/JsonLd";
 import { canonicalUrl, defaultRobots } from "@/app/seoConfig.js";
+import { staticServiceMetadata, staticServiceSchemas } from "../serviceSeo.js";
 
 const PAGE_URL = canonicalUrl("/services/full-stack-development");
 
@@ -44,28 +46,13 @@ const breadcrumbSchema = {
   ],
 };
 
-const faqSchema = {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  mainEntity: [
-    {
-      "@type": "Question",
-      name: "What is full-stack development?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "Full-stack development refers to building both frontend (user interface) and backend (server, database, APIs) of web applications. At Kraviona, we specialize in MERN stack and modern JavaScript full-stack solutions.",
-      },
-    },
-    {
-      "@type": "Question",
-      name: "Why choose full-stack development over separate teams?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "Full-stack development ensures better integration, faster development cycles, and more cost-effective solutions. A unified team maintains consistency across all layers of your application.",
-      },
-    },
-  ],
-};
+// This page has no visible FAQ section, so it deliberately does not emit
+// FAQPage markup. FAQ schema must match content users can read on the page.
+const pageSchemas = staticServiceSchemas(
+  "full-stack-development",
+  serviceSchema,
+  breadcrumbSchema,
+);
 
 export const metadata = {
   title: "Full-Stack Development Services India | MERN Stack Company | Kraviona",
@@ -108,25 +95,15 @@ export const metadata = {
     images: ["/og-web-development.jpg"],
   },
   robots: defaultRobots,
+  ...staticServiceMetadata("full-stack-development"),
 };
 
 export default function FullStackDevPage() {
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-      />
+      <JsonLd data={pageSchemas} />
 
-      <section className="relative py-28 bg-gradient-to-br from-[#081314] via-[#0f2425] to-[#1b3d3e] overflow-hidden">
+      <section className="relative py-28 bg-gradient-to-br from-[#1A2E33] via-[#2A4A52] to-[#1A2E33] overflow-hidden">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <nav
             className="flex items-center gap-2 text-sm text-gray-400 mb-10"
@@ -140,11 +117,11 @@ export default function FullStackDevPage() {
               Services
             </Link>
             <span>/</span>
-            <span className="text-[#f4be78]">Full-Stack Development</span>
+            <span className="text-[#F28C5E]">Full-Stack Development</span>
           </nav>
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-white leading-tight mb-6">
             Full-Stack{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#f4be78] to-[#d96c4e]">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#F28C5E] to-[#E8622A]">
               Development
             </span>{" "}
             Services
@@ -157,13 +134,13 @@ export default function FullStackDevPage() {
           <div className="flex flex-col sm:flex-row gap-4">
             <Link
               href="/contact"
-              className="inline-flex items-center justify-center px-8 py-4 bg-[#d96c4e] text-white font-bold rounded-xl hover:bg-[#c25e41] transition-all"
+              className="inline-flex items-center justify-center px-8 py-4 bg-[#E8622A] text-white font-bold rounded-xl hover:bg-[#B84A1A] transition-all"
             >
               Start Your Project
             </Link>
             <Link
               href="/services/mern-stack-development"
-              className="inline-flex items-center justify-center px-8 py-4 bg-white/5 text-white border border-white/20 font-bold rounded-xl hover:border-[#f4be78] transition-all"
+              className="inline-flex items-center justify-center px-8 py-4 bg-white/5 text-white border border-white/20 font-bold rounded-xl hover:border-[#F28C5E] transition-all"
             >
               MERN Stack Services
             </Link>
@@ -173,7 +150,7 @@ export default function FullStackDevPage() {
 
       <section className="py-20 bg-white">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl md:text-4xl font-extrabold text-[#111A1F] mb-6">
+          <h2 className="text-3xl md:text-4xl font-extrabold text-[#1A2E33] mb-6">
             What is Full-Stack Development?
           </h2>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
@@ -213,9 +190,9 @@ export default function FullStackDevPage() {
               ].map((s, i) => (
                 <div
                   key={i}
-                  className="p-5 bg-[#FAFCFC] border border-gray-200 rounded-xl"
+                  className="p-5 bg-[#F5F7F8] border border-gray-200 rounded-xl"
                 >
-                  <h3 className="font-bold text-[#111A1F] mb-1 text-sm">
+                  <h3 className="font-bold text-[#1A2E33] mb-1 text-sm">
                     {s.title}
                   </h3>
                   <p className="text-gray-500 text-sm">{s.desc}</p>
@@ -226,9 +203,9 @@ export default function FullStackDevPage() {
         </div>
       </section>
 
-      <section className="py-12 bg-[#FAFCFC] border-t border-gray-100">
+      <section className="py-12 bg-[#F5F7F8] border-t border-gray-100">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-lg font-bold text-[#111A1F] mb-5">
+          <h2 className="text-lg font-bold text-[#1A2E33] mb-5">
             Related Services
           </h2>
           <div className="flex flex-wrap gap-3">
@@ -250,7 +227,7 @@ export default function FullStackDevPage() {
               <Link
                 key={s.href}
                 href={s.href}
-                className="px-5 py-2.5 border border-[#295c5e]/30 text-[#295c5e] rounded-full font-semibold text-sm hover:bg-[#295c5e] hover:text-white transition-all"
+                className="px-5 py-2.5 border border-[#2A4A52]/30 text-[#2A4A52] rounded-full font-semibold text-sm hover:bg-[#2A4A52] hover:text-white transition-all"
               >
                 {s.name}
               </Link>

@@ -50,7 +50,7 @@ const ContactFormDetails = () => {
           text:
             responseData.message ||
             "Message sent successfully! We'll contact you soon.",
-          confirmButtonColor: "#d96c4e",
+          confirmButtonColor: "#B84A1A",
         });
         setFormData({
           firstName: "",
@@ -77,7 +77,7 @@ const ContactFormDetails = () => {
         text:
           error.message ||
           "Something went wrong. Please check your connection.",
-        confirmButtonColor: "#d96c4e",
+        confirmButtonColor: "#B84A1A",
       });
     } finally {
       setIsSubmitting(false);
@@ -88,7 +88,7 @@ const ContactFormDetails = () => {
     // Applied Poppins font globally to this section via inline style for guaranteed rendering
     // You can also add font-poppins to your tailwind.config.js
     <section
-      className="py-20 md:py-28 bg-[#fafcfc] text-[#1b3d3e] relative"
+      className="relative bg-primary-tint py-20 text-primary md:py-28"
       style={{ fontFamily: "'Poppins', sans-serif" }}
     >
       <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
@@ -102,11 +102,11 @@ const ContactFormDetails = () => {
             className="flex flex-col justify-center"
           >
             <div className="inline-block mb-4">
-              <span className="text-sm font-semibold tracking-wider text-[#d96c4e] uppercase bg-[#d96c4e]/10 px-4 py-2 rounded-full">
+              <span className="rounded-full bg-accent-tint px-4 py-2 text-sm font-semibold uppercase tracking-wider text-accent-dark">
                 Tell Us What You Need
               </span>
             </div>
-            <h2 className="text-4xl md:text-5xl font-bold mb-8 leading-[1.15] text-[#1b3d3e]">
+            <h2 className="mb-8 text-4xl font-bold leading-[1.15] text-primary md:text-5xl">
               Let&apos;s make the next <br />
               build clearer.
             </h2>
@@ -128,6 +128,12 @@ const ContactFormDetails = () => {
                 value="+91 96085 53167"
                 iconPath="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
               />
+              <ContactInfoItem
+                title="Visit Us"
+                link="https://maps.google.com/?q=East+Delhi+110092"
+                value="East Delhi, Delhi 110092, India"
+                iconPath="M12 21s7-5.373 7-12A7 7 0 105 9c0 6.627 7 12 7 12zM12 11.5A2.5 2.5 0 1112 6a2.5 2.5 0 010 5.5z"
+              />
             </div>
           </motion.div>
 
@@ -137,7 +143,7 @@ const ContactFormDetails = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
-            className="bg-white p-8 sm:p-10 md:p-12 rounded-[2rem] shadow-[0_20px_50px_rgba(27,61,62,0.08)] border border-gray-100"
+            className="rounded-[2rem] border border-primary/15 bg-white p-8 shadow-card sm:p-10 md:p-12"
           >
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -185,16 +191,20 @@ const ContactFormDetails = () => {
               />
 
               <div>
-                <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2">
+                <label
+                  htmlFor="message"
+                  className="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2"
+                >
                   Message
                 </label>
                 <textarea
+                  id="message"
                   name="message"
                   value={formData.message}
                   onChange={handleChange}
                   placeholder="Tell us what you want to build, improve, or fix."
                   rows={4}
-                  className="w-full bg-[#f8fafb] border border-gray-200 text-[#1b3d3e] px-5 py-4 rounded-xl outline-none focus:ring-2 focus:ring-[#295c5e]/30 focus:border-[#295c5e] transition-all font-medium resize-none placeholder-gray-400"
+                  className="w-full resize-none rounded-xl border border-primary/15 bg-surface px-5 py-4 font-medium text-primary outline-none transition-all placeholder-gray-400 focus:border-primary focus:ring-2 focus:ring-primary/30"
                   required
                 ></textarea>
               </div>
@@ -205,7 +215,7 @@ const ContactFormDetails = () => {
                 className={`w-full px-8 py-4.5 text-white rounded-xl font-semibold text-sm tracking-wide transition-all duration-300 shadow-md flex items-center justify-center gap-3 mt-4 ${
                   isSubmitting
                     ? "bg-gray-400 cursor-not-allowed shadow-none"
-                    : "bg-[#1b3d3e] hover:bg-[#122b2c] hover:shadow-lg hover:-translate-y-0.5"
+                    : "bg-accent-dark hover:brightness-90 hover:shadow-lg hover:-translate-y-0.5"
                 }`}
               >
                 {isSubmitting ? "Sending..." : "Send Project Details"}
@@ -230,8 +240,7 @@ const ContactFormDetails = () => {
               href="https://calendly.com/kravionatech"
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-lg px-6 py-3 font-semibold text-white transition-colors"
-              style={{ backgroundColor: "#295c5e" }}
+              className="mt-5 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg bg-primary px-6 py-3 font-semibold text-white transition-colors hover:bg-primary-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -260,13 +269,17 @@ const ContactFormDetails = () => {
 
 const FormInput = ({ label, name, ...props }) => (
   <div>
-    <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2">
+    <label
+      htmlFor={name}
+      className="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2"
+    >
       {label}
     </label>
     <input
+      id={name}
       name={name}
       {...props}
-      className="w-full bg-[#f8fafb] border border-gray-200 text-[#1b3d3e] px-5 py-4 rounded-xl outline-none focus:ring-2 focus:ring-[#295c5e]/30 focus:border-[#295c5e] transition-all font-medium placeholder-gray-400"
+      className="w-full rounded-xl border border-primary/15 bg-surface px-5 py-4 font-medium text-primary outline-none transition-all placeholder-gray-400 focus:border-primary focus:ring-2 focus:ring-primary/30"
       required
     />
   </div>
@@ -274,9 +287,9 @@ const FormInput = ({ label, name, ...props }) => (
 
 const ContactInfoItem = ({ title, link, value, iconPath }) => (
   <div className="flex items-start gap-5 group">
-    <div className="w-14 h-14 rounded-2xl bg-white shadow-sm border border-gray-100 group-hover:bg-[#1b3d3e] group-hover:shadow-md flex items-center justify-center shrink-0 transition-all duration-300">
+    <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-primary/15 bg-white shadow-sm transition-all duration-300 group-hover:bg-primary group-hover:shadow-md">
       <svg
-        className="w-6 h-6 text-[#295c5e] group-hover:text-white transition-colors duration-300"
+        className="h-6 w-6 text-primary group-hover:text-white transition-colors duration-300"
         fill="none"
         viewBox="0 0 24 24"
         stroke="currentColor"
@@ -295,7 +308,7 @@ const ContactInfoItem = ({ title, link, value, iconPath }) => (
       </h4>
       <a
         href={link}
-        className="text-lg font-semibold text-[#1b3d3e] hover:text-[#d96c4e] transition-colors"
+        className="text-lg font-semibold text-primary transition-colors hover:text-accent-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
       >
         {value}
       </a>

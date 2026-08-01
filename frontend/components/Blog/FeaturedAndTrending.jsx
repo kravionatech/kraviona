@@ -63,7 +63,7 @@ const FeaturedAndTrending = () => {
     return (
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-center items-center h-60">
-          <Loader2 size={40} className="animate-spin text-[#295c5e]" />
+          <Loader2 size={40} className="animate-spin text-[#2A4A52]" />
         </div>
       </section>
     );
@@ -78,21 +78,21 @@ const FeaturedAndTrending = () => {
         <div className="flex items-center justify-between mb-12">
           <div>
             <div className="flex items-center gap-2 mb-2">
-              <Star className="w-4 h-4 text-[#d96c4e]" />
-              <span className="text-[#d96c4e] font-black text-[10px] uppercase tracking-[0.25em]">
+              <Star className="w-4 h-4 text-[#E8622A]" />
+              <span className="text-[#E8622A] font-black text-[10px] uppercase tracking-[0.25em]">
                 Editors&apos; Picks
               </span>
             </div>
-            <h2 className="text-3xl md:text-4xl font-black text-[#1b3d3e] tracking-tight">
+            <h2 className="text-3xl md:text-4xl font-black text-[#1A2E33] tracking-tight">
               Featured &amp;{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#295c5e] to-[#d96c4e]">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#2A4A52] to-[#E8622A]">
                 Trending
               </span>
             </h2>
           </div>
           <Link
             href="#all-posts"
-            className="hidden md:flex items-center gap-2 text-[11px] font-black text-gray-400 uppercase tracking-widest hover:text-[#d96c4e] transition-colors"
+            className="hidden md:flex items-center gap-2 text-[11px] font-black text-gray-400 uppercase tracking-widest hover:text-[#E8622A] transition-colors"
           >
             All Posts <ArrowRight className="w-4 h-4" />
           </Link>

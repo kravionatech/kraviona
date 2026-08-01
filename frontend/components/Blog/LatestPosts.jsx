@@ -63,21 +63,21 @@ const LatestPosts = () => {
         <div className="flex items-center justify-between mb-12">
           <div>
             <div className="flex items-center gap-2 mb-2">
-              <span className="w-8 h-0.5 bg-[#d96c4e]" />
-              <span className="text-[#d96c4e] font-black text-[10px] uppercase tracking-[0.25em]">
+              <span className="w-8 h-0.5 bg-[#E8622A]" />
+              <span className="text-[#E8622A] font-black text-[10px] uppercase tracking-[0.25em]">
                 Latest Posts
               </span>
             </div>
-            <h2 className="text-3xl md:text-4xl font-black text-[#1b3d3e] tracking-tight">
+            <h2 className="text-3xl md:text-4xl font-black text-[#1A2E33] tracking-tight">
               Fresh{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#295c5e] to-[#d96c4e]">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#2A4A52] to-[#E8622A]">
                 Insights
               </span>
             </h2>
           </div>
           <Link
             href="#all-posts"
-            className="hidden md:flex items-center gap-2 text-[11px] font-black text-gray-400 uppercase tracking-widest hover:text-[#d96c4e] transition-colors"
+            className="hidden md:flex items-center gap-2 text-[11px] font-black text-gray-400 uppercase tracking-widest hover:text-[#E8622A] transition-colors"
           >
             View All <ArrowRight className="w-4 h-4" />
           </Link>
@@ -85,7 +85,7 @@ const LatestPosts = () => {
 
         {isLoading ? (
           <div className="flex justify-center py-20">
-            <Loader2 size={40} className="animate-spin text-[#295c5e]" />
+            <Loader2 size={40} className="animate-spin text-[#2A4A52]" />
           </div>
         ) : posts.length === 0 ? (
           <p className="text-center text-gray-400 py-16">

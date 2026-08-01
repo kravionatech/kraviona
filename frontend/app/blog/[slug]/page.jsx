@@ -40,6 +40,49 @@ const DEFAULT_AUTHOR = {
   twitter: "https://twitter.com/KravionaTech",
 };
 
+const SERVICE_LINKS = {
+  default: [
+    {
+      href: "/services/full-stack-development",
+      label: "Full-stack web development services",
+    },
+    {
+      href: "/services/react-development",
+      label: "React and Next.js development services",
+    },
+  ],
+  seo: [
+    {
+      href: "/services/technical-seo",
+      label: "Technical SEO services",
+    },
+    {
+      href: "/services/web-performance-optimization",
+      label: "Web performance optimization services",
+    },
+  ],
+  ai: [
+    {
+      href: "/services/ai-automation",
+      label: "AI automation services",
+    },
+    {
+      href: "/services/saas-development",
+      label: "SaaS development services",
+    },
+  ],
+  backend: [
+    {
+      href: "/services/nodejs-development",
+      label: "Node.js development services",
+    },
+    {
+      href: "/services/api-development",
+      label: "API development services",
+    },
+  ],
+};
+
 const parsePosts = (json) =>
   Array.isArray(json?.posts)
     ? json.posts
@@ -73,6 +116,30 @@ function getAuthorProfile(blog) {
     linkedin: author.linkedin || author.linkedinUrl || DEFAULT_AUTHOR.linkedin,
     twitter: author.twitter || author.twitterUrl || DEFAULT_AUTHOR.twitter,
   };
+}
+
+function getRelevantServices(blog) {
+  const topics = [
+    blog?.title,
+    blog?.excerpt,
+    blog?.category?.name,
+    ...(Array.isArray(blog?.tags) ? blog.tags : []),
+  ]
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase();
+
+  if (/seo|search|core web vital|ranking|crawl|schema/.test(topics)) {
+    return SERVICE_LINKS.seo;
+  }
+  if (/ai|automation|llm|chatbot|machine learning/.test(topics)) {
+    return SERVICE_LINKS.ai;
+  }
+  if (/node|api|backend|database|server/.test(topics)) {
+    return SERVICE_LINKS.backend;
+  }
+
+  return SERVICE_LINKS.default;
 }
 
 async function getBlog(slug) {
@@ -137,7 +204,7 @@ export async function generateMetadata({ params }) {
   const modifiedTime = getDate(blog.updatedAt || blog.publishedAt || blog.createdAt);
 
   return {
-    title: `${blog.title} | Kraviona Blog`,
+    title: blog.title,
 
     description,
 
@@ -168,7 +235,7 @@ export async function generateMetadata({ params }) {
     },
 
     openGraph: {
-      title: `${blog.title} | Kraviona Blog`,
+      title: blog.title,
 
       description,
 
@@ -184,7 +251,7 @@ export async function generateMetadata({ params }) {
 
       modifiedTime,
 
-      authors: [authorProfile.name],
+      authors: ["https://kraviona.com/about"],
 
       section: blog.category?.name || "Technology",
 
@@ -192,7 +259,7 @@ export async function generateMetadata({ params }) {
 
       images: [
         {
-          url: featuredImageUrl || "/og-image.jpg",
+          url: featuredImageUrl || `${blogCanonical}/opengraph-image`,
           width: 1200,
           height: 630,
           alt: `${blog.title} – Kraviona Blog`,
@@ -203,11 +270,11 @@ export async function generateMetadata({ params }) {
     twitter: {
       card: "summary_large_image",
 
-      title: `${blog.title} | Kraviona Blog`,
+      title: blog.title,
 
       description,
 
-      images: [featuredImageUrl || "/og-image.jpg"],
+      images: [featuredImageUrl || `${blogCanonical}/opengraph-image`],
 
       creator: SITE_TWITTER,
       site: SITE_TWITTER,
@@ -234,6 +301,7 @@ const BlogDetail = async ({ params }) => {
   const recommendedPosts = allPosts
     .filter((p) => p?.slug && p.slug !== slug)
     .slice(0, 6);
+  const relevantServices = getRelevantServices(blog);
   const authorProfile = getAuthorProfile(blog);
   const publishedSource = blog.publishedAt || blog.createdAt;
   const updatedSource = blog.updatedAt;
@@ -286,6 +354,15 @@ const BlogDetail = async ({ params }) => {
     .replace(/\s+/g, " ")
     .trim()
     .substring(0, 160);
+  const articleText = plainText(blog.content || blog.excerpt || "");
+  const articleWords = articleText ? articleText.split(/\s+/).filter(Boolean) : [];
+  const calculatedReadingMinutes = Math.max(1, Math.ceil(articleWords.length / 200));
+  const supportingTopics = Array.isArray(blog.supportingTopicClusters)
+    ? blog.supportingTopicClusters
+    : blog.supportingTopicClusters
+      ? [blog.supportingTopicClusters]
+      : [];
+  const articleTags = Array.isArray(blog.tags) ? blog.tags : [];
 
   const supportedArticleType = ["BlogPosting", "Article", "NewsArticle"].includes(
     blog.schemaType,
@@ -303,14 +380,12 @@ const BlogDetail = async ({ params }) => {
 
     description: articleDescription,
 
-    image: [
-      {
-        "@type": "ImageObject",
-        url: articleImage,
-        width: 1200,
-        height: 630,
-      },
-    ],
+    image: {
+      "@type": "ImageObject",
+      url: articleImage,
+      width: 1200,
+      height: 630,
+    },
 
     url: canonicalUrl(`/blog/${slug}`),
 
@@ -320,20 +395,30 @@ const BlogDetail = async ({ params }) => {
 
     articleSection: blog.category?.name || "Technology",
 
-    keywords: Array.isArray(blog.tags) ? blog.tags.join(", ") : blog.category?.name,
+    keywords: articleTags.join(", ") || blog.category?.name,
 
-    wordCount: blog.wordCount || undefined,
+    wordCount: blog.wordCount || articleWords.length || undefined,
 
-    timeRequired: blog.readingTimeMinutes
-      ? `PT${blog.readingTimeMinutes}M`
-      : undefined,
+    timeRequired: `PT${blog.readingTimeMinutes || calculatedReadingMinutes}M`,
+
+    articleBody: articleWords.slice(0, 200).join(" ") || undefined,
 
     isAccessibleForFree: blog.isAccessibleForFree ?? true,
 
-    inLanguage: blog.language || "en",
+    inLanguage: blog.language === "en" ? "en-IN" : blog.language || "en-IN",
 
-    about: [blog.primaryTopicCluster, ...(blog.supportingTopicClusters || [])]
+    isPartOf: { "@id": "https://kraviona.com/#website" },
+
+    about: [blog.primaryTopicCluster, ...supportingTopics]
       .filter(Boolean)
+      .map((name) => ({ "@type": "Thing", name })),
+
+    mentions: [
+      ...articleTags,
+      ...supportingTopics,
+    ]
+      .filter(Boolean)
+      .slice(0, 8)
       .map((name) => ({ "@type": "Thing", name })),
 
     citation: Array.isArray(blog.sources)
@@ -356,9 +441,9 @@ const BlogDetail = async ({ params }) => {
 
       logo: {
         "@type": "ImageObject",
-        url: "https://kraviona.com/logo.png",
-        width: 200,
-        height: 60,
+        url: "https://kraviona.com/full-logo.webp",
+        width: 384,
+        height: 144,
       },
     },
 
@@ -368,21 +453,31 @@ const BlogDetail = async ({ params }) => {
     },
   };
 
-  // Editors may provide a complete per-post JSON-LD object. Use it as the
-  // article schema only when it is a plain object; otherwise keep the safe,
-  // generated BlogPosting schema above.
-  const articleSchema =
+  // Editors can enrich the generated schema, but cannot replace the core
+  // article identity, dates, publisher, or page relationship.
+  const structuredDataOverride =
     blog.structuredDataOverride &&
     typeof blog.structuredDataOverride === "object" &&
     !Array.isArray(blog.structuredDataOverride)
+      ? blog.structuredDataOverride
+      : {};
+  const articleSchema =
+    Object.keys(structuredDataOverride).length > 0
       ? normalizeStructuredData({
+          ...generatedArticleSchema,
+          ...structuredDataOverride,
           "@context": "https://schema.org",
-          ...blog.structuredDataOverride,
-          url: canonicalUrl(`/blog/${slug}`),
-          mainEntityOfPage: {
-            "@type": "WebPage",
-            "@id": canonicalUrl(`/blog/${slug}`),
-          },
+          "@type": supportedArticleType,
+          "@id": `${canonicalUrl(`/blog/${slug}`)}#article`,
+          headline: generatedArticleSchema.headline,
+          description: generatedArticleSchema.description,
+          image: generatedArticleSchema.image,
+          url: generatedArticleSchema.url,
+          datePublished: generatedArticleSchema.datePublished,
+          dateModified: generatedArticleSchema.dateModified,
+          author: generatedArticleSchema.author,
+          publisher: generatedArticleSchema.publisher,
+          mainEntityOfPage: generatedArticleSchema.mainEntityOfPage,
         })
       : generatedArticleSchema;
 
@@ -442,7 +537,7 @@ const BlogDetail = async ({ params }) => {
       : null;
 
   return (
-    <main className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white">
       <JsonLd
         data={[articleSchema, breadcrumbSchema, faqSchema, videoSchema].filter(
           Boolean,
@@ -450,7 +545,7 @@ const BlogDetail = async ({ params }) => {
       />
 
       {/* ─── Article Header ───────────────────────────────────────────── */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-[#081314] via-[#0f2425] to-[#1b3d3e] px-4 pb-24 pt-40 sm:px-6 lg:px-8">
+      <section className="relative overflow-hidden bg-gradient-to-br from-[#1A2E33] via-[#2A4A52] to-[#1A2E33] px-4 pb-24 pt-40 sm:px-6 lg:px-8">
         <div className="absolute inset-0 bg-[url('/noise.svg')] opacity-[0.03]" />
         <div className="relative z-10 mx-auto max-w-6xl">
           <nav
@@ -467,14 +562,14 @@ const BlogDetail = async ({ params }) => {
             {blog.category?.name && (
               <>
                 <span>/</span>
-                <span className="text-[#f4be78]">{blog.category.name}</span>
+                <span className="text-[#F28C5E]">{blog.category.name}</span>
               </>
             )}
           </nav>
 
           <div className="max-w-4xl">
             {blog.category?.name && (
-              <p className="mb-5 text-xs font-black uppercase tracking-[0.2em] text-[#f4be78]">
+              <p className="mb-5 text-xs font-black uppercase tracking-[0.2em] text-[#F28C5E]">
                 {blog.category.name}
               </p>
             )}
@@ -491,11 +586,25 @@ const BlogDetail = async ({ params }) => {
               <MetaPill icon={<CalendarDays className="h-3.5 w-3.5" />} value={publishedDate} dark />
               <MetaPill icon={<Clock className="h-3.5 w-3.5" />} value={readingTime} dark />
               <MetaPill icon={<UserRound className="h-3.5 w-3.5" />} value={authorProfile.name} dark />
-              <MetaPill
-                icon={<Eye className="h-3.5 w-3.5" />}
-                value={updatedDate || viewCount || blog.category?.name || "Kraviona Insights"}
-                dark
-              />
+              {updatedDate ? (
+                <MetaPill
+                  icon={<CalendarDays className="h-3.5 w-3.5" />}
+                  value={`Updated ${updatedDate}`}
+                  dark
+                />
+              ) : viewCount ? (
+                <MetaPill
+                  icon={<Eye className="h-3.5 w-3.5" />}
+                  value={`${viewCount} views`}
+                  dark
+                />
+              ) : (
+                <MetaPill
+                  icon={<Eye className="h-3.5 w-3.5" />}
+                  value={blog.category?.name || "Kraviona Insights"}
+                  dark
+                />
+              )}
             </div>
 
           </div>
@@ -508,7 +617,7 @@ const BlogDetail = async ({ params }) => {
           {/* LEFT CONTENT */}
           <div className="min-w-0">
             {featuredImageUrl && (
-              <figure className="mb-10 overflow-hidden rounded-lg border border-gray-200 bg-[#fbfdfc]">
+              <figure className="mb-10 overflow-hidden rounded-lg border border-gray-200 bg-[#F5F7F8]">
                 <div className="relative aspect-[16/9] w-full">
                   <Image
                     src={featuredImageUrl}
@@ -541,8 +650,8 @@ const BlogDetail = async ({ params }) => {
               {recommendedPosts.length > 0 && (
                 <div className="rounded-lg border border-gray-100 bg-white p-5 shadow-sm">
                   <div className="flex items-center gap-3 mb-6">
-                    <span className="w-8 h-0.5 bg-[#d96c4e]"></span>
-                    <h2 className="text-xs font-black text-[#1b3d3e] uppercase tracking-[0.2em]">
+                    <span className="w-8 h-0.5 bg-[#E8622A]"></span>
+                    <h2 className="text-xs font-black text-[#1A2E33] uppercase tracking-[0.2em]">
                       Up Next
                     </h2>
                   </div>
@@ -559,6 +668,29 @@ const BlogDetail = async ({ params }) => {
                 </div>
               )}
 
+              <section className="rounded-lg border border-gray-100 bg-[#F5F7F8] p-5">
+                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#E8622A]">
+                  Build on this insight
+                </p>
+                <h2 className="mt-2 text-lg font-black text-[#1A2E33]">
+                  Talk to our delivery team
+                </h2>
+                <p className="mt-2 text-sm leading-relaxed text-gray-600">
+                  Get practical help applying these ideas to your website or product.
+                </p>
+                <div className="mt-4 space-y-2">
+                  {relevantServices.map((service) => (
+                    <Link
+                      key={service.href}
+                      href={service.href}
+                      className="block rounded-lg border border-[#2A4A52]/15 bg-white px-3 py-2.5 text-sm font-bold text-[#2A4A52] transition-colors hover:border-[#E8622A] hover:text-[#E8622A]"
+                    >
+                      {service.label}
+                    </Link>
+                  ))}
+                </div>
+              </section>
+
               {/* Author Card */}
               <div className="rounded-lg border border-gray-100 bg-white p-6 shadow-sm">
                 <p className="mb-4 text-[9px] font-black uppercase tracking-[0.3em] text-gray-400">
@@ -569,13 +701,14 @@ const BlogDetail = async ({ params }) => {
                   <AuthorAvatar
                     src={authorProfile.avatar}
                     name={authorProfile.name}
-                    className="h-16 w-16 ring-4 ring-[#d96c4e]/10"
+                    role={authorProfile.role}
+                    className="h-16 w-16 ring-4 ring-[#E8622A]/10"
                   />
                   <div className="min-w-0 flex-1">
-                    <p className="text-base font-black leading-none text-[#0f2425]">
+                    <p className="text-base font-black leading-none text-[#2A4A52]">
                       {authorProfile.name}
                     </p>
-                    <p className="mt-1 text-xs font-bold text-[#d96c4e]">
+                    <p className="mt-1 text-xs font-bold text-[#E8622A]">
                       {authorProfile.role}
                     </p>
                     <p className="mt-1 text-xs text-gray-400">
@@ -589,19 +722,19 @@ const BlogDetail = async ({ params }) => {
                 </p>
 
                 <div className="mt-5 grid grid-cols-2 gap-2">
-                  <div className="rounded-lg bg-[#FAFCFC] p-3">
+                  <div className="rounded-lg bg-[#F5F7F8] p-3">
                     <p className="text-[9px] font-black uppercase tracking-widest text-gray-400">
                       Published
                     </p>
-                    <p className="mt-1 text-xs font-bold text-[#1b3d3e]">
+                    <p className="mt-1 text-xs font-bold text-[#1A2E33]">
                       {publishedDate}
                     </p>
                   </div>
-                  <div className="rounded-lg bg-[#FAFCFC] p-3">
+                  <div className="rounded-lg bg-[#F5F7F8] p-3">
                     <p className="text-[9px] font-black uppercase tracking-widest text-gray-400">
                       Read Time
                     </p>
-                    <p className="mt-1 text-xs font-bold text-[#1b3d3e]">
+                    <p className="mt-1 text-xs font-bold text-[#1A2E33]">
                       {readingTime}
                     </p>
                   </div>
@@ -617,7 +750,7 @@ const BlogDetail = async ({ params }) => {
                         target={social.href.startsWith("http") ? "_blank" : undefined}
                         rel={social.href.startsWith("http") ? "noreferrer" : undefined}
                         aria-label={`${authorProfile.name} on ${social.name}`}
-                        className="flex h-10 w-10 items-center justify-center rounded-lg border border-gray-200 bg-[#FAFCFC] text-[#1b3d3e] transition-colors hover:border-[#d96c4e] hover:bg-[#d96c4e] hover:text-white"
+                        className="flex h-10 w-10 items-center justify-center rounded-lg border border-gray-200 bg-[#F5F7F8] text-[#1A2E33] transition-colors hover:border-[#E8622A] hover:bg-[#E8622A] hover:text-white"
                       >
                         <Icon className="h-4 w-4" />
                       </a>
@@ -630,7 +763,7 @@ const BlogDetail = async ({ params }) => {
           </aside>
         </div>
       </div>
-    </main>
+    </div>
   );
 };
 
@@ -640,10 +773,10 @@ function MetaPill({ icon, value, dark = false }) {
       className={`inline-flex items-center gap-2 rounded-md px-3 py-2 font-bold ${
         dark
           ? "border border-white/10 bg-white/5 text-gray-200"
-          : "border border-gray-200 bg-white text-[#1b3d3e]"
+          : "border border-gray-200 bg-white text-[#1A2E33]"
       }`}
     >
-      <span className={dark ? "text-[#f4be78]" : "text-[#d96c4e]"}>
+      <span className={dark ? "text-[#F28C5E]" : "text-[#E8622A]"}>
         {icon}
       </span>
       {value}
@@ -651,15 +784,15 @@ function MetaPill({ icon, value, dark = false }) {
   );
 }
 
-function AuthorAvatar({ src, name, className = "" }) {
+function AuthorAvatar({ src, name, role, className = "" }) {
   return (
     <div
-      className={`relative flex flex-shrink-0 items-center justify-center overflow-hidden rounded-full bg-[#d96c4e] text-white ${className}`}
+      className={`relative flex flex-shrink-0 items-center justify-center overflow-hidden rounded-full bg-[#E8622A] text-white ${className}`}
     >
       {src ? (
         <Image
           src={src}
-          alt={name}
+          alt={`${name} — ${role || "author"} at Kraviona Tech Solutions`}
           fill
           sizes="56px"
           className="object-cover"

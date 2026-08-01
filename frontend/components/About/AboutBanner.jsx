@@ -5,10 +5,10 @@ import { motion } from "framer-motion";
 
 const AboutBanner = () => {
   return (
-    <section className="relative pt-32 pb-24 bg-[#0f2425] font-sans overflow-hidden mt-[70px] lg:mt-0">
+    <section className="relative pt-32 pb-24 bg-[#2A4A52] font-sans overflow-hidden mt-[70px] lg:mt-0">
       {/* Background Glows */}
-      <div className="absolute -top-20 -right-20 w-[40rem] h-[40rem] bg-[#295c5e] rounded-full opacity-10 blur-[100px] pointer-events-none"></div>
-      <div className="absolute bottom-0 left-10 w-[30rem] h-[30rem] bg-[#d96c4e] rounded-full opacity-[0.03] blur-[100px] pointer-events-none"></div>
+      <div className="absolute -top-20 -right-20 w-[40rem] h-[40rem] bg-[#2A4A52] rounded-full opacity-10 blur-[100px] pointer-events-none"></div>
+      <div className="absolute bottom-0 left-10 w-[30rem] h-[30rem] bg-[#E8622A] rounded-full opacity-[0.03] blur-[100px] pointer-events-none"></div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
         <motion.div
@@ -18,22 +18,22 @@ const AboutBanner = () => {
           className="max-w-4xl mx-auto"
         >
           <div className="flex items-center justify-center gap-3 mb-8">
-            <span className="w-12 h-[1px] bg-gradient-to-r from-transparent to-[#d96c4e]"></span>
-            <span className="text-[#f4be78] font-black tracking-[0.3em] text-[10px] uppercase">
+            <span className="w-12 h-[1px] bg-gradient-to-r from-transparent to-[#E8622A]"></span>
+            <span className="text-[#F28C5E] font-black tracking-[0.3em] text-[10px] uppercase">
               Who We Are
             </span>
-            <span className="w-12 h-[1px] bg-gradient-to-l from-transparent to-[#d96c4e]"></span>
+            <span className="w-12 h-[1px] bg-gradient-to-l from-transparent to-[#E8622A]"></span>
           </div>
 
           <h1 className="text-5xl md:text-7xl font-black text-white tracking-tighter leading-[1.1] mb-8">
             We build{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#d96c4e] to-[#f4be78]">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#E8622A] to-[#F28C5E]">
               digital systems
             </span>{" "}
             that stay useful.
           </h1>
 
-          <p className="text-lg md:text-xl text-[#a4babb] leading-relaxed max-w-2xl mx-auto font-medium">
+          <p className="text-lg md:text-xl text-[#8FA8B0] leading-relaxed max-w-2xl mx-auto font-medium">
             Kraviona is a founder-led technology team for businesses that need
             fast websites, reliable web apps, clean backend systems, and
             technical SEO that is planned from the first sprint.

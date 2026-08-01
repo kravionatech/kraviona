@@ -53,7 +53,7 @@ function loadAnalytics() {
 
 //   window.chatbaseConfig = {
 //     chatbotId: "FPeMkwsan4E1m6g8IGtSQ",
-//     theme: { primaryColor: "#295C5E" },
+//     theme: { primaryColor: "#2A4A52" },
 //     chatWindow: { width: "360px", height: "540px" },
 //     launcher: { position: "bottom-right", size: "56px" },
 //   };
@@ -100,25 +100,28 @@ function loadGoogleNewsSwg() {
 
 export default function ThirdPartyScripts() {
   useEffect(() => {
-    const loadAll = () => {
-      loadAnalytics();
+    // Start GA4 after hydration so a visit that ends without an interaction is
+    // still counted. The optional News integration can remain interaction-led.
+    loadAnalytics();
+
+    const loadNews = () => {
       // loadChatbase();
       loadGoogleNewsSwg();
       cleanup();
     };
 
     const cleanup = () => {
-      window.removeEventListener("pointerdown", loadAll);
-      window.removeEventListener("keydown", loadAll);
-      window.removeEventListener("touchstart", loadAll);
+      window.removeEventListener("pointerdown", loadNews);
+      window.removeEventListener("keydown", loadNews);
+      window.removeEventListener("touchstart", loadNews);
     };
 
-    window.addEventListener("pointerdown", loadAll, {
+    window.addEventListener("pointerdown", loadNews, {
       once: true,
       passive: true,
     });
-    window.addEventListener("keydown", loadAll, { once: true });
-    window.addEventListener("touchstart", loadAll, {
+    window.addEventListener("keydown", loadNews, { once: true });
+    window.addEventListener("touchstart", loadNews, {
       once: true,
       passive: true,
     });

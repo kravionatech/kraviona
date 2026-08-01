@@ -1,6 +1,8 @@
 import Link from "next/link";
 import ContactFormDetails from "@/components/Contact/ContactFormDetails";
+import { JsonLd } from "@/components/JsonLd";
 import { canonicalUrl, defaultRobots } from "@/app/seoConfig.js";
+import { staticServiceMetadata, staticServiceSchemas } from "../serviceSeo.js";
 
 const PAGE_URL = canonicalUrl("/services/mern-stack-development");
 
@@ -106,6 +108,12 @@ const faqSchema = {
   ],
 };
 
+const pageSchemas = staticServiceSchemas(
+  "mern-stack-development",
+  serviceSchema,
+  breadcrumbSchema,
+);
+
 export const metadata = {
   title: "MERN Stack Development Company for Apps | Kraviona",
   description:
@@ -145,6 +153,7 @@ export const metadata = {
     images: ["/og-web-development.jpg"],
   },
   robots: defaultRobots,
+  ...staticServiceMetadata("mern-stack-development"),
 };
 
 const features = [
@@ -185,22 +194,11 @@ const relatedServices = [
 export default function MERNStackPage() {
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-      />
+      <JsonLd data={[...pageSchemas, faqSchema]} />
 
       {/* Hero */}
       <section
-        className="relative py-28 bg-gradient-to-br from-[#081314] via-[#0f2425] to-[#1b3d3e] overflow-hidden"
+        className="relative py-28 bg-gradient-to-br from-[#1A2E33] via-[#2A4A52] to-[#1A2E33] overflow-hidden"
         aria-labelledby="mern-h1"
       >
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -219,7 +217,7 @@ export default function MERNStackPage() {
               Services
             </Link>
             <span aria-hidden="true">/</span>
-            <span className="text-[#f4be78]" aria-current="page">
+            <span className="text-[#F28C5E]" aria-current="page">
               MERN Stack Development
             </span>
           </nav>
@@ -228,7 +226,7 @@ export default function MERNStackPage() {
             className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-white leading-tight mb-6"
           >
             MERN Stack{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#f4be78] to-[#d96c4e]">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#F28C5E] to-[#E8622A]">
               Development
             </span>{" "}
             Company India
@@ -242,14 +240,14 @@ export default function MERNStackPage() {
           <div className="flex flex-col sm:flex-row gap-4">
             <Link
               href="/contact"
-              className="inline-flex items-center justify-center px-8 py-4 bg-[#d96c4e] text-white font-bold rounded-xl hover:bg-[#c25e41] transition-all shadow-[0_4px_20px_rgba(217,108,78,0.3)]"
+              className="inline-flex items-center justify-center px-8 py-4 bg-[#E8622A] text-white font-bold rounded-xl hover:bg-[#B84A1A] transition-all shadow-[0_4px_20px_rgba(232,98,42,0.3)]"
               aria-label="Get a free MERN Stack consultation"
             >
               Get Free Consultation
             </Link>
             <Link
               href="/services"
-              className="inline-flex items-center justify-center px-8 py-4 bg-white/5 text-white border border-white/20 font-bold rounded-xl hover:border-[#f4be78] transition-all"
+              className="inline-flex items-center justify-center px-8 py-4 bg-white/5 text-white border border-white/20 font-bold rounded-xl hover:border-[#F28C5E] transition-all"
             >
               All Services
             </Link>
@@ -264,7 +262,7 @@ export default function MERNStackPage() {
             <div>
               <h2
                 id="why-mern"
-                className="text-3xl md:text-4xl font-extrabold text-[#111A1F] mb-6"
+                className="text-3xl md:text-4xl font-extrabold text-[#1A2E33] mb-6"
               >
                 Why Choose MERN Stack for Your Web Application?
               </h2>
@@ -295,11 +293,11 @@ export default function MERNStackPage() {
                     className="flex items-center gap-3 text-gray-700 text-sm font-medium"
                   >
                     <span
-                      className="w-5 h-5 rounded-full bg-[#d96c4e]/10 flex-shrink-0 flex items-center justify-center"
+                      className="w-5 h-5 rounded-full bg-[#E8622A]/10 flex-shrink-0 flex items-center justify-center"
                       aria-hidden="true"
                     >
                       <svg
-                        className="w-3 h-3 text-[#d96c4e]"
+                        className="w-3 h-3 text-[#E8622A]"
                         fill="currentColor"
                         viewBox="0 0 20 20"
                       >
@@ -323,7 +321,7 @@ export default function MERNStackPage() {
                 { label: "MongoDB", color: "#47A248", desc: "NoSQL Database" },
                 {
                   label: "Express.js",
-                  color: "#333",
+                  color: "#1A2E33",
                   desc: "Backend Framework",
                 },
                 {
@@ -346,7 +344,7 @@ export default function MERNStackPage() {
                     style={{ backgroundColor: t.color }}
                     aria-hidden="true"
                   />
-                  <p className="font-extrabold text-lg text-[#111A1F]">
+                  <p className="font-extrabold text-lg text-[#1A2E33]">
                     {t.label}
                   </p>
                   <p className="text-xs text-gray-400 mt-1">{t.desc}</p>
@@ -358,11 +356,11 @@ export default function MERNStackPage() {
       </section>
 
       {/* What's Included */}
-      <section className="py-20 bg-[#FAFCFC]" aria-labelledby="mern-features">
+      <section className="py-20 bg-[#F5F7F8]" aria-labelledby="mern-features">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2
             id="mern-features"
-            className="text-3xl font-extrabold text-[#111A1F] mb-4 text-center"
+            className="text-3xl font-extrabold text-[#1A2E33] mb-4 text-center"
           >
             What&apos;s Included in Our MERN Stack Service
           </h2>
@@ -377,18 +375,18 @@ export default function MERNStackPage() {
             {features.map((f, i) => (
               <div
                 key={i}
-                className="p-7 bg-white border border-gray-200 rounded-2xl hover:border-[#d96c4e]/30 hover:shadow-md transition-all"
+                className="p-7 bg-white border border-gray-200 rounded-2xl hover:border-[#E8622A]/30 hover:shadow-md transition-all"
                 role="listitem"
               >
                 <div
-                  className="w-10 h-10 rounded-xl bg-[#d96c4e]/10 flex items-center justify-center mb-4"
+                  className="w-10 h-10 rounded-xl bg-[#E8622A]/10 flex items-center justify-center mb-4"
                   aria-hidden="true"
                 >
-                  <span className="text-[#d96c4e] font-black text-sm">
+                  <span className="text-[#E8622A] font-black text-sm">
                     0{i + 1}
                   </span>
                 </div>
-                <h3 className="font-bold text-[#111A1F] mb-2">{f.title}</h3>
+                <h3 className="font-bold text-[#1A2E33] mb-2">{f.title}</h3>
                 <p className="text-gray-500 text-sm leading-relaxed">
                   {f.desc}
                 </p>
@@ -403,7 +401,7 @@ export default function MERNStackPage() {
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2
             id="mern-faq"
-            className="text-2xl font-extrabold text-[#111A1F] mb-8 text-center"
+            className="text-2xl font-extrabold text-[#1A2E33] mb-8 text-center"
           >
             MERN Stack Development — Common Questions
           </h2>
@@ -413,10 +411,10 @@ export default function MERNStackPage() {
                 key={i}
                 className="border border-gray-200 rounded-2xl overflow-hidden group"
               >
-                <summary className="flex items-center justify-between gap-4 px-6 py-5 cursor-pointer list-none font-semibold text-[#111A1F] hover:bg-gray-50 transition-colors text-sm md:text-base">
+                <summary className="flex items-center justify-between gap-4 px-6 py-5 cursor-pointer list-none font-semibold text-[#1A2E33] hover:bg-gray-50 transition-colors text-sm md:text-base">
                   {faq.name}
                   <span
-                    className="text-[#d96c4e] font-bold text-xl group-open:rotate-45 transition-transform duration-200 flex-shrink-0"
+                    className="text-[#E8622A] font-bold text-xl group-open:rotate-45 transition-transform duration-200 flex-shrink-0"
                     aria-hidden="true"
                   >
                     +
@@ -433,11 +431,11 @@ export default function MERNStackPage() {
 
       {/* Related Services */}
       <section
-        className="py-12 bg-[#FAFCFC] border-t border-gray-100"
+        className="py-12 bg-[#F5F7F8] border-t border-gray-100"
         aria-label="Related services"
       >
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-lg font-bold text-[#111A1F] mb-5">
+          <h2 className="text-lg font-bold text-[#1A2E33] mb-5">
             Related Services
           </h2>
           <nav
@@ -448,7 +446,7 @@ export default function MERNStackPage() {
               <Link
                 key={s.href}
                 href={s.href}
-                className="px-5 py-2.5 border border-[#295c5e]/30 text-[#295c5e] rounded-full font-semibold text-sm hover:bg-[#295c5e] hover:text-white transition-all"
+                className="px-5 py-2.5 border border-[#2A4A52]/30 text-[#2A4A52] rounded-full font-semibold text-sm hover:bg-[#2A4A52] hover:text-white transition-all"
               >
                 {s.name}
               </Link>

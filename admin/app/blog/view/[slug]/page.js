@@ -20,9 +20,9 @@ const ProgressBar = () => {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
   return (
-    <div className="fixed top-0 left-0 right-0 z-50 h-[3px] bg-gray-100">
+    <div className="fixed top-0 left-0 right-0 z-50 h-[3px] bg-[#2a4a52]">
       <div
-        className="h-full bg-orange-500 transition-all duration-75"
+        className="h-full bg-[#e8622a] transition-all duration-75"
         style={{ width: `${pct}%` }}
       />
     </div>
@@ -55,7 +55,7 @@ const Skeleton = () => (
 const NotFound = () => (
   <Frame>
     <div className="min-h-[60vh] flex flex-col items-center justify-center gap-4 text-center px-4">
-      <div className="w-16 h-16 rounded-full bg-orange-50 flex items-center justify-center">
+      <div className="w-16 h-16 rounded-full bg-[#2a4a52]/30 flex items-center justify-center">
         <span className="text-2xl">📄</span>
       </div>
       <h2 className="text-xl font-bold text-gray-900">Post not found</h2>
@@ -64,7 +64,7 @@ const NotFound = () => (
       </p>
       <Link
         href="/blog"
-        className="inline-flex items-center gap-2 text-orange-500 hover:text-orange-600 font-semibold text-sm"
+        className="inline-flex items-center gap-2 text-[#f28c5e] hover:text-[#e8622a] font-semibold text-sm"
       >
         <ArrowLeft size={15} /> Back to blog
       </Link>
@@ -140,12 +140,12 @@ const SingleBlogView = () => {
             className="w-full h-full object-cover"
           />
           {/* gradient fade */}
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0d1117] via-[#0d111780] to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#1a2e33] via-[#1a2e33]/70 to-transparent" />
 
           {/* title on hero */}
           <div className="absolute bottom-0 left-0 right-0 max-w-3xl mx-auto px-4 pb-10">
             {blog.category?.name && (
-              <span className="inline-block text-xs font-bold tracking-widest text-orange-400 uppercase mb-3">
+              <span className="inline-block text-xs font-bold tracking-widest text-[#f28c5e] uppercase mb-3">
                 {blog.category.name}
               </span>
             )}
@@ -156,10 +156,10 @@ const SingleBlogView = () => {
         </div>
       ) : (
         /* fallback: no image, plain header */
-        <div className="bg-[#1A2B3C] py-16">
+        <div className="bg-[#2a4a52] py-16">
           <div className="max-w-3xl mx-auto px-4">
             {blog.category?.name && (
-              <span className="inline-block text-xs font-bold tracking-widest text-orange-400 uppercase mb-3">
+              <span className="inline-block text-xs font-bold tracking-widest text-[#f28c5e] uppercase mb-3">
                 {blog.category.name}
               </span>
             )}
@@ -177,10 +177,10 @@ const SingleBlogView = () => {
             <img
               src={blog.author.avatar}
               alt={blog.author.name}
-              className="w-8 h-8 rounded-full object-cover ring-2 ring-orange-200"
+              className="w-8 h-8 rounded-full object-cover ring-2 ring-[#e8622a]/35"
             />
           ) : (
-            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white text-xs font-bold ring-2 ring-orange-200">
+            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#f28c5e] to-[#e8622a] flex items-center justify-center text-white text-xs font-bold ring-2 ring-[#e8622a]/35">
               {(blog.author?.name || '?')[0].toUpperCase()}
             </div>
           )}
@@ -202,20 +202,20 @@ const SingleBlogView = () => {
       </div>
 
       {/* ── Body ── */}
-      <div className="bg-[#FAFAFA] min-h-screen">
+      <div className="bg-[#1a2e33] min-h-screen">
         <div className="max-w-3xl mx-auto px-4 py-10 space-y-10" ref={articleRef}>
 
           {/* Excerpt */}
           {blog.excerpt && (
-            <p className="text-lg text-gray-600 leading-relaxed font-light border-l-4 border-orange-400 pl-5">
+            <p className="text-lg text-gray-600 leading-relaxed font-light border-l-4 border-[#e8622a] pl-5">
               {blog.excerpt}
             </p>
           )}
 
           {/* Quick Answer */}
           {blog.quickAnswer && (
-            <div className="bg-[#FFF7ED] border border-orange-200 rounded-2xl p-6">
-              <p className="text-xs font-bold tracking-widest text-orange-500 uppercase mb-2">Quick Answer</p>
+            <div className="bg-[#2a4a52]/45 border border-[#e8622a]/35 rounded-2xl p-6">
+              <p className="text-xs font-bold tracking-widest text-[#f28c5e] uppercase mb-2">Quick Answer</p>
               <p className="text-gray-800 text-sm leading-relaxed">{blog.quickAnswer}</p>
             </div>
           )}
@@ -227,7 +227,7 @@ const SingleBlogView = () => {
               <ul className="space-y-3">
                 {blog.keyTakeaways.map((item, i) => (
                   <li key={i} className="flex gap-3 text-sm text-gray-700 leading-relaxed">
-                    <span className="mt-0.5 w-5 h-5 rounded-full bg-orange-100 text-orange-600 flex-shrink-0 flex items-center justify-center text-xs font-bold">
+                    <span className="mt-0.5 w-5 h-5 rounded-full bg-[#e8622a]/15 text-[#f28c5e] flex-shrink-0 flex items-center justify-center text-xs font-bold">
                       {i + 1}
                     </span>
                     {item}
@@ -249,7 +249,7 @@ const SingleBlogView = () => {
                     </span>
                     <a
                       href={`#${toc.anchor}`}
-                      className="text-sm text-orange-600 hover:text-orange-700 hover:underline underline-offset-2 transition-colors"
+                      className="text-sm text-[#f28c5e] hover:text-[#e8622a] hover:underline underline-offset-2 transition-colors"
                     >
                       {toc.heading}
                     </a>
@@ -262,10 +262,10 @@ const SingleBlogView = () => {
           {/* Main content */}
           {blog.content && (
             <div className="prose prose-gray prose-sm sm:prose max-w-none
-              prose-headings:text-[#1A2B3C] prose-headings:font-bold
-              prose-a:text-orange-500 prose-a:no-underline hover:prose-a:underline
-              prose-blockquote:border-orange-400 prose-blockquote:text-gray-600
-              prose-code:text-orange-600 prose-code:bg-orange-50 prose-code:px-1 prose-code:rounded
+              prose-headings:text-[#f5f7f8] prose-headings:font-bold
+              prose-a:text-[#f28c5e] prose-a:no-underline hover:prose-a:underline
+              prose-blockquote:border-[#e8622a] prose-blockquote:text-gray-600
+              prose-code:text-[#f28c5e] prose-code:bg-[#2a4a52] prose-code:px-1 prose-code:rounded
               prose-img:rounded-xl">
               {/* If content is HTML use dangerouslySetInnerHTML, else render as text */}
               {typeof blog.content === 'string' && blog.content.trim().startsWith('<')
@@ -318,7 +318,7 @@ const SingleBlogView = () => {
                 {blog.tags.map((tag) => (
                   <span
                     key={tag}
-                    className="bg-white border border-gray-200 hover:border-orange-300 hover:text-orange-600 text-gray-600 px-3 py-1 rounded-full text-xs font-medium transition-colors cursor-pointer"
+                    className="bg-white border border-gray-200 hover:border-[#e8622a]/50 hover:text-[#f28c5e] text-gray-600 px-3 py-1 rounded-full text-xs font-medium transition-colors cursor-pointer"
                   >
                     #{tag}
                   </span>
@@ -331,7 +331,7 @@ const SingleBlogView = () => {
           <div className="pt-4">
             <Link
               href="/blog"
-              className="inline-flex items-center gap-2 text-sm font-semibold text-gray-400 hover:text-orange-500 transition-colors"
+              className="inline-flex items-center gap-2 text-sm font-semibold text-gray-400 hover:text-[#f28c5e] transition-colors"
             >
               <ArrowLeft size={15} /> Back to all posts
             </Link>

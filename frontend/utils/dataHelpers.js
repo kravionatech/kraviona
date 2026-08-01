@@ -92,18 +92,27 @@ export const getImageUrl = (post) =>
  * @param {object} post
  * @returns {string}
  */
-export const getImageAlt = (post) =>
-  post?.featuredImage?.altText ||
-  post?.featuredImage?.large?.altText ||
-  post?.featuredImage?.medium?.altText ||
-  post?.featuredImage?.small?.altText ||
-  post?.image?.altText ||
-  post?.thumbnail?.altText ||
-  post?.gallery?.[0]?.altText ||
-  post?.ogTitle ||
-  post?.twitterTitle ||
-  post?.title ||
-  "Blog image";
+export const getImageAlt = (post) => {
+  const explicitAlt =
+    post?.featuredImage?.altText ||
+    post?.featuredImage?.large?.altText ||
+    post?.featuredImage?.medium?.altText ||
+    post?.featuredImage?.small?.altText ||
+    post?.image?.altText ||
+    post?.thumbnail?.altText ||
+    post?.gallery?.[0]?.altText ||
+    post?.ogTitle ||
+    post?.twitterTitle;
+
+  if (explicitAlt) return explicitAlt;
+
+  const category =
+    post?.category?.name || post?.category?.title || post?.category || "web development";
+
+  return post?.title
+    ? `${post.title} — ${category} guide by Kraviona Tech Solutions`
+    : "Web development guide by Kraviona Tech Solutions";
+};
 
 /**
  * Returns a clean excerpt (strips HTML tags).

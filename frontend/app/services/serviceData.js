@@ -503,3 +503,36 @@ export const SERVICE_LINKS = Object.entries(SERVICE_PAGES).map(
     category: service.category,
   }),
 );
+
+// Dynamic service pages share the same FAQ component and JSON-LD. Keep the
+// source here so visible answers and structured data cannot diverge. Each
+// answer is intentionally substantive enough to be useful in the page rather
+// than a thin rich-result placeholder.
+export function getServiceFaqs(service) {
+  const categoryFaqs = CATEGORY_DETAILS[service.category]?.faqs || [];
+  const outcomeSummary = service.outcomes.slice(0, 3).join(", ").toLowerCase();
+
+  return [
+    {
+      question: `What is included in Kraviona's ${service.name} service?`,
+      answer: `The scope is shaped around your goals, current setup, and delivery priorities. A typical ${service.name} engagement can include ${outcomeSummary}. Before work begins, Kraviona confirms the practical deliverables, responsibilities, review points, and launch or handover plan in writing.`,
+    },
+    {
+      question: `How do you scope a ${service.name} project?`,
+      answer: `Kraviona starts with a discovery conversation, reviews the existing product or requirement, and identifies the highest-impact work. The team then turns that into a phased scope with assumptions, dependencies, milestones, and a realistic timeline, so the project stays focused instead of becoming an open-ended list of requests.`,
+    },
+    {
+      question: `Can ${service.name} work with our existing tools and team?`,
+      answer: `Yes. The work can be planned around the systems you already use, including your website, codebase, CMS, CRM, analytics, hosting, or internal workflows. Kraviona documents access needs early, works with your stakeholders, and recommends integration or migration steps that limit unnecessary disruption.`,
+    },
+    {
+      question: `How is progress reported during ${service.name} work?`,
+      answer: `You receive clear checkpoints rather than vague status updates. Depending on the scope, these can include a prioritized task plan, working demonstrations, before-and-after findings, implementation notes, and next actions. The reporting focuses on decisions, completed work, risks, and the measurable result the service is intended to improve.`,
+    },
+    {
+      question: `What happens after the ${service.name} work is delivered?`,
+      answer: `Kraviona explains what was completed, hands over relevant access or documentation, and outlines sensible next steps for your team. Projects include a practical review period for agreed fixes, while ongoing support can be arranged for monitoring, improvements, new features, or a longer-term growth roadmap.`,
+    },
+    ...categoryFaqs,
+  ].slice(0, 7);
+}

@@ -9,26 +9,26 @@ const ComingSoon = ({
   expectedDate,
 }) => (
   // FIX: Compact size, perfectly centered, accounting for header height (pt-20)
-  <div className="relative min-h-screen w-full flex flex-col items-center justify-center bg-[#0f2425] overflow-hidden pt-20 pb-10">
+  <div className="relative min-h-screen w-full flex flex-col items-center justify-center bg-[#2A4A52] overflow-hidden pt-20 pb-10">
     {/* Background Patterns */}
     <div
       className="absolute inset-0 z-0 opacity-10"
       style={{
-        backgroundImage: "radial-gradient(#f4be78 1px, transparent 1px)",
+        backgroundImage: "radial-gradient(#F28C5E 1px, transparent 1px)",
         backgroundSize: "30px 30px",
       }}
     ></div>
 
     {/* Decorative Glows (Scaled down) */}
-    <div className="absolute top-0 right-0 w-72 h-72 bg-[#295c5e]/20 rounded-full blur-[80px]"></div>
-    <div className="absolute bottom-0 left-0 w-72 h-72 bg-[#d96c4e]/10 rounded-full blur-[80px]"></div>
+    <div className="absolute top-0 right-0 w-72 h-72 bg-[#2A4A52]/20 rounded-full blur-[80px]"></div>
+    <div className="absolute bottom-0 left-0 w-72 h-72 bg-[#E8622A]/10 rounded-full blur-[80px]"></div>
 
     <div className="relative z-10 flex flex-col items-center text-center px-4 max-w-3xl">
       {/* Animated Icon (Smaller) */}
       <div className="mb-6">
-        <div className="w-16 h-16 bg-[#295c5e]/20 rounded-2xl flex items-center justify-center border border-[#f4be78]/10 backdrop-blur-lg animate-[slow-bounce_4s_infinite_ease-in-out]">
+        <div className="w-16 h-16 bg-[#2A4A52]/20 rounded-2xl flex items-center justify-center border border-[#F28C5E]/10 backdrop-blur-lg animate-[slow-bounce_4s_infinite_ease-in-out]">
           <svg
-            className="w-8 h-8 text-[#f4be78]"
+            className="w-8 h-8 text-[#F28C5E]"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -45,16 +45,16 @@ const ComingSoon = ({
 
       {/* Brand/Page Label */}
       <div className="flex items-center gap-3 mb-4">
-        <span className="w-6 h-[1px] bg-[#295c5e]"></span>
-        <h2 className="text-[#f4be78] font-bold tracking-[0.3em] uppercase text-[10px]">
+        <span className="w-6 h-[1px] bg-[#2A4A52]"></span>
+        <h2 className="text-[#F28C5E] font-bold tracking-[0.3em] uppercase text-[10px]">
           {pageName} Lab
         </h2>
-        <span className="w-6 h-[1px] bg-[#295c5e]"></span>
+        <span className="w-6 h-[1px] bg-[#2A4A52]"></span>
       </div>
 
       {/* Main Heading (Scaled down) */}
       <h1 className="text-4xl md:text-5xl font-black text-white mb-4 leading-tight tracking-tight">
-        Launching <span className="text-[#d96c4e]">Soon...</span>
+        Launching <span className="text-[#E8622A]">Soon...</span>
       </h1>
 
       {/* Description (Smaller text, tighter max-width) */}
@@ -64,8 +64,8 @@ const ComingSoon = ({
 
       {/* Launch Date Indicator (More compact) */}
       {expectedDate && (
-        <div className="mb-8 py-2 px-6 bg-[#295c5e]/10 border border-[#295c5e]/30 rounded-full backdrop-blur-sm">
-          <p className="text-[#f4be78] text-xs font-bold tracking-wide">
+        <div className="mb-8 py-2 px-6 bg-[#2A4A52]/10 border border-[#2A4A52]/30 rounded-full backdrop-blur-sm">
+          <p className="text-[#F28C5E] text-xs font-bold tracking-wide">
             PROJECTED LAUNCH:{" "}
             <span className="text-white ml-2 uppercase">{expectedDate}</span>
           </p>
@@ -83,7 +83,7 @@ const ComingSoon = ({
         <button
           type="button"
           aria-label="Notify me when this page launches"
-          className="w-full sm:w-auto bg-[#d96c4e] hover:bg-[#295c5e] text-white px-6 py-2.5 rounded-lg font-bold text-xs transition-all duration-300 shadow-lg active:scale-95 uppercase tracking-wider"
+          className="w-full sm:w-auto bg-[#E8622A] hover:bg-[#2A4A52] text-white px-6 py-2.5 rounded-lg font-bold text-xs transition-all duration-300 shadow-lg active:scale-95 uppercase tracking-wider"
         >
           Notify Me
         </button>
@@ -92,7 +92,7 @@ const ComingSoon = ({
       {/* Navigation Link (Compact) */}
       <Link
         href="/"
-        className="group flex items-center gap-2 text-gray-500 hover:text-[#f4be78] transition-all duration-300 font-bold uppercase text-[10px] tracking-widest"
+        className="group flex items-center gap-2 text-gray-500 hover:text-[#F28C5E] transition-all duration-300 font-bold uppercase text-[10px] tracking-widest"
       >
         <svg
           className="w-3.5 h-3.5 transform group-hover:-translate-x-1.5 transition-transform"

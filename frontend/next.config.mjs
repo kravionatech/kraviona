@@ -5,20 +5,54 @@ const rawDeploymentId =
 const deploymentId = rawDeploymentId
   .replace(/[^a-zA-Z0-9_-]/g, "-")
   .slice(0, 32);
+const scriptSources = [
+  "'self'",
+  "'unsafe-inline'",
+  // Next's development tooling uses eval. Do not ship that permission in the
+  // production CSP.
+  ...(process.env.NODE_ENV !== "production" ? ["'unsafe-eval'"] : []),
+  "https://www.googletagmanager.com",
+  "https://www.google-analytics.com",
+  "https://www.chatbase.co",
+  "https://news.google.com",
+].join(" ");
+const contentSecurityPolicy = [
+  "default-src 'self'",
+  "base-uri 'self'",
+  "object-src 'none'",
+  "frame-ancestors 'self'",
+  "form-action 'self' https://calendly.com https://wa.me",
+  "img-src 'self' data: blob: https:",
+  "font-src 'self' data: https://fonts.gstatic.com",
+  "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+  `script-src ${scriptSources}`,
+  "connect-src 'self' https://api.kraviona.com https://www.google-analytics.com https://www.googletagmanager.com https://www.chatbase.co",
+  "frame-src 'self' https://www.google.com https://maps.google.com https://www.googletagmanager.com https://calendly.com https://www.chatbase.co https://news.google.com",
+].join("; ");
 
 const nextConfig = {
   ...(deploymentId ? { deploymentId } : {}),
   reactStrictMode: true,
   poweredByHeader: false,
   compress: true,
+  generateEtags: true,
   productionBrowserSourceMaps: false,
   trailingSlash: false,
   skipTrailingSlashRedirect: false,
+  compiler: {
+    removeConsole: process.env.NODE_ENV === "production",
+  },
+  experimental: {
+    optimizePackageImports: ["lucide-react"],
+  },
 
   images: {
     formats: ["image/avif", "image/webp"],
     deviceSizes: [375, 640, 750, 828, 1080, 1200, 1920],
     imageSizes: [16, 32, 48, 64, 80, 96, 128, 256, 384],
+    // Keep the optimizer cache useful without making unversioned remote
+    // images difficult to refresh after an update.
+    minimumCacheTTL: 86400,
     dangerouslyAllowSVG: false,
 
     remotePatterns: [
@@ -39,6 +73,7 @@ const nextConfig = {
         headers: [
           { key: "X-Frame-Options", value: "SAMEORIGIN" },
           { key: "X-Content-Type-Options", value: "nosniff" },
+          { key: "X-XSS-Protection", value: "1; mode=block" },
           { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
           { key: "Cross-Origin-Opener-Policy", value: "same-origin-allow-popups" },
           { key: "Cross-Origin-Resource-Policy", value: "same-origin" },
@@ -50,8 +85,7 @@ const nextConfig = {
           },
           {
             key: "Content-Security-Policy",
-            value:
-              "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'self'; form-action 'self' https://calendly.com https://wa.me; img-src 'self' data: blob: https:; font-src 'self' data: https://fonts.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://www.chatbase.co https://news.google.com; connect-src 'self' https://api.kraviona.com https://www.google-analytics.com https://www.googletagmanager.com https://www.chatbase.co; frame-src 'self' https://www.googletagmanager.com https://calendly.com https://www.chatbase.co https://news.google.com;",
+            value: contentSecurityPolicy,
           },
           {
             key: "Strict-Transport-Security",
@@ -75,6 +109,15 @@ const nextConfig = {
         ],
       },
       {
+        source: "/images/:path*",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+        ],
+      },
+      {
         source: "/:path(robots.txt|sitemap.xml|rss.xml|llms.txt|ai.txt)",
         headers: [
           { key: "X-Robots-Tag", value: "noindex, follow, noarchive" },
@@ -95,7 +138,21 @@ const nextConfig = {
         destination: "/services/:path*",
         permanent: true,
       },
-      
+      {
+        source: "/blogs",
+        destination: "/blog",
+        permanent: true,
+      },
+      {
+        source: "/contact-us",
+        destination: "/contact",
+        permanent: true,
+      },
+      {
+        source: "/terms-and-conditions",
+        destination: "/terms",
+        permanent: true,
+      },
     ];
   },
 };

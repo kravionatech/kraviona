@@ -56,17 +56,17 @@ const GalleryPage = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#fdfdfd] pb-24">
+    <div className="min-h-screen bg-[#F5F7F8] pb-24">
       {/* Banner Section */}
-      <div className="bg-[#1b3d3e] text-white py-20 px-4 text-center relative overflow-hidden">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-[#295c5e] rounded-full blur-[120px] opacity-40 pointer-events-none"></div>
+      <div className="bg-[#1A2E33] text-white py-20 px-4 text-center relative overflow-hidden">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-[#2A4A52] rounded-full blur-[120px] opacity-40 pointer-events-none"></div>
 
         <div className="relative z-10 max-w-3xl mx-auto">
-          <span className="text-[#d96c4e] font-bold tracking-[0.2em] text-[10px] uppercase mb-4 block">
+          <span className="text-[#E8622A] font-bold tracking-[0.2em] text-[10px] uppercase mb-4 block">
             Our Work
           </span>
           <h1 className="text-4xl md:text-5xl font-black mb-6 tracking-tight">
-            Portfolio &amp; <span className="text-[#d96c4e]">Projects</span>
+            Portfolio &amp; <span className="text-[#E8622A]">Projects</span>
           </h1>
           <p className="text-gray-300 text-sm md:text-base leading-relaxed max-w-xl mx-auto">
             Explore our curated collection of high-performance web applications,
@@ -79,16 +79,16 @@ const GalleryPage = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-16">
         {isLoading ? (
           <div className="flex justify-center py-24">
-            <Loader2 size={40} className="animate-spin text-[#295c5e]" />
+            <Loader2 size={40} className="animate-spin text-[#2A4A52]" />
           </div>
         ) : projects.length === 0 ? (
           <div className="text-center py-24 bg-white rounded-3xl border border-gray-100 shadow-sm">
-            <div className="w-16 h-16 rounded-full bg-[#f9fafb] flex items-center justify-center mx-auto mb-6">
-              <span className="text-3xl font-black text-[#295c5e] opacity-30">
+            <div className="w-16 h-16 rounded-full bg-[#F5F7F8] flex items-center justify-center mx-auto mb-6">
+              <span className="text-3xl font-black text-[#2A4A52] opacity-30">
                 K
               </span>
             </div>
-            <h3 className="text-2xl font-bold text-[#1b3d3e] mb-3">
+            <h3 className="text-2xl font-bold text-[#1A2E33] mb-3">
               Portfolio Coming Soon
             </h3>
             <p className="text-gray-500 mb-8 max-w-sm mx-auto">
@@ -97,7 +97,7 @@ const GalleryPage = () => {
             </p>
             <Link
               href="/contact"
-              className="inline-block px-8 py-4 bg-[#1b3d3e] text-white rounded-full font-black text-xs uppercase tracking-[0.2em] hover:bg-[#d96c4e] transition-colors duration-300"
+              className="inline-block px-8 py-4 bg-[#1A2E33] text-white rounded-full font-black text-xs uppercase tracking-[0.2em] hover:bg-[#E8622A] transition-colors duration-300"
             >
               Start a Project
             </Link>
@@ -115,6 +115,12 @@ const GalleryPage = () => {
                 project.thumbnail ||
                 project.coverImage ||
                 null;
+              const projectTitle = project.title || project.name || "Kraviona project";
+              const projectCategory = project.category || project.type || "digital product";
+              const projectAlt =
+                project.imageAlt ||
+                project.alt ||
+                `${projectTitle} — ${projectCategory} project by Kraviona Tech Solutions`;
 
               return (
                 <motion.div
@@ -125,13 +131,13 @@ const GalleryPage = () => {
                   {imageUrl ? (
                     <Image
                       src={imageUrl}
-                      alt={project.title || project.name || "Project"}
+                      alt={projectAlt}
                       fill
                       sizes="(max-width: 640px) 100vw, (max-width: 1200px) 50vw, 33vw"
                       className="object-cover transition-transform duration-700 group-hover:scale-110"
                     />
                   ) : (
-                    <div className="w-full h-full bg-gradient-to-br from-[#0f2425] to-[#295c5e] flex items-center justify-center">
+                    <div className="w-full h-full bg-gradient-to-br from-[#2A4A52] to-[#2A4A52] flex items-center justify-center">
                       <span className="text-white/20 font-black text-3xl uppercase">
                         K
                       </span>
@@ -139,19 +145,19 @@ const GalleryPage = () => {
                   )}
 
                   {/* Overlay on Hover */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#0f2425]/90 via-[#0f2425]/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
-                    <p className="text-[#d96c4e] text-[9px] font-black uppercase tracking-widest mb-1">
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#2A4A52]/90 via-[#2A4A52]/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
+                    <p className="text-[#E8622A] text-[9px] font-black uppercase tracking-widest mb-1">
                       {project.category || project.type || "Project"}
                     </p>
                     <h3 className="text-white font-bold text-sm drop-shadow-md mb-3">
-                      {project.title || project.name}
+                      {projectTitle}
                     </h3>
                     {project.liveUrl && (
                       <a
                         href={project.liveUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 text-[10px] font-black text-white uppercase tracking-widest hover:text-[#f4be78] transition-colors"
+                        className="inline-flex items-center gap-2 text-[10px] font-black text-white uppercase tracking-widest hover:text-[#F28C5E] transition-colors"
                       >
                         View Live <ExternalLink className="w-3 h-3" />
                       </a>

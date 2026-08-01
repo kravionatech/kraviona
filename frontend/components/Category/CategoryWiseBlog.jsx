@@ -92,7 +92,7 @@ const CategoryWiseBlog = ({
       : category.replace(/-/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
 
   return (
-    <section className="py-24 md:py-32 bg-[#f9fafb] font-sans min-h-screen">
+    <section className="py-24 md:py-32 bg-[#F5F7F8] font-sans min-h-screen">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Breadcrumb & Header */}
         <div className="mb-16 md:mb-24 text-center max-w-3xl mx-auto">
@@ -103,14 +103,14 @@ const CategoryWiseBlog = ({
           >
             <div className="flex items-center justify-center gap-3 mb-6">
               <span className="text-gray-300">/</span>
-              <span className="text-[#d96c4e] text-[10px] font-black uppercase tracking-widest px-3 py-1 bg-[#d96c4e]/10 rounded-md capitalize">
+              <span className="text-[#E8622A] text-[10px] font-black uppercase tracking-widest px-3 py-1 bg-[#E8622A]/10 rounded-md capitalize">
                 {formattedCategoryName}
               </span>
             </div>
 
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-[#1b3d3e] tracking-tight leading-[1.1] capitalize">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-[#1A2E33] tracking-tight leading-[1.1] capitalize">
               {formattedCategoryName}{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#295c5e] to-[#d96c4e]">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#2A4A52] to-[#E8622A]">
                 Articles
               </span>
             </h1>
@@ -124,7 +124,7 @@ const CategoryWiseBlog = ({
 
         {/* Loading State */}
         {isLoading ? (
-          <div className="flex flex-col items-center justify-center py-20 text-[#295c5e]">
+          <div className="flex flex-col items-center justify-center py-20 text-[#2A4A52]">
             <Loader2 size={40} className="animate-spin mb-4" />
             <p className="font-medium animate-pulse tracking-widest uppercase text-xs">
               Loading Articles...
@@ -174,19 +174,19 @@ const CategoryWiseBlog = ({
                 />
               </svg>
             </div>
-            <h3 className="text-2xl font-bold text-[#1b3d3e] mb-3">
+            <h3 className="text-2xl font-bold text-[#1A2E33] mb-3">
               No articles found
             </h3>
             <p className="text-gray-500 mb-8">
               We are currently working on fresh content for the{" "}
-              <span className="font-bold text-[#d96c4e] capitalize">
+              <span className="font-bold text-[#E8622A] capitalize">
                 {formattedCategoryName}
               </span>{" "}
               category. Check back soon!
             </p>
             <Link
               href="#blogs"
-              className="inline-block px-8 py-4 bg-[#1b3d3e] text-white rounded-full font-black text-xs uppercase tracking-[0.2em] hover:bg-[#d96c4e] transition-colors duration-300"
+              className="inline-block px-8 py-4 bg-[#1A2E33] text-white rounded-full font-black text-xs uppercase tracking-[0.2em] hover:bg-[#E8622A] transition-colors duration-300"
             >
               Back to All Articles
             </Link>
@@ -205,7 +205,7 @@ const CategoryWiseBlog = ({
                 type="button"
                 disabled={!pagination.hasPreviousPage || isLoading}
                 onClick={() => setPage((current) => Math.max(1, current - 1))}
-                className="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-bold text-[#295c5e] transition hover:border-[#295c5e] disabled:cursor-not-allowed disabled:opacity-40"
+                className="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-bold text-[#2A4A52] transition hover:border-[#2A4A52] disabled:cursor-not-allowed disabled:opacity-40"
               >
                 Previous
               </button>
@@ -213,7 +213,7 @@ const CategoryWiseBlog = ({
                 type="button"
                 disabled={!pagination.hasNextPage || isLoading}
                 onClick={() => setPage((current) => current + 1)}
-                className="rounded-lg bg-[#295c5e] px-4 py-2 text-sm font-bold text-white transition hover:bg-[#1d4648] disabled:cursor-not-allowed disabled:opacity-40"
+                className="rounded-lg bg-[#2A4A52] px-4 py-2 text-sm font-bold text-white transition hover:bg-[#2A4A52] disabled:cursor-not-allowed disabled:opacity-40"
               >
                 Next
               </button>

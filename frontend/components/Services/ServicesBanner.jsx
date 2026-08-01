@@ -7,7 +7,7 @@ import { motion } from "framer-motion";
 const ServicesBanner = () => {
   return (
     // Height is set to 40vh-50vh for inner pages, not full screen
-    <section className="relative w-full h-[40vh] md:h-[60vh] flex flex-col justify-center bg-[#081314] overflow-hidden">
+    <section className="relative w-full h-[40vh] md:h-[60vh] flex flex-col justify-center bg-[#1A2E33] overflow-hidden">
       {/* --- Background Image & Dark Overlay --- */}
       <div className="absolute inset-0 w-full h-full z-0">
         <Image
@@ -17,9 +17,10 @@ const ServicesBanner = () => {
           className="object-cover opacity-55"
           priority
           fetchPriority="high"
+          sizes="100vw"
         />
         {/* Deep Kraviona Teal Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#0f2425] via-[#0f2425]/90 to-[#0f2425]/60"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-[#2A4A52] via-[#2A4A52]/90 to-[#2A4A52]/60"></div>
       </div>
 
       {/* --- Abstract Curved Lines (Like your reference image) --- */}
@@ -45,15 +46,15 @@ const ServicesBanner = () => {
           <div className="flex items-center gap-2 text-sm md:text-base font-medium text-gray-300">
             <Link
               href="/"
-              className="hover:text-[#f4be78] transition-colors duration-300"
+              className="hover:text-[#F28C5E] transition-colors duration-300"
             >
               Home
             </Link>
 
             {/* Divider using Kraviona Terracotta color */}
-            <span className="text-[#d96c4e] font-bold mx-1">»</span>
+            <span className="text-[#E8622A] font-bold mx-1">»</span>
 
-            <span className="text-[#f4be78]">Services</span>
+            <span className="text-[#F28C5E]">Services</span>
           </div>
         </motion.div>
       </div>

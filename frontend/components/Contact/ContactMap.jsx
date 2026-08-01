@@ -5,14 +5,14 @@ import { motion } from "framer-motion";
 
 const ContactMap = () => {
   return (
-    <section className="pb-24 bg-[#fdfdfd] relative">
+    <section className="relative bg-surface pb-24">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="w-full h-[400px] md:h-[500px] rounded-[32px] overflow-hidden shadow-sm border border-gray-100 group relative"
+          className="group relative h-[400px] w-full overflow-hidden rounded-[32px] border border-primary/20 shadow-card md:h-[500px]"
         >
           {/* Default view of New Delhi/East Delhi area */}
           <iframe
@@ -28,7 +28,7 @@ const ContactMap = () => {
 
           {/* Map Overlay Text (Optional, hidden on hover) */}
           <div className="absolute top-6 left-6 pointer-events-none transition-opacity duration-300 group-hover:opacity-0">
-            <span className="px-4 py-2 bg-white/90 backdrop-blur-sm text-[#1b3d3e] text-[10px] font-black uppercase tracking-widest rounded-lg shadow-sm border border-white/20">
+            <span className="rounded-lg border border-primary/20 bg-white/90 px-4 py-2 text-[10px] font-black uppercase tracking-widest text-primary shadow-sm backdrop-blur-sm">
               Based in New Delhi, India
             </span>
           </div>

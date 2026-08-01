@@ -1,12 +1,5 @@
-import { Inter } from "next/font/google";
 import "./globals.css";
 import { ToastContainer } from "react-toastify";
-
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter",
-  display: "swap",
-});
 
 export const metadata = {
   title: "Kraviona Admin",
@@ -18,11 +11,11 @@ export default function RootLayout({ children }) {
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${inter.variable} h-full antialiased`}
+      className="h-full antialiased"
     >
       <body
         suppressHydrationWarning
-        className="min-h-full flex flex-col bg-[#0a1018]"
+        className="min-h-full flex flex-col bg-[#1a2e33]"
       >
         {children}
         <ToastContainer />

@@ -2,9 +2,11 @@ import ServicesBanner from "@/components/Services/ServicesBanner";
 import FeaturedServices from "@/components/Home/FeaturedServices";
 import WhyChooseUs from "@/components/Services/WhyChooseUs";
 import ContactFormDetails from "@/components/Contact/ContactFormDetails";
+import { JsonLd } from "@/components/JsonLd";
 import Link from "next/link";
 import { SERVICE_LINKS } from "./serviceData.js";
 import { defaultRobots } from "@/app/seoConfig.js";
+import { breadcrumbSchema } from "@/lib/schema";
 
 // Service sub-pages for internal linking
 const servicePages = SERVICE_LINKS;
@@ -19,24 +21,12 @@ const servicesPageSchema = {
   description:
     "Explore Kraviona's full suite of web development, technical SEO, AI automation, digital marketing, e-commerce, marketplace seller, and brand services.",
   isPartOf: { "@id": "https://kraviona.com/#website" },
-  breadcrumb: {
-    "@type": "BreadcrumbList",
-    itemListElement: [
-      {
-        "@type": "ListItem",
-        position: 1,
-        name: "Home",
-        item: "https://kraviona.com",
-      },
-      {
-        "@type": "ListItem",
-        position: 2,
-        name: "Services",
-        item: "https://kraviona.com/services",
-      },
-    ],
-  },
 };
+
+const servicesBreadcrumbSchema = breadcrumbSchema([
+  { name: "Home", url: "https://kraviona.com" },
+  { name: "Services", url: "https://kraviona.com/services" },
+]);
 
 export const metadata = {
   title: "Web Development & Technical SEO Services | Kraviona",
@@ -95,10 +85,7 @@ export const metadata = {
 const MainServices = () => {
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(servicesPageSchema) }}
-      />
+      <JsonLd data={[servicesPageSchema, servicesBreadcrumbSchema]} />
       <ServicesBanner />
 
       {/* Service Sub-Pages Navigation */}
@@ -112,7 +99,7 @@ const MainServices = () => {
               <Link
                 key={s.href}
                 href={s.href}
-                className="px-4 py-2 text-sm font-semibold text-[#295c5e] border border-[#295c5e]/30 rounded-full hover:bg-[#295c5e] hover:text-white transition-all duration-200"
+                className="px-4 py-2 text-sm font-semibold text-[#2A4A52] border border-[#2A4A52]/30 rounded-full hover:bg-[#2A4A52] hover:text-white transition-all duration-200"
               >
                 {s.name}
               </Link>

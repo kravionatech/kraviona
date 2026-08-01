@@ -26,8 +26,8 @@ const industries = [
     title: "FinTech & Finance",
     description:
       "Secure, compliant, and lightning-fast financial platforms. We build custom payment gateways, investment dashboards, and robust banking solutions.",
-    color: "from-[#d96c4e]/20 to-transparent",
-    iconColor: "text-[#d96c4e]",
+    color: "from-[#E8622A]/20 to-transparent",
+    iconColor: "text-[#E8622A]",
   },
   {
     id: "ecommerce",
@@ -35,8 +35,8 @@ const industries = [
     title: "E-Commerce & Retail",
     description:
       "Scale your sales with high-converting online stores, automated inventory management, and personalized AI shopping experiences.",
-    color: "from-[#f4be78]/25 to-transparent",
-    iconColor: "text-[#b57930]",
+    color: "from-[#F28C5E]/25 to-transparent",
+    iconColor: "text-[#E8622A]",
   },
   {
     id: "healthcare",
@@ -44,8 +44,8 @@ const industries = [
     title: "Healthcare & MedTech",
     description:
       "HIPAA-compliant telemedicine apps, patient portals, and clinic management systems that prioritize data security and user accessibility.",
-    color: "from-[#f4be78]/20 to-transparent",
-    iconColor: "text-[#f4be78]",
+    color: "from-[#F28C5E]/20 to-transparent",
+    iconColor: "text-[#F28C5E]",
   },
   {
     id: "realestate",
@@ -53,8 +53,8 @@ const industries = [
     title: "Real Estate & PropTech",
     description:
       "Immersive property listing platforms, virtual tour integrations, and CRM dashboards that help realtors close deals faster.",
-    color: "from-[#295c5e]/20 to-transparent",
-    iconColor: "text-[#295c5e]",
+    color: "from-[#2A4A52]/20 to-transparent",
+    iconColor: "text-[#2A4A52]",
   },
   {
     id: "education",
@@ -62,8 +62,8 @@ const industries = [
     title: "EdTech & E-Learning",
     description:
       "Interactive learning management systems (LMS), virtual classrooms, and course selling platforms designed for modern education.",
-    color: "from-[#d96c4e]/20 to-transparent",
-    iconColor: "text-[#d96c4e]",
+    color: "from-[#E8622A]/20 to-transparent",
+    iconColor: "text-[#E8622A]",
   },
   {
     id: "logistics",
@@ -71,8 +71,8 @@ const industries = [
     title: "Travel & Logistics",
     description:
       "Smart booking engines, fleet tracking dashboards, and supply chain management software to keep your business moving efficiently.",
-    color: "from-[#f4be78]/25 to-transparent",
-    iconColor: "text-[#b57930]",
+    color: "from-[#F28C5E]/25 to-transparent",
+    iconColor: "text-[#E8622A]",
   },
 ];
 
@@ -117,9 +117,9 @@ const staggerContainer = {
 
 export default function Solutions() {
   return (
-    <div className="min-h-screen bg-[#fcfdfd] font-sans selection:bg-[#d96c4e] selection:text-white">
+    <div className="min-h-screen bg-[#F5F7F8] font-sans selection:bg-[#E8622A] selection:text-white">
       {/* 1. HERO SECTION */}
-      <section className="relative pt-32 pb-24 lg:pt-48 lg:pb-32 bg-[#1b3d3e] overflow-hidden">
+      <section className="relative pt-32 pb-24 lg:pt-48 lg:pb-32 bg-[#1A2E33] overflow-hidden">
         <div className="absolute inset-0 opacity-10 bg-[linear-gradient(to_right,#ffffff_1px,transparent_1px),linear-gradient(to_bottom,#ffffff_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_60%_at_50%_0%,#000_70%,transparent_100%)]"></div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
@@ -131,9 +131,9 @@ export default function Solutions() {
           >
             <motion.div
               variants={fadeUp}
-              className="inline-flex items-center gap-3 mb-6 px-4 py-2 rounded-full bg-[#295c5e]/50 border border-white/10 backdrop-blur-sm"
+              className="inline-flex items-center gap-3 mb-6 px-4 py-2 rounded-full bg-[#2A4A52]/50 border border-white/10 backdrop-blur-sm"
             >
-              <span className="w-2 h-2 rounded-full bg-[#f4be78] animate-pulse"></span>
+              <span className="w-2 h-2 rounded-full bg-[#F28C5E] animate-pulse"></span>
               <span className="text-white font-semibold tracking-widest text-xs uppercase">
                 Industry-Tailored Solutions
               </span>
@@ -144,7 +144,7 @@ export default function Solutions() {
               className="text-5xl md:text-6xl lg:text-7xl font-extrabold text-white leading-[1.1] mb-8"
             >
               Technology That Solves <br className="hidden md:block" />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#d96c4e] via-[#f4be78] to-[#d96c4e] animate-gradient-x">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#E8622A] via-[#F28C5E] to-[#E8622A] animate-gradient-x">
                 Real Business Problems.
               </span>
             </motion.h1>
@@ -171,7 +171,7 @@ export default function Solutions() {
             variants={fadeUp}
             className="text-center max-w-3xl mx-auto mb-20"
           >
-            <h2 className="text-4xl md:text-5xl font-extrabold text-[#1b3d3e] mb-6">
+            <h2 className="text-4xl md:text-5xl font-extrabold text-[#1A2E33] mb-6">
               Industries We Transform
             </h2>
             <p className="text-gray-500 text-lg">
@@ -192,7 +192,7 @@ export default function Solutions() {
               <motion.div
                 key={industry.id}
                 variants={fadeUp}
-                className="group relative bg-white p-8 rounded-[2rem] border border-gray-100 shadow-[0_4px_20px_rgb(0,0,0,0.03)] hover:shadow-[0_20px_40px_rgb(41,92,94,0.08)] transition-all duration-500 overflow-hidden"
+                className="group relative bg-white p-8 rounded-[2rem] border border-gray-100 shadow-[0_4px_20px_rgb(42,74,82,0.03)] hover:shadow-[0_20px_40px_rgb(42,74,82,0.08)] transition-all duration-500 overflow-hidden"
               >
                 <div
                   className={`absolute top-0 right-0 w-40 h-40 bg-gradient-to-bl ${industry.color} rounded-bl-full -z-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500`}
@@ -203,7 +203,7 @@ export default function Solutions() {
                   >
                     {industry.icon}
                   </div>
-                  <h3 className="text-2xl font-bold text-[#1b3d3e] mb-4">
+                  <h3 className="text-2xl font-bold text-[#1A2E33] mb-4">
                     {industry.title}
                   </h3>
                   <p className="text-gray-500 leading-relaxed mb-6">
@@ -211,7 +211,7 @@ export default function Solutions() {
                   </p>
                   <Link
                     href={`/contact?interest=${industry.id}`}
-                    className="inline-flex items-center gap-2 font-bold text-[#1b3d3e] group-hover:text-[#d96c4e] transition-colors"
+                    className="inline-flex items-center gap-2 font-bold text-[#1A2E33] group-hover:text-[#E8622A] transition-colors"
                   >
                     Discuss Your Project{" "}
                     <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -224,8 +224,8 @@ export default function Solutions() {
       </section>
 
       {/* 3. BUSINESS CHALLENGES */}
-      <section className="py-24 bg-[#1b3d3e] relative overflow-hidden">
-        <div className="absolute left-0 top-1/2 -translate-y-1/2 w-96 h-96 bg-[#295c5e] blur-[150px] rounded-full opacity-50"></div>
+      <section className="py-24 bg-[#1A2E33] relative overflow-hidden">
+        <div className="absolute left-0 top-1/2 -translate-y-1/2 w-96 h-96 bg-[#2A4A52] blur-[150px] rounded-full opacity-50"></div>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="flex flex-col lg:flex-row gap-16 items-center">
             <motion.div
@@ -235,12 +235,12 @@ export default function Solutions() {
               variants={fadeUp}
               className="lg:w-1/3"
             >
-              <span className="text-[#f4be78] font-bold tracking-[0.2em] text-sm uppercase mb-4 block">
+              <span className="text-[#F28C5E] font-bold tracking-[0.2em] text-sm uppercase mb-4 block">
                 Overcoming Obstacles
               </span>
               <h2 className="text-4xl md:text-5xl font-extrabold text-white leading-tight mb-6">
                 Not Just Code. <br />{" "}
-                <span className="text-[#d96c4e]">Business Solutions.</span>
+                <span className="text-[#E8622A]">Business Solutions.</span>
               </h2>
               <p className="text-gray-400 text-lg leading-relaxed mb-8">
                 You bring the operational bottlenecks; we bring the
@@ -250,7 +250,7 @@ export default function Solutions() {
               </p>
               <Link
                 href="/contact"
-                className="px-8 py-4 bg-white text-[#1b3d3e] rounded-full font-bold hover:bg-[#d96c4e] hover:text-white transition-colors shadow-lg inline-flex items-center gap-2"
+                className="px-8 py-4 bg-white text-[#1A2E33] rounded-full font-bold hover:bg-[#E8622A] hover:text-white transition-colors shadow-lg inline-flex items-center gap-2"
               >
                 Consult With Us
               </Link>
@@ -269,7 +269,7 @@ export default function Solutions() {
                   variants={fadeUp}
                   className="bg-white/5 backdrop-blur-md border border-white/10 p-8 rounded-[2rem] hover:bg-white/10 transition-colors"
                 >
-                  <div className="w-12 h-12 bg-[#295c5e] text-[#f4be78] rounded-xl flex items-center justify-center mb-6">
+                  <div className="w-12 h-12 bg-[#2A4A52] text-[#F28C5E] rounded-xl flex items-center justify-center mb-6">
                     {challenge.icon}
                   </div>
                   <h3 className="text-xl font-bold text-white mb-3">
@@ -286,7 +286,7 @@ export default function Solutions() {
       </section>
 
       {/* 4. THE KRAVIONA APPROACH */}
-      <section className="py-24 bg-[#f8fafa]">
+      <section className="py-24 bg-[#F5F7F8]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial="hidden"
@@ -295,7 +295,7 @@ export default function Solutions() {
             variants={fadeUp}
             className="text-center max-w-3xl mx-auto mb-16"
           >
-            <h2 className="text-4xl md:text-5xl font-extrabold text-[#1b3d3e] mb-6">
+            <h2 className="text-4xl md:text-5xl font-extrabold text-[#1A2E33] mb-6">
               Our Blueprint for Success
             </h2>
             <p className="text-gray-500 text-lg">
@@ -306,7 +306,7 @@ export default function Solutions() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="md:col-span-2 bg-white p-10 rounded-[2rem] border border-gray-100 shadow-sm flex flex-col justify-center">
-              <h3 className="text-2xl font-bold text-[#1b3d3e] mb-4">
+              <h3 className="text-2xl font-bold text-[#1A2E33] mb-4">
                 1. Deep Technical Discovery
               </h3>
               <p className="text-gray-500 text-lg">
@@ -315,8 +315,8 @@ export default function Solutions() {
                 scaling goals. We map out the entire architecture first.
               </p>
             </div>
-            <div className="bg-[#1b3d3e] p-10 rounded-[2rem] text-white flex flex-col justify-center items-start">
-              <div className="w-12 h-12 bg-[#d96c4e] rounded-full flex items-center justify-center mb-6">
+            <div className="bg-[#1A2E33] p-10 rounded-[2rem] text-white flex flex-col justify-center items-start">
+              <div className="w-12 h-12 bg-[#E8622A] rounded-full flex items-center justify-center mb-6">
                 <ShieldAlert className="text-white w-6 h-6" />
               </div>
               <h3 className="text-xl font-bold mb-3">Enterprise Grade</h3>
@@ -324,7 +324,7 @@ export default function Solutions() {
                 Built to handle thousands of concurrent users safely.
               </p>
             </div>
-            <div className="bg-[#d96c4e] p-10 rounded-[2rem] text-white flex flex-col justify-center items-start">
+            <div className="bg-[#E8622A] p-10 rounded-[2rem] text-white flex flex-col justify-center items-start">
               <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center mb-6">
                 <Zap className="text-white w-6 h-6" />
               </div>
@@ -334,7 +334,7 @@ export default function Solutions() {
               </p>
             </div>
             <div className="md:col-span-2 bg-white p-10 rounded-[2rem] border border-gray-100 shadow-sm flex flex-col justify-center">
-              <h3 className="text-2xl font-bold text-[#1b3d3e] mb-4">
+              <h3 className="text-2xl font-bold text-[#1A2E33] mb-4">
                 2. Scalable Execution
               </h3>
               <p className="text-gray-500 text-lg">
@@ -348,7 +348,7 @@ export default function Solutions() {
       </section>
 
       {/* 5. BOTTOM CTA */}
-      <section className="py-24 relative overflow-hidden bg-gradient-to-tr from-[#1b3d3e] via-[#295c5e] to-[#1b3d3e] text-center border-t border-[#f4be78]/20">
+      <section className="py-24 relative overflow-hidden bg-gradient-to-tr from-[#1A2E33] via-[#2A4A52] to-[#1A2E33] text-center border-t border-[#F28C5E]/20">
         <div className="max-w-3xl mx-auto px-4 relative z-10">
           <h2 className="text-4xl md:text-6xl font-extrabold text-white mb-6">
             Ready to Disrupt <br className="hidden md:block" /> Your Industry?
@@ -359,7 +359,7 @@ export default function Solutions() {
           </p>
           <Link
             href="/contact"
-            className="inline-flex items-center justify-center gap-2 px-10 py-5 bg-white text-[#1b3d3e] rounded-full font-bold text-lg hover:bg-[#d96c4e] hover:text-white transition-all duration-300 shadow-2xl hover:-translate-y-1"
+            className="inline-flex items-center justify-center gap-2 px-10 py-5 bg-white text-[#1A2E33] rounded-full font-bold text-lg hover:bg-[#E8622A] hover:text-white transition-all duration-300 shadow-2xl hover:-translate-y-1"
           >
             Schedule a Strategy Call <ArrowRight className="w-5 h-5" />
           </Link>

@@ -22,9 +22,9 @@ const OurStory = () => {
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <h2 className="text-4xl md:text-5xl font-black text-[#1b3d3e] tracking-tight mb-8">
+            <h2 className="text-4xl md:text-5xl font-black text-[#1A2E33] tracking-tight mb-8">
               The thinking behind <br />
-              <span className="text-[#d96c4e] italic font-serif font-medium">
+              <span className="text-[#E8622A] italic font-serif font-medium">
                 the build.
               </span>
             </h2>
@@ -42,8 +42,8 @@ const OurStory = () => {
                 workflows, and technical SEO so every build has a stronger
                 foundation after it goes live.
               </p>
-              <div className="border-l-4 border-[#d96c4e] pl-6 py-2 mt-8">
-                <p className="text-[#1b3d3e] font-bold text-xl">
+              <div className="border-l-4 border-[#E8622A] pl-6 py-2 mt-8">
+                <p className="text-[#1A2E33] font-bold text-xl">
                   &ldquo;Good development should make the business easier to
                   run, easier to find, and easier to grow.&rdquo;
                 </p>
@@ -62,9 +62,9 @@ const OurStory = () => {
             {stats.map((stat, idx) => (
               <div
                 key={idx}
-                className="bg-[#f9fafb] p-8 rounded-3xl border border-gray-100 flex flex-col items-center justify-center text-center hover:border-[#d96c4e]/30 hover:shadow-lg transition-all duration-300 group"
+                className="bg-[#F5F7F8] p-8 rounded-3xl border border-gray-100 flex flex-col items-center justify-center text-center hover:border-[#E8622A]/30 hover:shadow-lg transition-all duration-300 group"
               >
-                <span className="text-4xl md:text-5xl font-black text-[#1b3d3e] group-hover:text-[#d96c4e] transition-colors duration-300 mb-2">
+                <span className="text-4xl md:text-5xl font-black text-[#1A2E33] group-hover:text-[#E8622A] transition-colors duration-300 mb-2">
                   {stat.value}
                 </span>
                 <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">

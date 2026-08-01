@@ -201,9 +201,9 @@ const testimonials = [
 // ─── Homepage Metadata ────────────────────────────────────────────────────────
 export const metadata = {
   // title.default inherited from layout; override only the page-specific title
-  title: "MERN Stack, Next.js & Technical SEO Company | Kraviona",
+  title: "Web Development & Technical SEO Agency Delhi NCR",
   description:
-    "Kraviona Tech Solutions builds fast MERN stack products, Next.js websites, backend APIs, and technical SEO systems for businesses across India and beyond.",
+    "Next.js and MERN web development plus technical SEO services for ambitious Delhi NCR businesses. Build faster, rank better, and convert more visitors.",
   keywords: [
     "Kraviona",
     "Kraviona Tech Solutions",
@@ -229,17 +229,17 @@ export const metadata = {
     type: "website",
     locale: "en_IN",
     url: SITE_URL,
-    title: "MERN Stack, Next.js & Technical SEO Company | Kraviona",
+    title: "Web Development & Technical SEO Agency Delhi NCR",
     description:
-      "Fast MERN stack products, Next.js websites, backend APIs, and technical SEO foundations for businesses that want cleaner digital growth.",
+      "Next.js and MERN web development plus technical SEO services for ambitious Delhi NCR businesses.",
     siteName: SITE_NAME,
     images: [
       {
         url: DEFAULT_OG_IMAGE,
         width: 1200,
         height: 630,
-        alt: `${SITE_NAME} – MERN Stack & SEO Company`,
-        type: "image/jpeg",
+        alt: "Kraviona Tech Solutions — Web Development and Technical SEO Agency",
+        type: "image/png",
       },
     ],
   },
@@ -247,9 +247,9 @@ export const metadata = {
     card: "summary_large_image",
     site: SITE_TWITTER,
     creator: SITE_TWITTER,
-    title: "MERN Stack, Next.js & Technical SEO Company | Kraviona",
+    title: "Web Development & Technical SEO Agency Delhi NCR",
     description:
-      "MERN stack, Next.js, backend APIs, and technical SEO from a founder-led technology team.",
+      "Next.js and MERN web development plus technical SEO services for ambitious Delhi NCR businesses.",
     images: [DEFAULT_OG_IMAGE],
   },
   robots: defaultRobots,
@@ -297,19 +297,19 @@ const Home = async () => {
       <HeroSection />
 
       {/* ── SEO Content Block ── */}
-      <section className="py-20 bg-[#FAFCFC]" aria-label="About our services">
+      <section className="py-20 bg-[#F5F7F8]" aria-label="About our services">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-start">
             <div>
               <div className="flex items-center gap-3 mb-5">
-                <span className="w-10 h-[2px] bg-[#a9472f]" />
-                <span className="text-[#a9472f] font-bold uppercase tracking-[0.18em] text-xs">
+                <span className="w-10 h-[2px] bg-[#E8622A]" />
+                <span className="text-[#E8622A] font-bold uppercase tracking-[0.18em] text-xs">
                   Who We Are
                 </span>
               </div>
-              <h2 className="text-3xl md:text-4xl font-extrabold text-[#111A1F] leading-tight mb-5">
+              <h2 className="text-3xl md:text-4xl font-extrabold text-[#1A2E33] leading-tight mb-5">
                 A Practical{" "}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#a9472f] to-[#953924]">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#E8622A] to-[#B84A1A]">
                   Build and Growth Partner
                 </span>
               </h2>
@@ -340,7 +340,7 @@ const Home = async () => {
                     key={stat.label}
                     className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm text-center"
                   >
-                    <p className="text-2xl font-black text-[#a9472f]">
+                    <p className="text-2xl font-black text-[#E8622A]">
                       {stat.value}
                     </p>
                     <p className="text-xs text-gray-500 font-semibold uppercase tracking-wide mt-1">
@@ -351,10 +351,10 @@ const Home = async () => {
               </div>
               <section className="mb-8" aria-label="Client testimonials">
                 <div className="mb-5">
-                  <span className="text-[#a9472f] font-bold uppercase tracking-[0.18em] text-xs">
+                  <span className="text-[#E8622A] font-bold uppercase tracking-[0.18em] text-xs">
                     Client Results
                   </span>
-                  <h3 className="mt-2 text-2xl font-extrabold text-[#111A1F]">
+                  <h3 className="mt-2 text-2xl font-extrabold text-[#1A2E33]">
                     Built for founders and growth teams
                   </h3>
                 </div>
@@ -364,18 +364,18 @@ const Home = async () => {
                       key={testimonial.name}
                       className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm"
                     >
-                      <div className="mb-3 text-sm tracking-[0.15em] text-[#f4be78]">
+                      <div className="mb-3 text-sm tracking-[0.15em] text-[#F28C5E]">
                         {"★".repeat(testimonial.rating)}
                       </div>
                       <p className="text-sm leading-relaxed text-gray-600">
                         “{testimonial.text}”
                       </p>
                       <div className="mt-4 flex items-center gap-3">
-                        <span className="flex h-10 w-10 items-center justify-center rounded-full bg-[#f7e6e0] text-sm font-black text-[#953924]">
+                        <span className="flex h-10 w-10 items-center justify-center rounded-full bg-[#FEF0E9] text-sm font-black text-[#B84A1A]">
                           {testimonial.initials}
                         </span>
                         <div>
-                          <p className="font-bold text-[#111A1F]">
+                          <p className="font-bold text-[#1A2E33]">
                             {testimonial.name}
                           </p>
                           <p className="text-xs font-semibold text-gray-500">
@@ -389,7 +389,7 @@ const Home = async () => {
               </section>
               <Link
                 href="/about"
-                className="inline-flex items-center gap-2 px-7 py-3 bg-[#111A1F] text-white font-bold rounded-xl hover:bg-[#a9472f] transition-all duration-300 text-sm"
+                className="inline-flex items-center gap-2 px-7 py-3 bg-[#1A2E33] text-white font-bold rounded-xl hover:bg-[#E8622A] transition-all duration-300 text-sm"
               >
                 Learn About Kraviona
                 <svg
@@ -410,8 +410,8 @@ const Home = async () => {
 
             <div className="space-y-6">
               <div className="flex items-center gap-3 mb-5">
-                <span className="w-10 h-[2px] bg-[#a9472f]" />
-                <span className="text-[#a9472f] font-bold uppercase tracking-[0.18em] text-xs">
+                <span className="w-10 h-[2px] bg-[#E8622A]" />
+                <span className="text-[#E8622A] font-bold uppercase tracking-[0.18em] text-xs">
                   Core Services
                 </span>
               </div>
@@ -445,15 +445,15 @@ const Home = async () => {
                 <Link
                   key={i}
                   href={service.href}
-                  className="group flex gap-4 p-5 bg-white border border-gray-200 rounded-2xl hover:border-[#a9472f]/40 hover:shadow-[0_4px_20px_rgba(169,71,47,0.08)] transition-all duration-300"
+                  className="group flex gap-4 p-5 bg-white border border-gray-200 rounded-2xl hover:border-[#E8622A]/40 hover:shadow-[0_4px_20px_rgba(232,98,42,0.08)] transition-all duration-300"
                 >
-                  <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-[#f7e6e0] flex items-center justify-center mt-0.5">
-                    <span className="text-[#953924] font-black text-sm">
+                  <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-[#FEF0E9] flex items-center justify-center mt-0.5">
+                    <span className="text-[#B84A1A] font-black text-sm">
                       0{i + 1}
                     </span>
                   </div>
                   <div>
-                    <h3 className="font-bold text-[#111A1F] mb-1 group-hover:text-[#a9472f] transition-colors">
+                    <h3 className="font-bold text-[#1A2E33] mb-1 group-hover:text-[#E8622A] transition-colors">
                       {service.title}
                     </h3>
                     <p className="text-gray-500 text-sm leading-relaxed">
@@ -464,7 +464,7 @@ const Home = async () => {
               ))}
               <Link
                 href="/services"
-                className="inline-flex items-center gap-2 text-[#295c5e] font-bold hover:text-[#a9472f] transition-colors text-sm"
+                className="inline-flex items-center gap-2 text-[#2A4A52] font-bold hover:text-[#E8622A] transition-colors text-sm"
               >
                 View All Services →
               </Link>

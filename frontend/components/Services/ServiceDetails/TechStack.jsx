@@ -87,7 +87,7 @@ export default function TechStack() {
               >
                 {tech.icon}
               </div>
-              <span className="text-sm font-semibold text-gray-400 group-hover:text-[#1b3d3e] transition-colors opacity-0 group-hover:opacity-100 -translate-y-2 group-hover:translate-y-0">
+              <span className="text-sm font-semibold text-gray-400 group-hover:text-[#1A2E33] transition-colors opacity-0 group-hover:opacity-100 -translate-y-2 group-hover:translate-y-0">
                 {tech.name}
               </span>
             </div>

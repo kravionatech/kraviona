@@ -15,7 +15,7 @@ const BlogNewsletter = () => {
         icon: "warning",
         title: "Email required",
         text: "Please enter your email address.",
-        confirmButtonColor: "#d96c4e",
+        confirmButtonColor: "#E8622A",
       });
     }
 
@@ -40,14 +40,14 @@ const BlogNewsletter = () => {
           icon: "success",
           title: "Subscribed",
           text: data?.message || "Successfully subscribed!",
-          confirmButtonColor: "#d96c4e",
+          confirmButtonColor: "#E8622A",
         });
       } else {
         Swal.fire({
           icon: "error",
           title: "Subscription failed",
           text: data?.message || "Subscription failed.",
-          confirmButtonColor: "#d96c4e",
+          confirmButtonColor: "#E8622A",
         });
       }
     } catch (error) {
@@ -60,7 +60,7 @@ const BlogNewsletter = () => {
         text:
           error.message ||
           "Something went wrong. Please check your connection.",
-        confirmButtonColor: "#d96c4e",
+        confirmButtonColor: "#E8622A",
       });
     } finally {
       setIsSubmitting(false); // Request complete hone par loading band
@@ -69,7 +69,7 @@ const BlogNewsletter = () => {
 
   return (
     <div
-      className="bg-[#0f2425] w-full py-20 px-6 flex flex-col items-center justify-center text-white"
+      className="bg-[#2A4A52] w-full py-20 px-6 flex flex-col items-center justify-center text-white"
       style={{ fontFamily: "'Poppins', sans-serif" }}
     >
       {/* Header Section */}
@@ -77,7 +77,7 @@ const BlogNewsletter = () => {
         <h2 className="text-2xl md:text-3xl font-semibold mb-2">
           Subscribe to our Newsletter
         </h2>
-        <p className="text-[#a4babb] text-sm md:text-base">
+        <p className="text-[#8FA8B0] text-sm md:text-base">
           Get the latest updates and insights directly in your inbox.
         </p>
       </div>
@@ -94,12 +94,12 @@ const BlogNewsletter = () => {
           placeholder="hello@example.com"
           required
           disabled={isSubmitting} // Disable while submitting
-          className="flex-1 bg-[#1b3d3e]/50 border border-[#295c5e] text-white px-5 py-3 rounded-lg outline-none focus:border-[#d96c4e] focus:ring-1 focus:ring-[#d96c4e] transition-all placeholder-[#6b8c8d] text-sm disabled:opacity-50"
+          className="flex-1 bg-[#1A2E33]/50 border border-[#2A4A52] text-white px-5 py-3 rounded-lg outline-none focus:border-[#E8622A] focus:ring-1 focus:ring-[#E8622A] transition-all placeholder-[#5C7A82] text-sm disabled:opacity-50"
         />
         <button
           type="submit"
           disabled={isSubmitting} // Disable while submitting
-          className="bg-[#d96c4e] text-white px-8 py-3 rounded-lg font-medium text-sm hover:bg-[#c45f43] active:scale-95 transition-all whitespace-nowrap disabled:bg-[#a8523b] disabled:cursor-not-allowed"
+          className="bg-[#E8622A] text-white px-8 py-3 rounded-lg font-medium text-sm hover:bg-[#B84A1A] active:scale-95 transition-all whitespace-nowrap disabled:bg-[#B84A1A] disabled:cursor-not-allowed"
         >
           {isSubmitting ? "Subscribing..." : "Subscribe"}
         </button>

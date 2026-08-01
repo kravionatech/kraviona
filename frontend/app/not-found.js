@@ -75,10 +75,10 @@ const contactLinks = [
 
 export default function NotFound() {
   return (
-    <main className="min-h-screen bg-[#FAFCFC] text-[#111A1F]">
-      <section className="relative overflow-hidden bg-[#081314] pt-28 pb-16">
+    <div className="min-h-screen bg-[#F5F7F8] text-[#1A2E33]">
+      <section className="relative overflow-hidden bg-[#1A2E33] pt-28 pb-16">
         <div
-          className="absolute inset-0 opacity-[0.08] bg-[radial-gradient(#f4be78_1px,transparent_1px)] [background-size:28px_28px]"
+          className="absolute inset-0 opacity-[0.08] bg-[radial-gradient(#F28C5E_1px,transparent_1px)] [background-size:28px_28px]"
           aria-hidden="true"
         />
 
@@ -98,10 +98,11 @@ export default function NotFound() {
                 <span className="flex h-13 w-13 items-center justify-center rounded-2xl border border-white/10 bg-white shadow-sm">
                   <Image
                     src="/logo.png"
-                    alt="Kraviona logo"
+                    alt="Kraviona Tech Solutions logo"
                     width={48}
                     height={44}
                     priority
+                    sizes="48px"
                     className="h-auto w-11 object-contain"
                   />
                 </span>
@@ -109,13 +110,13 @@ export default function NotFound() {
                   <span className="block text-xl font-black leading-none text-white">
                     Kraviona
                   </span>
-                  <span className="mt-1.5 block text-[10px] font-black uppercase tracking-[0.2em] text-[#f4be78]">
+                  <span className="mt-1.5 block text-[10px] font-black uppercase tracking-[0.2em] text-[#F28C5E]">
                     Tech Solutions
                   </span>
                 </span>
               </Link>
 
-              <span className="mb-5 inline-flex items-center gap-2 rounded-full border border-[#d96c4e]/25 bg-[#d96c4e]/10 px-4 py-2 text-xs font-black uppercase tracking-[0.18em] text-[#f4be78]">
+              <span className="mb-5 inline-flex items-center gap-2 rounded-full border border-[#E8622A]/25 bg-[#E8622A]/10 px-4 py-2 text-xs font-black uppercase tracking-[0.18em] text-[#F28C5E]">
                 <Search className="h-3.5 w-3.5" aria-hidden="true" />
                 404 page not found
               </span>
@@ -124,7 +125,7 @@ export default function NotFound() {
                 This page moved, but your project can still move forward.
               </h1>
 
-              <p className="mt-5 max-w-2xl text-base leading-relaxed text-[#b6c8c9] md:text-lg">
+              <p className="mt-5 max-w-2xl text-base leading-relaxed text-[#8FA8B0] md:text-lg">
                 The URL may be old, mistyped, or removed during a site update.
                 Use the links below to jump back into the main Kraviona pages,
                 services, insights, or contact options.
@@ -133,7 +134,7 @@ export default function NotFound() {
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
                 <Link
                   href="/"
-                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#d96c4e] px-6 py-3.5 text-sm font-black text-white shadow-sm transition-colors hover:bg-[#c25e41]"
+                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#E8622A] px-6 py-3.5 text-sm font-black text-white shadow-sm transition-colors hover:bg-[#B84A1A]"
                 >
                   Go to Homepage
                   <ArrowRight className="h-4 w-4" />
@@ -148,14 +149,14 @@ export default function NotFound() {
               </div>
             </div>
 
-            <aside className="rounded-2xl border border-white/10 bg-white/[0.05] p-6 shadow-[0_24px_70px_rgba(0,0,0,0.16)]">
-              <p className="text-xs font-black uppercase tracking-[0.2em] text-[#f4be78]">
+            <aside className="rounded-2xl border border-white/10 bg-white/[0.05] p-6 shadow-[0_24px_70px_rgba(42,74,82,0.16)]">
+              <p className="text-xs font-black uppercase tracking-[0.2em] text-[#F28C5E]">
                 Need help now?
               </p>
               <h2 className="mt-3 text-2xl font-black text-white">
                 Talk to Kraviona directly.
               </h2>
-              <p className="mt-3 text-sm leading-relaxed text-[#b6c8c9]">
+              <p className="mt-3 text-sm leading-relaxed text-[#8FA8B0]">
                 If you followed a broken service or blog link, send it to us and
                 we will point you to the right page.
               </p>
@@ -168,13 +169,13 @@ export default function NotFound() {
                       href={item.href}
                       target={item.href.startsWith("http") ? "_blank" : undefined}
                       rel={item.href.startsWith("http") ? "noreferrer" : undefined}
-                      className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/[0.04] p-3 text-left transition-colors hover:border-[#d96c4e]/50 hover:bg-white/[0.08]"
+                      className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/[0.04] p-3 text-left transition-colors hover:border-[#E8622A]/50 hover:bg-white/[0.08]"
                     >
-                      <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#d96c4e]/10 text-[#f4be78]">
+                      <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#E8622A]/10 text-[#F28C5E]">
                         <Icon className="h-4 w-4" />
                       </span>
                       <span>
-                        <span className="block text-[10px] font-black uppercase tracking-[0.18em] text-[#789798]">
+                        <span className="block text-[10px] font-black uppercase tracking-[0.18em] text-[#8FA8B0]">
                           {item.name}
                         </span>
                         <span className="block text-sm font-bold text-white">
@@ -196,10 +197,10 @@ export default function NotFound() {
             <div>
               <div className="mb-6 flex items-end justify-between gap-4">
                 <div>
-                  <p className="text-xs font-black uppercase tracking-[0.2em] text-[#d96c4e]">
+                  <p className="text-xs font-black uppercase tracking-[0.2em] text-[#E8622A]">
                     Popular paths
                   </p>
-                  <h2 className="mt-2 text-2xl font-black text-[#111A1F]">
+                  <h2 className="mt-2 text-2xl font-black text-[#1A2E33]">
                     Continue from the main header links
                   </h2>
                 </div>
@@ -212,12 +213,12 @@ export default function NotFound() {
                     <Link
                       key={link.href}
                       href={link.href}
-                      className="group rounded-2xl border border-gray-200 bg-white p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:border-[#d96c4e]/40 hover:shadow-md"
+                      className="group rounded-2xl border border-gray-200 bg-white p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:border-[#E8622A]/40 hover:shadow-md"
                     >
-                      <span className="mb-5 flex h-11 w-11 items-center justify-center rounded-xl bg-[#d96c4e]/10 text-[#d96c4e]">
+                      <span className="mb-5 flex h-11 w-11 items-center justify-center rounded-xl bg-[#E8622A]/10 text-[#E8622A]">
                         <Icon className="h-5 w-5" />
                       </span>
-                      <span className="block text-lg font-black text-[#111A1F] group-hover:text-[#d96c4e]">
+                      <span className="block text-lg font-black text-[#1A2E33] group-hover:text-[#E8622A]">
                         {link.name}
                       </span>
                       <span className="mt-2 block text-sm leading-relaxed text-gray-600">
@@ -230,7 +231,7 @@ export default function NotFound() {
             </div>
 
             <aside className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-              <p className="text-xs font-black uppercase tracking-[0.2em] text-[#d96c4e]">
+              <p className="text-xs font-black uppercase tracking-[0.2em] text-[#E8622A]">
                 Featured services
               </p>
               <div className="mt-5 space-y-2">
@@ -238,16 +239,16 @@ export default function NotFound() {
                   <Link
                     key={link.href}
                     href={link.href}
-                    className="flex items-center justify-between gap-3 rounded-xl border border-gray-100 bg-[#FAFCFC] px-4 py-3 text-sm font-bold text-[#1b3d3e] transition-colors hover:border-[#d96c4e]/30 hover:bg-white hover:text-[#d96c4e]"
+                    className="flex items-center justify-between gap-3 rounded-xl border border-gray-100 bg-[#F5F7F8] px-4 py-3 text-sm font-bold text-[#1A2E33] transition-colors hover:border-[#E8622A]/30 hover:bg-white hover:text-[#E8622A]"
                   >
                     {link.name}
                     <ArrowRight className="h-4 w-4 flex-shrink-0" />
                   </Link>
                 ))}
               </div>
-              <div className="mt-6 rounded-2xl border border-[#295c5e]/15 bg-[#295c5e]/5 p-4">
-                <p className="flex items-center gap-2 text-sm font-black text-[#111A1F]">
-                  <MapPinned className="h-4 w-4 text-[#d96c4e]" />
+              <div className="mt-6 rounded-2xl border border-[#2A4A52]/15 bg-[#2A4A52]/5 p-4">
+                <p className="flex items-center gap-2 text-sm font-black text-[#1A2E33]">
+                  <MapPinned className="h-4 w-4 text-[#E8622A]" />
                   East Delhi, India
                 </p>
                 <p className="mt-2 text-sm leading-relaxed text-gray-600">
@@ -259,6 +260,6 @@ export default function NotFound() {
           </div>
         </div>
       </section>
-    </main>
+    </div>
   );
 }

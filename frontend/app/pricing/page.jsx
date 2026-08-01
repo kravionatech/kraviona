@@ -125,22 +125,101 @@ const seoPricing = [
   { service: "GEO / AI SEO Setup", price: "₹6,000 - ₹12,000", delivery: "3-5 days" },
 ];
 
+const PRICING_URL = "https://kraviona.com/pricing";
+
+const getDisplayedStartingPrice = (priceFrom) => {
+  const numericPrice = String(priceFrom).replace(/[^\d]/g, "");
+  return numericPrice || null;
+};
+
+const pricedTierOffers = pricingTiers.flatMap((tier) => {
+  const price = getDisplayedStartingPrice(tier.priceFrom);
+
+  if (!price) return [];
+
+  return [
+    {
+      "@type": "Offer",
+      name: `${tier.name} Plan`,
+      url: PRICING_URL,
+      price,
+      priceCurrency: "INR",
+      availability: "https://schema.org/InStock",
+      description: `Starting at ${tier.priceFrom} ${tier.priceSuffix}.`,
+      itemOffered: {
+        "@type": "Service",
+        name: `${tier.name} Plan`,
+        description: `${tier.tagline}. Delivery timeline: ${tier.timeline}.`,
+      },
+    },
+  ];
+});
+
+const pricingItemListSchema = {
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  "@id": `${PRICING_URL}#pricing-plans`,
+  name: "Kraviona web development pricing plans",
+  itemListElement: pricingTiers.map((tier, index) => {
+    const price = getDisplayedStartingPrice(tier.priceFrom);
+
+    return {
+      "@type": "ListItem",
+      position: index + 1,
+      item: {
+        "@type": "Product",
+        name: `${tier.name} Plan`,
+        description: `${tier.tagline}. Delivery timeline: ${tier.timeline}. ${tier.priceFrom} ${tier.priceSuffix}.`,
+        url: PRICING_URL,
+        ...(price && {
+          offers: {
+            "@type": "Offer",
+            price,
+            priceCurrency: "INR",
+            availability: "https://schema.org/InStock",
+          },
+        }),
+      },
+    };
+  }),
+};
+
+const pricingOfferSchema = {
+  "@context": "https://schema.org",
+  "@type": "AggregateOffer",
+  name: "Kraviona starting-price web development plans",
+  url: PRICING_URL,
+  priceCurrency: "INR",
+  lowPrice: String(Math.min(...pricedTierOffers.map((offer) => Number(offer.price)))),
+  highPrice: String(Math.max(...pricedTierOffers.map((offer) => Number(offer.price)))),
+  offerCount: pricedTierOffers.length,
+  availability: "https://schema.org/InStock",
+  description:
+    "Published starting prices for Starter and Growth plans. Enterprise pricing is custom.",
+  seller: { "@id": "https://kraviona.com/#organization" },
+  offers: pricedTierOffers,
+};
+
 const Pricing = () => {
   return (
-    <main className="min-h-screen bg-[#f9fafb] px-4 py-28 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-surface px-4 py-28 sm:px-6 lg:px-8">
       <JsonLd
-        data={breadcrumbSchema([
-          { name: "Home", url: "https://kraviona.com" },
-          { name: "Pricing", url: "https://kraviona.com/pricing" },
-        ])}
+        data={[
+          pricingOfferSchema,
+          pricingItemListSchema,
+          breadcrumbSchema([
+            { name: "Home", url: "https://kraviona.com" },
+            { name: "Pricing", url: "https://kraviona.com/pricing" },
+          ]),
+        ]}
       />
 
       <section className="mx-auto max-w-7xl">
         <div className="mx-auto mb-14 max-w-3xl text-center">
-          <span className="text-[#d96c4e] font-bold tracking-[0.3em] text-[10px] uppercase">
+          <span className="text-accent-dark font-bold tracking-[0.3em] text-[10px] uppercase">
             Transparent Pricing
           </span>
-          <h1 className="mt-3 text-4xl md:text-6xl font-extrabold text-[#1b3d3e] tracking-tight leading-tight">
+          <h1 className="mt-3 text-4xl md:text-6xl font-extrabold text-primary tracking-tight leading-tight">
             Plans for serious web growth
           </h1>
           <p className="mt-5 text-gray-500 text-lg leading-relaxed">
@@ -153,33 +232,33 @@ const Pricing = () => {
           {pricingTiers.map((tier) => (
             <article
               key={tier.name}
-              className={`relative flex h-full flex-col rounded-2xl border bg-white p-7 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl ${
+              className={`relative flex h-full flex-col rounded-2xl border p-7 shadow-card transition-all duration-300 hover:-translate-y-1 hover:shadow-brand-md ${
                 tier.highlight
-                  ? "border-[#d96c4e] ring-2 ring-[#d96c4e]/15"
-                  : "border-gray-200"
+                  ? "border-primary bg-primary text-white ring-2 ring-accent/20"
+                  : "border-primary/15 bg-white"
               }`}
             >
               {tier.highlight && (
-                <span className="absolute right-5 top-5 rounded-full bg-[#d96c4e]/10 px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-[#d96c4e]">
+                <span className="absolute right-5 top-5 rounded-full bg-white/15 px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-white">
                   Popular
                 </span>
               )}
               <div>
-                <h2 className="text-2xl font-black text-[#1b3d3e]">
+                <h2 className={`text-2xl font-black ${tier.highlight ? "text-white" : "text-primary"}`}>
                   {tier.name}
                 </h2>
-                <p className="mt-2 text-sm font-semibold text-gray-500">
+                <p className={`mt-2 text-sm font-semibold ${tier.highlight ? "text-white/75" : "text-brand-muted"}`}>
                   {tier.tagline}
                 </p>
                 <div className="mt-6">
-                  <span className="text-4xl font-black text-[#111A1F]">
+                  <span className={`text-4xl font-black ${tier.highlight ? "text-white" : "text-accent-dark"}`}>
                     {tier.priceFrom}
                   </span>
-                  <span className="ml-2 text-sm font-bold text-gray-500">
+                  <span className={`ml-2 text-sm font-bold ${tier.highlight ? "text-white/75" : "text-brand-muted"}`}>
                     {tier.priceSuffix}
                   </span>
                 </div>
-                <p className="mt-3 text-sm font-bold text-[#d96c4e]">
+                <p className={`mt-3 text-sm font-bold ${tier.highlight ? "text-accent-hover" : "text-accent-dark"}`}>
                   Timeline: {tier.timeline}
                 </p>
               </div>
@@ -188,9 +267,9 @@ const Pricing = () => {
                 {tier.features.map((feature) => (
                   <li
                     key={feature}
-                    className="flex gap-3 text-sm leading-relaxed text-gray-600"
+                    className={`flex gap-3 text-sm leading-relaxed ${tier.highlight ? "text-white/85" : "text-brand-muted"}`}
                   >
-                    <span className="mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-[#295c5e]/10 text-xs font-black text-[#295c5e]">
+                    <span className={`mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full text-xs font-black ${tier.highlight ? "bg-white/15 text-accent-hover" : "bg-primary-tint text-primary"}`}>
                       ✓
                     </span>
                     {feature}
@@ -200,10 +279,10 @@ const Pricing = () => {
 
               <Link
                 href={tier.ctaLink}
-                className={`mt-8 inline-flex items-center justify-center rounded-xl px-6 py-3.5 text-sm font-black transition-colors ${
+                className={`mt-8 inline-flex min-h-11 items-center justify-center rounded-xl px-6 py-3.5 text-sm font-black transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-hover ${
                   tier.highlight
-                    ? "bg-[#d96c4e] text-white hover:bg-[#c25e41]"
-                    : "bg-[#1b3d3e] text-white hover:bg-[#d96c4e]"
+                    ? "bg-accent-dark text-white hover:brightness-90"
+                    : "border-2 border-accent-dark text-accent-dark hover:bg-primary hover:text-white"
                 }`}
               >
                 {tier.cta}
@@ -212,26 +291,26 @@ const Pricing = () => {
           ))}
         </div>
 
-        <section className="mt-16 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm md:p-8">
+        <section className="mt-16 rounded-2xl border border-primary/15 bg-white p-6 shadow-card md:p-8">
           <div className="mb-6 flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
             <div>
-              <span className="text-[#d96c4e] font-bold tracking-[0.24em] text-[10px] uppercase">
+              <span className="text-accent-dark font-bold tracking-[0.24em] text-[10px] uppercase">
                 SEO Add-ons
               </span>
-              <h2 className="mt-2 text-2xl font-black text-[#1b3d3e]">
+              <h2 className="mt-2 text-2xl font-black text-primary">
                 Focused optimisation packages
               </h2>
             </div>
             <Link
               href="/contact"
-              className="text-sm font-black text-[#295c5e] hover:text-[#d96c4e]"
+              className="text-sm font-black text-primary hover:text-accent-dark"
             >
               Request custom quote →
             </Link>
           </div>
 
-          <div className="overflow-hidden rounded-xl border border-gray-200">
-            <div className="grid grid-cols-3 bg-[#f4f7f7] px-4 py-3 text-xs font-black uppercase tracking-[0.16em] text-[#1b3d3e]">
+          <div className="overflow-hidden rounded-xl border border-primary/15">
+            <div className="grid grid-cols-3 bg-primary-tint px-4 py-3 text-xs font-black uppercase tracking-[0.16em] text-primary">
               <span>Service</span>
               <span>Price</span>
               <span>Delivery</span>
@@ -239,11 +318,11 @@ const Pricing = () => {
             {seoPricing.map((item) => (
               <div
                 key={item.service}
-                className="grid grid-cols-1 gap-1 border-t border-gray-200 px-4 py-4 text-sm md:grid-cols-3 md:gap-0"
+                className="grid grid-cols-1 gap-1 border-t border-primary/15 px-4 py-4 text-sm md:grid-cols-3 md:gap-0"
               >
-                <span className="font-bold text-[#1b3d3e]">{item.service}</span>
-                <span className="text-gray-600">{item.price}</span>
-                <span className="text-gray-600">{item.delivery}</span>
+                <span className="font-bold text-primary">{item.service}</span>
+                <span className="text-brand-muted">{item.price}</span>
+                <span className="text-brand-muted">{item.delivery}</span>
               </div>
             ))}
           </div>
@@ -255,7 +334,7 @@ const Pricing = () => {
           consultation to get an accurate quote.
         </p>
       </section>
-    </main>
+    </div>
   );
 };
 

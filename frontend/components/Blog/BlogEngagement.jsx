@@ -166,10 +166,10 @@ export default function BlogEngagement({
     <section className="mt-12 rounded-lg border border-gray-100 bg-white p-5 shadow-sm md:p-6">
       <div className="mb-5 flex flex-col gap-3 border-b border-gray-100 pb-5 md:flex-row md:items-start md:justify-between">
         <div>
-          <p className="text-[10px] font-black uppercase tracking-[0.24em] text-[#d96c4e]">
+          <p className="text-[10px] font-black uppercase tracking-[0.24em] text-[#E8622A]">
             Reader Response
           </p>
-          <h2 className="mt-2 text-2xl font-black tracking-tight text-[#0f2425]">
+          <h2 className="mt-2 text-2xl font-black tracking-tight text-[#2A4A52]">
             What did you think?
           </h2>
           <p className="mt-1 text-sm text-gray-500">
@@ -177,7 +177,7 @@ export default function BlogEngagement({
           </p>
         </div>
         {isLoading && (
-          <span className="rounded-full bg-[#fbfdfc] px-3 py-1 text-xs font-bold text-gray-400">
+          <span className="rounded-full bg-[#F5F7F8] px-3 py-1 text-xs font-bold text-gray-400">
             Syncing
           </span>
         )}
@@ -189,18 +189,28 @@ export default function BlogEngagement({
       </div>
 
       {status && (
-        <p className="mb-5 rounded-lg border border-gray-100 bg-[#fbfdfc] px-4 py-3 text-sm font-medium text-[#1b3d3e]">
+        <p
+          role="status"
+          aria-live="polite"
+          className="mb-5 rounded-lg border border-gray-100 bg-[#F5F7F8] px-4 py-3 text-sm font-medium text-[#1A2E33]"
+        >
           {status}
         </p>
       )}
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_0.9fr]">
-        <form onSubmit={submitComment} className="rounded-lg bg-[#fbfdfc] p-4">
-          <h3 className="mb-4 text-sm font-black uppercase tracking-[0.16em] text-[#1b3d3e]">
+        <form onSubmit={submitComment} className="rounded-lg bg-[#F5F7F8] p-4">
+          <h3 className="mb-4 text-sm font-black uppercase tracking-[0.16em] text-[#1A2E33]">
             Add a comment
           </h3>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <label className="sr-only" htmlFor="blog-comment-name">
+              Your name
+            </label>
             <input
+              id="blog-comment-name"
+              name="authorName"
+              autoComplete="name"
               value={form.authorName}
               onChange={(event) =>
                 setForm((current) => ({
@@ -210,9 +220,15 @@ export default function BlogEngagement({
               }
               required
               placeholder="Your name"
-              className="rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm outline-none focus:border-[#d96c4e]"
+              className="rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm outline-none focus:border-[#E8622A]"
             />
+            <label className="sr-only" htmlFor="blog-comment-email">
+              Email address
+            </label>
             <input
+              id="blog-comment-email"
+              name="email"
+              autoComplete="email"
               value={form.email}
               onChange={(event) =>
                 setForm((current) => ({ ...current, email: event.target.value }))
@@ -220,10 +236,15 @@ export default function BlogEngagement({
               required
               type="email"
               placeholder="Email"
-              className="rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm outline-none focus:border-[#d96c4e]"
+              className="rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm outline-none focus:border-[#E8622A]"
             />
           </div>
+          <label className="sr-only" htmlFor="blog-comment-message">
+            Your comment
+          </label>
           <textarea
+            id="blog-comment-message"
+            name="comment"
             value={form.comment}
             onChange={(event) =>
               setForm((current) => ({ ...current, comment: event.target.value }))
@@ -231,12 +252,12 @@ export default function BlogEngagement({
             required
             rows={5}
             placeholder={`Share your thoughts on "${title}"`}
-            className="mt-3 w-full resize-none rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm outline-none focus:border-[#d96c4e]"
+            className="mt-3 w-full resize-none rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm outline-none focus:border-[#E8622A]"
           />
           <button
             type="submit"
             disabled={isSubmitting}
-            className="mt-3 inline-flex items-center gap-2 rounded-lg bg-[#d96c4e] px-5 py-3 text-sm font-black text-white transition-colors hover:bg-[#c25e41] disabled:cursor-not-allowed disabled:opacity-60"
+            className="mt-3 inline-flex items-center gap-2 rounded-lg bg-[#E8622A] px-5 py-3 text-sm font-black text-white transition-colors hover:bg-[#B84A1A] disabled:cursor-not-allowed disabled:opacity-60"
           >
             <Send className="h-4 w-4" />
             {isSubmitting ? "Posting..." : "Post Comment"}
@@ -244,7 +265,7 @@ export default function BlogEngagement({
         </form>
 
         <div>
-          <h3 className="mb-4 text-sm font-black uppercase tracking-[0.16em] text-[#1b3d3e]">
+          <h3 className="mb-4 text-sm font-black uppercase tracking-[0.16em] text-[#1A2E33]">
             Recent comments
           </h3>
           <div className="max-h-[430px] space-y-3 overflow-y-auto pr-1">
@@ -256,14 +277,14 @@ export default function BlogEngagement({
                 >
                   <div className="mb-2 flex items-start justify-between gap-3">
                     <div>
-                      <p className="text-sm font-black text-[#0f2425]">
+                      <p className="text-sm font-black text-[#2A4A52]">
                         {comment.authorName}
                       </p>
                       <p className="text-xs text-gray-400">
                         {formatDate(comment.createdAt)}
                       </p>
                     </div>
-                    <MessageSquare className="h-4 w-4 text-[#d96c4e]" />
+                    <MessageSquare className="h-4 w-4 text-[#E8622A]" />
                   </div>
                   <p className="text-sm leading-7 text-gray-600">
                     {comment.comment}
@@ -271,7 +292,7 @@ export default function BlogEngagement({
                 </article>
               ))
             ) : (
-              <div className="rounded-lg border border-dashed border-gray-200 bg-[#fbfdfc] p-6 text-center text-sm text-gray-500">
+              <div className="rounded-lg border border-dashed border-gray-200 bg-[#F5F7F8] p-6 text-center text-sm text-gray-500">
                 No comments yet. Be the first to respond.
               </div>
             )}
@@ -284,14 +305,14 @@ export default function BlogEngagement({
 
 function Metric({ icon: Icon, label, value }) {
   return (
-    <div className="rounded-lg border border-gray-100 bg-[#fbfdfc] p-3">
-      <div className="mb-2 flex items-center gap-2 text-[#d96c4e]">
+    <div className="rounded-lg border border-gray-100 bg-[#F5F7F8] p-3">
+      <div className="mb-2 flex items-center gap-2 text-[#E8622A]">
         <Icon className="h-4 w-4" />
         <span className="text-[10px] font-black uppercase tracking-widest">
           {label}
         </span>
       </div>
-      <p className="text-xl font-black text-[#0f2425]">
+      <p className="text-xl font-black text-[#2A4A52]">
         {formatNumber(value)}
       </p>
     </div>

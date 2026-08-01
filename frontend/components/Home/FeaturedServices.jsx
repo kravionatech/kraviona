@@ -148,14 +148,14 @@ const FeaturedServices = () => {
 
   return (
     <section
-      className="py-20 md:py-28 bg-[#FAFCFC] relative overflow-hidden"
+      className="py-20 md:py-28 bg-[#F5F7F8] relative overflow-hidden"
       aria-labelledby="services-heading"
     >
       {/* Subtle dot-grid background */}
       <div
         className="absolute inset-0 opacity-[0.028] z-0 pointer-events-none"
         style={{
-          backgroundImage: "radial-gradient(#111A1F 1.5px, transparent 1.5px)",
+          backgroundImage: "radial-gradient(#1A2E33 1.5px, transparent 1.5px)",
           backgroundSize: "28px 28px",
         }}
         aria-hidden="true"
@@ -171,24 +171,24 @@ const FeaturedServices = () => {
               viewport={{ once: true }}
               className="flex items-center gap-3 mb-5"
             >
-              <div className="w-10 h-[2px] bg-[#d96c4e]" aria-hidden="true" />
-              <span className="text-[#d96c4e] font-bold uppercase tracking-[0.2em] text-xs md:text-sm">
+              <div className="w-10 h-[2px] bg-[#E8622A]" aria-hidden="true" />
+              <span className="text-[#E8622A] font-bold uppercase tracking-[0.2em] text-xs md:text-sm">
                 Our Solutions
               </span>
             </motion.div>
 
             <h2
               id="services-heading"
-              className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.25rem] font-extrabold text-[#111A1F] tracking-tight leading-[1.1]"
+              className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.25rem] font-extrabold text-[#1A2E33] tracking-tight leading-[1.1]"
             >
               Services Built Around{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#d96c4e] to-[#f4be78]">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#E8622A] to-[#F28C5E]">
                 Real Outcomes
               </span>
             </h2>
           </div>
 
-          <div className="md:border-l-2 border-[#f4be78]/60 md:pl-6 max-w-xs">
+          <div className="md:border-l-2 border-[#F28C5E]/60 md:pl-6 max-w-xs">
             <p className="text-gray-500 text-sm md:text-base leading-relaxed">
               We focus on the parts that make a digital product useful:
               performance, structure, maintainability, search visibility, and a
@@ -204,7 +204,7 @@ const FeaturedServices = () => {
             aria-live="polite"
             aria-busy="true"
           >
-            <Loader2 size={40} className="animate-spin text-[#295c5e]" />
+            <Loader2 size={40} className="animate-spin text-[#2A4A52]" />
           </div>
         ) : (
           <motion.ul
@@ -238,21 +238,21 @@ const FeaturedServices = () => {
                       className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
                       style={{
                         boxShadow:
-                          "inset 0 0 0 1.5px rgba(217,108,78,0.5), 0 20px 48px rgba(15,36,37,0.14)",
+                          "inset 0 0 0 1.5px rgba(232,98,42,0.5), 0 20px 48px rgba(42,74,82,0.14)",
                       }}
                       aria-hidden="true"
                     />
 
                     {/* Top accent line */}
                     <div
-                      className="h-0.5 w-full bg-gradient-to-r from-transparent via-[#d96c4e]/0 to-transparent group-hover:via-[#d96c4e]/80 transition-all duration-500"
+                      className="h-0.5 w-full bg-gradient-to-r from-transparent via-[#E8622A]/0 to-transparent group-hover:via-[#E8622A]/80 transition-all duration-500"
                       aria-hidden="true"
                     />
 
                     <div className="p-7 md:p-8 flex flex-col h-full relative z-10">
                       {/* Icon */}
                       <div
-                        className="w-14 h-14 rounded-xl bg-[#FAFCFC] border border-gray-100 group-hover:bg-[#0f2425] group-hover:border-[#0f2425] text-[#295c5e] group-hover:text-[#f4be78] flex items-center justify-center mb-6 transition-all duration-500 shadow-sm"
+                        className="w-14 h-14 rounded-xl bg-[#F5F7F8] border border-gray-100 group-hover:bg-[#2A4A52] group-hover:border-[#2A4A52] text-[#2A4A52] group-hover:text-[#F28C5E] flex items-center justify-center mb-6 transition-all duration-500 shadow-sm"
                         aria-hidden="true"
                       >
                         {icon}
@@ -260,7 +260,7 @@ const FeaturedServices = () => {
 
                       {/* Content */}
                       <div className="flex-grow">
-                        <h3 className="text-xl font-bold text-[#111A1F] mb-3 group-hover:text-[#111A1F] transition-colors duration-300">
+                        <h3 className="text-xl font-bold text-[#1A2E33] mb-3 group-hover:text-[#1A2E33] transition-colors duration-300">
                           {service.title || service.name}
                         </h3>
                         <p className="text-gray-500 text-sm leading-relaxed mb-6">
@@ -278,7 +278,7 @@ const FeaturedServices = () => {
                                 className="flex items-center text-sm font-medium text-gray-600"
                               >
                                 <CheckCircle2
-                                  className="w-4 h-4 text-[#d96c4e] mr-2.5 flex-shrink-0"
+                                  className="w-4 h-4 text-[#E8622A] mr-2.5 flex-shrink-0"
                                   aria-hidden="true"
                                 />
                                 {feature}
@@ -289,10 +289,10 @@ const FeaturedServices = () => {
                       </div>
 
                       {/* CTA */}
-                      <div className="mt-auto pt-5 border-t border-gray-100 group-hover:border-[#d96c4e]/15 transition-colors duration-500">
+                      <div className="mt-auto pt-5 border-t border-gray-100 group-hover:border-[#E8622A]/15 transition-colors duration-500">
                         <Link
                           href={`/services/${service.slug || ""}`}
-                          className="inline-flex items-center gap-2 text-sm font-bold text-[#295c5e] group-hover:text-[#d96c4e] transition-colors duration-300"
+                          className="inline-flex items-center gap-2 text-sm font-bold text-[#2A4A52] group-hover:text-[#E8622A] transition-colors duration-300"
                         >
                           Learn more about {service.title}
                           <ArrowRight
@@ -318,7 +318,7 @@ const FeaturedServices = () => {
         >
           <Link
             href="/services"
-            className="inline-flex items-center gap-2 px-8 py-3.5 bg-[#111A1F] text-white font-bold rounded-xl hover:bg-[#d96c4e] transition-all duration-300 text-sm shadow-sm hover:shadow-[0_4px_20px_rgba(217,108,78,0.3)] hover:-translate-y-0.5"
+            className="inline-flex items-center gap-2 px-8 py-3.5 bg-[#1A2E33] text-white font-bold rounded-xl hover:bg-[#E8622A] transition-all duration-300 text-sm shadow-sm hover:shadow-[0_4px_20px_rgba(232,98,42,0.3)] hover:-translate-y-0.5"
           >
             View All Services
             <ArrowRight className="w-4 h-4" aria-hidden="true" />

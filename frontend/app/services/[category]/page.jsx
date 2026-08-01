@@ -25,7 +25,6 @@ import { JsonLd } from "@/components/JsonLd";
 import {
   canonicalUrl,
   defaultRobots,
-  SITE_NAME,
   SITE_URL,
 } from "@/app/seoConfig.js";
 import {
@@ -35,6 +34,7 @@ import {
 } from "@/lib/schema";
 import {
   CATEGORY_DETAILS,
+  getServiceFaqs,
   SERVICE_EXPERT,
   SERVICE_LINKS,
   SERVICE_PAGES,
@@ -77,10 +77,13 @@ export async function generateMetadata({ params }) {
   }
 
   const pageUrl = canonicalUrl(`/services/${slug}`);
+  const metaDescription = `Expert ${service.name} services in Delhi NCR from Kraviona. ${service.description}`
+    .replace(/\s+/g, " ")
+    .slice(0, 160);
 
   return {
-    title: `${service.name} Services India | ${SITE_NAME}`,
-    description: `${service.description} Talk to ${SERVICE_EXPERT.name}, ${SERVICE_EXPERT.jobTitle} at Kraviona, for a practical service plan.`,
+    title: `${service.name} Services in Delhi NCR`,
+    description: metaDescription,
     keywords: [
       service.name,
       `${service.name} India`,
@@ -129,6 +132,7 @@ export default async function ServicesDetails({ params }) {
 
   const pageUrl = canonicalUrl(`/services/${slug}`);
   const details = CATEGORY_DETAILS[service.category];
+  const serviceFaqs = getServiceFaqs(service);
   const relatedServices = SERVICE_LINKS.filter(
     (item) => item.href !== `/services/${slug}` && item.category === service.category,
   ).slice(0, 4);
@@ -173,7 +177,7 @@ export default async function ServicesDetails({ params }) {
     { name: "Services", url: canonicalUrl("/services") },
     { name: service.name, url: pageUrl },
   ]);
-  const faqJsonLd = buildFaqSchema(details?.faqs || []);
+  const faqJsonLd = buildFaqSchema(serviceFaqs);
 
   return (
     <>
@@ -183,16 +187,16 @@ export default async function ServicesDetails({ params }) {
         )}
       />
 
-      <section className="relative overflow-hidden bg-[#081314] pt-32 pb-24">
-        <div className="absolute inset-0 opacity-[0.08] bg-[radial-gradient(#f4be78_1px,transparent_1px)] [background-size:28px_28px]" />
+      <section className="relative overflow-hidden bg-[#1A2E33] pt-32 pb-24">
+        <div className="absolute inset-0 opacity-[0.08] bg-[radial-gradient(#F28C5E_1px,transparent_1px)] [background-size:28px_28px]" />
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl">
-            <p className="mb-5 text-xs font-black uppercase tracking-[0.22em] text-[#f4be78]">
+            <p className="mb-5 text-xs font-black uppercase tracking-[0.22em] text-[#F28C5E]">
               {service.category}
             </p>
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-white leading-tight mb-6">
               {service.name}{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#f4be78] to-[#d96c4e]">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#F28C5E] to-[#E8622A]">
                 Services
               </span>
             </h1>
@@ -202,7 +206,7 @@ export default async function ServicesDetails({ params }) {
             <div className="flex flex-col sm:flex-row gap-3">
               <Link
                 href="/contact"
-                className="inline-flex items-center justify-center px-7 py-4 bg-[#d96c4e] text-white font-bold rounded-xl hover:bg-[#c25e41] transition-colors"
+                className="inline-flex items-center justify-center px-7 py-4 bg-[#E8622A] text-white font-bold rounded-xl hover:bg-[#B84A1A] transition-colors"
               >
                 Discuss This Service
               </Link>
@@ -231,10 +235,10 @@ export default async function ServicesDetails({ params }) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-10 lg:gap-14 items-start">
             <div>
-              <p className="text-xs font-black uppercase tracking-[0.2em] text-[#d96c4e] mb-3">
+              <p className="text-xs font-black uppercase tracking-[0.2em] text-[#E8622A] mb-3">
                 What You Get
               </p>
-              <h2 className="text-3xl md:text-4xl font-extrabold text-[#111A1F] mb-4">
+              <h2 className="text-3xl md:text-4xl font-extrabold text-[#1A2E33] mb-4">
                 Practical delivery focused on outcomes
               </h2>
               <p className="mb-8 max-w-3xl text-gray-600 leading-relaxed">
@@ -244,12 +248,12 @@ export default async function ServicesDetails({ params }) {
                 {service.outcomes.map((outcome, index) => (
                   <div
                     key={outcome}
-                    className="p-6 rounded-xl border border-gray-200 bg-[#FAFCFC] transition-all duration-200 hover:border-[#d96c4e]/40 hover:bg-white hover:shadow-sm"
+                    className="p-6 rounded-xl border border-gray-200 bg-[#F5F7F8] transition-all duration-200 hover:border-[#E8622A]/40 hover:bg-white hover:shadow-sm"
                   >
-                    <span className="mb-4 flex h-9 w-9 items-center justify-center rounded-full bg-[#d96c4e]/10 text-[#d96c4e]">
+                    <span className="mb-4 flex h-9 w-9 items-center justify-center rounded-full bg-[#E8622A]/10 text-[#E8622A]">
                       <CheckCircle2 className="h-5 w-5" />
                     </span>
-                    <h3 className="font-bold text-[#111A1F] leading-snug">
+                    <h3 className="font-bold text-[#1A2E33] leading-snug">
                       {outcome}
                     </h3>
                     <p className="mt-3 text-sm leading-relaxed text-gray-600">
@@ -278,12 +282,12 @@ export default async function ServicesDetails({ params }) {
                 ].map((item) => (
                   <div
                     key={item.title}
-                    className="rounded-xl border border-[#295c5e]/15 bg-white p-5"
+                    className="rounded-xl border border-[#2A4A52]/15 bg-white p-5"
                   >
-                    <span className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-[#295c5e]/10 text-[#295c5e]">
+                    <span className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-[#2A4A52]/10 text-[#2A4A52]">
                       {item.icon}
                     </span>
-                    <h3 className="font-extrabold text-[#111A1F]">
+                    <h3 className="font-extrabold text-[#1A2E33]">
                       {item.title}
                     </h3>
                     <p className="mt-2 text-sm leading-relaxed text-gray-600">
@@ -295,22 +299,23 @@ export default async function ServicesDetails({ params }) {
             </div>
 
             <aside className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-              <p className="text-xs font-black uppercase tracking-[0.2em] text-[#d96c4e] mb-4">
+              <p className="text-xs font-black uppercase tracking-[0.2em] text-[#E8622A] mb-4">
                 EEAT Expert Contact
               </p>
               <div className="flex items-center gap-4 mb-5">
                 <Image
                   src={SERVICE_EXPERT.image}
-                  alt={SERVICE_EXPERT.name}
+                  alt={`${SERVICE_EXPERT.name}, Kraviona Tech Solutions founder and lead engineer`}
                   width={64}
                   height={64}
+                  sizes="64px"
                   className="h-16 w-16 rounded-2xl object-cover"
                 />
                 <div>
-                  <h2 className="font-extrabold text-[#111A1F]">
+                  <h2 className="font-extrabold text-[#1A2E33]">
                     {SERVICE_EXPERT.name}
                   </h2>
-                  <p className="text-sm font-semibold text-[#d96c4e]">
+                  <p className="text-sm font-semibold text-[#E8622A]">
                     {SERVICE_EXPERT.jobTitle}
                   </p>
                 </div>
@@ -321,21 +326,21 @@ export default async function ServicesDetails({ params }) {
               <div className="grid grid-cols-2 gap-2 mb-5">
                 <a
                   href={`mailto:${SERVICE_EXPERT.email}`}
-                  className="flex items-center gap-2 rounded-xl bg-[#FAFCFC] px-3 py-3 text-xs font-bold text-[#1b3d3e] hover:text-[#d96c4e]"
+                  className="flex items-center gap-2 rounded-xl bg-[#F5F7F8] px-3 py-3 text-xs font-bold text-[#1A2E33] hover:text-[#E8622A]"
                 >
                   <Mail className="h-4 w-4" />
                   Email
                 </a>
                 <a
                   href={SERVICE_EXPERT.phoneHref}
-                  className="flex items-center gap-2 rounded-xl bg-[#FAFCFC] px-3 py-3 text-xs font-bold text-[#1b3d3e] hover:text-[#d96c4e]"
+                  className="flex items-center gap-2 rounded-xl bg-[#F5F7F8] px-3 py-3 text-xs font-bold text-[#1A2E33] hover:text-[#E8622A]"
                 >
                   <Phone className="h-4 w-4" />
                   Call
                 </a>
                 <a
                   href={SERVICE_EXPERT.whatsapp}
-                  className="flex items-center gap-2 rounded-xl bg-[#FAFCFC] px-3 py-3 text-xs font-bold text-[#1b3d3e] hover:text-[#d96c4e]"
+                  className="flex items-center gap-2 rounded-xl bg-[#F5F7F8] px-3 py-3 text-xs font-bold text-[#1A2E33] hover:text-[#E8622A]"
                   target="_blank"
                   rel="noreferrer"
                 >
@@ -344,13 +349,13 @@ export default async function ServicesDetails({ params }) {
                 </a>
                 <a
                   href={SERVICE_EXPERT.website}
-                  className="flex items-center gap-2 rounded-xl bg-[#FAFCFC] px-3 py-3 text-xs font-bold text-[#1b3d3e] hover:text-[#d96c4e]"
+                  className="flex items-center gap-2 rounded-xl bg-[#F5F7F8] px-3 py-3 text-xs font-bold text-[#1A2E33] hover:text-[#E8622A]"
                 >
                   <Globe className="h-4 w-4" />
                   Website
                 </a>
               </div>
-              <div className="space-y-3 rounded-xl bg-[#FAFCFC] p-4 text-sm text-gray-600">
+              <div className="space-y-3 rounded-xl bg-[#F5F7F8] p-4 text-sm text-gray-600">
                 <ContactLine
                   icon={<Mail className="h-4 w-4" />}
                   label="Email"
@@ -399,9 +404,9 @@ export default async function ServicesDetails({ params }) {
                   />
                 </div>
               </div>
-              <div className="mt-5 rounded-xl border border-[#d96c4e]/20 bg-[#d96c4e]/5 p-4">
-                <p className="flex items-center gap-2 text-sm font-bold text-[#111A1F]">
-                  <BadgeCheck className="h-4 w-4 text-[#d96c4e]" />
+              <div className="mt-5 rounded-xl border border-[#E8622A]/20 bg-[#E8622A]/5 p-4">
+                <p className="flex items-center gap-2 text-sm font-bold text-[#1A2E33]">
+                  <BadgeCheck className="h-4 w-4 text-[#E8622A]" />
                   {SERVICE_EXPERT.consultation}
                 </p>
                 <p className="mt-1 text-xs text-gray-500">
@@ -416,7 +421,7 @@ export default async function ServicesDetails({ params }) {
                   {SERVICE_EXPERT.knowsAbout.map((item) => (
                     <span
                       key={item}
-                      className="rounded-full border border-[#295c5e]/20 px-3 py-1 text-xs font-semibold text-[#295c5e]"
+                      className="rounded-full border border-[#2A4A52]/20 px-3 py-1 text-xs font-semibold text-[#2A4A52]"
                     >
                       {item}
                     </span>
@@ -433,7 +438,7 @@ export default async function ServicesDetails({ params }) {
                       key={item}
                       className="flex items-start gap-2 text-xs font-semibold leading-relaxed text-gray-600"
                     >
-                      <ShieldCheck className="mt-0.5 h-4 w-4 flex-shrink-0 text-[#d96c4e]" />
+                      <ShieldCheck className="mt-0.5 h-4 w-4 flex-shrink-0 text-[#E8622A]" />
                       {item}
                     </li>
                   ))}
@@ -444,7 +449,7 @@ export default async function ServicesDetails({ params }) {
         </div>
       </section>
 
-      <section className="py-16 bg-[#FAFCFC] border-y border-gray-100">
+      <section className="py-16 bg-[#F5F7F8] border-y border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <DetailPanel
@@ -474,10 +479,10 @@ export default async function ServicesDetails({ params }) {
       <section className="py-16 bg-white border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="mb-10 max-w-2xl">
-            <p className="text-xs font-black uppercase tracking-[0.2em] text-[#d96c4e] mb-3">
+            <p className="text-xs font-black uppercase tracking-[0.2em] text-[#E8622A] mb-3">
               Work Process
             </p>
-            <h2 className="text-3xl font-extrabold text-[#111A1F]">
+            <h2 className="text-3xl font-extrabold text-[#1A2E33]">
               A clear path from first discussion to measurable improvement
             </h2>
           </div>
@@ -488,10 +493,10 @@ export default async function ServicesDetails({ params }) {
               "Build and improve",
             ]).map((step, index) => (
               <div key={step} className="rounded-xl bg-white p-6 border border-gray-200">
-                <span className="mb-5 flex h-10 w-10 items-center justify-center rounded-full bg-[#1b3d3e] text-sm font-black text-white">
+                <span className="mb-5 flex h-10 w-10 items-center justify-center rounded-full bg-[#1A2E33] text-sm font-black text-white">
                   {index + 1}
                 </span>
-                <h3 className="text-lg font-extrabold text-[#111A1F] mb-3">
+                <h3 className="text-lg font-extrabold text-[#1A2E33] mb-3">
                   {step}
                 </h3>
                 <p className="text-sm leading-relaxed text-gray-600">
@@ -510,21 +515,21 @@ export default async function ServicesDetails({ params }) {
         </div>
       </section>
 
-      <section className="py-16 bg-[#FAFCFC]">
+      <section className="py-16 bg-[#F5F7F8]">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="mb-10 text-center">
-            <p className="text-xs font-black uppercase tracking-[0.2em] text-[#d96c4e] mb-3">
+            <p className="text-xs font-black uppercase tracking-[0.2em] text-[#E8622A] mb-3">
               Questions
             </p>
-            <h2 className="text-3xl font-extrabold text-[#111A1F]">
+            <h2 className="text-3xl font-extrabold text-[#1A2E33]">
               Common questions about {service.name}
             </h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            {(details?.faqs || []).map((faq) => (
+            {serviceFaqs.map((faq) => (
               <div key={faq.question} className="rounded-xl border border-gray-200 bg-white p-6">
-                <h3 className="mb-3 flex items-start gap-2 text-base font-extrabold text-[#111A1F]">
-                  <Rocket className="mt-0.5 h-4 w-4 flex-shrink-0 text-[#d96c4e]" />
+                <h3 className="mb-3 flex items-start gap-2 text-base font-extrabold text-[#1A2E33]">
+                  <Rocket className="mt-0.5 h-4 w-4 flex-shrink-0 text-[#E8622A]" />
                   {faq.question}
                 </h3>
                 <p className="text-sm leading-relaxed text-gray-600">
@@ -539,7 +544,7 @@ export default async function ServicesDetails({ params }) {
       {relatedServices.length > 0 && (
         <section className="py-12 bg-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-lg font-bold text-[#111A1F] mb-5">
+            <h2 className="text-lg font-bold text-[#1A2E33] mb-5">
               Related Services
             </h2>
             <div className="flex flex-wrap gap-3">
@@ -547,7 +552,7 @@ export default async function ServicesDetails({ params }) {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className="px-5 py-2.5 border border-[#295c5e]/30 text-[#295c5e] rounded-full font-semibold text-sm hover:bg-[#295c5e] hover:text-white transition-all"
+                  className="px-5 py-2.5 border border-[#2A4A52]/30 text-[#2A4A52] rounded-full font-semibold text-sm hover:bg-[#2A4A52] hover:text-white transition-all"
                 >
                   {item.name}
                 </Link>
@@ -564,12 +569,12 @@ export default async function ServicesDetails({ params }) {
 
 const ContactLine = ({ icon, label, value }) => (
   <div className="flex items-start gap-3">
-    <span className="mt-0.5 text-[#d96c4e]">{icon}</span>
+    <span className="mt-0.5 text-[#E8622A]">{icon}</span>
     <div>
       <p className="text-[10px] font-black uppercase tracking-wider text-gray-400">
         {label}
       </p>
-      <p className="font-semibold text-[#1b3d3e]">{value}</p>
+      <p className="font-semibold text-[#1A2E33]">{value}</p>
     </div>
   </div>
 );
@@ -580,7 +585,7 @@ const SocialLink = ({ href, label, icon }) => (
     aria-label={label}
     target="_blank"
     rel="noreferrer"
-    className="flex h-10 w-10 items-center justify-center rounded-full border border-gray-200 bg-white text-[#1b3d3e] transition-colors hover:border-[#d96c4e] hover:bg-[#d96c4e] hover:text-white"
+    className="flex h-10 w-10 items-center justify-center rounded-full border border-gray-200 bg-white text-[#1A2E33] transition-colors hover:border-[#E8622A] hover:bg-[#E8622A] hover:text-white"
   >
     {icon}
   </a>
@@ -589,15 +594,15 @@ const SocialLink = ({ href, label, icon }) => (
 const DetailPanel = ({ icon, title, items }) => (
   <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
     <div className="mb-5 flex items-center gap-3">
-      <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#d96c4e]/10 text-[#d96c4e]">
+      <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#E8622A]/10 text-[#E8622A]">
         {icon}
       </span>
-      <h2 className="text-lg font-extrabold text-[#111A1F]">{title}</h2>
+      <h2 className="text-lg font-extrabold text-[#1A2E33]">{title}</h2>
     </div>
     <ul className="space-y-3">
       {items.map((item) => (
         <li key={item} className="flex items-start gap-3 text-sm text-gray-600">
-          <ArrowUpRight className="mt-0.5 h-4 w-4 flex-shrink-0 text-[#295c5e]" />
+          <ArrowUpRight className="mt-0.5 h-4 w-4 flex-shrink-0 text-[#2A4A52]" />
           <span className="leading-relaxed">{item}</span>
         </li>
       ))}

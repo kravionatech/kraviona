@@ -113,18 +113,18 @@ const AllPostsFeed = () => {
   const visiblePosts = filteredPosts.filter((post) => post?.slug);
 
   return (
-    <section id="all-posts" className="py-24 bg-[#f9fafb] font-sans">
+    <section id="all-posts" className="py-24 bg-[#F5F7F8] font-sans">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-12">
           <div className="flex items-center gap-2 mb-3">
-            <span className="w-8 h-0.5 bg-[#d96c4e]" />
-            <span className="text-[#d96c4e] font-black text-[10px] uppercase tracking-[0.25em]">
+            <span className="w-8 h-0.5 bg-[#E8622A]" />
+            <span className="text-[#E8622A] font-black text-[10px] uppercase tracking-[0.25em]">
               All Articles
             </span>
           </div>
-          <h2 className="text-3xl md:text-4xl font-black text-[#1b3d3e] tracking-tight">
+          <h2 className="text-3xl md:text-4xl font-black text-[#1A2E33] tracking-tight">
             Explore{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#295c5e] to-[#d96c4e]">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#2A4A52] to-[#E8622A]">
               Every Post
             </span>
           </h2>
@@ -139,7 +139,7 @@ const AllPostsFeed = () => {
               placeholder="Search articles..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-11 pr-4 py-3.5 bg-white border border-gray-200 rounded-xl text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#295c5e]/30 focus:border-[#295c5e] transition-all"
+              className="w-full pl-11 pr-4 py-3.5 bg-white border border-gray-200 rounded-xl text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#2A4A52]/30 focus:border-[#2A4A52] transition-all"
             />
           </div>
           <div className="relative">
@@ -147,7 +147,7 @@ const AllPostsFeed = () => {
             <select
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
-              className="appearance-none pl-11 pr-10 py-3.5 bg-white border border-gray-200 rounded-xl text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#295c5e]/30 focus:border-[#295c5e] transition-all cursor-pointer min-w-[200px]"
+              className="appearance-none pl-11 pr-10 py-3.5 bg-white border border-gray-200 rounded-xl text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#2A4A52]/30 focus:border-[#2A4A52] transition-all cursor-pointer min-w-[200px]"
             >
               <option value="all">All Categories</option>
               {categories.map((c, idx) => (
@@ -162,7 +162,7 @@ const AllPostsFeed = () => {
         {/* Grid */}
         {isLoading ? (
           <div className="flex justify-center py-24">
-            <Loader2 size={40} className="animate-spin text-[#295c5e]" />
+            <Loader2 size={40} className="animate-spin text-[#2A4A52]" />
           </div>
         ) : filteredPosts.length === 0 ? (
           <div className="text-center py-20 bg-white rounded-3xl border border-gray-100">
@@ -174,7 +174,7 @@ const AllPostsFeed = () => {
                 setSearchQuery("");
                 setSelectedCategory("all");
               }}
-              className="mt-4 px-6 py-2.5 bg-[#1b3d3e] text-white rounded-full text-xs font-black uppercase tracking-widest hover:bg-[#d96c4e] transition-colors"
+              className="mt-4 px-6 py-2.5 bg-[#1A2E33] text-white rounded-full text-xs font-black uppercase tracking-widest hover:bg-[#E8622A] transition-colors"
             >
               Clear Filters
             </button>

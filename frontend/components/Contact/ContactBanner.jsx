@@ -8,7 +8,7 @@ import { Mail, PhoneCall } from "lucide-react"; // Make sure lucide-react is ins
 const ContactBanner = () => {
   return (
     // Height matched with Services Banner (40vh-50vh) for consistency across inner pages
-    <section className="relative w-full h-[40vh] md:h-[60vh] flex flex-col justify-center bg-[#081314] overflow-hidden font-sans">
+    <section className="relative w-full h-[40vh] md:h-[60vh] flex flex-col justify-center bg-[#1A2E33] overflow-hidden font-sans">
       {/* --- Background Image & Deep Brand Dark Overlay --- */}
       <div className="absolute inset-0 w-full h-full z-0">
         <Image
@@ -18,9 +18,10 @@ const ContactBanner = () => {
           className="object-cover opacity-55"
           priority
           fetchPriority="high"
+          sizes="100vw"
         />
         {/* Kraviona Dark Teal Gradient */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#0f2425] via-[#0f2425]/90 to-[#0f2425]/60"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-[#2A4A52] via-[#2A4A52]/90 to-[#2A4A52]/60"></div>
       </div>
 
       {/* --- Abstract Curved Lines (Right Side Decorative) --- */}
@@ -46,15 +47,15 @@ const ContactBanner = () => {
           <div className="flex items-center gap-2 text-sm md:text-base font-medium text-gray-300 mb-8">
             <Link
               href="/"
-              className="hover:text-[#f4be78] transition-colors duration-300"
+              className="hover:text-[#F28C5E] transition-colors duration-300"
             >
               Home
             </Link>
 
             {/* Kraviona Terracotta Divider */}
-            <span className="text-[#d96c4e] font-bold mx-1">»</span>
+            <span className="text-[#E8622A] font-bold mx-1">»</span>
 
-            <span className="text-[#f4be78]">Start a Project</span>
+            <span className="text-[#F28C5E]">Start a Project</span>
           </div>
 
           {/* --- Direct Contact Info Pills --- */}
@@ -62,10 +63,10 @@ const ContactBanner = () => {
             {/* Email Pill */}
             <a
               href="mailto:kravionatech@gmail.com"
-              className="group flex items-center gap-3 px-5 py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-[#f4be78]/50 rounded-full transition-all duration-300 backdrop-blur-sm"
+              className="group flex items-center gap-3 px-5 py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-[#F28C5E]/50 rounded-full transition-all duration-300 backdrop-blur-sm"
             >
-              <div className="bg-[#f4be78]/10 p-1.5 rounded-full group-hover:bg-[#f4be78]/20 transition-colors">
-                <Mail className="w-4 h-4 text-[#f4be78]" />
+              <div className="bg-[#F28C5E]/10 p-1.5 rounded-full group-hover:bg-[#F28C5E]/20 transition-colors">
+                <Mail className="w-4 h-4 text-[#F28C5E]" />
               </div>
               <span className="text-sm font-medium text-gray-300 group-hover:text-white tracking-wide">
                 kravionatech@gmail.com
@@ -75,10 +76,10 @@ const ContactBanner = () => {
             {/* Phone Pill */}
             <a
               href="tel:+919608553167"
-              className="group flex items-center gap-3 px-5 py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-[#d96c4e]/50 rounded-full transition-all duration-300 backdrop-blur-sm"
+              className="group flex items-center gap-3 px-5 py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-[#E8622A]/50 rounded-full transition-all duration-300 backdrop-blur-sm"
             >
-              <div className="bg-[#d96c4e]/10 p-1.5 rounded-full group-hover:bg-[#d96c4e]/20 transition-colors">
-                <PhoneCall className="w-4 h-4 text-[#d96c4e]" />
+              <div className="bg-[#E8622A]/10 p-1.5 rounded-full group-hover:bg-[#E8622A]/20 transition-colors">
+                <PhoneCall className="w-4 h-4 text-[#E8622A]" />
               </div>
               <span className="text-sm font-medium text-gray-300 group-hover:text-white tracking-wide">
                 +91 96085 53167

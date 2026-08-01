@@ -1,4 +1,5 @@
 // Central schema definitions for Kraviona.com
+import { CONTACT_FAQS } from "./contactFaqs";
 
 export const organizationSchema = {
   "@context": "https://schema.org",
@@ -8,13 +9,14 @@ export const organizationSchema = {
   url: "https://kraviona.com",
   logo: {
     "@type": "ImageObject",
-    url: "https://kraviona.com/logo.png",
-    width: 200,
-    height: 60,
+    url: "https://kraviona.com/full-logo.webp",
+    width: 384,
+    height: 144,
   },
+  image: "https://kraviona.com/opengraph-image",
   description:
-    "Kraviona Tech Solutions builds MERN stack products, Next.js websites, backend APIs, and technical SEO systems for businesses across India.",
-  foundingDate: "2019",
+    "Kraviona Tech Solutions is a Delhi NCR web development and technical SEO agency building MERN stack products, Next.js websites, and backend APIs for businesses across India.",
+  foundingDate: "2022",
   numberOfEmployees: {
     "@type": "QuantitativeValue",
     value: 10,
@@ -54,6 +56,14 @@ export const organizationSchema = {
     "https://twitter.com/KravionaTech",
     "https://www.facebook.com/profile.php?id=61570716181916",
   ],
+  knowsAbout: [
+    "Web Development",
+    "Technical SEO",
+    "MERN Stack",
+    "Next.js",
+    "React.js",
+    "UI/UX Design",
+  ],
 };
 
 export const localBusinessSchema = {
@@ -61,16 +71,17 @@ export const localBusinessSchema = {
   "@type": "LocalBusiness",
   "@id": "https://kraviona.com/#localbusiness",
   name: "Kraviona Tech Solutions",
-  image: "https://kraviona.com/og-image.jpg",
+  image: "https://kraviona.com/opengraph-image",
   url: "https://kraviona.com",
   telephone: "+91-96085-53167",
   email: "kravionatech@gmail.com",
   priceRange: "₹₹",
+  parentOrganization: { "@id": "https://kraviona.com/#organization" },
   address: {
     "@type": "PostalAddress",
     streetAddress: "East Delhi",
     addressLocality: "Delhi",
-    addressRegion: "DL",
+    addressRegion: "Delhi",
     postalCode: "110092",
     addressCountry: "IN",
   },
@@ -104,16 +115,9 @@ export const websiteSchema = {
   url: "https://kraviona.com",
   name: "Kraviona Tech Solutions",
   description: "MERN Stack, Next.js and Technical SEO Company India",
+  inLanguage: "en-IN",
   publisher: {
     "@id": "https://kraviona.com/#organization",
-  },
-  potentialAction: {
-    "@type": "SearchAction",
-    target: {
-      "@type": "EntryPoint",
-      urlTemplate: "https://kraviona.com/blog?q={search_term_string}",
-    },
-    "query-input": "required name=search_term_string",
   },
 };
 
@@ -136,48 +140,14 @@ export const personSchema = {
 export const contactFaqSchema = {
   "@context": "https://schema.org",
   "@type": "FAQPage",
-  mainEntity: [
-    {
-      "@type": "Question",
-      name: "How long does a MERN Stack project take?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "A typical MERN Stack web application takes 4-12 weeks depending on complexity. MVPs can be delivered in 3-4 weeks. Enterprise platforms with custom APIs may take 3+ months.",
-      },
+  mainEntity: CONTACT_FAQS.map((faq) => ({
+    "@type": "Question",
+    name: faq.question,
+    acceptedAnswer: {
+      "@type": "Answer",
+      text: faq.answer,
     },
-    {
-      "@type": "Question",
-      name: "Do you sign NDAs for client projects?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "Yes, Kraviona signs Non-Disclosure Agreements (NDAs) for all client projects. We treat your business information with complete confidentiality. Contact us to request our standard NDA.",
-      },
-    },
-    {
-      "@type": "Question",
-      name: "What is your development process?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "We follow an Agile development process with weekly sprints, transparent communication via Slack or WhatsApp, and regular demo sessions. Every project includes a discovery phase, design approval, development, testing, and post-launch support.",
-      },
-    },
-    {
-      "@type": "Question",
-      name: "Do you offer post-launch support?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "Yes, all projects include 30 days of free post-launch support. We also offer monthly retainer plans for ongoing maintenance, updates, and monitoring.",
-      },
-    },
-    {
-      "@type": "Question",
-      name: "Can I get a free consultation?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "Yes! We offer a free 30-minute consultation call where we discuss your project requirements, timeline, and budget. Book via our contact page or WhatsApp at +91 96085 53167.",
-      },
-    },
-  ],
+  })),
 };
 
 export function serviceSchema(params: {
@@ -185,35 +155,44 @@ export function serviceSchema(params: {
   description: string;
   url: string;
   price?: string;
+  serviceType?: string;
 }) {
   return {
     "@context": "https://schema.org",
     "@type": "Service",
+    "@id": `${params.url}#service`,
     name: params.name,
     description: params.description,
     url: params.url,
     provider: {
       "@id": "https://kraviona.com/#organization",
     },
+    serviceType: params.serviceType || params.name,
     areaServed: {
-      "@type": "Country",
-      name: "India",
+      "@type": "GeoCircle",
+      geoMidpoint: {
+        "@type": "GeoCoordinates",
+        latitude: 28.6139,
+        longitude: 77.209,
+      },
+      geoRadius: 100000,
     },
     hasOfferCatalog: {
       "@type": "OfferCatalog",
       name: params.name,
     },
-    ...(params.price && {
-      offers: {
-        "@type": "Offer",
-        priceCurrency: "INR",
+    offers: {
+      "@type": "Offer",
+      priceCurrency: "INR",
+      availability: "https://schema.org/InStock",
+      ...(params.price && {
         priceSpecification: {
           "@type": "PriceSpecification",
           priceCurrency: "INR",
           description: params.price,
         },
-      },
-    }),
+      }),
+    },
   };
 }
 
