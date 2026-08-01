@@ -1,5 +1,5 @@
 import "./globals.css";
-import { ToastContainer } from "react-toastify";
+import ToastProvider from "./ToastProvider";
 
 export const metadata = {
   title: "Kraviona Admin",
@@ -18,7 +18,7 @@ export default function RootLayout({ children }) {
         className="min-h-full flex flex-col bg-[#1a2e33]"
       >
         {children}
-        <ToastContainer />
+        <ToastProvider />
       </body>
     </html>
   );

@@ -774,7 +774,7 @@ export default function Header() {
       <div
         onClick={closeMobile}
         aria-hidden="true"
-        className={`fixed inset-0 bg-black/30 backdrop-blur-[2px] z-[60] lg:hidden transition-opacity duration-300 ${mobileOpen ? "opacity-100" : "opacity-0 pointer-events-none"}`}
+        className={`fixed inset-0 bg-dark/30 backdrop-blur-[2px] z-[60] lg:hidden transition-opacity duration-300 ${mobileOpen ? "opacity-100" : "opacity-0 pointer-events-none"}`}
       />
 
       {/* ─────────────── MOBILE DRAWER ───────────────────────────────── */}

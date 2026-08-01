@@ -290,7 +290,7 @@ function BlogHero({ latestPost, categories, articleCount }) {
         </div>
       </div>
 
-      <div id="blog-topics" className="relative border-t border-white/10 bg-black/10">
+      <div id="blog-topics" className="relative border-t border-white/10 bg-dark/10">
         <div className="mx-auto flex max-w-7xl items-center gap-4 px-4 py-4 sm:px-6 lg:px-8">
           <span className="hidden shrink-0 text-[10px] font-black uppercase tracking-[0.2em] text-white/40 sm:block">
             Explore topics
