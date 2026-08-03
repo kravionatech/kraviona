@@ -1,4 +1,4 @@
-const jsonText = (data) => JSON.stringify(data, null, 2);
+  const jsonText = (data) => JSON.stringify(data, null, 2);
 
 export const successResult = (data) => ({
   content: [{ type: "text", text: jsonText(data) }],
