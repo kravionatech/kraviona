@@ -22,8 +22,7 @@ export default function robots() {
           "/test",
           "/preview",
           "/draft",
-          "/*.json$",
-          "/*?*",
+          "/*.json$"
         ],
       },
       // Make public, canonical marketing content discoverable to AI search
