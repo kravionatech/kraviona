@@ -35,7 +35,7 @@ const contentSecurityPolicy = [
 const nextConfig = {
   // This app is deployed independently from the repository root, which has
   // its own lockfile. Keep production file tracing scoped to the frontend.
-  outputFileTracingRoot: fileURLToPath(new URL("./", import.meta.url)),
+  outputFileTracingRoot: fileURLToPath(new URL("../", import.meta.url)),
   ...(deploymentId ? { deploymentId } : {}),
   reactStrictMode: true,
   poweredByHeader: false,
