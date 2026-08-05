@@ -144,6 +144,11 @@ const nextConfig = {
         permanent: true,
       },
       {
+        source: "/services/web-development",
+        destination: "/services/web-app-development",
+        permanent: true,
+      },
+      {
         source: "/blogs",
         destination: "/blog",
         permanent: true,
@@ -156,6 +161,11 @@ const nextConfig = {
       {
         source: "/terms-and-conditions",
         destination: "/terms",
+        permanent: true,
+      },
+      {
+        source: "/privacy",
+        destination: "/privacy-policy",
         permanent: true,
       },
     ];
