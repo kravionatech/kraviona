@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import Swal from "sweetalert2";
+import { API_URL } from "@/utils/api";
 
 const BlogNewsletter = () => {
   const [email, setEmail] = useState("");
@@ -22,7 +23,7 @@ const BlogNewsletter = () => {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch("/api/newsletter", {
+      const response = await fetch(`${API_URL}/newslatter`, {
         method: "POST",
         cache: "no-store",
         headers: {

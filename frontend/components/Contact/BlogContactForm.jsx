@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Swal from "sweetalert2";
+import { API_URL } from "@/utils/api";
 
 const createInitialForm = (initialSubject) => ({
   name: "",
@@ -20,6 +21,15 @@ const readResponseBody = async (response) => {
 
   const text = await response.text();
   return text ? { message: text } : {};
+};
+
+const splitName = (name) => {
+  const parts = String(name || "").trim().split(/\s+/).filter(Boolean);
+
+  return {
+    firstName: parts[0] || "",
+    lastName: parts.slice(1).join(" ") || "Customer",
+  };
 };
 
 const BlogContactForm = ({ initialSubject = "" }) => {
@@ -103,11 +113,16 @@ const BlogContactForm = ({ initialSubject = "" }) => {
     setStatus({ loading: true, success: null, error: null });
 
     try {
-      const res = await fetch("/api/contact", {
+      const { firstName, lastName } = splitName(form.name);
+      const res = await fetch(`${API_URL}/messages`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({
-          name: form.name.trim(),
+          firstName,
+          lastName,
           email: form.email.trim(),
           phone: form.phone.trim(),
           message: form.message.trim(),
@@ -117,7 +132,7 @@ const BlogContactForm = ({ initialSubject = "" }) => {
 
       const data = await readResponseBody(res);
 
-      if (res.ok && data.ok !== false) {
+      if (res.ok && data.success !== false) {
         setStatus({
           loading: false,
           success:

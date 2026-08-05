@@ -14,6 +14,7 @@ import { deleteComment, getAllComments, updateComment } from "../controllers/com
 import { createTeamMember, deleteTeamMember, getAllTeamMembers, getPublicTeamMembers, updateTeamMember } from "../controllers/team/team.controller.js";
 import { createUser, deleteUser, getAllUsers, updateUser } from "../controllers/users/users.controller.js";
 import { mcpLogin } from "../controllers/mcp/mcp.auth.controller.js";
+import { getPublicProjects, getPublicServices } from "../controllers/public-catalog/public-catalog.controller.js";
 
 const Router  = express.Router();
 
@@ -39,6 +40,11 @@ Router.post('/team', verifyToken, createTeamMember)
 Router.patch('/team/:id', verifyToken, updateTeamMember)
 Router.delete('/team/:id', verifyToken, deleteTeamMember)
 Router.get('/public/team', getPublicTeamMembers)
+
+// Public catalog used by the marketing site. These endpoints keep frontend
+// sections from calling missing API routes and falling back after a 404.
+Router.get('/services', getPublicServices)
+Router.get('/projects', getPublicProjects)
 
 // Comment moderation
 Router.get('/comments', verifyToken, getAllComments)

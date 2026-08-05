@@ -4,10 +4,12 @@ const RAW_BASE_URL =
   process.env.BACKEND_PROXY_URL ||
   "https://api.kraviona.com/api/v1";
 
-const baseUrl = RAW_BASE_URL.replace(/\/+$/, "");
+export const normalizeBackendBaseUrl = (value = RAW_BASE_URL) => {
+  const baseUrl = String(value || "").replace(/\/+$/, "");
 
-export const API_URL = baseUrl.endsWith("/api/v1")
-  ? baseUrl
-  : baseUrl.endsWith("/api")
-    ? `${baseUrl}/v1`
-    : `${baseUrl}/api/v1`;
+  if (baseUrl.endsWith("/api/v1")) return baseUrl;
+  if (baseUrl.endsWith("/api")) return `${baseUrl}/v1`;
+  return `${baseUrl}/api/v1`;
+};
+
+export const API_URL = normalizeBackendBaseUrl(RAW_BASE_URL);

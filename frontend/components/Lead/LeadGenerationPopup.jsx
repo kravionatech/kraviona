@@ -14,6 +14,7 @@ import {
   User,
   X,
 } from "lucide-react";
+import { API_URL } from "@/utils/api";
 
 const SERVICE_OPTIONS = [
   "MERN Stack Development",
@@ -222,15 +223,18 @@ const LeadGenerationPopup = () => {
     });
 
     try {
-      const response = await fetch("/api/contact", {
+      const response = await fetch(`${API_URL}/leads`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify(leadPayload),
       });
 
       const data = await response.json().catch(() => ({}));
 
-      if (!response.ok || data.ok === false) {
+      if (!response.ok || data.success === false) {
         throw new Error(data.error || data.message || "Unable to send lead.");
       }
 

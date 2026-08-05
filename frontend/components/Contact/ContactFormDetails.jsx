@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import Swal from "sweetalert2";
+import { API_URL } from "@/utils/api";
 
 const ContactFormDetails = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -23,16 +24,16 @@ const ContactFormDetails = () => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Combine firstName + lastName into a single `name` field as expected by /api/contact
-    const name =
-      `${formData.firstName.trim()} ${formData.lastName.trim()}`.trim();
-
     try {
-      const response = await fetch("/api/contact", {
+      const response = await fetch(`${API_URL}/messages`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({
-          name,
+          firstName: formData.firstName.trim(),
+          lastName: formData.lastName.trim(),
           email: formData.email.trim(),
           phone: formData.phone.trim(),
           subject: formData.subject.trim() || "Service Inquiry",
@@ -42,8 +43,7 @@ const ContactFormDetails = () => {
 
       const responseData = await response.json();
 
-      // Our /api/contact proxy always sets ok:true on success and ok:false on failure
-      if (response.ok && responseData.ok !== false) {
+      if (response.ok && responseData.success !== false) {
         Swal.fire({
           icon: "success",
           title: "Message sent",

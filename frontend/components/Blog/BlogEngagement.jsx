@@ -7,6 +7,7 @@ import {
   Send,
 } from "lucide-react";
 import { formatDate } from "@/utils/dataHelpers";
+import { API_URL } from "@/utils/api";
 
 const VISITOR_KEY = "kraviona_blog_visitor_id";
 
@@ -63,8 +64,18 @@ export default function BlogEngagement({
     comment: "",
   });
 
-  const endpoint = useMemo(
-    () => `/api/blog/${encodeURIComponent(slug)}/engagement`,
+  const engagementEndpoint = useMemo(
+    () => `${API_URL}/post/${encodeURIComponent(slug)}/engagement`,
+    [slug],
+  );
+
+  const viewsEndpoint = useMemo(
+    () => `${API_URL}/post/${encodeURIComponent(slug)}/views`,
+    [slug],
+  );
+
+  const commentsEndpoint = useMemo(
+    () => `${API_URL}/post/${encodeURIComponent(slug)}/comments`,
     [slug],
   );
 
@@ -74,8 +85,9 @@ export default function BlogEngagement({
 
       try {
         setIsLoading(true);
-        const response = await fetch(endpoint, {
+        const response = await fetch(engagementEndpoint, {
           cache: "no-store",
+          headers: { Accept: "application/json" },
         });
         const result = await response.json();
 
@@ -91,7 +103,7 @@ export default function BlogEngagement({
         setIsLoading(false);
       }
     },
-    [endpoint, slug],
+    [engagementEndpoint, slug],
   );
 
   useEffect(() => {
@@ -110,11 +122,14 @@ export default function BlogEngagement({
 
       try {
         const viewEventId = getViewEventId(visitorId);
-        const response = await fetch(endpoint, {
+        const response = await fetch(viewsEndpoint, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            "x-visitor-id": viewEventId,
+          },
           body: JSON.stringify({
-            kind: "view",
             visitorId: viewEventId,
           }),
         });
@@ -129,7 +144,7 @@ export default function BlogEngagement({
     }, 1500);
 
     return () => window.clearTimeout(timer);
-  }, [endpoint, visitorId]);
+  }, [viewsEndpoint, visitorId]);
 
   const submitComment = async (event) => {
     event.preventDefault();
@@ -137,13 +152,13 @@ export default function BlogEngagement({
     try {
       setIsSubmitting(true);
       setStatus("");
-      const response = await fetch(endpoint, {
+      const response = await fetch(commentsEndpoint, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          kind: "comment",
-          ...form,
-        }),
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(form),
       });
       const result = await response.json();
 

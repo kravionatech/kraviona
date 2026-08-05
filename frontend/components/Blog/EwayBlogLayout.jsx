@@ -544,7 +544,7 @@ function NewsletterPanel() {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch("/api/newsletter", {
+      const response = await fetch(`${API_URL}/newslatter`, {
         method: "POST",
         cache: "no-store",
         headers: {

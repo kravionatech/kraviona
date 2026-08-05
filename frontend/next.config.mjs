@@ -134,11 +134,6 @@ const nextConfig = {
   async redirects() {
     return [
       {
-        source: "/blogs/:slug",
-        destination: "/blog/:slug",
-        permanent: true,
-      },
-      {
         source: "/service/:path*",
         destination: "/services/:path*",
         permanent: true,
@@ -146,11 +141,6 @@ const nextConfig = {
       {
         source: "/services/web-development",
         destination: "/services/web-app-development",
-        permanent: true,
-      },
-      {
-        source: "/blogs",
-        destination: "/blog",
         permanent: true,
       },
       {
