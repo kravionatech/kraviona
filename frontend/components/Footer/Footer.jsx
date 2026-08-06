@@ -11,7 +11,6 @@ import {
   MapPin,
   MessageCircle,
   Phone,
-  Twitter,
 } from "lucide-react";
 import { SERVICE_LINKS } from "@/app/services/serviceData";
 
@@ -79,7 +78,6 @@ const SOCIALS = [
     href: "https://www.linkedin.com/company/kravionai",
     icon: Linkedin,
   },
-  { name: "Twitter", href: "https://twitter.com/KravionaTech", icon: Twitter },
   {
     name: "Facebook",
     href: "https://www.facebook.com/profile.php?id=61570716181916",

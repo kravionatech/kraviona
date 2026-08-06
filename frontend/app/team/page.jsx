@@ -9,7 +9,6 @@ import {
   Mail,
   Search,
   ShieldCheck,
-  Twitter,
   Users,
 } from "lucide-react";
 
@@ -32,7 +31,6 @@ const fallbackMembers = [
         name: "LinkedIn",
         url: "https://www.linkedin.com/in/amarkumar96085/",
       },
-      { name: "Twitter", url: "https://twitter.com/KravionaTech" },
     ],
     isFeatured: true,
   },
@@ -119,7 +117,6 @@ function getImageSrc(member) {
 function getSocialIcon(name = "") {
   const key = name.toLowerCase();
   if (key.includes("linkedin")) return Linkedin;
-  if (key.includes("twitter") || key.includes("x")) return Twitter;
   if (key.includes("github")) return Github;
   if (key.includes("mail") || key.includes("email")) return Mail;
   return Globe;

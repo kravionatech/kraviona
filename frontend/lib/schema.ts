@@ -53,7 +53,6 @@ export const organizationSchema = {
   email: "kravionatech@gmail.com",
   sameAs: [
     "https://www.linkedin.com/company/kravionai",
-    "https://twitter.com/KravionaTech",
     "https://www.facebook.com/profile.php?id=61570716181916",
   ],
   knowsAbout: [
@@ -133,7 +132,6 @@ export const personSchema = {
   url: "https://kraviona.com/about",
   sameAs: [
     "https://www.linkedin.com/in/amarkumar96085/",
-    "https://twitter.com/KravionaTech",
   ],
 };
 

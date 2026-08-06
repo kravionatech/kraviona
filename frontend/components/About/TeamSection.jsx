@@ -1,6 +1,6 @@
 import React from "react";
 import Image from "next/image";
-import { Linkedin, Twitter, ArrowUpRight } from "lucide-react";
+import { Linkedin, ArrowUpRight } from "lucide-react";
 
 const TeamSection = () => {
   return (
@@ -58,13 +58,7 @@ const TeamSection = () => {
           >
             <Linkedin className="h-4 w-4" />
           </a>
-          <a
-            href="https://twitter.com/kraviona"
-            aria-label="Kraviona on Twitter"
-            className="flex h-9 w-9 items-center justify-center rounded-full bg-[#1A2E33]/5 text-[#1A2E33] transition-colors hover:bg-[#1A2E33] hover:text-white"
-          >
-            <Twitter className="h-4 w-4" />
-          </a>
+
           <a
             href="/contact"
             className="ml-2 flex items-center gap-1.5 rounded-full bg-[#1A2E33] px-5 py-2 text-xs font-bold text-white transition-opacity hover:opacity-90"

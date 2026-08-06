@@ -61,6 +61,9 @@ const nextConfig = {
     dangerouslyAllowSVG: false,
 
     remotePatterns: [
+      // NOTE: Do NOT add source.unsplash.com here — it is the deprecated
+      // Unsplash Source API that returns 400 errors. Use images.unsplash.com
+      // (the direct CDN) instead, or better yet, serve images locally.
       { protocol: "https", hostname: "res.cloudinary.com" },
       { protocol: "https", hostname: "images.pexels.com" },
       { protocol: "https", hostname: "img.freepik.com" },

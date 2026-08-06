@@ -7,7 +7,6 @@ export const SERVICE_EXPERT = {
   whatsapp: "https://wa.me/919608553167",
   linkedin: "https://www.linkedin.com/in/amarkumar96085/",
   companyLinkedin: "https://www.linkedin.com/company/kravionai",
-  twitter: "https://twitter.com/KravionaTech",
   facebook: "https://www.facebook.com/profile.php?id=61570716181916",
   website: "https://kraviona.com",
   address: "East Delhi, Delhi 110092, India",

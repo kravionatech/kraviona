@@ -7,7 +7,6 @@ import {
   Eye,
   Linkedin,
   Mail,
-  Twitter,
   UserRound,
 } from "lucide-react";
 import BlogEngagement from "@/components/Blog/BlogEngagement";
@@ -37,7 +36,6 @@ const DEFAULT_AUTHOR = {
   avatar: "/amar.jpeg",
   email: "kravionatech@gmail.com",
   linkedin: "https://www.linkedin.com/in/amarkumar96085/",
-  twitter: "https://twitter.com/KravionaTech",
 };
 
 const SERVICE_LINKS = {
@@ -323,11 +321,6 @@ const BlogDetail = async ({ params }) => {
       name: "LinkedIn",
       href: authorProfile.linkedin,
       icon: Linkedin,
-    },
-    {
-      name: "Twitter",
-      href: authorProfile.twitter,
-      icon: Twitter,
     },
     {
       name: "Email",
