@@ -13,6 +13,7 @@ import {
   Phone,
 } from "lucide-react";
 import { SERVICE_LINKS } from "@/app/services/serviceData";
+import { SOCIAL_LINKS } from "@/lib/social";
 
 const NAV = {
   company: [
@@ -42,14 +43,14 @@ const serviceColumns = [
 const CONTACT = [
   {
     label: "Email",
-    value: "kravionatech@gmail.com",
-    href: "mailto:kravionatech@gmail.com",
+    value: SOCIAL_LINKS.email,
+    href: `mailto:${SOCIAL_LINKS.email}`,
     icon: Mail,
   },
   {
     label: "Phone",
     value: "+91 96085 53167",
-    href: "tel:+919608553167",
+    href: `tel:${SOCIAL_LINKS.phone}`,
     icon: Phone,
   },
   {
@@ -61,7 +62,7 @@ const CONTACT = [
   {
     label: "WhatsApp",
     value: "Message us",
-    href: "https://wa.me/919608553167",
+    href: SOCIAL_LINKS.whatsapp,
     icon: MessageCircle,
   },
 ];
@@ -75,12 +76,12 @@ const BOTTOM_LEGAL = [
 const SOCIALS = [
   {
     name: "LinkedIn",
-    href: "https://www.linkedin.com/company/kravionai",
+    href: SOCIAL_LINKS.linkedin,
     icon: Linkedin,
   },
   {
     name: "Facebook",
-    href: "https://www.facebook.com/profile.php?id=61570716181916",
+    href: SOCIAL_LINKS.facebook,
     icon: Facebook,
   },
 ];

@@ -317,6 +317,9 @@ export const createPost = async (req, res) => {
     });
 
     await post.save();
+    await CategoryModel.findByIdAndUpdate(post.categoryID, {
+      $inc: { postCount: 1 },
+    });
 
     return res.status(201).json({
       message: "Post created successfully",
@@ -534,6 +537,10 @@ export const deletePost = async (req, res) => {
     }
 
     await post.deleteOne();
+    await CategoryModel.findOneAndUpdate(
+      { _id: post.categoryID, postCount: { $gt: 0 } },
+      { $inc: { postCount: -1 } },
+    );
 
     return res.status(200).json({ success: true, message: "Post deleted successfully." });
   } catch (error) {
@@ -636,6 +643,8 @@ export const updatePost = async (req, res) => {
     }
 
     // Only re-validate the category if the client actually sent one.
+    const previousCategoryId = post.categoryID;
+
     if (category !== undefined) {
       const matchedCategory = await validateCategory(category);
 
@@ -722,6 +731,18 @@ export const updatePost = async (req, res) => {
     if (nextReviewDueAt !== undefined) post.nextReviewDueAt = nextReviewDueAt;
 
     await post.save();
+
+    if (String(previousCategoryId) !== String(post.categoryID)) {
+      await Promise.all([
+        CategoryModel.findOneAndUpdate(
+          { _id: previousCategoryId, postCount: { $gt: 0 } },
+          { $inc: { postCount: -1 } },
+        ),
+        CategoryModel.findByIdAndUpdate(post.categoryID, {
+          $inc: { postCount: 1 },
+        }),
+      ]);
+    }
 
     return res.status(200).json({
       success: true,

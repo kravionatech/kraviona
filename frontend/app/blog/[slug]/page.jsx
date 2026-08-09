@@ -24,6 +24,7 @@ import {
 } from "@/app/seoConfig.js";
 import { API_URL } from "@/utils/api";
 import { formatDate, getDate, getImageAlt, getImageUrl } from "@/utils/dataHelpers";
+import { getAuthorAvatar } from "@/lib/utils/imageUrl";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -104,12 +105,9 @@ function getAuthorProfile(blog) {
     username: author.username || DEFAULT_AUTHOR.username,
     role: author.role || author.title || DEFAULT_AUTHOR.role,
     bio: author.bio || author.description || DEFAULT_AUTHOR.bio,
-    avatar:
-      author.avatar?.url ||
-      author.avatar ||
-      author.image?.url ||
-      author.image ||
-      DEFAULT_AUTHOR.avatar,
+    avatar: getAuthorAvatar(
+      author.avatar?.url || author.avatar || author.image?.url || author.image,
+    ),
     email: author.email || DEFAULT_AUTHOR.email,
     linkedin: author.linkedin || author.linkedinUrl || DEFAULT_AUTHOR.linkedin,
     twitter: author.twitter || author.twitterUrl || DEFAULT_AUTHOR.twitter,

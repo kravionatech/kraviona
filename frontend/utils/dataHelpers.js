@@ -1,3 +1,5 @@
+import { cleanImageUrl } from "@/lib/utils/imageUrl";
+
 /**
  * Utility helpers to normalize MongoDB data format.
  * Handles both:
@@ -76,8 +78,8 @@ const getMediaUrl = (image) => {
  * @param {object} post
  * @returns {string|null}
  */
-export const getImageUrl = (post) =>
-  getFirstString(
+export const getImageUrl = (post) => {
+  const imageUrl = getFirstString(
     getMediaUrl(post?.featuredImage),
     getMediaUrl(post?.image),
     getMediaUrl(post?.thumbnail),
@@ -86,6 +88,8 @@ export const getImageUrl = (post) =>
     getMediaUrl(post?.gallery?.[0]),
     getMediaUrl(post?.videoEmbedded?.thumbnailUrl),
   );
+  return imageUrl ? cleanImageUrl(imageUrl) : null;
+};
 
 /**
  * Returns the alt text for a post image.

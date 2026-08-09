@@ -1,11 +1,12 @@
 "use client";
 
 import Link from "next/link";
+import { SOCIAL_LINKS } from "@/lib/social";
 
 export function WhatsAppFloat() {
   return (
     <Link
-      href="https://wa.me/919608553167?text=Hi%20Kraviona%2C%20I%20want%20to%20discuss%20a%20project"
+      href={SOCIAL_LINKS.whatsappCTA}
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Chat on WhatsApp"

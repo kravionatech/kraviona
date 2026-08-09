@@ -1,13 +1,15 @@
+import { SOCIAL_LINKS } from "@/lib/social";
+
 export const SERVICE_EXPERT = {
   name: "Amar Kumar",
   jobTitle: "Founder & Lead Engineer",
-  email: "kravionatech@gmail.com",
+  email: SOCIAL_LINKS.email,
   phone: "+91 96085 53167",
-  phoneHref: "tel:+919608553167",
-  whatsapp: "https://wa.me/919608553167",
+  phoneHref: `tel:${SOCIAL_LINKS.phone}`,
+  whatsapp: SOCIAL_LINKS.whatsapp,
   linkedin: "https://www.linkedin.com/in/amarkumar96085/",
-  companyLinkedin: "https://www.linkedin.com/company/kravionai",
-  facebook: "https://www.facebook.com/profile.php?id=61570716181916",
+  companyLinkedin: SOCIAL_LINKS.linkedin,
+  facebook: SOCIAL_LINKS.facebook,
   website: "https://kraviona.com",
   address: "East Delhi, Delhi 110092, India",
   availability: "Monday to Saturday, 9:00 AM - 7:00 PM IST",

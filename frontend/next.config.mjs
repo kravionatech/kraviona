@@ -137,6 +137,21 @@ const nextConfig = {
   async redirects() {
     return [
       {
+        source: "/services/react-js-development",
+        destination: "/services/react-development",
+        permanent: true,
+      },
+      {
+        source: "/services/node-js-development",
+        destination: "/services/nodejs-development",
+        permanent: true,
+      },
+      {
+        source: "/case-studies",
+        destination: "/blog",
+        permanent: true,
+      },
+      {
         source: "/service/:path*",
         destination: "/services/:path*",
         permanent: true,
