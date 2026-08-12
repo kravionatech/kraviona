@@ -1,11 +1,11 @@
 "use client";
 
 import { useCallback, useRef, useState } from "react";
-import { AlertCircle, Loader2, RotateCcw, UploadCloud, X } from "lucide-react";
+import { AlertCircle, FolderOpen, Loader2, RotateCcw, UploadCloud, X } from "lucide-react";
 import { apiUrl } from "@/components/api";
+import MediaPicker from "@/components/MediaPage/MediaPicker";
 
-const ACCEPTED_TYPES = ["image/jpeg", "image/png", "image/webp"];
-const MAX_FILE_SIZE = 5 * 1024 * 1024;
+const MAX_FILE_SIZE = 10 * 1024 * 1024;
 
 export default function ImageUploader({ value = "", onChange, imageLabel = "Image" }) {
   const inputRef = useRef(null);
@@ -14,15 +14,16 @@ export default function ImageUploader({ value = "", onChange, imageLabel = "Imag
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState("");
   const [uploading, setUploading] = useState(false);
+  const [pickerOpen, setPickerOpen] = useState(false);
 
   const uploadFile = useCallback((file) => {
     if (!file) return;
-    if (!ACCEPTED_TYPES.includes(file.type)) {
-      setError("Please choose a JPG, PNG, or WebP image.");
+    if (!file.type.startsWith("image/")) {
+      setError("Please choose an image file.");
       return;
     }
     if (file.size > MAX_FILE_SIZE) {
-      setError("Image must be 5MB or smaller.");
+      setError("Image must be 10MB or smaller.");
       return;
     }
 
@@ -106,7 +107,7 @@ export default function ImageUploader({ value = "", onChange, imageLabel = "Imag
         <input
           ref={inputRef}
           type="file"
-          accept="image/jpeg,image/png,image/webp"
+          accept="image/*"
           className="hidden"
           onChange={(event) => {
             chooseFile(event.target.files);
@@ -117,6 +118,10 @@ export default function ImageUploader({ value = "", onChange, imageLabel = "Imag
         <p className="mt-3 text-sm font-medium text-gray-800">Drop {imageLabel.toLowerCase()} here or click to upload</p>
         <p className="mt-1 text-xs text-gray-500">JPG, PNG, or WebP · maximum 5MB</p>
       </div>
+
+      <button type="button" onClick={() => setPickerOpen(true)} className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 transition hover:border-[#2a4a52] hover:text-[#2a4a52]">
+        <FolderOpen size={16} /> Choose from media library
+      </button>
 
       {uploading && (
         <div className="h-2 overflow-hidden rounded-full bg-gray-100">
@@ -134,6 +139,12 @@ export default function ImageUploader({ value = "", onChange, imageLabel = "Imag
           )}
         </div>
       )}
+      <MediaPicker
+        open={pickerOpen}
+        onClose={() => setPickerOpen(false)}
+        title={`Choose ${imageLabel.toLowerCase()}`}
+        onSelect={(media) => onChange(media.fileUrl)}
+      />
     </div>
   );
 }

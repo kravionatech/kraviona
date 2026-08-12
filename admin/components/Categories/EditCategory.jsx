@@ -8,13 +8,13 @@ import {
   FaGlobe,
   FaSave,
   FaSearch,
-  FaImage,
   FaSpinner,
   FaEdit,
   FaTimes
 } from "react-icons/fa";
 import Spinner from "../Loadingspinner";
 import Swal from "sweetalert2";
+import ImageUploader from "@/components/Blogs/AddBlog/ImageUploader";
 
 const EditCategory = ({ id, setEditPageOpen }) => {
   const [loading, setLoading] = useState(false);
@@ -245,11 +245,8 @@ const EditCategory = ({ id, setEditPageOpen }) => {
                   <input name="ogTitle" value={ogTitle} onChange={(e) => setOgTitle(e.target.value)} className={inputBaseClasses} placeholder="Open Graph Title" />
                 </div>
                 <div>
-                  <label className={labelClasses}>OG Image URL</label>
-                  <div className="relative">
-                    <FaImage className="absolute top-3.5 left-3.5 text-gray-400 text-sm" />
-                    <input name="ogImage" value={ogImage} onChange={(e) => setOgImage(e.target.value)} className={`${inputBaseClasses} pl-10`} placeholder="https://..." />
-                  </div>
+                  <label className={labelClasses}>OG Image</label>
+                  <ImageUploader imageLabel="OG image" value={ogImage} onChange={setOgImage} />
                 </div>
                 <div className="md:col-span-2">
                   <label className={labelClasses}>OG Description</label>
@@ -268,11 +265,8 @@ const EditCategory = ({ id, setEditPageOpen }) => {
                   <input name="twitterTitle" value={twitterTitle} onChange={(e) => setTwitterTitle(e.target.value)} className={inputBaseClasses} placeholder="Twitter Title" />
                 </div>
                 <div>
-                  <label className={labelClasses}>Twitter Image URL</label>
-                  <div className="relative">
-                    <FaImage className="absolute top-3.5 left-3.5 text-gray-400 text-sm" />
-                    <input name="twitterImage" value={twitterImage} onChange={(e) => setTwitterImage(e.target.value)} className={`${inputBaseClasses} pl-10`} placeholder="https://..." />
-                  </div>
+                  <label className={labelClasses}>Twitter Image</label>
+                  <ImageUploader imageLabel="Twitter image" value={twitterImage} onChange={setTwitterImage} />
                 </div>
                 <div className="md:col-span-2">
                   <label className={labelClasses}>Twitter Description</label>

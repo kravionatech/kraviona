@@ -175,11 +175,11 @@ export default function Frame({ children }) {
 
 function CommandMenu({ results, onClose }) {
   return (
-    <div className="absolute left-0 right-0 top-[calc(100%+8px)] overflow-hidden rounded-2xl border border-white/10 bg-[#213b42] p-2 shadow-2xl shadow-[#1a2e33]/40">
+    <div className="absolute left-0 right-0 top-[calc(100%+8px)] overflow-hidden rounded-2xl border border-slate-200 bg-white p-2 shadow-2xl shadow-slate-900/15">
       <p className="px-3 py-2 text-[10px] font-bold uppercase tracking-[0.16em] text-slate-500">Quick navigation</p>
       {results.length ? results.map((item) => (
-        <Link key={item.href} href={item.href} onClick={onClose} className="flex items-center justify-between rounded-xl px-3 py-2.5 transition hover:bg-white/[0.06]">
-          <span><span className="block text-sm font-semibold text-slate-100">{item.label}</span><span className="block text-xs text-slate-500">{item.hint}</span></span>
+        <Link key={item.href} href={item.href} onClick={onClose} className="flex items-center justify-between rounded-xl px-3 py-2.5 transition hover:bg-slate-50">
+          <span><span className="block text-sm font-semibold text-slate-800">{item.label}</span><span className="block text-xs text-slate-500">{item.hint}</span></span>
           <Command size={15} className="text-slate-600" />
         </Link>
       )) : <p className="px-3 py-5 text-center text-sm text-slate-500">No matching pages found.</p>}
@@ -193,10 +193,10 @@ function NotificationMenu({ unreadMessages, newLeads, onClose }) {
     { href: "/leads", icon: Inbox, label: newLeads ? `${newLeads} new lead${newLeads === 1 ? "" : "s"}` : "No new leads", tone: "text-[#ffd8c8] bg-[#b84a1a]/20" },
   ];
   return (
-    <div className="absolute right-0 top-[calc(100%+8px)] w-80 overflow-hidden rounded-2xl border border-white/10 bg-[#213b42] shadow-2xl shadow-[#1a2e33]/40">
-      <div className="border-b border-white/[0.07] px-4 py-3"><p className="text-sm font-bold text-white">Priority activity</p><p className="text-xs text-slate-500">Live from your admin API</p></div>
+    <div className="absolute right-0 top-[calc(100%+8px)] w-80 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl shadow-slate-900/15">
+      <div className="border-b border-slate-200 px-4 py-3"><p className="text-sm font-bold text-slate-900">Priority activity</p><p className="text-xs text-slate-500">Live from your admin API</p></div>
       <div className="p-2">
-        {items.map(({ href, icon: Icon, label, tone }) => <Link key={href} href={href} onClick={onClose} className="flex items-center gap-3 rounded-xl p-3 transition hover:bg-white/[0.06]"><span className={`flex h-9 w-9 items-center justify-center rounded-xl ${tone}`}><Icon size={16} /></span><span className="text-sm font-semibold text-slate-200">{label}</span></Link>)}
+        {items.map(({ href, icon: Icon, label, tone }) => <Link key={href} href={href} onClick={onClose} className="flex items-center gap-3 rounded-xl p-3 transition hover:bg-slate-50"><span className={`flex h-9 w-9 items-center justify-center rounded-xl ${tone}`}><Icon size={16} /></span><span className="text-sm font-semibold text-slate-700">{label}</span></Link>)}
       </div>
     </div>
   );

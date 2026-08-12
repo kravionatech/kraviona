@@ -31,6 +31,7 @@ export const uploadMedia = async (req, res) => {
         const uploadedFiles = [];
 
         for (const file of files) {
+            const isImage = file.mimetype.startsWith("image/");
             // multer-storage-cloudinary uploads directly, exposing the secure
             // delivery URL on `path` and the Cloudinary public id on `filename`.
             const media = await mediaModel.create({
@@ -40,11 +41,13 @@ export const uploadMedia = async (req, res) => {
                 fileUrl: file.path,
                 publicId: file.filename,
 
-                mimeType: file.mimetype,
-                extension: path.extname(file.originalname),
+                // Images are normalized to WebP in the Cloudinary upload middleware.
+                // Keep the original filename separately so editors can still identify it.
+                mimeType: isImage ? "image/webp" : file.mimetype,
+                extension: isImage ? ".webp" : path.extname(file.originalname),
                 fileSize: file.size,
 
-                mediaType: file.mimetype.startsWith("image/")
+                mediaType: isImage
                     ? "image"
                     : file.mimetype.startsWith("video/")
                     ? "video"

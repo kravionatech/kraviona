@@ -4,13 +4,15 @@ import { cloudinary } from "../config/cloudinary.js";
 
 const imageParams = {
   folder: "kravionatech/images",
-  allowed_formats: ["jpg", "jpeg", "png", "webp"],
+  // Store one optimized canonical asset regardless of the source image type.
+  // Cloudinary applies this before persisting the asset, not only at delivery.
+  format: "webp",
   transformation: [
     {
-      width: 1200,
+      width: 1920,
+      height: 1920,
       crop: "limit",
-      quality: "auto",
-      fetch_format: "auto",
+      quality: "auto:good",
     },
   ],
 };
@@ -59,7 +61,7 @@ const allowedMediaTypes = [
 ];
 
 const mediaFileFilter = (_req, file, callback) => {
-  if (allowedMediaTypes.includes(file.mimetype)) {
+  if (file.mimetype.startsWith("image/") || allowedMediaTypes.includes(file.mimetype)) {
     callback(null, true);
     return;
   }
@@ -70,12 +72,12 @@ const mediaFileFilter = (_req, file, callback) => {
 export const uploadMiddleware = multer({
   storage: postImageStorage,
   fileFilter: (_req, file, callback) => {
-    if (["image/jpeg", "image/png", "image/webp"].includes(file.mimetype)) {
+    if (file.mimetype.startsWith("image/")) {
       callback(null, true);
       return;
     }
 
-    callback(new Error("Only JPG, PNG, and WebP images are supported"), false);
+    callback(new Error("Only image files are supported"), false);
   },
   limits: { fileSize: 5 * 1024 * 1024 },
 }).single("featuredImage");

@@ -10,11 +10,11 @@ import {
   FaGlobe,
   FaSave,
   FaSearch,
-  FaImage,
   FaSpinner
 } from "react-icons/fa";
 import Spinner from "../Loadingspinner";
 import Swal from "sweetalert2";
+import ImageUploader from "@/components/Blogs/AddBlog/ImageUploader";
 
 export default function CreateCategory() {
   const router = useRouter(); // Initialize the router
@@ -276,17 +276,8 @@ export default function CreateCategory() {
           </div>
 
           <div>
-            <label className={labelClasses}>OG Image URL</label>
-            <div className="relative">
-              <FaImage className="absolute top-4 left-4 text-gray-400" />
-              <input
-                name="ogImage"
-                value={ogImage}
-                onChange={(e) => setOgImage(e.target.value)}
-                className={`${inputBaseClasses} pl-11`}
-                placeholder="https://..."
-              />
-            </div>
+            <label className={labelClasses}>OG Image</label>
+            <ImageUploader imageLabel="OG image" value={ogImage} onChange={setOgImage} />
           </div>
 
           <div className="md:col-span-2">
@@ -320,17 +311,8 @@ export default function CreateCategory() {
           </div>
 
           <div>
-            <label className={labelClasses}>Twitter Image URL</label>
-            <div className="relative">
-              <FaImage className="absolute top-4 left-4 text-gray-400" />
-              <input
-                name="twitterImage"
-                value={twitterImage}
-                onChange={(e) => setTwitterImage(e.target.value)}
-                className={`${inputBaseClasses} pl-11`}
-                placeholder="https://..."
-              />
-            </div>
+            <label className={labelClasses}>Twitter Image</label>
+            <ImageUploader imageLabel="Twitter image" value={twitterImage} onChange={setTwitterImage} />
           </div>
 
           <div className="md:col-span-2">

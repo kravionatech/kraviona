@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Image from "@tiptap/extension-image";
@@ -36,6 +36,7 @@ import {
   Underline as UnderlineIcon,
   Undo2,
 } from "lucide-react";
+import MediaPicker from "@/components/MediaPage/MediaPicker";
 
 function ToolbarButton({ active = false, label, onClick, children }) {
   return (
@@ -59,6 +60,7 @@ function Divider() {
 }
 
 export default function TiptapEditor({ value = "", onChange }) {
+  const [mediaPickerOpen, setMediaPickerOpen] = useState(false);
   const editor = useEditor({
     immediatelyRender: false,
     extensions: [
@@ -97,11 +99,6 @@ export default function TiptapEditor({ value = "", onChange }) {
       return;
     }
     editor.chain().focus().setLink({ href: url.trim() }).run();
-  };
-
-  const insertImage = () => {
-    const url = window.prompt("Enter the image URL");
-    if (url?.trim()) editor.chain().focus().setImage({ src: url.trim() }).run();
   };
 
   const button = (label, Icon, command, active = false) => (
@@ -168,7 +165,7 @@ export default function TiptapEditor({ value = "", onChange }) {
         {button("Justify", AlignJustify, () => editor.chain().focus().setTextAlign("justify").run(), editor.isActive({ textAlign: "justify" }))}
         <Divider />
         {button("Insert link", LinkIcon, setLink, editor.isActive("link"))}
-        {button("Insert image", ImagePlus, insertImage)}
+        {button("Insert image", ImagePlus, () => setMediaPickerOpen(true))}
         {button("Horizontal rule", Minus, () => editor.chain().focus().setHorizontalRule().run())}
         <Divider />
         {button("Undo", Undo2, () => editor.chain().focus().undo().run())}
@@ -177,6 +174,12 @@ export default function TiptapEditor({ value = "", onChange }) {
       <div className="min-h-[500px] rounded-b-lg border border-t-0 border-gray-200 p-4">
         <EditorContent editor={editor} />
       </div>
+      <MediaPicker
+        open={mediaPickerOpen}
+        onClose={() => setMediaPickerOpen(false)}
+        title="Insert image into post"
+        onSelect={(media) => editor.chain().focus().setImage({ src: media.fileUrl, alt: media.altText || media.originalName }).run()}
+      />
     </div>
   );
 }

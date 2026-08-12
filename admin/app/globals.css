@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 :root {
-  color-scheme: dark;
+  color-scheme: light;
   --kraviona-dark: #1a2e33;
   --kraviona-primary: #2a4a52;
   --kraviona-primary-hover: #3d6b77;
@@ -24,27 +24,27 @@
 
 html,
 body {
-  background: var(--kraviona-ink);
+  background: #f6f9fa;
 }
 
 body {
-  color: var(--kraviona-surface);
+  color: #17383e;
 }
 
 /* Shared admin palette. Most screens use Tailwind surface utilities, so these
    scoped tokens keep every CRUD page, modal and table visually consistent. */
 .admin-shell {
-  --admin-canvas: var(--kraviona-ink);
-  --admin-surface: #213b42;
-  --admin-surface-raised: var(--kraviona-primary);
-  --admin-surface-muted: #20383e;
-  --admin-border: rgba(92, 155, 170, 0.32);
-  --admin-text: var(--kraviona-surface);
-  --admin-text-muted: #b4c9ce;
+  --admin-canvas: #f6f9fa;
+  --admin-surface: #ffffff;
+  --admin-surface-raised: #edf4f5;
+  --admin-surface-muted: #f8fbfb;
+  --admin-border: rgba(42, 74, 82, 0.18);
+  --admin-text: #17383e;
+  --admin-text-muted: #607a80;
   --admin-accent: var(--kraviona-coral);
   background:
-    radial-gradient(circle at 80% -10%, rgba(92, 155, 170, 0.18), transparent 30rem),
-    radial-gradient(circle at -10% 20%, rgba(232, 98, 42, 0.13), transparent 26rem),
+    radial-gradient(circle at 80% -10%, rgba(92, 155, 170, 0.13), transparent 30rem),
+    radial-gradient(circle at -10% 20%, rgba(232, 98, 42, 0.08), transparent 26rem),
     var(--admin-canvas);
 }
 
@@ -130,12 +130,27 @@ body {
 
 .admin-shell .text-slate-700,
 .admin-shell .text-gray-700 {
-  color: #d0e0e3;
+  color: #31565e;
+}
+
+/* The post editor is a focused workspace: keep its canvas bright even when
+   older editor utilities use fixed legacy colours. */
+.admin-shell .post-editor-page {
+  background: #f6f9fa !important;
+  color: #17383e;
+}
+
+.admin-shell .post-editor-page .bg-\[\#1A2E33\] {
+  background-color: #edf4f5 !important;
+}
+
+.admin-shell .post-editor-page .bg-\[\#1A2E33\]\/50 {
+  background-color: rgba(23, 56, 62, 0.32) !important;
 }
 
 .admin-shell .text-slate-600,
 .admin-shell .text-gray-600 {
-  color: #a4babb;
+  color: #526e74;
 }
 
 .admin-shell .text-slate-500,
@@ -145,25 +160,25 @@ body {
 
 .admin-shell .text-slate-400,
 .admin-shell .text-gray-400 {
-  color: #89abb3;
+  color: #70898f;
 }
 
 .admin-shell input,
 .admin-shell textarea,
 .admin-shell select {
   color: var(--admin-text);
-  background-color: var(--admin-surface-muted);
+  background-color: #ffffff;
   border-color: var(--admin-border);
 }
 
 .admin-shell input::placeholder,
 .admin-shell textarea::placeholder {
-  color: #8eabb1;
+  color: #8aa0a5;
 }
 
 .admin-shell select option {
   color: var(--admin-text);
-  background-color: var(--admin-surface);
+  background-color: #ffffff;
 }
 
 .admin-shell input:focus,
@@ -189,17 +204,17 @@ body {
 .admin-shell .text-cyan-700,
 .admin-shell .text-teal-700,
 .admin-shell .text-emerald-700 {
-  color: #c6e1e6;
+  color: #1f6a6d;
 }
 
 .admin-shell .text-violet-700,
 .admin-shell .text-amber-700 {
-  color: var(--kraviona-sand-light);
+  color: #97611d;
 }
 
 .admin-shell .text-rose-700,
 .admin-shell .text-orange-700 {
-  color: var(--kraviona-accent-hover);
+  color: #c5491d;
 }
 
 .admin-shell .shadow-sm,
@@ -218,12 +233,12 @@ body {
 .admin-shell .ProseMirror {
   border-color: var(--admin-border);
   color: var(--admin-text);
-  background: var(--admin-surface-muted);
+  background: #ffffff;
 }
 
-.admin-shell .ql-snow .ql-stroke { stroke: #b8c8c9; }
-.admin-shell .ql-snow .ql-fill { fill: #b8c8c9; }
-.admin-shell .ql-snow .ql-picker { color: #b8c8c9; }
+.admin-shell .ql-snow .ql-stroke { stroke: #31565e; }
+.admin-shell .ql-snow .ql-fill { fill: #31565e; }
+.admin-shell .ql-snow .ql-picker { color: #31565e; }
 .admin-shell .ql-snow .ql-picker-options { background: var(--admin-surface); border-color: var(--admin-border); }
 .no-scrollbar::-webkit-scrollbar {
   display: none;
@@ -256,12 +271,12 @@ body {
 .ProseMirror blockquote {
   border-left: 4px solid var(--kraviona-coral);
   padding-left: 16px;
-  color: #c8dbe0;
+  color: #526e74;
 }
 
 .ProseMirror pre {
-  background: var(--admin-surface-muted);
-  color: #f9fafb;
+  background: #edf4f5;
+  color: #17383e;
   padding: 16px;
   border-radius: 10px;
   overflow-x: auto;
@@ -323,7 +338,7 @@ body {
 .tiptap-editor .ProseMirror h1,
 .tiptap-editor .ProseMirror h2,
 .tiptap-editor .ProseMirror h3 {
-  color: #f8fafc;
+  color: #17383e;
   font-weight: 800;
   letter-spacing: -0.02em;
   line-height: 1.25;
@@ -342,7 +357,7 @@ body {
 }
 
 .tiptap-editor .ProseMirror strong {
-  color: #ffffff;
+  color: #17383e;
   font-weight: 700;
 }
 

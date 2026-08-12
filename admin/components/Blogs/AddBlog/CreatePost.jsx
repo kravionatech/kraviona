@@ -1250,14 +1250,11 @@ const SeoTab = ({ data, setData, errors }) => {
                 }
               />
             </Field>
-            <Field label="OG image URL" hint="Falls back to featured image URL">
-              <Input
-                type="url"
+            <Field label="OG image" hint="Falls back to featured image when empty">
+              <ImageUploader
+                imageLabel="OG image"
                 value={data.ogImage}
-                onChange={(e) => set("ogImage")(e.target.value)}
-                placeholder={
-                  data.featuredImage?.url || "https://cdn.example.com/og.jpg"
-                }
+                onChange={set("ogImage")}
               />
             </Field>
           </div>
@@ -1848,7 +1845,7 @@ export default function CreatePost({ mode = "create", postId }) {
   }
 
   return (
-    <div className="min-h-screen bg-[#F7F8FA]">
+    <div className="post-editor-page min-h-screen bg-[#F7F8FA]">
       {toast && (
         <div
           role="status"
@@ -1861,7 +1858,7 @@ export default function CreatePost({ mode = "create", postId }) {
       )}
       {/* ── Top bar ── */}
       <div className="sticky top-0 z-40 bg-white border-b border-gray-200 shadow-sm">
-        <div className="max-w-5xl mx-auto px-4 md:px-8 h-14 flex items-center justify-between gap-4">
+        <div className="mx-auto flex h-14 max-w-[1440px] items-center justify-between gap-4 px-4 md:px-8">
           <div className="flex items-center gap-3">
             <div className="w-7 h-7 bg-blue-600 rounded-lg flex items-center justify-center">
               <FileText size={14} className="text-white" />
@@ -1928,7 +1925,7 @@ export default function CreatePost({ mode = "create", postId }) {
       </div>
 
       {/* ── Content ── */}
-      <div className="max-w-5xl mx-auto px-4 md:px-8 py-8">
+      <div className="mx-auto max-w-[1440px] px-4 py-6 sm:px-6 md:px-8 md:py-8">
         <div className="grid gap-6 lg:grid-cols-[minmax(0,7fr)_minmax(280px,3fr)]">
         <div className="min-w-0">
         {/* Tabs */}
