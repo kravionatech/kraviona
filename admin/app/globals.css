@@ -2,14 +2,14 @@
 
 :root {
   color-scheme: light;
-  --kraviona-dark: #1a2e33;
-  --kraviona-primary: #2a4a52;
-  --kraviona-primary-hover: #3d6b77;
-  --kraviona-primary-light: #5c9baa;
-  --kraviona-accent: #e8622a;
-  --kraviona-accent-hover: #f28c5e;
-  --kraviona-accent-dark: #b84a1a;
-  --kraviona-surface: #f5f7f8;
+  --kraviona-dark: #2c2a0c;
+  --kraviona-primary: #2e5f50;
+  --kraviona-primary-hover: #23483d;
+  --kraviona-primary-light: #5a8877;
+  --kraviona-accent: #fb8b00;
+  --kraviona-accent-hover: #ff9d1a;
+  --kraviona-accent-dark: #c66e00;
+  --kraviona-surface: #fffdf0;
 
   /* Legacy aliases keep older admin utility classes on the shared palette. */
   --kraviona-ink: var(--kraviona-dark);
@@ -19,32 +19,32 @@
   --kraviona-coral: var(--kraviona-accent);
   --kraviona-coral-deep: var(--kraviona-accent-dark);
   --kraviona-sand: var(--kraviona-accent-hover);
-  --kraviona-sand-light: #ffd8c8;
+  --kraviona-sand-light: #f3ecb1;
 }
 
 html,
 body {
-  background: #f6f9fa;
+  background: #f3ecb1;
 }
 
 body {
-  color: #17383e;
+  color: #2c2a0c;
 }
 
 /* Shared admin palette. Most screens use Tailwind surface utilities, so these
    scoped tokens keep every CRUD page, modal and table visually consistent. */
 .admin-shell {
-  --admin-canvas: #f6f9fa;
-  --admin-surface: #ffffff;
-  --admin-surface-raised: #edf4f5;
-  --admin-surface-muted: #f8fbfb;
-  --admin-border: rgba(42, 74, 82, 0.18);
-  --admin-text: #17383e;
-  --admin-text-muted: #607a80;
+  --admin-canvas: #f3ecb1;
+  --admin-surface: #fffdf0;
+  --admin-surface-raised: #e7df9f;
+  --admin-surface-muted: #fff9d9;
+  --admin-border: rgba(46, 95, 80, 0.25);
+  --admin-text: #2c2a0c;
+  --admin-text-muted: #617064;
   --admin-accent: var(--kraviona-coral);
   background:
-    radial-gradient(circle at 80% -10%, rgba(92, 155, 170, 0.13), transparent 30rem),
-    radial-gradient(circle at -10% 20%, rgba(232, 98, 42, 0.08), transparent 26rem),
+    radial-gradient(circle at 80% -10%, rgba(46, 95, 80, 0.13), transparent 30rem),
+    radial-gradient(circle at -10% 20%, rgba(251, 139, 0, 0.1), transparent 26rem),
     var(--admin-canvas);
 }
 
@@ -70,26 +70,30 @@ body {
 .admin-shell .bg-\[\#235056\],
 .admin-shell .bg-\[\#284043\],
 .admin-shell .bg-\[\#295c5e\],
-.admin-shell .bg-\[\#49b9ad\] {
+.admin-shell .bg-\[\#49b9ad\],
+.admin-shell .bg-\[\#2a4a52\] {
   background-color: var(--kraviona-teal) !important;
 }
 
 .admin-shell .text-\[\#235056\],
 .admin-shell .text-\[\#284043\],
 .admin-shell .text-\[\#295c5e\],
-.admin-shell .text-\[\#49b9ad\] {
+.admin-shell .text-\[\#49b9ad\],
+.admin-shell .text-\[\#2a4a52\] {
   color: var(--kraviona-teal) !important;
 }
 
 .admin-shell .bg-\[\#d26c51\],
 .admin-shell .bg-\[\#d96c4e\],
-.admin-shell .bg-\[\#f0a46f\] {
+.admin-shell .bg-\[\#f0a46f\],
+.admin-shell .bg-\[\#e8622a\] {
   background-color: var(--kraviona-coral) !important;
 }
 
 .admin-shell .text-\[\#d26c51\],
 .admin-shell .text-\[\#d96c4e\],
-.admin-shell .text-\[\#f0a46f\] {
+.admin-shell .text-\[\#f0a46f\],
+.admin-shell .text-\[\#e8622a\] {
   color: var(--kraviona-coral) !important;
 }
 
@@ -130,27 +134,27 @@ body {
 
 .admin-shell .text-slate-700,
 .admin-shell .text-gray-700 {
-  color: #31565e;
+  color: #3a5145;
 }
 
 /* The post editor is a focused workspace: keep its canvas bright even when
    older editor utilities use fixed legacy colours. */
 .admin-shell .post-editor-page {
-  background: #f6f9fa !important;
-  color: #17383e;
+  background: #f3ecb1 !important;
+  color: #2c2a0c;
 }
 
 .admin-shell .post-editor-page .bg-\[\#1A2E33\] {
-  background-color: #edf4f5 !important;
+  background-color: #e7df9f !important;
 }
 
 .admin-shell .post-editor-page .bg-\[\#1A2E33\]\/50 {
-  background-color: rgba(23, 56, 62, 0.32) !important;
+  background-color: rgba(44, 42, 12, 0.32) !important;
 }
 
 .admin-shell .text-slate-600,
 .admin-shell .text-gray-600 {
-  color: #526e74;
+  color: #52665a;
 }
 
 .admin-shell .text-slate-500,
@@ -160,32 +164,32 @@ body {
 
 .admin-shell .text-slate-400,
 .admin-shell .text-gray-400 {
-  color: #70898f;
+  color: #748073;
 }
 
 .admin-shell input,
 .admin-shell textarea,
 .admin-shell select {
   color: var(--admin-text);
-  background-color: #ffffff;
+  background-color: #fffdf0;
   border-color: var(--admin-border);
 }
 
 .admin-shell input::placeholder,
 .admin-shell textarea::placeholder {
-  color: #8aa0a5;
+  color: #89917b;
 }
 
 .admin-shell select option {
   color: var(--admin-text);
-  background-color: #ffffff;
+  background-color: #fffdf0;
 }
 
 .admin-shell input:focus,
 .admin-shell textarea:focus,
 .admin-shell select:focus {
-  border-color: rgba(242, 140, 94, 0.8);
-  box-shadow: 0 0 0 3px rgba(242, 140, 94, 0.16);
+  border-color: rgba(251, 139, 0, 0.8);
+  box-shadow: 0 0 0 3px rgba(251, 139, 0, 0.16);
 }
 
 .admin-shell .bg-blue-50,
@@ -197,14 +201,14 @@ body {
 .admin-shell .bg-red-50,
 .admin-shell .bg-orange-50,
 .admin-shell .bg-teal-50 {
-  background-color: rgba(42, 74, 82, 0.72);
+  background-color: rgba(46, 95, 80, 0.12);
 }
 
 .admin-shell .text-blue-700,
 .admin-shell .text-cyan-700,
 .admin-shell .text-teal-700,
 .admin-shell .text-emerald-700 {
-  color: #1f6a6d;
+  color: #2e5f50;
 }
 
 .admin-shell .text-violet-700,
@@ -214,7 +218,29 @@ body {
 
 .admin-shell .text-rose-700,
 .admin-shell .text-orange-700 {
-  color: #c5491d;
+  color: #c66e00;
+}
+
+/* Replace framework blue utilities inside the admin only with the supplied
+   orange/green brand palette. */
+.admin-shell .bg-blue-600,
+.admin-shell .bg-blue-700 {
+  background-color: var(--kraviona-accent) !important;
+}
+
+.admin-shell .hover\:bg-blue-700:hover,
+.admin-shell .hover\:bg-blue-600:hover {
+  background-color: var(--kraviona-accent-dark) !important;
+}
+
+.admin-shell .text-blue-600,
+.admin-shell .text-blue-500 {
+  color: var(--kraviona-primary) !important;
+}
+
+.admin-shell .border-blue-500,
+.admin-shell .border-blue-200 {
+  border-color: rgba(46, 95, 80, 0.4) !important;
 }
 
 .admin-shell .shadow-sm,
