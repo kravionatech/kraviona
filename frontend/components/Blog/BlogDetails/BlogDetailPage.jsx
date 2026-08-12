@@ -2,7 +2,9 @@
 
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import dynamic from "next/dynamic";
+import parse from "html-react-parser";
 import { CheckCircle2, HelpCircle, Lightbulb } from "lucide-react";
 import { API_URL } from "@/utils/api";
 import { formatDate } from "@/utils/dataHelpers";
@@ -23,7 +25,26 @@ const normalizeContentImages = (html = "") =>
     .replace(/src=(["'])\/(uploads|images|media|storage)\//gi, `src=$1${apiAssetOrigin}/$2/`)
     .replace(/src=(["'])(?!https?:|data:|blob:|\/)([^"']+)/gi, `src=$1${apiAssetOrigin}/$2`)
     .replace(/<img(?![^>]*\bloading=)/gi, "<img loading=\"lazy\"")
-    .replace(/<img(?![^>]*\bdecoding=)/gi, "<img decoding=\"async\"");
+    .replace(/<img(?![^>]*\bdecoding=)/gi, "<img decoding=\"async\"")
+    .replace(/<a\b([^>]*)>/gi, (tag, attributes) => {
+      const href = attributes.match(/\bhref\s*=\s*(["'])(.*?)\1/i)?.[2];
+      if (!href || !/^https?:\/\//i.test(href)) return tag;
+
+      try {
+        if (new URL(href).hostname === "kraviona.com") return tag;
+      } catch {
+        return tag;
+      }
+
+      const withTarget = /\btarget\s*=/i.test(attributes)
+        ? attributes.replace(/\btarget\s*=\s*(["']).*?\1/i, 'target="_blank"')
+        : `${attributes} target="_blank"`;
+      const withRel = /\brel\s*=/i.test(withTarget)
+        ? withTarget.replace(/\brel\s*=\s*(["']).*?\1/i, 'rel="noopener noreferrer"')
+        : `${withTarget} rel="noopener noreferrer"`;
+
+      return `<a${withRel}>`;
+    });
 
 const stripHtml = (value = "") =>
   String(value)
@@ -35,6 +56,27 @@ const toStringArray = (value) =>
   Array.isArray(value)
     ? value.filter((item) => typeof item === "string" && item.trim())
     : [];
+
+const renderArticleContent = (html = "") =>
+  parse(html, {
+    replace(node) {
+      if (node.type !== "tag" || node.name !== "img" || !node.attribs?.src) {
+        return undefined;
+      }
+
+      return (
+        <Image
+          src={node.attribs.src}
+          alt={node.attribs.alt || ""}
+          width={Number(node.attribs.width) || 800}
+          height={Number(node.attribs.height) || 450}
+          sizes="(max-width: 768px) 100vw, 800px"
+          loading="lazy"
+          className={node.attribs.class || ""}
+        />
+      );
+    },
+  });
 
 const BlogDetailPage = ({ blog }) => {
   if (!blog) return null;
@@ -132,8 +174,9 @@ const BlogDetailPage = ({ blog }) => {
           prose-hr:border-gray-200 prose-hr:my-10
           prose-table:overflow-hidden prose-table:rounded-xl prose-th:bg-[#1A2E33] prose-th:text-white prose-th:font-bold prose-td:border prose-td:border-gray-200
         "
-        dangerouslySetInnerHTML={{ __html: contentHtml }}
-      />
+      >
+        {renderArticleContent(contentHtml)}
+      </div>
 
       {faqs.length > 0 && (
         <section className="mt-14 border-t border-gray-100 pt-10">

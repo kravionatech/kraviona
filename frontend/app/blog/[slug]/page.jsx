@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
+import Script from "next/script";
 import {
   CalendarDays,
   Clock,
@@ -12,6 +13,7 @@ import {
 import BlogEngagement from "@/components/Blog/BlogEngagement";
 import BlogDetailPage from "@/components/Blog/BlogDetails/BlogDetailPage";
 import PostCard from "@/components/Card/PostCard";
+import ReadingProgress from "@/components/Blog/ReadingProgress";
 import { JsonLd } from "@/components/JsonLd";
 import {
   canonicalUrl,
@@ -160,7 +162,7 @@ async function getBlog(slug) {
 
 async function getRecommendedPosts() {
   try {
-    const res = await fetch(`${API_URL}/public/posts?limit=12`, {
+    const res = await fetch(`${API_URL}/public/posts?limit=24`, {
       cache: "no-store",
       headers: { Accept: "application/json" },
     });
@@ -294,9 +296,20 @@ const BlogDetail = async ({ params }) => {
 
   const featuredImageUrl = getImageUrl(blog);
   const featuredImageAlt = getImageAlt(blog);
-  const recommendedPosts = allPosts
-    .filter((p) => p?.slug && p.slug !== slug)
-    .slice(0, 6);
+  const relatedPosts = allPosts
+    .filter(
+      (post) =>
+        post?.slug &&
+        post.slug !== slug &&
+        (post.category?.slug === blog.category?.slug ||
+          post.category?.name === blog.category?.name),
+    )
+    .sort(
+      (a, b) =>
+        new Date(b.publishedAt || b.createdAt || 0) -
+        new Date(a.publishedAt || a.createdAt || 0),
+    )
+    .slice(0, 3);
   const relevantServices = getRelevantServices(blog);
   const authorProfile = getAuthorProfile(blog);
   const publishedSource = blog.publishedAt || blog.createdAt;
@@ -355,11 +368,7 @@ const BlogDetail = async ({ params }) => {
       : [];
   const articleTags = Array.isArray(blog.tags) ? blog.tags : [];
 
-  const supportedArticleType = ["BlogPosting", "Article", "NewsArticle"].includes(
-    blog.schemaType,
-  )
-    ? blog.schemaType
-    : "BlogPosting";
+  const supportedArticleType = "BlogPosting";
   const generatedArticleSchema = {
     "@context": "https://schema.org",
 
@@ -428,11 +437,11 @@ const BlogDetail = async ({ params }) => {
     publisher: {
       "@type": "Organization",
 
-      name: SITE_NAME,
+      name: "Kraviona Tech Solutions",
 
       logo: {
         "@type": "ImageObject",
-        url: "https://kraviona.com/full-logo.webp",
+        url: "https://kraviona.com/logo.png",
         width: 384,
         height: 144,
       },
@@ -529,8 +538,17 @@ const BlogDetail = async ({ params }) => {
 
   return (
     <div className="min-h-screen bg-white">
+      <ReadingProgress />
+      <Script
+        id="blog-posting-schema"
+        type="application/ld+json"
+        strategy="beforeInteractive"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(articleSchema).replace(/</g, "\\u003c"),
+        }}
+      />
       <JsonLd
-        data={[articleSchema, breadcrumbSchema, faqSchema, videoSchema].filter(
+        data={[breadcrumbSchema, faqSchema, videoSchema].filter(
           Boolean,
         )}
       />
@@ -617,13 +635,28 @@ const BlogDetail = async ({ params }) => {
                     priority
                     fetchPriority="high"
                     quality={90}
-                    sizes="(min-width: 1024px) 740px, calc(100vw - 32px)"
+                    sizes="(max-width: 768px) 100vw, 800px"
                     className="object-contain"
                   />
                 </div>
               </figure>
             )}
             <BlogDetailPage blog={blog} />
+            {relatedPosts.length > 0 && (
+              <section className="mt-14 border-t border-gray-100 pt-10">
+                <div className="mb-6 flex items-center gap-3">
+                  <span className="h-0.5 w-8 bg-[#E8622A]" />
+                  <h2 className="text-xl font-black tracking-tight text-[#1A2E33] md:text-2xl">
+                    Related Posts
+                  </h2>
+                </div>
+                <div className="grid gap-5 md:grid-cols-3">
+                  {relatedPosts.map((post) => (
+                    <PostCard key={post.slug} post={post} />
+                  ))}
+                </div>
+              </section>
+            )}
             <BlogEngagement
               slug={blog.slug}
               title={blog.title}
@@ -638,7 +671,7 @@ const BlogDetail = async ({ params }) => {
           <aside className="w-full lg:sticky lg:top-28 lg:h-fit">
             <div className="space-y-6">
               {/* Up Next Section */}
-              {recommendedPosts.length > 0 && (
+              {relatedPosts.length > 0 && (
                 <div className="rounded-lg border border-gray-100 bg-white p-5 shadow-sm">
                   <div className="flex items-center gap-3 mb-6">
                     <span className="w-8 h-0.5 bg-[#E8622A]"></span>
@@ -648,7 +681,7 @@ const BlogDetail = async ({ params }) => {
                   </div>
 
                   <div className="space-y-4">
-                    {recommendedPosts.map((post, idx) => (
+                    {relatedPosts.map((post, idx) => (
                       <PostCard
                         key={`${post.title || post.slug}-${idx}`}
                         post={post}
@@ -739,7 +772,7 @@ const BlogDetail = async ({ params }) => {
                         key={social.name}
                         href={social.href}
                         target={social.href.startsWith("http") ? "_blank" : undefined}
-                        rel={social.href.startsWith("http") ? "noreferrer" : undefined}
+                        rel={social.href.startsWith("http") ? "noopener noreferrer" : undefined}
                         aria-label={`${authorProfile.name} on ${social.name}`}
                         className="flex h-10 w-10 items-center justify-center rounded-lg border border-gray-200 bg-[#F5F7F8] text-[#1A2E33] transition-colors hover:border-[#E8622A] hover:bg-[#E8622A] hover:text-white"
                       >
