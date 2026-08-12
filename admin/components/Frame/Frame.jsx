@@ -104,11 +104,11 @@ export default function Frame({ children }) {
   };
 
   return (
-    <div className="admin-shell flex min-h-screen bg-slate-50 font-sans text-slate-900">
+    <div className="admin-shell flex min-h-dvh bg-slate-50 font-sans text-slate-900">
       <Sidebar onLogout={handleLogout} isOpen={mobileNavOpen} onClose={() => setMobileNavOpen(false)} />
 
-      <div className="min-w-0 flex-1">
-        <header className="sticky top-0 z-20 h-16 border-b border-gray-200 bg-white px-4 py-3 sm:px-6 lg:px-8">
+      <div className="flex min-w-0 flex-1 flex-col">
+        <header className="sticky top-0 z-20 h-16 shrink-0 border-b border-gray-200 bg-white px-4 py-3 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between gap-3">
             <div className="flex min-w-0 items-center gap-3">
               <button
@@ -167,7 +167,7 @@ export default function Frame({ children }) {
           </div>
         </header>
 
-        <main className="min-h-[calc(100vh-73px)]">{children}</main>
+        <main className="min-h-[calc(100dvh-4rem)] min-w-0 flex-1">{children}</main>
       </div>
     </div>
   );

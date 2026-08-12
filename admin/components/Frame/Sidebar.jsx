@@ -75,7 +75,7 @@ export default function Sidebar({ onLogout, isOpen, onClose }) {
         />
       )}
       <aside
-        className={`fixed inset-y-0 left-0 z-40 flex h-screen w-64 flex-col overflow-y-auto bg-slate-900 transition-transform duration-300 lg:static lg:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-40 flex h-dvh w-72 flex-col overflow-hidden bg-slate-900 shadow-2xl shadow-slate-950/20 transition-transform duration-300 lg:sticky lg:top-0 lg:z-10 lg:h-screen lg:w-64 lg:shrink-0 lg:self-start lg:translate-x-0 lg:shadow-none ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
@@ -94,19 +94,21 @@ export default function Sidebar({ onLogout, isOpen, onClose }) {
           </button>
         </div>
 
-        <nav className="space-y-1 py-2" aria-label="Primary navigation">
-          {primaryNavigation.map((item) => (
-            <NavLink key={item.href} item={item} pathname={pathname} onClick={onClose} />
-          ))}
-        </nav>
+        <div className="min-h-0 flex-1 overflow-y-auto pb-4">
+          <nav className="space-y-1 py-2" aria-label="Primary navigation">
+            {primaryNavigation.map((item) => (
+              <NavLink key={item.href} item={item} pathname={pathname} onClick={onClose} />
+            ))}
+          </nav>
 
-        <div className="mx-4 my-5 border-t border-slate-800" />
-        <p className="px-6 pb-2 text-xs font-semibold uppercase tracking-wider text-slate-500">Workspace</p>
-        <nav className="space-y-1 pb-6" aria-label="Workspace navigation">
-          {workspaceNavigation.map((item) => (
-            <NavLink key={item.href} item={item} pathname={pathname} onClick={onClose} />
-          ))}
-        </nav>
+          <div className="mx-4 my-5 border-t border-slate-800" />
+          <p className="px-6 pb-2 text-xs font-semibold uppercase tracking-wider text-slate-500">Workspace</p>
+          <nav className="space-y-1" aria-label="Workspace navigation">
+            {workspaceNavigation.map((item) => (
+              <NavLink key={item.href} item={item} pathname={pathname} onClick={onClose} />
+            ))}
+          </nav>
+        </div>
 
         <div className="mt-auto border-t border-slate-800 p-4">
           <div className="mb-3 flex items-center gap-3 px-2">

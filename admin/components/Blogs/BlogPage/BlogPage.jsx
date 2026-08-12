@@ -225,10 +225,10 @@ const BlogPage = () => {
   }
 
   return (
-    <div className="min-h-full w-full bg-[#F8F9FB] p-8">
+    <div className="min-h-full w-full bg-[#F8F9FB] p-4 sm:p-6 lg:p-8">
       {/* Header */}
       <div className="mb-8">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <p className="text-xs font-semibold text-orange-500 uppercase tracking-widest mb-1">
               Content Management
@@ -237,7 +237,7 @@ const BlogPage = () => {
           </div>
           <Link
             href="/blog/new"
-            className="inline-flex items-center gap-2 bg-orange-500 hover:bg-orange-600 active:bg-orange-700 transition-colors text-white px-5 py-2.5 text-sm font-semibold rounded-lg shadow-sm shadow-orange-200"
+            className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-orange-500 px-5 py-2.5 text-sm font-semibold text-white shadow-sm shadow-orange-200 transition-colors hover:bg-orange-600 active:bg-orange-700 sm:w-auto"
           >
             <Plus size={16} strokeWidth={2.5} />
             New Post
@@ -245,7 +245,7 @@ const BlogPage = () => {
         </div>
 
         {/* Stats row */}
-        <div className="mt-5 flex items-center gap-4">
+        <div className="mt-5 flex flex-wrap items-center gap-3">
           <div className="flex items-center gap-2 bg-white border border-gray-200 rounded-lg px-4 py-2.5 shadow-sm">
             <FileText size={15} className="text-gray-400" />
             <span className="text-sm font-semibold text-gray-800">
@@ -280,8 +280,8 @@ const BlogPage = () => {
       {/* Table card */}
       <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
         {/* Toolbar */}
-        <div className="px-6 py-4 border-b border-gray-100 flex items-center gap-3">
-          <div className="relative flex-1 max-w-sm">
+        <div className="flex flex-col gap-3 border-b border-gray-100 px-4 py-4 sm:px-6 md:flex-row md:items-center">
+          <div className="relative w-full md:max-w-sm md:flex-1">
             <Search
               size={15}
               className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
@@ -296,7 +296,7 @@ const BlogPage = () => {
               className="w-full pl-9 pr-4 py-2 text-sm bg-gray-50 border border-gray-200 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition"
             />
           </div>
-          <div className="flex items-center gap-1 rounded-lg bg-gray-100 p-1">
+          <div className="grid w-full grid-cols-3 gap-1 rounded-lg bg-gray-100 p-1 md:flex md:w-auto">
             {["all", "published", "draft"].map((item) => (
               <button
                 key={item}
