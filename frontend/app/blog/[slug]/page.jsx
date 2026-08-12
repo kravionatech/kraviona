@@ -296,12 +296,18 @@ const BlogDetail = async ({ params }) => {
 
   const featuredImageUrl = getImageUrl(blog);
   const featuredImageAlt = getImageAlt(blog);
-  const bannerImageUrl =
+  const uploadedBannerImageUrl =
     typeof blog.bannerImage === "string"
       ? blog.bannerImage
       : blog.bannerImage?.url || "";
-  const bannerImageAlt =
+  const uploadedBannerImageAlt =
     typeof blog.bannerImage === "object" ? blog.bannerImage?.altText || "" : "";
+  // A dedicated banner wins, otherwise make the existing featured image the
+  // hero background so every blog detail page has a visual header.
+  const heroImageUrl = uploadedBannerImageUrl || featuredImageUrl;
+  const heroImageAlt = uploadedBannerImageUrl
+    ? uploadedBannerImageAlt
+    : featuredImageAlt;
   const relatedPosts = allPosts
     .filter(
       (post) =>
@@ -561,11 +567,11 @@ const BlogDetail = async ({ params }) => {
 
       {/* ─── Article Header ───────────────────────────────────────────── */}
       <section className="relative overflow-hidden bg-gradient-to-br from-[#1A2E33] via-[#2A4A52] to-[#1A2E33] px-4 pb-24 pt-40 sm:px-6 lg:px-8">
-        {bannerImageUrl && (
+        {heroImageUrl && (
           <>
             <Image
-              src={bannerImageUrl}
-              alt={bannerImageAlt}
+              src={heroImageUrl}
+              alt={heroImageAlt}
               fill
               priority
               sizes="100vw"
