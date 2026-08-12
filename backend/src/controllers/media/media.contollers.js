@@ -1,6 +1,5 @@
 import path from "path";
-import fs from "fs";
-import { v2 as cloudinary } from "cloudinary";
+import { cloudinary } from "../../config/cloudinary.js";
 
 import { mediaModel } from "../../models/media/media.model.js";
 import { Auth } from "../../models/auth/auth.models.js";
@@ -32,29 +31,14 @@ export const uploadMedia = async (req, res) => {
         const uploadedFiles = [];
 
         for (const file of files) {
-            const folder = path.basename(file.destination);
-
-            // Upload to Cloudinary
-            const cloudinaryResponse = await cloudinary.uploader.upload(
-                file.path,
-                {
-                    folder: `kravionatech/${folder}`,
-                    resource_type: "auto",
-                }
-            );
-
-            // Delete local file
-            if (fs.existsSync(file.path)) {
-                fs.unlinkSync(file.path);
-            }
-
-            // Save MongoDB
+            // multer-storage-cloudinary uploads directly, exposing the secure
+            // delivery URL on `path` and the Cloudinary public id on `filename`.
             const media = await mediaModel.create({
                 fileName: file.filename,
                 originalName: file.originalname,
 
-                fileUrl: cloudinaryResponse.secure_url,
-                publicId: cloudinaryResponse.public_id,
+                fileUrl: file.path,
+                publicId: file.filename,
 
                 mimeType: file.mimetype,
                 extension: path.extname(file.originalname),
@@ -68,9 +52,9 @@ export const uploadMedia = async (req, res) => {
                     ? "audio"
                     : "document",
 
-                width: cloudinaryResponse.width || null,
-                height: cloudinaryResponse.height || null,
-                duration: cloudinaryResponse.duration || null,
+                width: file.width || null,
+                height: file.height || null,
+                duration: file.duration || null,
 
                 userID: isUser._id,
                 uploadedBy: isUser._id,

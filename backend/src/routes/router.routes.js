@@ -4,7 +4,7 @@ import verifyToken from "../middleware/verifyToken.js";
 import { createCategory, deleteCategory, getAllCategories, getCategories, getCategoryByIdOrSlug, updateCategory } from "../controllers/categories/categories.controller.js";
 import { createPost, deletePost, privatePosts, privateViewPost, publicPosts, singleViewPost, updatePost } from "../controllers/post/post.controller.js";
 import { deleteMedia, getMyMedias, uploadMedia } from "../controllers/media/media.contollers.js";
-import { upload } from "../middleware/upload.middleware.js";
+import { upload, uploadMiddleware } from "../middleware/upload.middleware.js";
 import { createNewsLatter, deleteSubscriber, getAllSubscribers } from "../controllers/newslatter/newslatter.controller.js";
 import { createMessage, deleteMessage, getAllMessages, getMessageById, updateMessage } from "../controllers/messages/message.controller.js";
 import { createLead, deleteLead, getAllLeads, getLeadById, updateLead } from "../controllers/leads/lead.controller.js";
@@ -68,7 +68,7 @@ Router.post("/mcp-login", mcpLogin);
 // to them yet. e.g.:
 // import { createPost, publicPosts, privatePosts, deletePost, updatePost, singleViewPost, privateViewPost } from "../../controllers/blog/post.controller.js";
 
-Router.post('/create-post', verifyToken, createPost)
+Router.post('/create-post', verifyToken, uploadMiddleware, createPost)
 Router.get("/public/posts", publicPosts)
 Router.get("/private/posts", verifyToken, privatePosts)
 Router.delete('/post/:id', verifyToken, deletePost)
@@ -76,7 +76,7 @@ Router.delete('/post/:id', verifyToken, deletePost)
 // FIX: new route — PATCH (not PUT), since updatePost only changes the
 // fields the client actually sends rather than requiring a full
 // replacement of the whole document.
-Router.patch('/post/:id', verifyToken, updatePost)
+Router.patch('/post/:id', verifyToken, uploadMiddleware, updatePost)
 
 Router.get('/post/:slug/engagement', getPostEngagement)
 Router.post('/post/:slug/views', recordPostView)

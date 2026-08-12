@@ -6,6 +6,8 @@ import {
   Activity,
   AlertCircle,
   BarChart3,
+  CheckCircle2,
+  Clock,
   Database,
   Eye,
   FileText,
@@ -127,7 +129,7 @@ function EmptyState({ label = "No data yet" }) {
 function LoadingDashboard() {
   return (
     <Frame>
-      <div className="min-h-full bg-[#1a2e33] p-6 lg:p-8">
+      <div className="min-h-full bg-slate-50 p-6 lg:p-8">
         <div className="mb-6 h-24 animate-pulse rounded-lg bg-white" />
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
           {Array.from({ length: 8 }).map((_, index) => (
@@ -344,7 +346,7 @@ export default function DashboardPage() {
 
   return (
     <Frame>
-      <div className="min-h-full bg-[#1a2e33] text-slate-950">
+      <div className="min-h-full bg-slate-50 text-slate-950">
         <main className="px-4 py-6 sm:px-6 lg:px-8">
           <div className="mb-6 rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
             <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
@@ -388,34 +390,10 @@ export default function DashboardPage() {
           </div>
 
           <section className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
-            <KpiCard
-              title="Pipeline Value"
-              value={formatCurrency(summary.pipelineValue)}
-              caption={`${formatCurrency(summary.wonValue)} won value`}
-              icon={BarChart3}
-              color={COLORS.primary}
-            />
-            <KpiCard
-              title="Active Leads"
-              value={formatNumber(summary.leadsTotal)}
-              caption={`${summary.conversionRate || 0}% conversion rate`}
-              icon={Inbox}
-              color={COLORS.accent}
-            />
-            <KpiCard
-              title="Published Posts"
-              value={formatNumber(summary.publishedPosts)}
-              caption={`${formatCompact(summary.totalPostViews)} total views`}
-              icon={Newspaper}
-              color={COLORS.green}
-            />
-            <KpiCard
-              title="Open Messages"
-              value={formatNumber(summary.unreadMessages)}
-              caption={`${formatNumber(summary.messagesTotal)} total messages`}
-              icon={Mail}
-              color={COLORS.rose}
-            />
+            <KpiCard title="Total Posts" value={formatNumber(summary.postsTotal)} caption="All blog content" icon={FileText} color="#2563eb" />
+            <KpiCard title="Published" value={formatNumber(summary.publishedPosts)} caption="Live on the website" icon={CheckCircle2} color="#16a34a" />
+            <KpiCard title="Drafts" value={formatNumber(summary.draftPosts)} caption="Ready to finish" icon={Clock} color="#ca8a04" />
+            <KpiCard title="Total Views" value={formatNumber(summary.totalPostViews)} caption="Across published posts" icon={Eye} color="#7c3aed" />
           </section>
 
           <section className="mb-6">

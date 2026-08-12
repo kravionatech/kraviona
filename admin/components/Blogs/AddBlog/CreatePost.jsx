@@ -3,7 +3,8 @@ import React from "react";
 
 import { useEffect, useRef, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import TextEditor from "./TextEditor"; // ← your Quill-based editor
+import TiptapEditor from "./TiptapEditor";
+import ImageUploader from "./ImageUploader";
 import {
   ChevronDown,
   ChevronUp,
@@ -33,13 +34,14 @@ import {
 } from "lucide-react";
 
 // ─── Utilities ────────────────────────────────────────────────────────────────
-const slugify = (str) =>
-  str
+function generateSlug(str) {
+  return str
     .toLowerCase()
     .trim()
     .replace(/[^a-z0-9\s-]/g, "")
     .replace(/\s+/g, "-")
     .replace(/-+/g, "-");
+}
 
 const cx = (...classes) => classes.filter(Boolean).join(" ");
 
@@ -432,9 +434,8 @@ const OgPreview = ({ title, description, image }) => (
 // ═══════════════════════════════════════════════════════════════════════════════
 // TAB: BLOG DETAILS
 // ═══════════════════════════════════════════════════════════════════════════════
-const BlogDetailsTab = ({ data, setData, errors }) => {
+const BlogDetailsTab = ({ data, setData, errors, slugManuallyEditedRef }) => {
   const [categories, setCategories] = useState([]);
-  const [imgError, setImgError] = useState(false);
 
   useEffect(() => {
     fetch(`${process.env.NEXT_PUBLIC_API_URL}/categories`)
@@ -448,7 +449,16 @@ const BlogDetailsTab = ({ data, setData, errors }) => {
     setData((p) => ({ ...p, [parent]: { ...p[parent], [key]: val } }));
 
   const handleTitle = (val) => {
-    setData((p) => ({ ...p, title: val, slug: slugify(val) }));
+    setData((p) => ({
+      ...p,
+      title: val,
+      slug: slugManuallyEditedRef.current ? p.slug : generateSlug(val),
+    }));
+  };
+
+  const regenerateSlug = () => {
+    slugManuallyEditedRef.current = false;
+    setData((p) => ({ ...p, slug: generateSlug(p.title) }));
   };
 
   return (
@@ -474,9 +484,10 @@ const BlogDetailsTab = ({ data, setData, errors }) => {
             <Input
               value={data.title}
               onChange={(e) => handleTitle(e.target.value)}
-              placeholder="Getting Started with Node.js and Express"
-              error={errors.title}
-              maxLength={200}
+                placeholder="Post title..."
+                error={errors.title}
+                maxLength={200}
+                className="text-2xl font-medium"
             />
           </Field>
 
@@ -501,15 +512,24 @@ const BlogDetailsTab = ({ data, setData, errors }) => {
               <input
                 type="text"
                 value={data.slug}
-                onChange={(e) =>
-                  set("slug")(
-                    e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ""),
-                  )
-                }
+                onChange={(e) => {
+                  slugManuallyEditedRef.current = true;
+                  set("slug")(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ""));
+                }}
                 placeholder="your-post-slug"
                 className="flex-1 px-3 text-sm text-gray-900 bg-white outline-none"
               />
+              <button
+                type="button"
+                onClick={regenerateSlug}
+                className="border-l border-gray-200 px-3 text-xs font-semibold text-blue-600 hover:bg-blue-50"
+              >
+                Regenerate
+              </button>
             </div>
+            <p className="mt-1 text-sm text-gray-400">
+              kraviona.com/blog/{data.slug || "your-post-slug"}
+            </p>
           </Field>
 
           {/* Excerpt */}
@@ -604,15 +624,8 @@ const BlogDetailsTab = ({ data, setData, errors }) => {
           TextEditor applies `max-w-6xl mx-auto mt-10` on its root div.
           The wrapper below resets those so it sits flush inside the section.
         */}
-        <div
-          className={cx(
-            "[&_.ql-container]:min-h-[420px] [&_.ql-editor]:min-h-[420px]",
-            "[&>div]:mt-0 [&>div]:max-w-none [&>div]:mx-0",
-            "border rounded-xl overflow-hidden",
-            errors.content ? "border-red-400" : "border-gray-200",
-          )}
-        >
-          <TextEditor content={data.content} setContent={set("content")} />
+        <div className={errors.content ? "rounded-lg ring-1 ring-red-400" : ""}>
+          <TiptapEditor value={data.content} onChange={set("content")} />
         </div>
         {errors.content && (
           <p className="text-xs text-red-500 mt-1 flex items-center gap-1">
@@ -632,16 +645,10 @@ const BlogDetailsTab = ({ data, setData, errors }) => {
 
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
           <div className="lg:col-span-3 space-y-4">
-            <Field label="Image URL" required error={errors.featuredImageUrl}>
-              <Input
-                type="url"
+            <Field label="Upload featured image" required error={errors.featuredImageUrl}>
+              <ImageUploader
                 value={data.featuredImage.url}
-                onChange={(e) => {
-                  setImgError(false);
-                  setNested("featuredImage", "url")(e.target.value);
-                }}
-                placeholder="https://cdn.example.com/image.webp"
-                error={errors.featuredImageUrl}
+                onChange={setNested("featuredImage", "url")}
               />
             </Field>
             <Field
@@ -685,12 +692,11 @@ const BlogDetailsTab = ({ data, setData, errors }) => {
               Preview
             </p>
             <div className="border-2 border-dashed border-gray-200 rounded-xl bg-gray-50 overflow-hidden aspect-video flex items-center justify-center">
-              {data.featuredImage.url && !imgError ? (
+              {data.featuredImage.url ? (
                 <img
                   src={data.featuredImage.url}
                   alt=""
                   className="w-full h-full object-cover"
-                  onError={() => setImgError(true)}
                 />
               ) : (
                 <div className="text-center space-y-1">
@@ -1501,27 +1507,17 @@ const validate = (data, submitStatus = data.status) => {
   if (!data.title.trim()) e.title = "Title is required";
   else if (data.title.trim().length < 10) e.title = "Minimum 10 characters";
   if (!data.slug.trim()) e.slug = "Slug is required";
+  else if (!/^[a-z0-9-]+$/.test(data.slug))
+    e.slug = "Use lowercase letters, numbers, and hyphens only";
   if (!data.excerpt.trim()) e.excerpt = "Excerpt is required";
   if (!data.category) e.category = "Category is required";
-  if (!data.primaryTopicCluster.trim())
-    e.primaryTopicCluster = "Primary topic cluster is required";
-  if (
-    !data.content ||
-    data.content === "<p><br></p>" ||
-    data.content.trim() === ""
-  )
+  const contentText = String(data.content || "").replace(/<[^>]*>/g, "").trim();
+  if (!contentText)
     e.content = "Content is required";
+  else if (contentText.length < 100)
+    e.content = "Content must be at least 100 characters";
   if (!data.featuredImage.url.trim())
     e.featuredImageUrl = "Featured image URL is required";
-  if (!data.metaTitle.trim()) e.metaTitle = "Meta title is required";
-  if (!data.metaDescription.trim())
-    e.metaDescription = "Meta description is required";
-  if (!data.canonicalUrl.trim()) e.canonicalUrl = "Canonical URL is required";
-  if (!data.keywords.length) e.keywords = "At least one keyword required";
-  if (!data.focusKeywords.length)
-    e.focusKeywords = "At least one focus keyword required";
-  if (!data.semanticKeywords.length)
-    e.semanticKeywords = "At least one semantic keyword required";
   if (submitStatus === "scheduled") {
     const scheduleDate = new Date(data.scheduledAt);
 
@@ -1544,7 +1540,7 @@ const buildPayload = (data, status) => ({
   quickAnswer: data.quickAnswer?.trim() || undefined,
   keyTakeaways: data.keyTakeaways.filter(Boolean),
   tableOfContents: data.tableOfContents,
-  primaryTopicCluster: data.primaryTopicCluster.trim(),
+  primaryTopicCluster: data.primaryTopicCluster.trim() || data.category,
   supportingTopicClusters: data.supportingTopicClusters,
   tags: data.tags,
   featuredImage: {
@@ -1608,9 +1604,17 @@ export default function CreatePost({ mode = "create", postId }) {
   const [initializing, setInitializing] = useState(isEdit);
   const [loadError, setLoadError] = useState("");
   const [saved, setSaved] = useState(null); // "draft" | "published" | "scheduled" | null
+  const [toast, setToast] = useState(null);
+  const isSlugManuallyEdited = useRef(false);
 
   // Auto-save indicator (local state, not persisted)
   const [autoSaveStatus, setAutoSaveStatus] = useState(""); // "saving" | "saved" | ""
+
+  useEffect(() => {
+    if (!toast) return undefined;
+    const timeout = window.setTimeout(() => setToast(null), 4000);
+    return () => window.clearTimeout(timeout);
+  }, [toast]);
 
   useEffect(() => {
     if (!isEdit || !postId) return;
@@ -1638,6 +1642,7 @@ export default function CreatePost({ mode = "create", postId }) {
         if (ignore) return;
 
         const nextData = normalizePostForForm(json.data || {});
+        isSlugManuallyEdited.current = true;
         setData(nextData);
         setLoadedData(nextData);
       } catch (err) {
@@ -1662,6 +1667,7 @@ export default function CreatePost({ mode = "create", postId }) {
       setErrors(errs);
 
       if (Object.keys(errs).length > 0) {
+        setToast({ tone: "error", message: "Please correct the highlighted fields." });
         const firstTabWithError = TABS.find((t) =>
           t.errorKeys.some((k) => errs[k]),
         );
@@ -1693,16 +1699,21 @@ export default function CreatePost({ mode = "create", postId }) {
         const nextData =
           isEdit && json.data ? normalizePostForForm(json.data) : null;
         setSaved(submitStatus);
+        setToast({
+          tone: "success",
+          message: submitStatus === "published" ? "Post published successfully!" : "Draft saved successfully!",
+        });
         if (isEdit && nextData) {
           setData(nextData);
           setLoadedData(nextData);
         } else {
           setData(getInitialData());
+          isSlugManuallyEdited.current = false;
         }
         setErrors({});
-        if (!isEdit) router.push("/blog");
+        if (!isEdit) window.setTimeout(() => router.push("/blog"), 650);
       } catch (err) {
-        alert(err.message || "Something went wrong. Please try again.");
+        setToast({ tone: "error", message: err.message || "Something went wrong. Please try again." });
       } finally {
         setLoading(false);
       }
@@ -1770,6 +1781,16 @@ export default function CreatePost({ mode = "create", postId }) {
 
   return (
     <div className="min-h-screen bg-[#F7F8FA]">
+      {toast && (
+        <div
+          role="status"
+          className={`fixed bottom-5 right-5 z-[60] rounded-lg px-4 py-3 text-sm font-medium text-white shadow-lg ${
+            toast.tone === "success" ? "bg-green-600" : "bg-red-600"
+          }`}
+        >
+          {toast.message}
+        </div>
+      )}
       {/* ── Top bar ── */}
       <div className="sticky top-0 z-40 bg-white border-b border-gray-200 shadow-sm">
         <div className="max-w-5xl mx-auto px-4 md:px-8 h-14 flex items-center justify-between gap-4">
@@ -1840,6 +1861,8 @@ export default function CreatePost({ mode = "create", postId }) {
 
       {/* ── Content ── */}
       <div className="max-w-5xl mx-auto px-4 md:px-8 py-8">
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,7fr)_minmax(280px,3fr)]">
+        <div className="min-w-0">
         {/* Tabs */}
         <div className="flex items-end gap-1 border-b border-gray-200 mb-0">
           {TABS.map(({ key, label, icon: Icon }, idx) => {
@@ -1872,7 +1895,12 @@ export default function CreatePost({ mode = "create", postId }) {
         {/* Panel */}
         <div className="bg-white border border-gray-200 rounded-b-2xl rounded-tr-2xl shadow-sm p-6 md:p-8 min-h-[70vh]">
           {activeTab === "post" ? (
-            <BlogDetailsTab data={data} setData={setData} errors={errors} />
+            <BlogDetailsTab
+              data={data}
+              setData={setData}
+              errors={errors}
+              slugManuallyEditedRef={isSlugManuallyEdited}
+            />
           ) : (
             <SeoTab data={data} setData={setData} errors={errors} />
           )}
@@ -1961,6 +1989,45 @@ export default function CreatePost({ mode = "create", postId }) {
               </button>
             </div>
           </div>
+        </div>
+        </div>
+
+        <aside className="space-y-4 lg:sticky lg:top-24 lg:h-fit">
+          <section className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+            <h2 className="text-sm font-semibold text-gray-900">Publish</h2>
+            <label className="mt-4 block text-xs font-medium text-gray-600">Status</label>
+            <select
+              value={data.status}
+              onChange={(event) => setData((current) => ({ ...current, status: event.target.value }))}
+              className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-700 outline-none focus:border-blue-500"
+            >
+              <option value="draft">Draft</option>
+              <option value="published">Published</option>
+            </select>
+            <p className="mt-3 text-xs text-gray-500">Visibility: Public</p>
+            <button type="button" onClick={() => handleSubmit("published")} disabled={loading} className="mt-4 flex w-full items-center justify-center gap-2 rounded-lg bg-blue-600 py-2.5 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-60">
+              {loading && <Loader2 size={15} className="animate-spin" />}
+              {isEdit ? "Update Post" : "Publish"}
+            </button>
+            <button type="button" onClick={() => handleSubmit("draft")} disabled={loading} className="mt-2 w-full rounded-lg border border-gray-300 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-60">
+              Save Draft
+            </button>
+          </section>
+
+          <section className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+            <h2 className="mb-3 text-sm font-semibold text-gray-900">Featured Image</h2>
+            <ImageUploader value={data.featuredImage.url} onChange={(url) => setData((current) => ({ ...current, featuredImage: { ...current.featuredImage, url } }))} />
+            {errors.featuredImageUrl && <p className="mt-2 text-sm text-red-500">{errors.featuredImageUrl}</p>}
+          </section>
+
+          <section className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+            <h2 className="text-sm font-semibold text-gray-900">Post Details</h2>
+            <p className="mt-3 text-xs font-medium text-gray-500">Reading time</p>
+            <p className="text-sm text-gray-800">{readingTime} min read · {wordCount} words</p>
+            <label className="mt-4 block text-xs font-medium text-gray-600">Tags</label>
+            <input value={data.tags.join(", ")} onChange={(event) => setData((current) => ({ ...current, tags: event.target.value.split(",").map((tag) => tag.trim()).filter(Boolean) }))} placeholder="seo, nextjs" className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-blue-500" />
+          </section>
+        </aside>
         </div>
       </div>
     </div>

@@ -104,24 +104,24 @@ export default function Frame({ children }) {
   };
 
   return (
-    <div className="admin-shell flex min-h-screen bg-[#1a2e33] font-sans text-slate-100">
+    <div className="admin-shell flex min-h-screen bg-slate-50 font-sans text-slate-900">
       <Sidebar onLogout={handleLogout} isOpen={mobileNavOpen} onClose={() => setMobileNavOpen(false)} />
 
       <div className="min-w-0 flex-1">
-        <header className="sticky top-0 z-20 border-b border-white/[0.07] bg-[#20383e]/90 px-4 py-3 backdrop-blur-xl sm:px-6 lg:px-8">
+        <header className="sticky top-0 z-20 h-16 border-b border-gray-200 bg-white px-4 py-3 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between gap-3">
             <div className="flex min-w-0 items-center gap-3">
               <button
                 type="button"
                 onClick={() => setMobileNavOpen(true)}
-                className="rounded-xl border border-white/10 bg-white/[0.03] p-2 text-slate-300 transition hover:bg-white/[0.08] lg:hidden"
+                className="rounded-lg p-2 text-gray-600 transition hover:bg-gray-100 lg:hidden"
                 aria-label="Open navigation"
               >
                 <Menu size={19} />
               </button>
               <div className="hidden min-w-0 sm:block">
-                <p className="text-[10px] font-bold uppercase tracking-[0.17em] text-[#f28c5e]">Kraviona admin</p>
-                <h1 className="truncate text-sm font-bold text-white">{pageName(pathname)}</h1>
+                <p className="text-[10px] font-bold uppercase tracking-[0.17em] text-blue-600">Kraviona admin</p>
+                <h1 className="truncate text-sm font-semibold text-gray-900">{pageName(pathname)}</h1>
               </div>
             </div>
 
@@ -133,7 +133,7 @@ export default function Frame({ children }) {
                 onFocus={() => setSearchOpen(true)}
                 onChange={(event) => { setSearch(event.target.value); setSearchOpen(true); }}
                 placeholder="Search pages, content, actions..."
-                className="w-full rounded-xl border border-white/10 bg-white/[0.04] py-2.5 pl-10 pr-16 text-sm text-slate-100 outline-none transition placeholder:text-slate-500 focus:border-[#f28c5e]/60 focus:bg-white/[0.06] focus:ring-4 focus:ring-[#f28c5e]/10"
+                className="w-full rounded-lg border border-gray-200 bg-white py-2.5 pl-10 pr-16 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
               />
               <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 rounded-md border border-white/10 bg-white/[0.06] px-1.5 py-0.5 text-[10px] font-semibold text-slate-400">
                 ⌘ K
@@ -142,7 +142,7 @@ export default function Frame({ children }) {
             </div>
 
             <div className="flex items-center gap-2 sm:gap-3">
-              <Link href="/blog/new" className="hidden items-center gap-2 rounded-xl bg-[#b84a1a] px-3.5 py-2.5 text-sm font-bold text-white shadow-lg shadow-[#e8622a]/15 transition hover:bg-[#e8622a] sm:flex">
+              <Link href="/blog/new" className="hidden items-center gap-2 rounded-lg bg-blue-600 px-3.5 py-2.5 text-sm font-medium text-white transition hover:bg-blue-700 sm:flex">
                 <FilePlus2 size={16} />
                 New post
               </Link>
@@ -150,18 +150,18 @@ export default function Frame({ children }) {
                 <button
                   type="button"
                   onClick={() => setNotificationsOpen((open) => !open)}
-                  className="relative rounded-xl border border-white/10 bg-white/[0.04] p-2.5 text-slate-300 transition hover:border-[#f28c5e]/40 hover:bg-white/[0.08] hover:text-[#f28c5e]"
+                  className="relative rounded-lg p-2.5 text-gray-600 transition hover:bg-gray-100 hover:text-blue-600"
                   aria-label="Open notifications"
                   aria-expanded={notificationsOpen}
                 >
                   <Bell size={18} />
-                  {alertCount > 0 && <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-[#b84a1a] px-1 text-[10px] font-bold text-white">{alertCount > 9 ? "9+" : alertCount}</span>}
+                  {alertCount > 0 && <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-blue-600 px-1 text-[10px] font-bold text-white">{alertCount > 9 ? "9+" : alertCount}</span>}
                 </button>
                 {notificationsOpen && <NotificationMenu unreadMessages={unreadMessages} newLeads={newLeads} onClose={() => setNotificationsOpen(false)} />}
               </div>
-              <div className="hidden items-center gap-2 border-l border-white/10 pl-3 sm:flex">
-                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-[#f28c5e] to-[#e8622a] text-xs font-black text-[#1a2e33]">AA</span>
-                <span className="hidden text-sm font-bold text-slate-200 xl:block">Amar Admin</span>
+              <div className="hidden items-center gap-2 border-l border-gray-200 pl-3 sm:flex">
+                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-blue-600 text-xs font-bold text-white">AA</span>
+                <span className="hidden text-sm font-medium text-gray-700 xl:block">Amar Admin</span>
               </div>
             </div>
           </div>

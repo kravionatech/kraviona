@@ -17,7 +17,6 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import React, { useCallback, useEffect, useState } from "react";
-import Swal from "sweetalert2";
 
 const StatusBadge = ({ status }) => {
   const styles = {
@@ -58,6 +57,7 @@ const BlogPage = () => {
   const [deletingId, setDeletingId] = useState(null);
   const [searchInput, setSearchInput] = useState("");
   const [search, setSearch] = useState("");
+  const [status, setStatus] = useState("all");
   const [page, setPage] = useState(1);
   const [pagination, setPagination] = useState({
     totalPosts: 0,
@@ -88,6 +88,7 @@ const BlogPage = () => {
         limit: "20",
       });
       if (search.trim()) params.set("search", search.trim());
+      if (status !== "all") params.set("status", status);
 
       const data = await apiRequest(
         `/private/posts?${params.toString()}`,
@@ -119,19 +120,10 @@ const BlogPage = () => {
       clearTimeout(timeout);
       if (!signal?.aborted) setLoading(false);
     }
-  }, [page, search]);
+  }, [page, search, status]);
 
   const handleDeletePost = async (id) => {
-    const confirm = await Swal.fire({
-      title: "Delete this post?",
-      text: "This action cannot be undone.",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonText: "Delete",
-      cancelButtonText: "Cancel",
-      confirmButtonColor: "#EF4444",
-    });
-    if (!confirm.isConfirmed) return;
+    if (!window.confirm("Delete this post? This action cannot be undone.")) return;
 
     try {
       setDeletingId(id);
@@ -144,9 +136,8 @@ const BlogPage = () => {
       } else {
         await fetchPosts();
       }
-      Swal.fire({ title: "Deleted", text: data.message, icon: "success" });
     } catch (error) {
-      Swal.fire({ title: "Error", text: error.message, icon: "error" });
+      setError(error.message);
     } finally {
       setDeletingId(null);
     }
@@ -305,6 +296,20 @@ const BlogPage = () => {
               className="w-full pl-9 pr-4 py-2 text-sm bg-gray-50 border border-gray-200 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition"
             />
           </div>
+          <div className="flex items-center gap-1 rounded-lg bg-gray-100 p-1">
+            {["all", "published", "draft"].map((item) => (
+              <button
+                key={item}
+                type="button"
+                onClick={() => { setPage(1); setStatus(item); }}
+                className={`rounded-md px-3 py-1.5 text-xs font-medium capitalize transition ${
+                  status === item ? "bg-blue-600 text-white shadow-sm" : "text-gray-600 hover:bg-white"
+                }`}
+              >
+                {item}
+              </button>
+            ))}
+          </div>
           {search && (
             <span className="text-xs text-gray-400">
               {pagination.totalPosts} result
@@ -318,7 +323,7 @@ const BlogPage = () => {
           <table className="w-full text-left whitespace-nowrap">
             <thead>
               <tr className="bg-[#1A2B3C] text-white text-xs font-semibold uppercase tracking-wider">
-                <th className="px-6 py-4 w-16 text-center">#</th>
+                <th className="px-6 py-4">Thumbnail</th>
                 <th className="px-6 py-4">Title</th>
                 <th className="px-6 py-4">Author</th>
                 <th className="px-6 py-4">Status</th>
@@ -328,20 +333,17 @@ const BlogPage = () => {
             </thead>
             <tbody className="divide-y divide-gray-50">
               {filtered.length > 0 ? (
-                filtered.map((post, index) => (
+                filtered.map((post) => (
                   <tr
                     key={post._id}
                     className="group hover:bg-orange-50/40 transition-colors duration-150 relative"
                   >
-                    {/* Accent stripe on hover */}
-                    <td className="px-6 py-4 text-center text-gray-400 text-sm">
-                      <span className="font-mono">
-                        {String(
-                          (pagination.currentPage - 1) * pagination.limit +
-                            index +
-                            1,
-                        ).padStart(2, "0")}
-                      </span>
+                    <td className="px-6 py-4">
+                      {post.featuredImage?.url ? (
+                        <img src={post.featuredImage.url} alt="" className="h-10 w-[60px] rounded object-cover" />
+                      ) : (
+                        <span className="flex h-10 w-[60px] items-center justify-center rounded bg-gray-100 text-xs text-gray-400">No image</span>
+                      )}
                     </td>
 
                     <td className="px-6 py-4">
@@ -352,6 +354,9 @@ const BlogPage = () => {
                         <span className="text-xs text-gray-400 font-mono">
                           /{post.slug}
                         </span>
+                      )}
+                      {post.excerpt && (
+                        <span className="mt-1 block max-w-xs truncate text-xs text-gray-500">{post.excerpt}</span>
                       )}
                     </td>
 

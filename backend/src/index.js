@@ -3,7 +3,7 @@ import config from "./config/config.js";
 import connectDB from "./config/db.js";
 import mongoose from "mongoose";
 import os from "os";
-import {v2 as cloudinary} from "cloudinary"
+import "./config/cloudinary.js";
 
 const startServer = async () => {
   try {
@@ -33,12 +33,5 @@ const startServer = async () => {
     process.exit(1);
   }
 };
-
-// cloudinary config
-cloudinary.config({ 
-  cloud_name: config.CLOUDINARY_CLOUD_NAME, 
-  api_key: config.CLOUDINARY_API_KEY, 
-  api_secret: config.CLOUDINARY_API_SECRET
-});
 
 startServer();

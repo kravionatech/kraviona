@@ -39,6 +39,29 @@ const normalizeStringArray = (arr) =>
     ? arr.map((item) => String(item).toLowerCase().trim()).filter(Boolean)
     : [];
 
+// Multipart requests deliver nested values as strings. Normalize only the
+// featured image payload here, then let the existing controller validation
+// and document mapping keep handling the same `featuredImage.url` field.
+const applyUploadedFeaturedImage = (req) => {
+  let featuredImage = req.body?.featuredImage;
+
+  if (typeof featuredImage === "string") {
+    try {
+      featuredImage = JSON.parse(featuredImage);
+    } catch {
+      // Preserve the existing validation response for malformed JSON payloads.
+      return;
+    }
+  }
+
+  if (!req.file?.path && !featuredImage) return;
+
+  req.body.featuredImage = {
+    ...(featuredImage && typeof featuredImage === "object" ? featuredImage : {}),
+    ...(req.file?.path ? { url: req.file.path } : {}),
+  };
+};
+
 // Centralized error handling so Mongoose validation errors and duplicate-key
 // errors come back as proper 400/409s instead of being flattened into a
 // generic 500 — the original returned 500 for every single failure mode,
@@ -124,6 +147,7 @@ const publicPostFilter = () => ({
 // ==========================================
 export const createPost = async (req, res) => {
   try {
+    applyUploadedFeaturedImage(req);
     const user = req.user;
 
     if (!user) {
@@ -559,6 +583,7 @@ export const deletePost = async (req, res) => {
 // pre('save') hook.
 export const updatePost = async (req, res) => {
   try {
+    applyUploadedFeaturedImage(req);
     await publishDueScheduledPosts();
 
     const user = req.user;
