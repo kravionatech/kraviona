@@ -307,3 +307,58 @@ body {
 .ProseMirror ul[data-type="taskList"] li > div {
   flex: 1 1 auto;
 }
+
+/* The app does not use Tailwind's typography plugin, so define the editor's
+   document styles explicitly. This keeps headings and inline formatting
+   visually distinct while preserving the semantic HTML saved by Tiptap. */
+.tiptap-editor .ProseMirror {
+  font-size: 1rem;
+  line-height: 1.75;
+}
+
+.tiptap-editor .ProseMirror > * + * {
+  margin-top: 1rem;
+}
+
+.tiptap-editor .ProseMirror h1,
+.tiptap-editor .ProseMirror h2,
+.tiptap-editor .ProseMirror h3 {
+  color: #f8fafc;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+}
+
+.tiptap-editor .ProseMirror h1 {
+  font-size: 2rem;
+}
+
+.tiptap-editor .ProseMirror h2 {
+  font-size: 1.5rem;
+}
+
+.tiptap-editor .ProseMirror h3 {
+  font-size: 1.25rem;
+}
+
+.tiptap-editor .ProseMirror strong {
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.tiptap-editor .ProseMirror em {
+  font-style: italic;
+}
+
+.tiptap-editor .ProseMirror ul,
+.tiptap-editor .ProseMirror ol {
+  padding-left: 1.5rem;
+}
+
+.tiptap-editor .ProseMirror ul {
+  list-style: disc;
+}
+
+.tiptap-editor .ProseMirror ol {
+  list-style: decimal;
+}

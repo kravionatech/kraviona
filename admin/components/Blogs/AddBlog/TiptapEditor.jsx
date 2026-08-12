@@ -110,9 +110,41 @@ export default function TiptapEditor({ value = "", onChange }) {
     </ToolbarButton>
   );
 
+  const blockType = editor.isActive("heading", { level: 1 })
+    ? "heading-1"
+    : editor.isActive("heading", { level: 2 })
+      ? "heading-2"
+      : editor.isActive("heading", { level: 3 })
+        ? "heading-3"
+        : "paragraph";
+
+  const setBlockType = (event) => {
+    const { value: nextBlockType } = event.target;
+    const chain = editor.chain().focus();
+
+    if (nextBlockType === "paragraph") {
+      chain.setParagraph().run();
+      return;
+    }
+
+    chain.toggleHeading({ level: Number(nextBlockType.at(-1)) }).run();
+  };
+
   return (
-    <div className="overflow-hidden rounded-lg">
+    <div className="tiptap-editor overflow-hidden rounded-lg">
       <div className="sticky top-0 z-10 flex flex-wrap gap-1 rounded-t-lg border border-gray-200 bg-white p-2">
+        <select
+          aria-label="Text style"
+          className="h-8 rounded border border-gray-200 bg-white px-2 text-xs font-semibold text-gray-700 outline-none focus:border-blue-500"
+          onChange={setBlockType}
+          value={blockType}
+        >
+          <option value="paragraph">Paragraph</option>
+          <option value="heading-1">Heading 1</option>
+          <option value="heading-2">Heading 2</option>
+          <option value="heading-3">Heading 3</option>
+        </select>
+        <Divider />
         {button("Bold", Bold, () => editor.chain().focus().toggleBold().run(), editor.isActive("bold"))}
         {button("Italic", Italic, () => editor.chain().focus().toggleItalic().run(), editor.isActive("italic"))}
         {button("Underline", UnderlineIcon, () => editor.chain().focus().toggleUnderline().run(), editor.isActive("underline"))}
