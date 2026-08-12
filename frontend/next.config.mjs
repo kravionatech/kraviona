@@ -86,8 +86,12 @@ const nextConfig = {
         ],
       },
       {
-        source: "/((?!api|_next/static|_next/image|favicon.ico).*)",
+        source: "/((?!api|_next/static|_next/image|favicon.ico|blog/).*)",
         headers: [
+          {
+            key: "Cache-Control",
+            value: "public, s-maxage=1800, stale-while-revalidate=3600",
+          },
           { key: "X-Content-Type-Options", value: "nosniff" },
           { key: "X-Frame-Options", value: "SAMEORIGIN" },
           { key: "X-Robots-Tag", value: "index, follow" },

@@ -1,5 +1,10 @@
 import { NextResponse } from "next/server";
 
+const BOT_BLOCKLIST = [
+  "bytespider", "petalbot", "mj12bot", "ahrefsbot",
+  "semrushbot", "ccbot", "gptbot", "dotbot", "dataforseobot",
+];
+
 const CANONICAL_HOST = "kraviona.com";
 const WWW_HOST = "www.kraviona.com";
 const SESSION_QUERY_PARAMETERS = new Set([
@@ -28,6 +33,24 @@ const isSessionQueryParameter = (key) => {
 
 export function proxy(request) {
   const url = request.nextUrl;
+  const excludedBotCheckPaths = [
+    "/_next/",
+    "/api/",
+    "/favicon.ico",
+    "/robots.txt",
+    "/sitemap.xml",
+  ];
+  const shouldSkipBotCheck = excludedBotCheckPaths.some((path) =>
+    url.pathname.startsWith(path),
+  );
+
+  if (!shouldSkipBotCheck) {
+    const userAgent = (request.headers.get("user-agent") || "").toLowerCase();
+    if (BOT_BLOCKLIST.some((bot) => userAgent.includes(bot))) {
+      return new NextResponse("Forbidden", { status: 403 });
+    }
+  }
+
   const host = (
     request.headers.get("x-forwarded-host") || request.headers.get("host") || ""
   )
@@ -70,7 +93,5 @@ export function proxy(request) {
 }
 
 export const config = {
-  // Canonicalization must also cover metadata files and static assets. Otherwise
-  // crawlers can still fetch www versions of sitemap.xml, robots.txt, or images.
-  matcher: "/:path*",
+  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
 };
