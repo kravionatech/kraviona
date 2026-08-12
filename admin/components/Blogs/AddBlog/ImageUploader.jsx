@@ -7,7 +7,7 @@ import { apiUrl } from "@/components/api";
 const ACCEPTED_TYPES = ["image/jpeg", "image/png", "image/webp"];
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
 
-export default function ImageUploader({ value = "", onChange }) {
+export default function ImageUploader({ value = "", onChange, imageLabel = "Image" }) {
   const inputRef = useRef(null);
   const lastFileRef = useRef(null);
   const [dragging, setDragging] = useState(false);
@@ -69,12 +69,12 @@ export default function ImageUploader({ value = "", onChange }) {
   if (value) {
     return (
       <div className="relative overflow-hidden rounded-lg border border-gray-200 bg-gray-50">
-        <img src={value} alt="Featured image preview" className="aspect-video w-full object-cover" />
+        <img src={value} alt={`${imageLabel} preview`} className="aspect-video w-full object-cover" />
         <button
           type="button"
           onClick={() => onChange("")}
           className="absolute right-2 top-2 rounded-full bg-red-600 p-1.5 text-white shadow-sm transition hover:bg-red-700"
-          aria-label="Remove featured image"
+          aria-label={`Remove ${imageLabel.toLowerCase()}`}
         >
           <X size={15} />
         </button>
@@ -114,7 +114,7 @@ export default function ImageUploader({ value = "", onChange }) {
           }}
         />
         {uploading ? <Loader2 className="mx-auto animate-spin text-blue-600" size={28} /> : <UploadCloud className="mx-auto text-blue-600" size={28} />}
-        <p className="mt-3 text-sm font-medium text-gray-800">Drop image here or click to upload</p>
+        <p className="mt-3 text-sm font-medium text-gray-800">Drop {imageLabel.toLowerCase()} here or click to upload</p>
         <p className="mt-1 text-xs text-gray-500">JPG, PNG, or WebP · maximum 5MB</p>
       </div>
 

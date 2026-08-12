@@ -189,6 +189,7 @@ export const createPost = async (req, res) => {
       supportingTopicClusters,
       tags,
       featuredImage,
+      bannerImage,
       gallery,
       videoEmbedded,
       metaTitle,
@@ -289,6 +290,7 @@ export const createPost = async (req, res) => {
       supportingTopicClusters: Array.isArray(supportingTopicClusters) ? supportingTopicClusters : [],
       tags: normalizedTags,
       featuredImage,
+      ...(bannerImage?.url && { bannerImage }),
       gallery: Array.isArray(gallery) ? gallery : [],
       videoEmbedded,
       metaTitle: metaTitle?.trim(), // falls back to the schema default (title) if omitted
@@ -617,6 +619,7 @@ export const updatePost = async (req, res) => {
       supportingTopicClusters,
       tags,
       featuredImage,
+      bannerImage,
       gallery,
       videoEmbedded,
       metaTitle,
@@ -697,6 +700,9 @@ export const updatePost = async (req, res) => {
     // { featuredImage: { altText: "new" } } doesn't wipe out url/width/height.
     if (featuredImage !== undefined) {
       post.featuredImage = { ...post.featuredImage?.toObject?.(), ...featuredImage };
+    }
+    if (bannerImage !== undefined) {
+      post.bannerImage = bannerImage?.url ? bannerImage : undefined;
     }
     if (gallery !== undefined) post.gallery = gallery;
     if (videoEmbedded !== undefined) {

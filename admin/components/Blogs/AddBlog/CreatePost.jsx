@@ -712,6 +712,58 @@ const BlogDetailsTab = ({ data, setData, errors, slugManuallyEditedRef }) => {
         </div>
       </div>
 
+      {/* ── Hero Banner ── */}
+      <div>
+        <SectionHeading
+          icon={Image}
+          description="Optional background image behind the title on the public blog details page"
+        >
+          Hero banner image
+        </SectionHeading>
+
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-5">
+          <div className="space-y-4 lg:col-span-3">
+            <Field
+              label="Upload hero banner image"
+              hint="Recommended: 1920×900px or wider. A dark overlay keeps the title readable."
+            >
+              <ImageUploader
+                imageLabel="Hero banner image"
+                value={data.bannerImage.url}
+                onChange={setNested("bannerImage", "url")}
+              />
+            </Field>
+            <Field label="Banner image alt text" hint="Describe the image for accessibility">
+              <Input
+                value={data.bannerImage.altText}
+                onChange={(event) => setNested("bannerImage", "altText")(event.target.value)}
+                placeholder="Describe the blog banner image"
+              />
+            </Field>
+          </div>
+
+          <div className="lg:col-span-2">
+            <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-gray-500">
+              Background preview
+            </p>
+            <div className="relative flex aspect-video items-end overflow-hidden rounded-xl border border-gray-200 bg-[#1A2E33] p-4">
+              {data.bannerImage.url && (
+                <img
+                  src={data.bannerImage.url}
+                  alt=""
+                  className="absolute inset-0 h-full w-full object-cover opacity-70"
+                />
+              )}
+              <div className="absolute inset-0 bg-[#1A2E33]/50" />
+              <p className="relative z-10 text-sm font-bold text-white">Your blog title appears here</p>
+            </div>
+            <p className="mt-2 text-center text-xs text-gray-400">
+              If left empty, the current gradient background is used.
+            </p>
+          </div>
+        </div>
+      </div>
+
       {/* ── Video ── */}
       <div>
         <SectionHeading icon={Video}>Video (optional)</SectionHeading>
@@ -1346,6 +1398,11 @@ const INITIAL = {
     height: undefined,
     sizeInBytes: undefined,
   },
+  // Optional public blog hero background
+  bannerImage: {
+    url: "",
+    altText: "",
+  },
   // Video
   videoEmbedded: {
     hasVideo: false,
@@ -1405,6 +1462,7 @@ const getInitialData = () => ({
   relatedPosts: [],
   tags: [],
   featuredImage: { ...INITIAL.featuredImage },
+  bannerImage: { ...INITIAL.bannerImage },
   videoEmbedded: { ...INITIAL.videoEmbedded },
 });
 
@@ -1430,6 +1488,10 @@ const normalizePostForForm = (post) => ({
   featuredImage: {
     ...INITIAL.featuredImage,
     ...(post.featuredImage || {}),
+  },
+  bannerImage: {
+    ...INITIAL.bannerImage,
+    ...(post.bannerImage || {}),
   },
   videoEmbedded: {
     ...INITIAL.videoEmbedded,
@@ -1552,6 +1614,12 @@ const buildPayload = (data, status) => ({
       sizeInBytes: data.featuredImage.sizeInBytes,
     }),
   },
+  bannerImage: data.bannerImage.url.trim()
+    ? {
+        url: data.bannerImage.url.trim(),
+        altText: data.bannerImage.altText.trim(),
+      }
+    : null,
   videoEmbedded: data.videoEmbedded,
   metaTitle: data.metaTitle.trim(),
   metaDescription: data.metaDescription.trim(),

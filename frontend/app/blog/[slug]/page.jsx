@@ -296,6 +296,12 @@ const BlogDetail = async ({ params }) => {
 
   const featuredImageUrl = getImageUrl(blog);
   const featuredImageAlt = getImageAlt(blog);
+  const bannerImageUrl =
+    typeof blog.bannerImage === "string"
+      ? blog.bannerImage
+      : blog.bannerImage?.url || "";
+  const bannerImageAlt =
+    typeof blog.bannerImage === "object" ? blog.bannerImage?.altText || "" : "";
   const relatedPosts = allPosts
     .filter(
       (post) =>
@@ -555,6 +561,20 @@ const BlogDetail = async ({ params }) => {
 
       {/* ─── Article Header ───────────────────────────────────────────── */}
       <section className="relative overflow-hidden bg-gradient-to-br from-[#1A2E33] via-[#2A4A52] to-[#1A2E33] px-4 pb-24 pt-40 sm:px-6 lg:px-8">
+        {bannerImageUrl && (
+          <>
+            <Image
+              src={bannerImageUrl}
+              alt={bannerImageAlt}
+              fill
+              priority
+              sizes="100vw"
+              quality={85}
+              className="object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-br from-[#10272c]/90 via-[#1A2E33]/80 to-[#10272c]/90" />
+          </>
+        )}
         <div className="absolute inset-0 bg-[url('/noise.svg')] opacity-[0.03]" />
         <div className="relative z-10 mx-auto max-w-6xl">
           <nav
@@ -632,8 +652,6 @@ const BlogDetail = async ({ params }) => {
                     src={featuredImageUrl}
                     alt={featuredImageAlt}
                     fill
-                    priority
-                    fetchPriority="high"
                     quality={90}
                     sizes="(max-width: 768px) 100vw, 800px"
                     className="object-contain"

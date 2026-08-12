@@ -18,6 +18,14 @@ const featuredImageSchema = new Schema(
   { _id: false }
 );
 
+const bannerImageSchema = new Schema(
+  {
+    url:     { type: String, trim: true },
+    altText: { type: String, trim: true },
+  },
+  { _id: false }
+);
+
 const galleryItemSchema = new Schema(
   {
     url:     { type: String, trim: true },
@@ -234,6 +242,8 @@ const postSchema = new Schema(
     // 4. MEDIA
     // ----------------------------------------------------------
     featuredImage: { type: featuredImageSchema, required: true },
+    // Optional hero background for the public blog detail page.
+    bannerImage:   { type: bannerImageSchema, default: undefined },
     gallery:       { type: [galleryItemSchema], default: [] },
     videoEmbedded: { type: videoEmbeddedSchema, default: () => ({}) },
 
