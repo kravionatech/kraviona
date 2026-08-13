@@ -4,6 +4,7 @@ import Frame from "@/components/Frame/Frame";
 import { apiRequest, formatDate } from "@/components/api";
 import {
   Edit3,
+  CreditCard,
   Loader2,
   Plus,
   RefreshCw,
@@ -17,6 +18,7 @@ import {
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Pagination from "@/components/Pagination";
 import AvatarPicker from "@/components/AvatarPicker";
+import CompanyIdCard from "@/components/CompanyIdCard";
 import Swal from "sweetalert2";
 
 const ROLES = ["super_admin", "admin", "editor", "viewer", "user"];
@@ -305,6 +307,7 @@ export default function UsersPage() {
   const [editingUser, setEditingUser] = useState(null);
   const [form, setForm] = useState(EMPTY_USER);
   const [modalOpen, setModalOpen] = useState(false);
+  const [idCardUser, setIdCardUser] = useState(null);
   const [page, setPage] = useState(1);
 
   const countMap = useMemo(
@@ -623,6 +626,15 @@ export default function UsersPage() {
                         <div className="flex justify-end gap-2">
                           <button
                             type="button"
+                            onClick={() => setIdCardUser(user)}
+                            className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-[#0f5960]/20 bg-[#e7f1f0] text-[#0f5960] transition hover:bg-[#0f5960] hover:text-white"
+                            aria-label="View company ID card"
+                            title="Company ID card"
+                          >
+                            <CreditCard size={15} />
+                          </button>
+                          <button
+                            type="button"
                             onClick={() => openEdit(user)}
                             className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 text-slate-600 transition hover:bg-slate-50"
                             aria-label="Edit user"
@@ -669,6 +681,7 @@ export default function UsersPage() {
             onSubmit={submitUser}
           />
         )}
+        <CompanyIdCard open={Boolean(idCardUser)} onClose={() => setIdCardUser(null)} user={idCardUser} teamMember={idCardUser?.teamMember || null} />
       </div>
     </Frame>
   );

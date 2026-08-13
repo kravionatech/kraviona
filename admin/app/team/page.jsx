@@ -4,6 +4,7 @@ import Frame from "@/components/Frame/Frame";
 import { apiRequest, formatDate } from "@/components/api";
 import {
   Briefcase,
+  CreditCard,
   Edit3,
   Loader2,
   Plus,
@@ -18,8 +19,10 @@ import {
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Pagination from "@/components/Pagination";
 import AvatarPicker from "@/components/AvatarPicker";
+import CompanyIdCard from "@/components/CompanyIdCard";
 
 const STATUS_OPTIONS = ["all", "active", "inactive"];
+const USER_ROLES = ["super_admin", "admin", "editor", "viewer", "user"];
 
 const EMPTY_MEMBER = {
   name: "",
@@ -33,6 +36,8 @@ const EMPTY_MEMBER = {
   order: 0,
   isFeatured: false,
   status: "active",
+  userID: "",
+  role: "",
 };
 
 function initials(name = "") {
@@ -73,6 +78,8 @@ function buildMemberForm(member = {}) {
     order: member.order || 0,
     isFeatured: member.isFeatured || false,
     status: member.status || "active",
+    userID: member.userID?._id || member.userID || "",
+    role: member.userID?.role || "",
   };
 }
 
@@ -146,7 +153,7 @@ function FeaturedToggle({ checked, onChange }) {
   );
 }
 
-function TeamModal({ form, isEditing, saving, onChange, onClose, onSubmit }) {
+function TeamModal({ form, accounts, isEditing, saving, onChange, onClose, onSubmit }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/45 p-4">
       <div className="flex max-h-[90vh] w-full max-w-4xl flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl">
@@ -208,6 +215,20 @@ function TeamModal({ form, isEditing, saving, onChange, onClose, onSubmit }) {
                 onChange={(event) => onChange("department", event.target.value)}
                 placeholder="Engineering"
               />
+            </Field>
+            <Field label="Linked user account">
+              <Select value={form.userID} onChange={(event) => { const account = accounts.find((item) => item._id === event.target.value); onChange("userID", event.target.value); onChange("role", account?.role || ""); }}>
+                <option value="">No linked user account</option>
+                {accounts.map((account) => <option key={account._id} value={account._id}>{account.name} · {account.email} ({account.role.replace("_", " ")})</option>)}
+              </Select>
+              <p className="mt-1.5 text-xs text-slate-500">Link a user to verify their Kraviona Team ID.</p>
+            </Field>
+            <Field label="Linked account role">
+              <Select disabled={!form.userID} value={form.role} onChange={(event) => onChange("role", event.target.value)}>
+                <option value="">Select role</option>
+                {USER_ROLES.map((role) => <option key={role} value={role}>{role.replace("_", " ")}</option>)}
+              </Select>
+              <p className="mt-1.5 text-xs text-slate-500">Saving this form updates the linked account role.</p>
             </Field>
             <Field label="Display order">
               <Input
@@ -280,6 +301,7 @@ function TeamModal({ form, isEditing, saving, onChange, onClose, onSubmit }) {
 
 export default function TeamPage() {
   const [members, setMembers] = useState([]);
+  const [accounts, setAccounts] = useState([]);
   const [counts, setCounts] = useState([]);
   const [pagination, setPagination] = useState({ total: 0 });
   const [search, setSearch] = useState("");
@@ -290,6 +312,7 @@ export default function TeamPage() {
   const [editingMember, setEditingMember] = useState(null);
   const [form, setForm] = useState(EMPTY_MEMBER);
   const [modalOpen, setModalOpen] = useState(false);
+  const [idCardMember, setIdCardMember] = useState(null);
   const [page, setPage] = useState(1);
 
   const countMap = useMemo(
@@ -314,8 +337,12 @@ export default function TeamPage() {
       if (search.trim()) params.set("search", search.trim());
       if (status !== "all") params.set("status", status);
 
-      const response = await apiRequest(`/team?${params.toString()}`);
+      const [response, accountsResponse] = await Promise.all([
+        apiRequest(`/team?${params.toString()}`),
+        apiRequest("/users?limit=50"),
+      ]);
       setMembers(Array.isArray(response.data) ? response.data : []);
+      setAccounts(Array.isArray(accountsResponse.data) ? accountsResponse.data : []);
       setCounts(Array.isArray(response.counts) ? response.counts : []);
       setPagination(response.pagination || { total: 0 });
     } catch (err) {
@@ -367,6 +394,8 @@ export default function TeamPage() {
     order: Number(form.order || 0),
     isFeatured: form.isFeatured,
     status: form.status,
+    userID: form.userID,
+    role: form.role,
   });
 
   const submitMember = async (event) => {
@@ -540,6 +569,9 @@ export default function TeamPage() {
                       Status
                     </th>
                     <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider text-slate-500">
+                      Account ID
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider text-slate-500">
                       Created
                     </th>
                     <th className="px-4 py-3 text-right text-xs font-bold uppercase tracking-wider text-slate-500">
@@ -603,11 +635,15 @@ export default function TeamPage() {
                           {member.status}
                         </span>
                       </td>
+                      <td className="px-4 py-4">
+                        {member.userID ? <div className="space-y-1"><span className="inline-flex rounded-full bg-[#e7f1f0] px-2 py-1 text-[11px] font-bold capitalize text-[#0a454b]">{member.userID.role?.replace("_", " ")}</span><p className={`text-xs font-semibold ${member.userID.isVerified ? "text-emerald-600" : "text-amber-600"}`}>{member.userID.isVerified ? "Verified account" : "Unverified account"}</p></div> : <span className="text-xs font-semibold text-amber-700">Not linked</span>}
+                      </td>
                       <td className="px-4 py-4 text-sm text-slate-500">
                         {formatDate(member.createdAt)}
                       </td>
                       <td className="px-4 py-4">
                         <div className="flex justify-end gap-2">
+                          <button type="button" onClick={() => setIdCardMember(member)} className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-[#0f5960]/20 bg-[#e7f1f0] text-[#0f5960] transition hover:bg-[#0f5960] hover:text-white" aria-label="View company ID card" title="Company ID card"><CreditCard size={15}/></button>
                           <button
                             type="button"
                             onClick={() => openEdit(member)}
@@ -649,6 +685,7 @@ export default function TeamPage() {
         {modalOpen && (
           <TeamModal
             form={form}
+            accounts={accounts}
             isEditing={Boolean(editingMember)}
             saving={saving}
             onChange={changeForm}
@@ -656,6 +693,7 @@ export default function TeamPage() {
             onSubmit={submitMember}
           />
         )}
+        <CompanyIdCard open={Boolean(idCardMember)} onClose={() => setIdCardMember(null)} user={idCardMember?.userID || null} teamMember={idCardMember} />
       </div>
     </Frame>
   );

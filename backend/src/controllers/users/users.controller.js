@@ -1,5 +1,6 @@
 import bcrypt from "bcryptjs";
 import { Auth } from "../../models/auth/auth.models.js";
+import { TeamMemberModel } from "../../models/team/team.model.js";
 
 const USER_ROLES = ["super_admin", "admin", "editor", "viewer", "user"];
 const MANAGER_ROLES = ["super_admin"];
@@ -110,10 +111,15 @@ export const getAllUsers = async (req, res) => {
       ]),
     ]);
 
+    const teamMembers = await TeamMemberModel.find({ userID: { $in: users.map((item) => item._id) } })
+      .select("name designation department avatar status userID")
+      .lean();
+    const teamMemberByUser = new Map(teamMembers.map((item) => [String(item.userID), item]));
+
     return res.status(200).json({
       success: true,
       message: users.length ? "Users fetched successfully" : "No users found",
-      data: users,
+      data: users.map((item) => ({ ...item, teamMember: teamMemberByUser.get(String(item._id)) || null })),
       counts: roleCounts.map((item) => ({
         label: item._id || "unknown",
         value: item.count,

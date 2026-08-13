@@ -1,13 +1,18 @@
 import slugify from "slugify";
 import { TeamMemberModel } from "../../models/team/team.model.js";
+import { Auth } from "../../models/auth/auth.models.js";
 
 const MANAGER_ROLES = ["super_admin"];
 const TEAM_STATUSES = ["active", "inactive"];
+const USER_ROLES = ["super_admin", "admin", "editor", "viewer", "user"];
 
 const canManageTeam = (user) => user && MANAGER_ROLES.includes(user.role);
 const cleanText = (value) => String(value || "").trim();
 
 const handleTeamError = (error, res) => {
+  if (error.status) {
+    return res.status(error.status).json({ success: false, message: error.message });
+  }
   if (error.name === "ValidationError") {
     const errors = Object.values(error.errors).map((err) => err.message);
     return res.status(400).json({
@@ -56,11 +61,39 @@ const buildTeamPayload = (body) => ({
   avatar: cleanText(body.avatar),
   skills: normalizeArray(body.skills),
   socialLinks: normalizeSocialLinks(body.socialLinks),
-  userID: body.userID || undefined,
+  userID: body.userID === "" ? null : body.userID || undefined,
+  role: body.role || undefined,
   order: Number(body.order || 0),
   isFeatured: Boolean(body.isFeatured),
   status: TEAM_STATUSES.includes(body.status) ? body.status : "active",
 });
+
+const resolveLinkedAccount = async (userID, role) => {
+  if (!userID) return null;
+  let account;
+  try {
+    account = await Auth.findById(userID);
+  } catch {
+    const error = new Error("Choose a valid user account.");
+    error.status = 400;
+    throw error;
+  }
+  if (!account) {
+    const error = new Error("Linked user account was not found.");
+    error.status = 404;
+    throw error;
+  }
+  if (role && !USER_ROLES.includes(role)) {
+    const error = new Error("Invalid account role.");
+    error.status = 400;
+    throw error;
+  }
+  if (role && account.role !== role) {
+    account.role = role;
+    await account.save();
+  }
+  return account;
+};
 
 export const getAllTeamMembers = async (req, res) => {
   try {
@@ -94,7 +127,7 @@ export const getAllTeamMembers = async (req, res) => {
 
     const [members, total, statusCounts] = await Promise.all([
       TeamMemberModel.find(query)
-        .populate({ path: "userID", select: "name email role avatar isActive" })
+        .populate({ path: "userID", select: "name email role avatar isActive isVerified createdAt" })
         .sort({ order: 1, createdAt: -1 })
         .skip((currentPage - 1) * perPage)
         .limit(perPage)
@@ -161,7 +194,15 @@ export const createTeamMember = async (req, res) => {
       return res.status(403).json({ success: false, message: "Forbidden" });
     }
 
-    const member = await TeamMemberModel.create(buildTeamPayload(req.body));
+    const payload = buildTeamPayload(req.body);
+    const linkedAccount = await resolveLinkedAccount(payload.userID, payload.role);
+    delete payload.role;
+    if (linkedAccount) {
+      payload.userID = linkedAccount._id;
+      if (!payload.email) payload.email = linkedAccount.email;
+      if (!payload.avatar) payload.avatar = linkedAccount.avatar;
+    }
+    const member = await TeamMemberModel.create(payload);
 
     return res.status(201).json({
       success: true,
@@ -192,6 +233,14 @@ export const updateTeamMember = async (req, res) => {
     }
 
     const payload = buildTeamPayload(req.body);
+    const requestedUserID = payload.userID === undefined ? member.userID : payload.userID;
+    const linkedAccount = await resolveLinkedAccount(requestedUserID, payload.role);
+    delete payload.role;
+    if (linkedAccount) {
+      payload.userID = linkedAccount._id;
+      if (!payload.email) payload.email = linkedAccount.email;
+      if (!payload.avatar) payload.avatar = linkedAccount.avatar;
+    }
     Object.entries(payload).forEach(([key, value]) => {
       if (value !== undefined) member[key] = value;
     });
@@ -199,7 +248,7 @@ export const updateTeamMember = async (req, res) => {
     await member.save();
 
     const updatedMember = await TeamMemberModel.findById(member._id)
-      .populate({ path: "userID", select: "name email role avatar isActive" })
+      .populate({ path: "userID", select: "name email role avatar isActive isVerified createdAt" })
       .lean();
 
     return res.status(200).json({

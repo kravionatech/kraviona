@@ -149,6 +149,12 @@ body {
   display: none;
 }
 
+@media print {
+  body * { visibility: hidden !important; }
+  #kraviona-id-card-print, #kraviona-id-card-print * { visibility: visible !important; }
+  #kraviona-id-card-print { position: fixed; left: 50%; top: 50%; width: 86mm; transform: translate(-50%, -50%); box-shadow: none !important; }
+}
+
 /* The post editor is a focused workspace: keep its canvas bright even when
    older editor utilities use fixed legacy colours. */
 .admin-shell .post-editor-page {
