@@ -13,6 +13,7 @@ import {
   TrendingUp,
   CalendarClock,
   AlertCircle,
+  EyeOff,
   RefreshCw,
 } from "lucide-react";
 import Link from "next/link";
@@ -58,6 +59,7 @@ const BlogPage = () => {
   const [searchInput, setSearchInput] = useState("");
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("all");
+  const [indexability, setIndexability] = useState("all");
   const [page, setPage] = useState(1);
   const [pagination, setPagination] = useState({
     totalPosts: 0,
@@ -89,6 +91,7 @@ const BlogPage = () => {
       });
       if (search.trim()) params.set("search", search.trim());
       if (status !== "all") params.set("status", status);
+      if (indexability !== "all") params.set("indexability", indexability);
 
       const data = await apiRequest(
         `/private/posts?${params.toString()}`,
@@ -120,7 +123,7 @@ const BlogPage = () => {
       clearTimeout(timeout);
       if (!signal?.aborted) setLoading(false);
     }
-  }, [page, search, status]);
+  }, [indexability, page, search, status]);
 
   const handleDeletePost = async (id) => {
     if (!window.confirm("Delete this post? This action cannot be undone.")) return;
@@ -165,6 +168,7 @@ const BlogPage = () => {
   const publishedCount = pagination.statusCounts?.published || 0;
   const draftCount = pagination.statusCounts?.draft || 0;
   const scheduledCount = pagination.statusCounts?.scheduled || 0;
+  const noIndexCount = pagination.indexabilityCounts?.noIndex || 0;
 
   if (loading) {
     return (
@@ -296,6 +300,11 @@ const BlogPage = () => {
               className="w-full pl-9 pr-4 py-2 text-sm bg-gray-50 border border-gray-200 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition"
             />
           </div>
+          <div className="flex items-center gap-2 rounded-lg border border-rose-200 bg-white px-4 py-2.5 shadow-sm">
+            <EyeOff size={15} className="text-rose-500" />
+            <span className="text-sm font-semibold text-rose-700">{noIndexCount}</span>
+            <span className="text-xs text-gray-400">no index</span>
+          </div>
           <div className="grid w-full grid-cols-3 gap-1 rounded-lg bg-gray-100 p-1 md:flex md:w-auto">
             {["all", "published", "draft"].map((item) => (
               <button
@@ -310,6 +319,16 @@ const BlogPage = () => {
               </button>
             ))}
           </div>
+          <select
+            aria-label="Filter posts by search index status"
+            value={indexability}
+            onChange={(event) => { setPage(1); setIndexability(event.target.value); }}
+            className="h-9 w-full rounded-lg border border-gray-200 bg-white px-3 text-xs font-semibold text-gray-700 outline-none focus:border-orange-400 md:w-auto"
+          >
+            <option value="all">All index statuses</option>
+            <option value="noindex">No index only</option>
+            <option value="indexed">Indexed only</option>
+          </select>
           {search && (
             <span className="text-xs text-gray-400">
               {pagination.totalPosts} result
@@ -355,6 +374,10 @@ const BlogPage = () => {
                           /{post.slug}
                         </span>
                       )}
+                      <span className={`mt-1.5 inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide ${post.isNoIndex ? "bg-rose-50 text-rose-700" : "bg-emerald-50 text-emerald-700"}`}>
+                        {post.isNoIndex && <EyeOff size={11} />}
+                        {post.isNoIndex ? "No index" : "Indexed"}
+                      </span>
                       {post.excerpt && (
                         <span className="mt-1 block max-w-xs truncate text-xs text-gray-500">{post.excerpt}</span>
                       )}

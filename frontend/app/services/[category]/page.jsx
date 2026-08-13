@@ -39,8 +39,112 @@ import {
   SERVICE_LINKS,
   SERVICE_PAGES,
 } from "../serviceData.js";
+import { API_URL } from "@/utils/api";
 
-const getService = (slug) => SERVICE_PAGES[slug?.toLowerCase()?.trim()];
+const DEFAULT_TRUST_POINTS = [
+  { title: "Clear ownership", description: "You know what Kraviona is handling, what is needed from your side, and what gets delivered at each step." },
+  { title: "No vague handover", description: "The work is explained in plain language with setup notes, next actions, and practical guidance after launch." },
+  { title: "Built for progress", description: "Every task connects back to a real business goal such as leads, speed, ranking, sales, automation, or cleaner operations." },
+];
+const DEFAULT_SUCCESS_METRICS = [
+  "Clear scope and accountable milestones",
+  "Visible before-and-after improvements",
+  "Lead, sales, ranking, speed, or workflow metrics",
+  "Actionable reporting after implementation",
+];
+const DEFAULT_PROCESS_DESCRIPTIONS = [
+  "We identify the highest-impact gaps before making implementation decisions.",
+  "You get a practical scope with priorities, timeline, and next actions.",
+  "Kraviona implements the work, reviews the result, and improves the next cycle.",
+  "The process continues with measurement, reporting, and refinement.",
+];
+
+const mergeExpert = (overrides = {}) => {
+  const expert = { ...SERVICE_EXPERT };
+  Object.entries(overrides || {}).forEach(([key, value]) => {
+    if (Array.isArray(value) ? value.length : String(value || "").trim()) expert[key] = value;
+  });
+  expert.knowsAbout = expert.expertise?.length ? expert.expertise : expert.knowsAbout;
+  expert.phoneHref = expert.phoneHref || `tel:${String(expert.phone || "").replace(/\s+/g, "")}`;
+  return expert;
+};
+
+const normalizeService = (record, slug) => {
+  if (!record) return null;
+  const category = record.category || "General";
+  const defaults = CATEGORY_DETAILS[category] || {};
+  const name = record.title || record.name;
+  const outcomes = (record.outcomes?.length ? record.outcomes : record.features || []).map((item, index) => typeof item === "string"
+    ? { title: item, description: getOutcomeNote(item, { name, category }, index) }
+    : { title: item.title, description: item.description || getOutcomeNote(item.title, { name, category }, index) });
+  const process = (record.process?.length ? record.process : defaults.process || []).map((item, index) => typeof item === "string"
+    ? { title: item, description: DEFAULT_PROCESS_DESCRIPTIONS[index] || DEFAULT_PROCESS_DESCRIPTIONS[3] }
+    : { title: item.title, description: item.description || DEFAULT_PROCESS_DESCRIPTIONS[index] || DEFAULT_PROCESS_DESCRIPTIONS[3] });
+
+  return {
+    ...record,
+    slug: record.slug || slug,
+    name,
+    category,
+    hero: {
+      eyebrow: record.hero?.eyebrow || category,
+      title: record.hero?.title || name,
+      highlight: record.hero?.highlight || "Services",
+      description: record.hero?.description || record.description,
+    },
+    intro: record.intro || defaults.intro || record.description,
+    outcomes,
+    trustPoints: record.trustPoints?.length ? record.trustPoints : DEFAULT_TRUST_POINTS,
+    deliverables: record.deliverables?.length ? record.deliverables : defaults.deliverables || [],
+    idealFor: record.idealFor?.length ? record.idealFor : defaults.idealFor || [],
+    successMetrics: record.successMetrics?.length ? record.successMetrics : DEFAULT_SUCCESS_METRICS,
+    process,
+    techStack: record.techStack || [],
+    faqs: record.faqs || [],
+    cta: {
+      title: record.cta?.title || `Ready to start your ${name} project?`,
+      description: record.cta?.description || "Talk with Kraviona about your goals, current setup, and the most practical next step.",
+      label: record.cta?.label || "Discuss Your Project",
+      href: record.cta?.href || "/contact",
+    },
+    seo: record.seo || {},
+    expert: mergeExpert(record.expert),
+  };
+};
+
+const getService = async (slug) => {
+  const cleanSlug = slug?.toLowerCase()?.trim();
+  try {
+    const response = await fetch(`${API_URL}/services/${encodeURIComponent(cleanSlug)}`, { next: { revalidate: 60 }, headers: { Accept: "application/json" } });
+    if (response.ok) {
+      const json = await response.json();
+      if (json?.data) {
+        const legacy = SERVICE_PAGES[cleanSlug] || {};
+        return normalizeService({
+          ...legacy,
+          ...json.data,
+          outcomes: json.data.outcomes?.length ? json.data.outcomes : legacy.outcomes,
+        }, cleanSlug);
+      }
+    }
+  } catch {}
+  return normalizeService(SERVICE_PAGES[cleanSlug], cleanSlug);
+};
+
+const getServiceLinks = async () => {
+  try {
+    const response = await fetch(`${API_URL}/services`, { next: { revalidate: 60 }, headers: { Accept: "application/json" } });
+    if (response.ok) {
+      const json = await response.json();
+      if (json?.data?.length) {
+        const links = new Map(SERVICE_LINKS.map((item) => [item.href, item]));
+        json.data.forEach((item) => links.set(`/services/${item.slug}`, { name: item.title || item.name, href: `/services/${item.slug}`, category: item.category }));
+        return Array.from(links.values());
+      }
+    }
+  } catch {}
+  return SERVICE_LINKS;
+};
 const STATIC_SERVICE_SLUGS = new Set([
   "ai-automation",
   "api-development",
@@ -65,34 +169,34 @@ export function generateStaticParams() {
 
 // Every service slug comes from the local service catalogue. Treat any other
 // path as a genuine 404 instead of redirecting it to the service index.
-export const dynamicParams = false;
+export const dynamicParams = true;
 
 export async function generateMetadata({ params }) {
   const { category } = await params;
   const slug = category?.toLowerCase()?.trim();
-  const service = getService(slug);
+  const service = await getService(slug);
 
   if (!service) {
     notFound();
   }
 
   const pageUrl = canonicalUrl(`/services/${slug}`);
-  const metaDescription = `Expert ${service.name} services in Delhi NCR from Kraviona. ${service.description}`
+  const metaDescription = (service.seo?.metaDescription || `Expert ${service.name} services in Delhi NCR from Kraviona. ${service.description}`)
     .replace(/\s+/g, " ")
     .slice(0, 160);
 
   return {
-    title: `${service.name} Services in Delhi NCR`,
+    title: service.seo?.metaTitle || `${service.name} Services in Delhi NCR`,
     description: metaDescription,
-    keywords: [
+    keywords: service.seo?.keywords?.length ? service.seo.keywords : [
       service.name,
       `${service.name} India`,
       `${service.name} Services`,
       service.category,
       "Kraviona Tech Solutions",
     ],
-    authors: [{ name: SERVICE_EXPERT.name, url: SITE_URL }],
-    creator: SERVICE_EXPERT.name,
+    authors: [{ name: service.expert.name, url: SITE_URL }],
+    creator: service.expert.name,
     alternates: { canonical: pageUrl },
     openGraph: {
       title: `${service.name} Services | Kraviona`,
@@ -102,7 +206,7 @@ export async function generateMetadata({ params }) {
       locale: "en_IN",
       images: [
         {
-          url: "/og-web-development.jpg",
+          url: service.seo?.ogImage || "/og-web-development.jpg",
           width: 1200,
           height: 630,
           alt: `${service.name} by Kraviona`,
@@ -115,25 +219,25 @@ export async function generateMetadata({ params }) {
       creator: "@KravionaTech",
       title: `${service.name} Services | Kraviona`,
       description: service.description,
-      images: ["/og-web-development.jpg"],
+      images: [service.seo?.ogImage || "/og-web-development.jpg"],
     },
-    robots: defaultRobots,
+    robots: service.seo?.noIndex ? { index: false, follow: false } : defaultRobots,
   };
 }
 
 export default async function ServicesDetails({ params }) {
   const { category } = await params;
   const slug = category?.toLowerCase()?.trim();
-  const service = getService(slug);
+  const service = await getService(slug);
 
   if (!service) {
     notFound();
   }
 
   const pageUrl = canonicalUrl(`/services/${slug}`);
-  const details = CATEGORY_DETAILS[service.category];
-  const serviceFaqs = getServiceFaqs(service);
-  const relatedServices = SERVICE_LINKS.filter(
+  const serviceFaqs = service.faqs.length ? service.faqs : getServiceFaqs({ ...service, outcomes: service.outcomes.map((item) => item.title) });
+  const expert = service.expert;
+  const relatedServices = (await getServiceLinks()).filter(
     (item) => item.href !== `/services/${slug}` && item.category === service.category,
   ).slice(0, 4);
 
@@ -147,29 +251,29 @@ export default async function ServicesDetails({ params }) {
     "@context": "https://schema.org",
     "@type": "Person",
     "@id": `${SITE_URL}/about#amar-kumar`,
-    name: SERVICE_EXPERT.name,
-    jobTitle: SERVICE_EXPERT.jobTitle,
-    image: SERVICE_EXPERT.image,
-    email: SERVICE_EXPERT.email,
-    telephone: SERVICE_EXPERT.phone,
+    name: expert.name,
+    jobTitle: expert.jobTitle,
+    image: expert.image,
+    email: expert.email,
+    telephone: expert.phone,
     url: `${SITE_URL}/about`,
     sameAs: [
-      SERVICE_EXPERT.linkedin,
-      SERVICE_EXPERT.companyLinkedin,
-      SERVICE_EXPERT.twitter,
-      SERVICE_EXPERT.facebook,
-      SERVICE_EXPERT.website,
-    ],
+      expert.linkedin,
+      expert.companyLinkedin,
+      expert.twitter,
+      expert.facebook,
+      expert.website,
+    ].filter(Boolean),
     address: {
       "@type": "PostalAddress",
-      streetAddress: "East Delhi",
+      streetAddress: expert.address,
       addressLocality: "Delhi",
       addressRegion: "Delhi",
       postalCode: "110092",
       addressCountry: "IN",
     },
     worksFor: { "@id": "https://kraviona.com/#organization" },
-    knowsAbout: SERVICE_EXPERT.knowsAbout,
+    knowsAbout: expert.knowsAbout,
   };
 
   const breadcrumbJsonLd = buildBreadcrumbSchema([
@@ -192,33 +296,33 @@ export default async function ServicesDetails({ params }) {
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl">
             <p className="mb-5 text-xs font-black uppercase tracking-[0.22em] text-[#F28C5E]">
-              {service.category}
+              {service.hero.eyebrow}
             </p>
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-white leading-tight mb-6">
-              {service.name}{" "}
+              {service.hero.title}{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#F28C5E] to-[#E8622A]">
-                Services
+                {service.hero.highlight}
               </span>
             </h1>
             <p className="text-gray-300 text-lg md:text-xl max-w-3xl leading-relaxed mb-10">
-              {service.description}
+              {service.hero.description}
             </p>
             <div className="flex flex-col sm:flex-row gap-3">
               <Link
-                href="/contact"
+                href={service.cta.href}
                 className="inline-flex items-center justify-center px-7 py-4 bg-[#E8622A] text-white font-bold rounded-xl hover:bg-[#B84A1A] transition-colors"
               >
-                Discuss This Service
+                {service.cta.label}
               </Link>
               <a
-                href={SERVICE_EXPERT.phoneHref}
+                href={expert.phoneHref}
                 className="inline-flex items-center justify-center px-7 py-4 border border-white/20 text-white font-bold rounded-xl hover:bg-white/10 transition-colors"
               >
                 <Phone className="mr-2 h-4 w-4" />
-                Call {SERVICE_EXPERT.phone}
+                Call {expert.phone}
               </a>
               <a
-                href={SERVICE_EXPERT.whatsapp}
+                href={expert.whatsapp}
                 className="inline-flex items-center justify-center px-7 py-4 border border-white/20 text-white font-bold rounded-xl hover:bg-white/10 transition-colors"
                 target="_blank"
                 rel="noreferrer"
@@ -242,56 +346,40 @@ export default async function ServicesDetails({ params }) {
                 Practical delivery focused on outcomes
               </h2>
               <p className="mb-8 max-w-3xl text-gray-600 leading-relaxed">
-                {details?.intro}
+                {service.intro}
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 {service.outcomes.map((outcome, index) => (
                   <div
-                    key={outcome}
+                    key={`${outcome.title}-${index}`}
                     className="p-6 rounded-xl border border-gray-200 bg-[#F5F7F8] transition-all duration-200 hover:border-[#E8622A]/40 hover:bg-white hover:shadow-sm"
                   >
                     <span className="mb-4 flex h-9 w-9 items-center justify-center rounded-full bg-[#E8622A]/10 text-[#E8622A]">
                       <CheckCircle2 className="h-5 w-5" />
                     </span>
                     <h3 className="font-bold text-[#1A2E33] leading-snug">
-                      {outcome}
+                      {outcome.title}
                     </h3>
                     <p className="mt-3 text-sm leading-relaxed text-gray-600">
-                      {getOutcomeNote(outcome, service, index)}
+                      {outcome.description}
                     </p>
                   </div>
                 ))}
               </div>
               <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
-                {[
-                  {
-                    icon: <ShieldCheck className="h-5 w-5" />,
-                    title: "Clear ownership",
-                    text: "You know what Kraviona is handling, what is needed from your side, and what gets delivered at each step.",
-                  },
-                  {
-                    icon: <ClipboardCheck className="h-5 w-5" />,
-                    title: "No vague handover",
-                    text: "The work is explained in plain language with setup notes, next actions, and practical guidance after launch.",
-                  },
-                  {
-                    icon: <Rocket className="h-5 w-5" />,
-                    title: "Built for progress",
-                    text: "Every task connects back to a real business goal, such as leads, speed, ranking, sales, automation, or cleaner operations.",
-                  },
-                ].map((item) => (
+                {service.trustPoints.map((item, index) => (
                   <div
                     key={item.title}
                     className="rounded-xl border border-[#2A4A52]/15 bg-white p-5"
                   >
                     <span className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-[#2A4A52]/10 text-[#2A4A52]">
-                      {item.icon}
+                      {[<ShieldCheck key="shield" className="h-5 w-5" />, <ClipboardCheck key="check" className="h-5 w-5" />, <Rocket key="rocket" className="h-5 w-5" />][index % 3]}
                     </span>
                     <h3 className="font-extrabold text-[#1A2E33]">
                       {item.title}
                     </h3>
                     <p className="mt-2 text-sm leading-relaxed text-gray-600">
-                      {item.text}
+                      {item.description}
                     </p>
                   </div>
                 ))}
@@ -304,42 +392,43 @@ export default async function ServicesDetails({ params }) {
               </p>
               <div className="flex items-center gap-4 mb-5">
                 <Image
-                  src={SERVICE_EXPERT.image}
-                  alt={`${SERVICE_EXPERT.name}, Kraviona Tech Solutions founder and lead engineer`}
+                  src={expert.image}
+                  alt={`${expert.name}, ${expert.jobTitle}`}
                   width={64}
                   height={64}
                   sizes="64px"
+                  unoptimized={expert.image?.startsWith("http")}
                   className="h-16 w-16 rounded-2xl object-cover"
                 />
                 <div>
                   <h2 className="font-extrabold text-[#1A2E33]">
-                    {SERVICE_EXPERT.name}
+                    {expert.name}
                   </h2>
                   <p className="text-sm font-semibold text-[#E8622A]">
-                    {SERVICE_EXPERT.jobTitle}
+                    {expert.jobTitle}
                   </p>
                 </div>
               </div>
               <p className="text-sm leading-relaxed text-gray-600 mb-5">
-                {SERVICE_EXPERT.bio}
+                {expert.bio}
               </p>
               <div className="grid grid-cols-2 gap-2 mb-5">
                 <a
-                  href={`mailto:${SERVICE_EXPERT.email}`}
+                  href={`mailto:${expert.email}`}
                   className="flex items-center gap-2 rounded-xl bg-[#F5F7F8] px-3 py-3 text-xs font-bold text-[#1A2E33] hover:text-[#E8622A]"
                 >
                   <Mail className="h-4 w-4" />
                   Email
                 </a>
                 <a
-                  href={SERVICE_EXPERT.phoneHref}
+                  href={expert.phoneHref}
                   className="flex items-center gap-2 rounded-xl bg-[#F5F7F8] px-3 py-3 text-xs font-bold text-[#1A2E33] hover:text-[#E8622A]"
                 >
                   <Phone className="h-4 w-4" />
                   Call
                 </a>
                 <a
-                  href={SERVICE_EXPERT.whatsapp}
+                  href={expert.whatsapp}
                   className="flex items-center gap-2 rounded-xl bg-[#F5F7F8] px-3 py-3 text-xs font-bold text-[#1A2E33] hover:text-[#E8622A]"
                   target="_blank"
                   rel="noreferrer"
@@ -348,7 +437,7 @@ export default async function ServicesDetails({ params }) {
                   WhatsApp
                 </a>
                 <a
-                  href={SERVICE_EXPERT.website}
+                  href={expert.website}
                   className="flex items-center gap-2 rounded-xl bg-[#F5F7F8] px-3 py-3 text-xs font-bold text-[#1A2E33] hover:text-[#E8622A]"
                 >
                   <Globe className="h-4 w-4" />
@@ -359,22 +448,22 @@ export default async function ServicesDetails({ params }) {
                 <ContactLine
                   icon={<Mail className="h-4 w-4" />}
                   label="Email"
-                  value={SERVICE_EXPERT.email}
+                  value={expert.email}
                 />
                 <ContactLine
                   icon={<Phone className="h-4 w-4" />}
                   label="Phone"
-                  value={SERVICE_EXPERT.phone}
+                  value={expert.phone}
                 />
                 <ContactLine
                   icon={<MapPin className="h-4 w-4" />}
                   label="Location"
-                  value={SERVICE_EXPERT.address}
+                  value={expert.address}
                 />
                 <ContactLine
                   icon={<CalendarDays className="h-4 w-4" />}
                   label="Availability"
-                  value={SERVICE_EXPERT.availability}
+                  value={expert.availability}
                 />
               </div>
               <div className="mt-5">
@@ -383,22 +472,22 @@ export default async function ServicesDetails({ params }) {
                 </p>
                 <div className="flex flex-wrap gap-2">
                   <SocialLink
-                    href={SERVICE_EXPERT.linkedin}
+                    href={expert.linkedin}
                     label="Amar LinkedIn"
                     icon={<Linkedin className="h-4 w-4" />}
                   />
                   <SocialLink
-                    href={SERVICE_EXPERT.companyLinkedin}
+                    href={expert.companyLinkedin}
                     label="Kraviona LinkedIn"
                     icon={<Linkedin className="h-4 w-4" />}
                   />
                   <SocialLink
-                    href={SERVICE_EXPERT.twitter}
+                    href={expert.twitter}
                     label="Twitter"
                     icon={<Twitter className="h-4 w-4" />}
                   />
                   <SocialLink
-                    href={SERVICE_EXPERT.facebook}
+                    href={expert.facebook}
                     label="Facebook"
                     icon={<Facebook className="h-4 w-4" />}
                   />
@@ -407,10 +496,10 @@ export default async function ServicesDetails({ params }) {
               <div className="mt-5 rounded-xl border border-[#E8622A]/20 bg-[#E8622A]/5 p-4">
                 <p className="flex items-center gap-2 text-sm font-bold text-[#1A2E33]">
                   <BadgeCheck className="h-4 w-4 text-[#E8622A]" />
-                  {SERVICE_EXPERT.consultation}
+                  {expert.consultation}
                 </p>
                 <p className="mt-1 text-xs text-gray-500">
-                  {SERVICE_EXPERT.responseTime}
+                  {expert.responseTime}
                 </p>
               </div>
               <div className="mt-5 border-t border-gray-100 pt-5">
@@ -418,7 +507,7 @@ export default async function ServicesDetails({ params }) {
                   Expertise
                 </p>
                 <div className="flex flex-wrap gap-2">
-                  {SERVICE_EXPERT.knowsAbout.map((item) => (
+                  {expert.knowsAbout.map((item) => (
                     <span
                       key={item}
                       className="rounded-full border border-[#2A4A52]/20 px-3 py-1 text-xs font-semibold text-[#2A4A52]"
@@ -433,7 +522,7 @@ export default async function ServicesDetails({ params }) {
                   Trust Signals
                 </p>
                 <ul className="space-y-2">
-                  {SERVICE_EXPERT.credentials.map((item) => (
+                  {expert.credentials.map((item) => (
                     <li
                       key={item}
                       className="flex items-start gap-2 text-xs font-semibold leading-relaxed text-gray-600"
@@ -455,26 +544,32 @@ export default async function ServicesDetails({ params }) {
             <DetailPanel
               icon={<ClipboardCheck className="h-5 w-5" />}
               title="Detailed Deliverables"
-              items={details?.deliverables || []}
+              items={service.deliverables}
             />
             <DetailPanel
               icon={<Users className="h-5 w-5" />}
               title="Best Fit For"
-              items={details?.idealFor || []}
+              items={service.idealFor}
             />
             <DetailPanel
               icon={<BarChart3 className="h-5 w-5" />}
               title="How Success Is Measured"
-              items={[
-                "Clear scope and accountable milestones",
-                "Visible before-and-after improvements",
-                "Lead, sales, ranking, speed, or workflow metrics",
-                "Actionable reporting after implementation",
-              ]}
+              items={service.successMetrics}
             />
           </div>
         </div>
       </section>
+
+      {service.techStack.length > 0 && (
+        <section className="border-b border-gray-100 bg-white py-12">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <p className="mb-5 text-center text-xs font-black uppercase tracking-[0.2em] text-[#E8622A]">Technology & Tools</p>
+            <div className="flex flex-wrap justify-center gap-3">
+              {service.techStack.map((technology) => <span key={technology} className="rounded-xl border border-[#2A4A52]/15 bg-[#F5F7F8] px-5 py-3 text-sm font-bold text-[#1A2E33]">{technology}</span>)}
+            </div>
+          </div>
+        </section>
+      )}
 
       <section className="py-16 bg-white border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -487,31 +582,27 @@ export default async function ServicesDetails({ params }) {
             </h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-            {(details?.process || [
-              "Audit the current state",
-              "Plan clear priorities",
-              "Build and improve",
-            ]).map((step, index) => (
-              <div key={step} className="rounded-xl bg-white p-6 border border-gray-200">
+            {service.process.map((step, index) => (
+              <div key={`${step.title}-${index}`} className="rounded-xl bg-white p-6 border border-gray-200">
                 <span className="mb-5 flex h-10 w-10 items-center justify-center rounded-full bg-[#1A2E33] text-sm font-black text-white">
                   {index + 1}
                 </span>
                 <h3 className="text-lg font-extrabold text-[#1A2E33] mb-3">
-                  {step}
+                  {step.title}
                 </h3>
                 <p className="text-sm leading-relaxed text-gray-600">
-                  {index === 0 &&
-                    "We identify the highest-impact gaps before making implementation decisions."}
-                  {index === 1 &&
-                    "You get a practical scope with priorities, timeline, and next actions."}
-                  {index === 2 &&
-                    "Kraviona implements the work, reviews the result, and improves the next cycle."}
-                  {index > 2 &&
-                    "The process continues with measurement, reporting, and refinement."}
+                  {step.description}
                 </p>
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      <section className="bg-white px-4 py-16 sm:px-6 lg:px-8">
+        <div className="relative mx-auto max-w-6xl overflow-hidden rounded-[2rem] bg-gradient-to-br from-[#1A2E33] to-[#2A4A52] px-6 py-14 text-center text-white shadow-xl sm:px-10">
+          <div className="absolute inset-0 opacity-[0.08] bg-[radial-gradient(#F28C5E_1px,transparent_1px)] [background-size:24px_24px]" />
+          <div className="relative mx-auto max-w-3xl"><h2 className="text-3xl font-extrabold sm:text-4xl">{service.cta.title}</h2><p className="mx-auto mt-4 max-w-2xl leading-relaxed text-gray-200">{service.cta.description}</p><Link href={service.cta.href} className="mt-8 inline-flex items-center justify-center rounded-xl bg-[#E8622A] px-7 py-4 font-bold text-white transition-colors hover:bg-white hover:text-[#1A2E33]">{service.cta.label}</Link></div>
         </div>
       </section>
 

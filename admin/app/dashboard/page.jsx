@@ -1,9 +1,10 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Activity,
   BarChart3,
+  BriefcaseBusiness,
   CalendarDays,
   CheckCircle2,
   ChevronDown,
@@ -17,6 +18,8 @@ import {
   ShieldCheck,
   Sparkles,
   TrendingUp,
+  UserCheck,
+  UserCog,
   Users,
 } from "lucide-react";
 import {
@@ -44,6 +47,12 @@ const periods = [
 
 const chartColors = ["#0f5960", "#e35d3d", "#f7c56d", "#5c9baa"];
 const number = (value) => new Intl.NumberFormat("en-IN").format(Number(value || 0));
+const currency = (value) => new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 0 }).format(Number(value || 0));
+const localDateInput = (date = new Date()) => {
+  const offset = date.getTimezoneOffset() * 60000;
+  return new Date(date.getTime() - offset).toISOString().slice(0, 10);
+};
+const displayDate = (value) => new Date(value).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" });
 const relativeTime = (value) => {
   const seconds = Math.max(0, Math.floor((Date.now() - new Date(value).getTime()) / 1000));
   if (seconds < 60) return "just now";
@@ -89,15 +98,53 @@ function ModuleBadge({ module }) {
   return <span className={`inline-flex h-7 shrink-0 items-center rounded-lg border px-2 text-[10px] font-black uppercase tracking-[0.08em] ${palette[module] || palette.profile}`}>{module}</span>;
 }
 
+function ExecutiveOverview({ workspace }) {
+  if (!workspace) return null;
+  const roleTotal = workspace.roleDistribution?.reduce((total, item) => total + item.value, 0) || 0;
+  const pipelineMax = Math.max(...(workspace.pipeline?.map((item) => item.value) || [0]), 1);
+
+  return <section className="mb-6 rounded-2xl border border-[#0f5960]/15 bg-[#0b363d] p-5 text-white shadow-xl shadow-[#0f5960]/10">
+    <div className="mb-5 flex items-start gap-3"><span className="rounded-xl bg-white/10 p-2 text-[#f7d994]"><UserCog size={18} /></span><div><h2 className="font-bold">Super admin control plane</h2><p className="mt-0.5 text-xs text-[#bcd5d3]">Live workforce, access and commercial health across the complete workspace.</p></div></div>
+    <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+      {[
+        [UserCheck, "Active accounts", `${number(workspace.activeUsers)} / ${number(workspace.totalUsers)}`, "Users with workspace access"],
+        [Users, "Team directory", `${number(workspace.activeTeam)} / ${number(workspace.totalTeam)}`, "Active and total profiles"],
+        [BriefcaseBusiness, "Open pipeline", number(workspace.openLeads), "Leads requiring follow-up"],
+        [TrendingUp, "Won value", currency(workspace.wonValue), "Lifetime converted deal value"],
+      ].map(([Icon, label, value, detail]) => <div key={label} className="rounded-xl border border-white/10 bg-white/[0.07] p-4"><div className="mb-3 flex items-center justify-between"><p className="text-[10px] font-black uppercase tracking-[0.13em] text-[#a9cfcc]">{label}</p><Icon size={17} className="text-[#f7d994]" /></div><p className="text-xl font-black tracking-tight">{value}</p><p className="mt-1 text-[11px] text-[#bcd5d3]">{detail}</p></div>)}
+    </div>
+    <div className="mt-4 grid gap-4 lg:grid-cols-2">
+      <div className="rounded-xl border border-white/10 bg-white/[0.06] p-4"><div className="mb-4 flex items-center justify-between"><div><p className="text-sm font-bold">Access by role</p><p className="text-[11px] text-[#bcd5d3]">Account distribution and privilege footprint</p></div><span className="rounded-lg bg-white/10 px-2 py-1 text-xs font-bold">{number(roleTotal)} users</span></div><div className="space-y-3">{workspace.roleDistribution?.map((item, index) => <div key={item.name}><div className="mb-1 flex justify-between text-xs"><span className="capitalize text-[#dcebea]">{item.name.replace("_", " ")}</span><b>{number(item.value)}</b></div><div className="h-1.5 overflow-hidden rounded-full bg-white/10"><div className="h-full rounded-full" style={{ width: `${roleTotal ? Math.max((item.value / roleTotal) * 100, 4) : 0}%`, background: chartColors[index % chartColors.length] }} /></div></div>)}</div></div>
+      <div className="rounded-xl border border-white/10 bg-white/[0.06] p-4"><div className="mb-4 flex items-center justify-between"><div><p className="text-sm font-bold">Lead pipeline</p><p className="text-[11px] text-[#bcd5d3]">Current stage distribution</p></div><span className="rounded-lg bg-white/10 px-2 py-1 text-xs font-bold">{number(workspace.loginsInRange)} logins in range</span></div><div className="grid grid-cols-3 gap-2 sm:grid-cols-6">{workspace.pipeline?.map((item, index) => <div key={item.name} className="flex min-h-24 flex-col justify-end rounded-lg bg-slate-950/15 p-2"><div className="mb-2 rounded-full bg-white/10"><div className="rounded-full bg-[#f7c56d]" style={{ height: `${Math.max((item.value / pipelineMax) * 34, item.value ? 5 : 2)}px`, opacity: 0.55 + index / 14 }} /></div><b className="text-base">{number(item.value)}</b><span className="truncate text-[9px] uppercase tracking-wide text-[#bcd5d3]">{item.name}</span></div>)}</div></div>
+    </div>
+    <div className="mt-4 flex flex-wrap gap-2 text-[11px] font-semibold text-[#dcebea]"><span className="rounded-full border border-white/10 px-3 py-1.5">{number(workspace.totalPosts)} total posts</span><span className="rounded-full border border-white/10 px-3 py-1.5">{number(workspace.totalServices)} services</span><span className="rounded-full border border-white/10 px-3 py-1.5">{number(workspace.totalProjects)} projects</span></div>
+  </section>;
+}
+
 export default function DashboardPage() {
   const [period, setPeriod] = useState("30d");
-  const [customStart, setCustomStart] = useState(() => new Date(Date.now() - 29 * 86400000).toISOString().slice(0, 10));
-  const [customEnd, setCustomEnd] = useState(() => new Date().toISOString().slice(0, 10));
+  const [customStart, setCustomStart] = useState(() => localDateInput(new Date(Date.now() - 29 * 86400000)));
+  const [customEnd, setCustomEnd] = useState(() => localDateInput());
   const [analytics, setAnalytics] = useState(null);
   const [timelineMode, setTimelineMode] = useState("content");
   const [periodMenuOpen, setPeriodMenuOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const periodMenuRef = useRef(null);
+
+  useEffect(() => {
+    const closeMenu = (event) => {
+      if (event.type === "keydown" && event.key !== "Escape") return;
+      if (event.type === "mousedown" && periodMenuRef.current?.contains(event.target)) return;
+      setPeriodMenuOpen(false);
+    };
+    document.addEventListener("mousedown", closeMenu);
+    document.addEventListener("keydown", closeMenu);
+    return () => {
+      document.removeEventListener("mousedown", closeMenu);
+      document.removeEventListener("keydown", closeMenu);
+    };
+  }, []);
 
   const loadAnalytics = useCallback(async () => {
     setLoading(true); setError("");
@@ -110,7 +157,10 @@ export default function DashboardPage() {
     finally { setLoading(false); }
   }, [period, customStart, customEnd]);
 
-  useEffect(() => { loadAnalytics(); }, [loadAnalytics]);
+  useEffect(() => {
+    const timeout = setTimeout(loadAnalytics, 0);
+    return () => clearTimeout(timeout);
+  }, [loadAnalytics]);
 
   const seoData = useMemo(() => {
     const seo = analytics?.seo;
@@ -122,14 +172,15 @@ export default function DashboardPage() {
   const comparison = analytics?.comparison || {};
   const scopeLabel = analytics?.scope === "workspace" ? "Workspace analytics" : "My analytics";
   const periodLabel = [...periods, ["custom", "Custom range"]].find(([value]) => value === period)?.[1] || "Last 30 days";
+  const rangeLabel = analytics?.range ? `${displayDate(analytics.range.start)} – ${displayDate(analytics.range.end)}` : "";
 
   return <Frame>
     <main className="min-h-full bg-[#f4f8f7] px-4 py-6 sm:px-6 lg:px-9 lg:py-8">
       <div className="mx-auto max-w-[1600px]">
-        <section className="relative mb-6 overflow-hidden rounded-[28px] border border-[#0f5960]/20 bg-gradient-to-br from-[#0b363d] via-[#0f5960] to-[#1a6870] p-5 text-white shadow-2xl shadow-[#0f5960]/20 sm:p-6">
-          <div className="absolute -right-20 -top-16 h-72 w-72 rounded-full bg-[#f7c56d]/15 blur-3xl"/>
+        <section className="relative isolate z-20 mb-6 rounded-[28px] border border-[#0f5960]/20 bg-gradient-to-br from-[#0b363d] via-[#0f5960] to-[#1a6870] p-5 text-white shadow-2xl shadow-[#0f5960]/20 sm:p-6">
+          <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-[28px]"><div className="absolute -right-20 -top-16 h-72 w-72 rounded-full bg-[#f7c56d]/15 blur-3xl"/></div>
           <div className="relative flex flex-col justify-between gap-5 xl:flex-row xl:items-center"><div><div className="mb-2 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-[#f7d994]"><Sparkles size={13} /> {analytics?.scope === "workspace" ? "Executive command center" : "Personal content command center"}</div><h1 className="text-3xl font-black tracking-tight">{scopeLabel}</h1><p className="mt-1.5 max-w-2xl text-sm leading-6 text-[#dcebea]">Secure, date-wise content growth, SEO quality and operational activity—always scoped to your access.</p><div className="mt-4 flex flex-wrap gap-2"><span className="rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-xs font-semibold text-[#e5f2f1]">Role-safe reporting</span><span className="rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-xs font-semibold text-[#e5f2f1]">Live audit stream</span>{analytics?.system && <span className="rounded-full border border-emerald-300/25 bg-emerald-300/10 px-3 py-1.5 text-xs font-semibold text-emerald-100">System {analytics.system.database}</span>}</div></div>
-            <div className="flex flex-wrap items-center gap-2 rounded-2xl border border-white/15 bg-slate-950/10 p-2.5 backdrop-blur-sm"><div className="relative"><button type="button" onClick={() => setPeriodMenuOpen((open) => !open)} className="inline-flex h-11 items-center gap-2 rounded-xl border border-white/15 bg-[#123f46] px-3 text-sm font-bold text-white shadow-inner shadow-black/10"><CalendarDays className="text-[#f7d994]" size={16}/><span>{periodLabel}</span><ChevronDown className={`text-[#f7d994] transition ${periodMenuOpen ? "rotate-180" : ""}`} size={15}/></button>{periodMenuOpen && <div className="absolute right-0 top-[calc(100%+8px)] z-30 w-52 overflow-hidden rounded-xl border border-[#0f5960]/20 bg-white p-1.5 text-slate-800 shadow-2xl">{[...periods, ["custom", "Custom range"]].map(([value, label]) => <button key={value} type="button" onClick={() => { setPeriod(value); setPeriodMenuOpen(false); }} className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm font-semibold transition ${period === value ? "bg-[#e7f1f0] text-[#0f5960]" : "hover:bg-slate-50"}`}>{label}{period === value && <CheckCircle2 size={14}/>}</button>)}</div>}</div>{period === "custom" && <><input aria-label="Custom range start date" type="date" value={customStart} max={customEnd} onChange={(event) => setCustomStart(event.target.value)} className="h-11 rounded-xl border border-white/15 bg-[#123f46] px-3 text-sm text-white outline-none [color-scheme:dark]"/><input aria-label="Custom range end date" type="date" value={customEnd} min={customStart} max={new Date().toISOString().slice(0, 10)} onChange={(event) => setCustomEnd(event.target.value)} className="h-11 rounded-xl border border-white/15 bg-[#123f46] px-3 text-sm text-white outline-none [color-scheme:dark]"/></>}<button type="button" onClick={loadAnalytics} disabled={loading} className="inline-flex h-11 items-center gap-2 rounded-xl bg-[#f7c56d] px-4 text-sm font-bold text-[#123f46] shadow-lg shadow-[#f7c56d]/15 transition hover:bg-[#ffe09c] disabled:opacity-60"><RefreshCw size={16} className={loading ? "animate-spin" : ""} /> Refresh</button></div>
+            <div className="flex flex-wrap items-center gap-2 rounded-2xl border border-white/15 bg-slate-950/10 p-2.5 backdrop-blur-sm"><div ref={periodMenuRef} className="relative"><button type="button" aria-expanded={periodMenuOpen} aria-haspopup="menu" onClick={() => setPeriodMenuOpen((open) => !open)} className="inline-flex h-11 items-center gap-2 rounded-xl border border-white/15 bg-[#123f46] px-3 text-sm font-bold text-white shadow-inner shadow-black/10"><CalendarDays className="text-[#f7d994]" size={16}/><span className="flex flex-col items-start leading-tight"><span>{periodLabel}</span>{rangeLabel && <span className="mt-0.5 text-[9px] font-medium text-[#a9cfcc]">{rangeLabel}</span>}</span><ChevronDown className={`text-[#f7d994] transition ${periodMenuOpen ? "rotate-180" : ""}`} size={15}/></button>{periodMenuOpen && <div role="menu" className="absolute left-0 top-[calc(100%+8px)] z-50 w-56 overflow-hidden rounded-xl border border-[#0f5960]/20 bg-white p-1.5 text-slate-800 shadow-2xl sm:left-auto sm:right-0">{[...periods, ["custom", "Custom range"]].map(([value, label]) => <button key={value} type="button" role="menuitem" onClick={() => { setPeriod(value); setPeriodMenuOpen(false); }} className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm font-semibold transition ${period === value ? "bg-[#e7f1f0] text-[#0f5960]" : "hover:bg-slate-50"}`}>{label}{period === value && <CheckCircle2 size={14}/>}</button>)}</div>}</div>{period === "custom" && <><input aria-label="Custom range start date" type="date" value={customStart} max={customEnd} onChange={(event) => setCustomStart(event.target.value)} className="h-11 min-w-0 rounded-xl border border-white/15 bg-[#123f46] px-3 text-sm text-white outline-none [color-scheme:dark]"/><input aria-label="Custom range end date" type="date" value={customEnd} min={customStart} max={localDateInput()} onChange={(event) => setCustomEnd(event.target.value)} className="h-11 min-w-0 rounded-xl border border-white/15 bg-[#123f46] px-3 text-sm text-white outline-none [color-scheme:dark]"/></>}<button type="button" onClick={loadAnalytics} disabled={loading} className="inline-flex h-11 items-center gap-2 rounded-xl bg-[#f7c56d] px-4 text-sm font-bold text-[#123f46] shadow-lg shadow-[#f7c56d]/15 transition hover:bg-[#ffe09c] disabled:opacity-60"><RefreshCw size={16} className={loading ? "animate-spin" : ""} /> Refresh</button></div>
           </div>
         </section>
 
@@ -142,6 +193,8 @@ export default function DashboardPage() {
             {analytics?.scope === "workspace" && <Card icon={MousePointerClick} label="Leads received" value={kpis.leads} previous={comparison.leads} detail="Website inquiries in selected period" tone="blue" />}
             <Card icon={SearchCheck} label="SEO coverage" value={`${kpis.seoScore || 0}%`} detail="Meta title, description and OG image coverage" tone="gold" />
           </section>
+
+          <ExecutiveOverview workspace={analytics?.workspace} />
 
           <section className="mb-6 grid grid-cols-1 gap-5 xl:grid-cols-3">
             <article className="rounded-2xl border border-[#0f5960]/12 bg-white p-5 shadow-sm xl:col-span-2"><SectionTitle icon={BarChart3} title="Performance timeline" description="Switch between content growth and operational activity." action={<div className="flex rounded-xl bg-[#e7f1f0] p-1 text-xs font-bold"><button onClick={() => setTimelineMode("content")} className={`rounded-lg px-3 py-1.5 ${timelineMode === "content" ? "bg-white text-[#0f5960] shadow-sm" : "text-[#5d7679]"}`}>Content</button><button onClick={() => setTimelineMode("activity")} className={`rounded-lg px-3 py-1.5 ${timelineMode === "activity" ? "bg-white text-[#0f5960] shadow-sm" : "text-[#5d7679]"}`}>Activity</button></div>} />

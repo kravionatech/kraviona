@@ -492,6 +492,7 @@ export const privatePosts = async (req, res) => {
       ? {}
       : { userID: user.id };
     const status = String(req.query.status || "").trim().toLowerCase();
+    const indexability = String(req.query.indexability || "").trim().toLowerCase();
     const search = String(req.query.search || "").trim();
 
     if (search) {
@@ -507,14 +508,18 @@ export const privatePosts = async (req, res) => {
     if (status && ["draft", "published", "scheduled", "archived"].includes(status)) {
       filter.status = status;
     }
+    if (indexability === "noindex") filter.isNoIndex = true;
+    if (indexability === "indexed") filter.isNoIndex = { $ne: true };
 
-    const [totalPosts, published, draft, scheduled, archived] =
+    const [totalPosts, published, draft, scheduled, archived, noIndex, indexed] =
       await Promise.all([
         PostModel.countDocuments(filter),
         PostModel.countDocuments({ ...baseFilter, status: "published" }),
         PostModel.countDocuments({ ...baseFilter, status: "draft" }),
         PostModel.countDocuments({ ...baseFilter, status: "scheduled" }),
         PostModel.countDocuments({ ...baseFilter, status: "archived" }),
+        PostModel.countDocuments({ ...baseFilter, isNoIndex: true }),
+        PostModel.countDocuments({ ...baseFilter, isNoIndex: { $ne: true } }),
       ]);
     const totalPages = Math.ceil(totalPosts / limit);
     const page = totalPages ? Math.min(requestedPage, totalPages) : 1;
@@ -523,7 +528,7 @@ export const privatePosts = async (req, res) => {
     const posts = await PostModel.find(filter)
         // FIX: same `reaction` -> `reactions` typo as publicPosts.
         .select(
-          "title slug excerpt author category reactions views featuredImage contentSourceType commentCount createdAt updatedAt publishedAt scheduledAt status"
+          "title slug excerpt author category reactions views featuredImage contentSourceType commentCount createdAt updatedAt publishedAt scheduledAt status isNoIndex"
         )
         .sort({ createdAt: -1 })
         .skip(skip)
@@ -540,6 +545,7 @@ export const privatePosts = async (req, res) => {
         totalPages,
         limit,
         statusCounts: { published, draft, scheduled, archived },
+        indexabilityCounts: { noIndex, indexed },
       },
     });
   } catch (error) {

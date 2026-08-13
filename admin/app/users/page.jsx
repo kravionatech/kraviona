@@ -237,6 +237,9 @@ function UserModal({ form, isEditing, saving, onChange, onClose, onSubmit }) {
                   </option>
                 ))}
               </Select>
+              <p className="mt-1.5 text-xs text-slate-500">
+                Super admin, admin and editor accounts are added to Team automatically.
+              </p>
             </Field>
             <Field label="Job title">
               <Input

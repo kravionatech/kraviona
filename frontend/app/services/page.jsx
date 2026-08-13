@@ -7,9 +7,30 @@ import Link from "next/link";
 import { SERVICE_LINKS } from "./serviceData.js";
 import { defaultRobots } from "@/app/seoConfig.js";
 import { breadcrumbSchema } from "@/lib/schema";
+import { API_URL } from "@/utils/api";
 
-// Service sub-pages for internal linking
-const servicePages = SERVICE_LINKS;
+async function getServicePages() {
+  try {
+    const response = await fetch(`${API_URL}/services`, {
+      next: { revalidate: 60 },
+      headers: { Accept: "application/json" },
+    });
+    if (response.ok) {
+      const json = await response.json();
+      if (json?.data?.length) {
+        const dynamicLinks = json.data.map((service) => ({
+          name: service.title || service.name,
+          href: `/services/${service.slug}`,
+          category: service.category,
+        }));
+        const byHref = new Map(SERVICE_LINKS.map((item) => [item.href, item]));
+        dynamicLinks.forEach((item) => byHref.set(item.href, item));
+        return Array.from(byHref.values());
+      }
+    }
+  } catch {}
+  return SERVICE_LINKS;
+}
 
 // JSON-LD: Service Page Schema
 const servicesPageSchema = {
@@ -82,7 +103,8 @@ export const metadata = {
   robots: defaultRobots,
 };
 
-const MainServices = () => {
+const MainServices = async () => {
+  const servicePages = await getServicePages();
   return (
     <>
       <JsonLd data={[servicesPageSchema, servicesBreadcrumbSchema]} />

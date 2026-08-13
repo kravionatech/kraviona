@@ -7,6 +7,7 @@ import { LoginHistory } from "../../models/auth/login-history.model.js";
 import { ActivityLog } from "../../models/analytics/activity-log.model.js";
 import { Service } from "../../models/services/service.model.js";
 import { Project } from "../../models/portfolio/project.model.js";
+import { TeamMemberModel } from "../../models/team/team.model.js";
 
 const CONTENT_ROLES = ["super_admin", "admin", "editor"];
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -46,6 +47,7 @@ function getRange(query) {
     start = startOfDay(query.start);
     end = endOfDay(query.end);
     if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime()) || start > end) throw new Error("Choose a valid custom date range.");
+    if (end.getTime() - start.getTime() > 366 * DAY_MS) throw new Error("Custom range cannot be longer than 12 months.");
   } else {
     start = startOfDay(new Date(now.getTime() - 29 * DAY_MS));
   }
@@ -163,6 +165,56 @@ export const getAdvancedAnalytics = async (req, res) => {
       .slice(0, 7)
       .map((post) => ({ title: post.title, slug: post.slug, views: post.views || 0, status: post.status, readTime: post.readingTimeMinutes || 1 }));
 
+    const workspace = isSuperAdmin
+      ? await (async () => {
+          const [
+            totalUsers,
+            activeUsers,
+            totalTeam,
+            activeTeam,
+            totalPosts,
+            totalServices,
+            totalProjects,
+            openLeads,
+            roleRows,
+            pipelineRows,
+            wonValueRows,
+            loginsInRange,
+          ] = await Promise.all([
+            Auth.countDocuments(),
+            Auth.countDocuments({ isActive: true }),
+            TeamMemberModel.countDocuments(),
+            TeamMemberModel.countDocuments({ status: "active" }),
+            PostModel.countDocuments(),
+            Service.countDocuments(),
+            Project.countDocuments(),
+            Lead.countDocuments({ status: { $nin: ["Won", "Lost"] }, isArchived: { $ne: true } }),
+            Auth.aggregate([{ $group: { _id: "$role", value: { $sum: 1 } } }, { $sort: { value: -1 } }]),
+            Lead.aggregate([{ $match: { isArchived: { $ne: true } } }, { $group: { _id: "$status", value: { $sum: 1 } } }]),
+            Lead.aggregate([{ $match: { status: "Won" } }, { $group: { _id: null, value: { $sum: "$dealValue" } } }]),
+            LoginHistory.countDocuments(dateMatch),
+          ]);
+
+          return {
+            totalUsers,
+            activeUsers,
+            totalTeam,
+            activeTeam,
+            totalPosts,
+            totalServices,
+            totalProjects,
+            openLeads,
+            wonValue: wonValueRows[0]?.value || 0,
+            loginsInRange,
+            roleDistribution: roleRows.map((item) => ({ name: item._id || "unknown", value: item.value })),
+            pipeline: ["New", "Contacted", "Qualified", "Proposal", "Won", "Lost"].map((name) => ({
+              name,
+              value: pipelineRows.find((item) => item._id === name)?.value || 0,
+            })),
+          };
+        })()
+      : null;
+
     const recordedLoginKeys = new Set(
       activityLogs
         .filter((item) => item.module === "security" && item.action === "login")
@@ -215,6 +267,7 @@ export const getAdvancedAnalytics = async (req, res) => {
         activity,
         heatmap: timeline.map((item) => ({ date: item.date, value: item.activity })),
         tracking: { configured: false, message: "Visitor tracking is not connected yet. Content and activity analytics are live." },
+        workspace,
         system: isSuperAdmin ? { database: mongoose.connection.readyState === 1 ? "connected" : "unavailable", auditEvents: activityLogs.length } : null,
       },
     });

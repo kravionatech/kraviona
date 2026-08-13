@@ -22,7 +22,7 @@ import AvatarPicker from "@/components/AvatarPicker";
 import CompanyIdCard from "@/components/CompanyIdCard";
 
 const STATUS_OPTIONS = ["all", "active", "inactive"];
-const USER_ROLES = ["super_admin", "admin", "editor", "viewer", "user"];
+const USER_ROLES = ["super_admin", "admin", "editor"];
 
 const EMPTY_MEMBER = {
   name: "",
@@ -52,14 +52,12 @@ function initials(name = "") {
 }
 
 function MemberAvatar({ member, size = "md" }) {
-  const [imageFailed, setImageFailed] = useState(false);
+  const [failedSource, setFailedSource] = useState("");
   const source = member.avatar || member.userID?.avatar;
   const classes = size === "lg" ? "h-16 w-16" : "h-11 w-11";
 
-  useEffect(() => setImageFailed(false), [source]);
-
-  if (source && !imageFailed) {
-    return <img src={source} alt={`${member.name} profile`} onError={() => setImageFailed(true)} className={`${classes} shrink-0 rounded-full border-2 border-[#e7f1f0] object-cover`} />;
+  if (source && failedSource !== source) {
+    return <img src={source} alt={`${member.name} profile`} onError={() => setFailedSource(source)} className={`${classes} shrink-0 rounded-full border-2 border-[#e7f1f0] object-cover`} />;
   }
 
   return <span className={`flex ${classes} shrink-0 items-center justify-center rounded-full bg-[#0f5960] text-sm font-bold text-white`}>{initials(member.name)}</span>;
@@ -342,7 +340,7 @@ export default function TeamPage() {
         apiRequest("/users?limit=50"),
       ]);
       setMembers(Array.isArray(response.data) ? response.data : []);
-      setAccounts(Array.isArray(accountsResponse.data) ? accountsResponse.data : []);
+      setAccounts(Array.isArray(accountsResponse.data) ? accountsResponse.data.filter((account) => USER_ROLES.includes(account.role)) : []);
       setCounts(Array.isArray(response.counts) ? response.counts : []);
       setPagination(response.pagination || { total: 0 });
     } catch (err) {

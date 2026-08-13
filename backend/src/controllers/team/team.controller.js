@@ -4,7 +4,7 @@ import { Auth } from "../../models/auth/auth.models.js";
 
 const MANAGER_ROLES = ["super_admin"];
 const TEAM_STATUSES = ["active", "inactive"];
-const USER_ROLES = ["super_admin", "admin", "editor", "viewer", "user"];
+const USER_ROLES = ["super_admin", "admin", "editor"];
 
 const canManageTeam = (user) => user && MANAGER_ROLES.includes(user.role);
 const cleanText = (value) => String(value || "").trim();

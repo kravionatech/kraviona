@@ -7,6 +7,7 @@ import {
   BarChart3,
   Edit3,
   Eye,
+  EyeOff,
   Loader2,
   RefreshCw,
   Search,
@@ -133,6 +134,7 @@ export default function ContentDecayPage() {
   const [posts, setPosts] = useState([]);
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("all");
+  const [indexability, setIndexability] = useState("all");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [page, setPage] = useState(1);
@@ -145,6 +147,7 @@ export default function ContentDecayPage() {
 
       const params = new URLSearchParams({ page: String(page), limit: "20" });
       if (search.trim()) params.set("search", search.trim());
+      if (indexability !== "all") params.set("indexability", indexability);
       const response = await apiRequest(`/private/posts?${params.toString()}`);
       const rawPosts = Array.isArray(response.data) ? response.data : [];
 
@@ -155,7 +158,7 @@ export default function ContentDecayPage() {
     } finally {
       setLoading(false);
     }
-  }, [page, search]);
+  }, [indexability, page, search]);
 
   useEffect(() => {
     const timeout = setTimeout(fetchPosts, 0);
@@ -263,6 +266,20 @@ export default function ContentDecayPage() {
               ))}
             </div>
 
+            <select
+              aria-label="Filter decay content by search index status"
+              value={indexability}
+              onChange={(event) => {
+                setIndexability(event.target.value);
+                setPage(1);
+              }}
+              className="h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm font-semibold text-slate-700 outline-none focus:border-[#d26c51]"
+            >
+              <option value="all">All index statuses</option>
+              <option value="noindex">No index only</option>
+              <option value="indexed">Indexed only</option>
+            </select>
+
             <label className="relative block w-full lg:w-80">
               <Search
                 size={16}
@@ -328,6 +345,10 @@ export default function ContentDecayPage() {
                         <p className="mt-2 text-xs font-medium capitalize text-slate-500">
                           {post.status || "draft"} | {getCategoryLabel(post.category)}
                         </p>
+                        <span className={`mt-2 inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide ${post.isNoIndex ? "bg-rose-50 text-rose-700" : "bg-emerald-50 text-emerald-700"}`}>
+                          {post.isNoIndex && <EyeOff size={11} />}
+                          {post.isNoIndex ? "No index" : "Indexed"}
+                        </span>
                       </td>
                       <td className="px-4 py-4">
                         <div className="flex flex-col gap-2">

@@ -1,14 +1,67 @@
 import bcrypt from "bcryptjs";
+import slugify from "slugify";
 import { Auth } from "../../models/auth/auth.models.js";
 import { TeamMemberModel } from "../../models/team/team.model.js";
 
 const USER_ROLES = ["super_admin", "admin", "editor", "viewer", "user"];
+const TEAM_ACCOUNT_ROLES = ["super_admin", "admin", "editor"];
 const MANAGER_ROLES = ["super_admin"];
 
 const canManageUsers = (user) => user && MANAGER_ROLES.includes(user.role);
 const isSuperAdmin = (user) => user?.role === "super_admin";
 
 const cleanText = (value) => String(value || "").trim();
+
+const roleLabel = (role) =>
+  role
+    .split("_")
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
+
+// Staff accounts appear in the team directory automatically. The relation is
+// intentionally one-way: a standalone team profile does not need a login.
+const syncStaffAccountToTeam = async (account) => {
+  if (!account) return null;
+
+  if (!TEAM_ACCOUNT_ROLES.includes(account.role)) {
+    await TeamMemberModel.updateOne(
+      { userID: account._id },
+      { $unset: { userID: 1 } },
+    );
+    return null;
+  }
+
+  const email = cleanText(account.email).toLowerCase();
+  let member = await TeamMemberModel.findOne({ userID: account._id });
+  if (!member && email) {
+    member = await TeamMemberModel.findOne({
+      email,
+      $or: [{ userID: { $exists: false } }, { userID: null }],
+    });
+  }
+
+  if (!member) {
+    member = new TeamMemberModel({
+      slug: `${slugify(account.name, { lower: true, strict: true }) || "team-member"}-${String(account._id).slice(-8)}`,
+      designation: cleanText(account.profile?.jobTitle) || roleLabel(account.role),
+      department: account.role === "editor" ? "Content" : "Administration",
+      skills: [],
+      order: 0,
+      isFeatured: false,
+    });
+  }
+
+  member.userID = account._id;
+  member.name = cleanText(account.name);
+  member.email = email || undefined;
+  member.phone = cleanText(account.phone);
+  member.avatar = cleanText(account.avatar);
+  member.bio = cleanText(account.profile?.bio);
+  member.designation = cleanText(account.profile?.jobTitle) || member.designation || roleLabel(account.role);
+  member.status = account.isActive ? "active" : "inactive";
+  await member.save();
+  return member;
+};
 
 const toBoolean = (value, fallback = false) => {
   if (value === undefined || value === null) return fallback;
@@ -201,6 +254,13 @@ export const createUser = async (req, res) => {
       },
     });
 
+    try {
+      await syncStaffAccountToTeam(createdUser);
+    } catch (syncError) {
+      await Auth.deleteOne({ _id: createdUser._id });
+      throw syncError;
+    }
+
     return res.status(201).json({
       success: true,
       message: "User created successfully",
@@ -294,6 +354,7 @@ export const updateUser = async (req, res) => {
     }
 
     await targetUser.save();
+    await syncStaffAccountToTeam(targetUser);
 
     return res.status(200).json({
       success: true,
@@ -337,6 +398,10 @@ export const deleteUser = async (req, res) => {
       });
     }
 
+    await TeamMemberModel.updateOne(
+      { userID: targetUser._id },
+      { $unset: { userID: 1 } },
+    );
     await targetUser.deleteOne();
 
     return res.status(200).json({

@@ -86,11 +86,12 @@ const createRoute = ({ path, changeFrequency, priority, lastModified }) => {
   return route;
 };
 
-const serviceRoutes = SERVICE_LINKS.map((service) =>
+const buildServiceRoutes = (services) => services.map((service) =>
   createRoute({
-    path: service.href,
+    path: service.href || `/services/${service.slug}`,
     changeFrequency: "monthly",
     priority: 0.92,
+    lastModified: service.updatedAt,
   }),
 );
 
@@ -135,6 +136,20 @@ async function getPublishedCategories() {
   } catch (error) {
     console.error("[SITEMAP_CATEGORIES_ERROR]", error?.message);
     return [];
+  }
+}
+
+async function getPublishedServices() {
+  try {
+    const json = await fetchJson("/services");
+    const services = parseCollection(json).filter((service) => service?.slug);
+    if (!services.length) return SERVICE_LINKS;
+    const merged = new Map(SERVICE_LINKS.map((service) => [service.href, service]));
+    services.forEach((service) => merged.set(`/services/${service.slug}`, service));
+    return Array.from(merged.values());
+  } catch (error) {
+    console.error("[SITEMAP_SERVICES_ERROR]", error?.message);
+    return SERVICE_LINKS;
   }
 }
 
@@ -226,14 +241,15 @@ function mergeRoutes(routes) {
 }
 
 export default async function sitemap() {
-  const [posts, categories] = await Promise.all([
+  const [posts, categories, services] = await Promise.all([
     getPublishedPosts(),
     getPublishedCategories(),
+    getPublishedServices(),
   ]);
 
   return mergeRoutes([
     ...staticRoutes,
-    ...serviceRoutes,
+    ...buildServiceRoutes(services),
     ...buildCategoryRoutes(posts, categories),
     ...buildBlogPostRoutes(posts),
   ]);
