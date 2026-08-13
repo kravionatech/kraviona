@@ -8,6 +8,7 @@ import { Auth } from "../../models/auth/auth.models.js";
 import { recordLogin } from "../login-history/login-history.controller.js";
 import tokenGenerate from "../../utils/tokenGeneration.js";
 import config from "../../config/config.js";
+const MCP_ADMIN_ROLES = ["super_admin"];
 // import { Auth } from "../../models/auth/auth.models.js";
 // import tokenGenerate from "../../utils/tokenGeneration.js";
 // import config from "../../config/config.js";
@@ -46,6 +47,13 @@ export const mcpLogin = async (req, res) => {
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(401).json({ success: false, message: "Invalid credentials" });
+    }
+
+    if (!MCP_ADMIN_ROLES.includes(user.role)) {
+      return res.status(403).json({
+        success: false,
+        message: "Only a verified super admin can create an MCP access token",
+      });
     }
 
     user.lastLoginAt = new Date();

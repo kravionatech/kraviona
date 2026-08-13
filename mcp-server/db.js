@@ -8,6 +8,28 @@ import { config } from "./config.js";
 const connection = Auth.db;
 let pendingConnection;
 
+const directAtlasUri = (uri) => {
+  if (config.directMongoUri) return config.directMongoUri;
+  if (!uri?.startsWith("mongodb+srv://kraviona.c9i8wkl.mongodb.net") &&
+      !uri?.includes("@kraviona.c9i8wkl.mongodb.net")) {
+    return null;
+  }
+
+  const hosts = [
+    "ac-i9uvc7d-shard-00-00.c9i8wkl.mongodb.net:27017",
+    "ac-i9uvc7d-shard-00-01.c9i8wkl.mongodb.net:27017",
+    "ac-i9uvc7d-shard-00-02.c9i8wkl.mongodb.net:27017",
+  ].join(",");
+
+  return uri
+    .replace("mongodb+srv://", "mongodb://")
+    .replace(/\/\/([^@]+@)[^/]+\//, `//$1${hosts}/`)
+    .replace(
+      /\?.*$/,
+      "?ssl=true&authSource=admin&replicaSet=atlas-yphon3-shard-0&retryWrites=true&w=majority",
+    );
+};
+
 export const connectDB = async () => {
   if (connection.readyState === 1) return connection;
   if (pendingConnection) return pendingConnection;
@@ -25,6 +47,17 @@ export const connectDB = async () => {
 
   pendingConnection = connection
     .openUri(config.mongoUri, options)
+    .catch(async (error) => {
+      const directUri = directAtlasUri(config.mongoUri);
+      if (!directUri || error?.code !== "ECONNREFUSED") throw error;
+      return connection.openUri(directUri, {
+        ...options,
+        serverSelectionTimeoutMS: Math.max(
+          config.serverSelectionTimeoutMs,
+          20_000,
+        ),
+      });
+    })
     .then(() => {
       console.error(`[MCP] MongoDB connected (${connection.name})`);
       return connection;

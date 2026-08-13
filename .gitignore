@@ -62,6 +62,7 @@
 *.pem
 *.pid
 *.pid.lock
+**/.admin-session
 *.seed
 *.tgz
 *.tsbuildinfo

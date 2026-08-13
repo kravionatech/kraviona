@@ -1,8 +1,25 @@
-  const jsonText = (data) => JSON.stringify(data, null, 2);
+const jsonText = (data) => JSON.stringify(data, null, 2);
 
-export const successResult = (data) => ({
-  content: [{ type: "text", text: jsonText(data) }],
-});
+const normalize = (value) =>
+  JSON.parse(
+    JSON.stringify(value, (_key, entry) => {
+      if (entry?._bsontype === "ObjectId") return entry.toString();
+      return entry;
+    }),
+  );
+
+export const successResult = (data, summary = "Admin operation completed") => {
+  const structuredContent = normalize(data);
+  return {
+    content: [
+      {
+        type: "text",
+        text: `## ${summary}\n\n\`\`\`json\n${jsonText(structuredContent)}\n\`\`\``,
+      },
+    ],
+    structuredContent,
+  };
+};
 
 export const errorResult = (message, details) => {
   const payload = {
@@ -13,7 +30,17 @@ export const errorResult = (message, details) => {
 
   return {
     isError: true,
-    content: [{ type: "text", text: jsonText(payload) }],
+    content: [
+      {
+        type: "text",
+        text: `## Admin operation failed\n\n${payload.error}${
+          payload.details?.length
+            ? `\n\n- ${payload.details.join("\n- ")}`
+            : ""
+        }`,
+      },
+    ],
+    structuredContent: payload,
   };
 };
 

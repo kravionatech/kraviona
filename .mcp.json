@@ -1,6 +1,6 @@
 {
   "mcpServers": {
-    "kraviona": {
+    "kraviona-admin": {
       "type": "stdio",
       "command": "node",
       "args": [
@@ -8,7 +8,8 @@
       ],
       "env": {
         "MCP_READ_ONLY": "false",
-        "MCP_ALLOW_DELETES": "false"
+        "MCP_ALLOW_DELETES": "false",
+        "MCP_ADMIN_ROLES": "super_admin"
       }
     }
   }

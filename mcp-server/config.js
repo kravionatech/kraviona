@@ -4,10 +4,10 @@ import path from "path";
 
 const directory = path.dirname(fileURLToPath(import.meta.url));
 
-// Local MCP settings win over the shared backend settings. Neither file is
-// required when the values are supplied by the MCP host.
-dotenv.config({ path: path.join(directory, ".env"), quiet: true });
+// The MCP must use the same database as the backend. Values explicitly
+// supplied by the host win, then backend/.env, then optional MCP-only values.
 dotenv.config({ path: path.join(directory, "../backend/.env"), quiet: true });
+dotenv.config({ path: path.join(directory, ".env"), quiet: true });
 
 const booleanFromEnv = (name, fallback) => {
   const value = process.env[name];
@@ -22,14 +22,28 @@ const integerFromEnv = (name, fallback, minimum, maximum) => {
 };
 
 export const config = Object.freeze({
+  name: "kraviona-admin-mcp",
+  version: "3.0.0",
   mongoUri:
     process.env.MONGO_URI ||
     process.env.DATABASE_URL ||
     process.env.MONGODB_URI,
+  directMongoUri: process.env.MONGO_DIRECT_URI,
   databaseName: process.env.DB_NAME,
-  transport: process.env.VERCEL ? "streamable-http" : "stdio",
+  transport: "stdio",
   readOnly: booleanFromEnv("MCP_READ_ONLY", false),
   allowDeletes: booleanFromEnv("MCP_ALLOW_DELETES", false),
+  sessionFile:
+    process.env.MCP_ADMIN_SESSION_FILE ||
+    path.join(directory, ".admin-session"),
+  sessionToken: process.env.MCP_ADMIN_SESSION_TOKEN || "",
+  allowedRoles: new Set(
+    (process.env.MCP_ADMIN_ROLES || "super_admin")
+      .split(",")
+      .map((role) => role.trim())
+      .filter(Boolean),
+  ),
+  sessionTtlDays: integerFromEnv("MCP_ADMIN_SESSION_DAYS", 30, 1, 90),
   serverSelectionTimeoutMs: integerFromEnv(
     "MCP_DB_TIMEOUT_MS",
     10_000,

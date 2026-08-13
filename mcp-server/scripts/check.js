@@ -1,59 +1,75 @@
-import * as users from "../tools/users.js";
-import * as categories from "../tools/categories.js";
-import * as comments from "../tools/comments.js";
-import * as posts from "../tools/posts.js";
-import * as postReactions from "../tools/post-reactions.js";
-import * as leads from "../tools/leads.js";
-import * as media from "../tools/media.js";
-import * as messages from "../tools/messages.js";
-import * as newsletterSubscriptions from "../tools/newsletter-subscriptions.js";
-import * as teamMembers from "../tools/team-members.js";
-import * as operations from "../tools/operations.js";
+import { resourceNames } from "../catalog.js";
+import { describeResource } from "../repository.js";
+import { ALL_TOOLS } from "../server.js";
 
-const ALL_TOOLS = [
-  users,
-  categories,
-  comments,
-  posts,
-  postReactions,
-  leads,
-  media,
-  messages,
-  newsletterSubscriptions,
-  teamMembers,
-  operations,
-].flatMap((group) => group.tools);
+const fail = (message) => {
+  throw new Error(message);
+};
 
 const names = ALL_TOOLS.map((tool) => tool.name);
 const duplicates = names.filter((name, index) => names.indexOf(name) !== index);
-
 if (duplicates.length) {
-  throw new Error(`Duplicate tool names: ${[...new Set(duplicates)].join(", ")}`);
+  fail(`Duplicate tool names: ${[...new Set(duplicates)].join(", ")}`);
 }
 
 for (const tool of ALL_TOOLS) {
-  if (!tool.inputSchema || tool.inputSchema.type !== "object") {
-    throw new Error(`${tool.name} does not have an object input schema`);
+  if (tool.inputSchema?.type !== "object") {
+    fail(`${tool.name} must declare an object input schema`);
   }
-  if (!tool.annotations) {
-    throw new Error(`${tool.name} does not declare MCP safety annotations`);
-  }
+  if (!tool.annotations) fail(`${tool.name} is missing safety annotations`);
   for (const required of tool.inputSchema.required || []) {
     if (!tool.inputSchema.properties?.[required]) {
-      throw new Error(
-        `${tool.name} requires ${required}, but it is absent from properties`,
-      );
+      fail(`${tool.name} requires missing property: ${required}`);
     }
   }
   if (
     tool.annotations.destructiveHint &&
-    tool.inputSchema.properties?.confirm?.const !== true
+    tool.inputSchema.properties?.confirmation?.const !== "PERMANENTLY_DELETE"
   ) {
-    throw new Error(`${tool.name} is destructive but lacks confirm=true`);
+    fail(`${tool.name} lacks the permanent-deletion confirmation phrase`);
   }
 }
 
-console.error(
-  `[MCP] Validated ${ALL_TOOLS.length} unique, annotated tool schemas`,
+for (const expected of [
+  "users",
+  "posts",
+  "categories",
+  "comments",
+  "post_reactions",
+  "leads",
+  "messages",
+  "newsletter_subscriptions",
+  "media",
+  "team_members",
+  "services",
+  "projects",
+  "login_history",
+  "activity_logs",
+]) {
+  if (!resourceNames.includes(expected)) fail(`Missing admin resource: ${expected}`);
+}
+
+const userSchema = describeResource("users");
+if (!userSchema.createSchema.properties.password) {
+  fail("User creation schema must accept password");
+}
+if (!userSchema.createSchema.required?.includes("password")) {
+  fail("User creation schema must require password");
+}
+for (const secret of ["verification", "passwordResetToken", "loginAttempts"] ) {
+  if (userSchema.createSchema.properties[secret]) {
+    fail(`User creation schema exposes server security field: ${secret}`);
+  }
+}
+
+const postSchema = describeResource("posts");
+if (postSchema.updateSchema.properties.slug) {
+  fail("Post update schema must keep slug immutable");
+}
+if (postSchema.createSchema.properties.userID) {
+  fail("Post schema exposes server-managed userID");
+}
+
+process.stdout.write(
+  `Validated ${ALL_TOOLS.length} admin-only tools across ${resourceNames.length} backend resources.\n`,
 );
-process.exit(0);

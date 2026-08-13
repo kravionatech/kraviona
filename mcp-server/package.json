@@ -1,12 +1,15 @@
 {
-  "name": "kraviona-business-mcp",
-  "version": "2.0.0",
-  "description": "Private MCP server for managing Kraviona content, CRM, inbox, audience, media, users, and team workflows with Claude",
+  "name": "kraviona-admin-mcp",
+  "version": "3.0.0",
+  "description": "Private super-admin MCP server for managing the complete Kraviona backend with native Mongoose schemas and audited mutations",
   "type": "module",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
     "dev": "node --watch index.js",
+    "login": "node scripts/login.js",
+    "logout": "node scripts/logout.js",
+    "whoami": "node scripts/whoami.js",
     "check": "node scripts/check.js",
     "tools": "node scripts/list-tools.js",
     "smoke": "node scripts/smoke-test.js"
