@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Pagination from "@/components/Pagination";
+import AvatarPicker from "@/components/AvatarPicker";
 import Swal from "sweetalert2";
 
 const ROLES = ["super_admin", "admin", "editor", "viewer", "user"];
@@ -242,13 +243,7 @@ function UserModal({ form, isEditing, saving, onChange, onClose, onSubmit }) {
                 placeholder="Content Manager"
               />
             </Field>
-            <Field label="Avatar URL">
-              <Input
-                value={form.avatar}
-                onChange={(event) => onChange("avatar", event.target.value)}
-                placeholder="https://..."
-              />
-            </Field>
+            <AvatarPicker label="Profile image" name={form.name} value={form.avatar} onChange={(value) => onChange("avatar", value)} />
             <div className="md:col-span-2">
               <Field label="Bio">
                 <Textarea

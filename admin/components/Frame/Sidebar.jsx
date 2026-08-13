@@ -106,7 +106,7 @@ export default function Sidebar({ onLogout, isOpen, onClose, currentUser }) {
           </button>
         </div>
 
-        <div className="min-h-0 flex-1 overflow-y-auto pb-4">
+        <div className="kraviona-sidebar-scroll min-h-0 flex-1 overflow-y-auto pb-4">
           <nav className="space-y-1 py-2" aria-label="Primary navigation">
             {visiblePrimaryNavigation.map((item) => (
               <NavLink key={item.href} item={item} pathname={pathname} onClick={onClose} />

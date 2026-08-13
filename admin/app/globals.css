@@ -138,6 +138,17 @@ body {
   color: #3a5145;
 }
 
+/* Keep the sidebar usable on smaller screens while avoiding the distracting
+   native scrollbar shown beside the navigation. */
+.kraviona-sidebar-scroll {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.kraviona-sidebar-scroll::-webkit-scrollbar {
+  display: none;
+}
+
 /* The post editor is a focused workspace: keep its canvas bright even when
    older editor utilities use fixed legacy colours. */
 .admin-shell .post-editor-page {

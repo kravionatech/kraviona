@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Pagination from "@/components/Pagination";
+import AvatarPicker from "@/components/AvatarPicker";
 
 const STATUS_OPTIONS = ["all", "active", "inactive"];
 
@@ -43,6 +44,20 @@ function initials(name = "") {
       .map((part) => part[0]?.toUpperCase())
       .join("") || "TM"
   );
+}
+
+function MemberAvatar({ member, size = "md" }) {
+  const [imageFailed, setImageFailed] = useState(false);
+  const source = member.avatar || member.userID?.avatar;
+  const classes = size === "lg" ? "h-16 w-16" : "h-11 w-11";
+
+  useEffect(() => setImageFailed(false), [source]);
+
+  if (source && !imageFailed) {
+    return <img src={source} alt={`${member.name} profile`} onError={() => setImageFailed(true)} className={`${classes} shrink-0 rounded-full border-2 border-[#e7f1f0] object-cover`} />;
+  }
+
+  return <span className={`flex ${classes} shrink-0 items-center justify-center rounded-full bg-[#0f5960] text-sm font-bold text-white`}>{initials(member.name)}</span>;
 }
 
 function buildMemberForm(member = {}) {
@@ -202,13 +217,7 @@ function TeamModal({ form, isEditing, saving, onChange, onClose, onSubmit }) {
                 min="0"
               />
             </Field>
-            <Field label="Avatar URL">
-              <Input
-                value={form.avatar}
-                onChange={(event) => onChange("avatar", event.target.value)}
-                placeholder="https://..."
-              />
-            </Field>
+            <AvatarPicker label="Profile image" name={form.name} value={form.avatar} onChange={(value) => onChange("avatar", value)} />
             <Field label="Status">
               <Select
                 value={form.status}
@@ -543,9 +552,7 @@ export default function TeamPage() {
                     <tr key={member._id} className="align-top">
                       <td className="px-4 py-4">
                         <div className="flex items-center gap-3">
-                          <span className="flex h-11 w-11 items-center justify-center rounded-full bg-[#235056] text-sm font-bold text-white">
-                            {initials(member.name)}
-                          </span>
+                          <MemberAvatar member={member} />
                           <div className="min-w-0">
                             <div className="flex flex-wrap items-center gap-2">
                               <p className="font-semibold text-slate-950">
