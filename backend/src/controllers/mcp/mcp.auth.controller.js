@@ -5,6 +5,7 @@
 
 import bcrypt from "bcryptjs";
 import { Auth } from "../../models/auth/auth.models.js";
+import { recordLogin } from "../login-history/login-history.controller.js";
 import tokenGenerate from "../../utils/tokenGeneration.js";
 import config from "../../config/config.js";
 // import { Auth } from "../../models/auth/auth.models.js";
@@ -46,6 +47,12 @@ export const mcpLogin = async (req, res) => {
     if (!isMatch) {
       return res.status(401).json({ success: false, message: "Invalid credentials" });
     }
+
+    user.lastLoginAt = new Date();
+    await user.save();
+    await recordLogin(user, req, "mcp").catch((auditError) =>
+      console.error("Unable to record MCP login history:", auditError.message),
+    );
 
     const token = tokenGenerate({
       id: user._id,

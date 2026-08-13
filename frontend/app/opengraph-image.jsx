@@ -15,7 +15,7 @@ export default function OpenGraphImage() {
           flexDirection: "column",
           justifyContent: "space-between",
           padding: "64px 72px",
-          background: "#2A4A52",
+          background: "#0f5960",
           color: "white",
           fontFamily: "Arial, sans-serif",
         }}
@@ -24,7 +24,7 @@ export default function OpenGraphImage() {
           <span
             style={{
               alignItems: "center",
-              background: "#E8622A",
+              background: "#d85e3d",
               borderRadius: 6,
               color: "#FFFFFF",
               display: "flex",
@@ -47,7 +47,7 @@ export default function OpenGraphImage() {
           </div>
         </div>
         <div style={{ display: "flex", justifyContent: "space-between", fontSize: 25 }}>
-          <span style={{ color: "#F28C5E" }}>kraviona.com</span>
+            <span style={{ color: "#f3bd67" }}>kraviona.com</span>
           <span>Delhi NCR, India</span>
         </div>
       </div>

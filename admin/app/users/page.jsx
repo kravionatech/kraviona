@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Pagination from "@/components/Pagination";
+import Swal from "sweetalert2";
 
 const ROLES = ["super_admin", "admin", "editor", "viewer", "user"];
 const STATUS_OPTIONS = ["all", "active", "inactive"];
@@ -410,23 +411,30 @@ export default function UsersPage() {
 
       closeModal();
       fetchUsers();
+      await Swal.fire({ icon: "success", title: "User saved", text: `The user was ${editingUser ? "updated" : "created"} successfully.`, timer: 1800, showConfirmButton: false });
     } catch (err) {
-      setError(err.message || "Unable to save user");
+      const message = err.message || "Unable to save user";
+      setError(message);
+      await Swal.fire({ icon: "error", title: "User not saved", text: message });
     } finally {
       setSaving(false);
     }
   };
 
   const deleteUser = async (user) => {
-    if (!window.confirm(`Delete ${user.name}?`)) return;
+    const confirmation = await Swal.fire({ icon: "warning", title: "Delete user?", text: `${user.name} will be permanently removed.`, showCancelButton: true, confirmButtonText: "Delete", confirmButtonColor: "#dc2626" });
+    if (!confirmation.isConfirmed) return;
 
     try {
       setError("");
       await apiRequest(`/users/${user._id}`, { method: "DELETE" });
       setUsers((current) => current.filter((item) => item._id !== user._id));
       fetchUsers();
+      await Swal.fire({ icon: "success", title: "User deleted", text: `${user.name} has been removed.`, timer: 1800, showConfirmButton: false });
     } catch (err) {
-      setError(err.message || "Unable to delete user");
+      const message = err.message || "Unable to delete user";
+      setError(message);
+      await Swal.fire({ icon: "error", title: "Delete failed", text: message });
     }
   };
 
@@ -578,9 +586,7 @@ export default function UsersPage() {
                     <tr key={user._id}>
                       <td className="px-4 py-4">
                         <div className="flex items-center gap-3">
-                          <span className="flex h-10 w-10 items-center justify-center rounded-full bg-[#235056] text-sm font-bold text-white">
-                            {initials(user.name)}
-                          </span>
+                          {user.avatar ? <img src={user.avatar} alt={`${user.name} avatar`} className="h-10 w-10 rounded-full object-cover" /> : <span className="flex h-10 w-10 items-center justify-center rounded-full bg-[#235056] text-sm font-bold text-white">{initials(user.name)}</span>}
                           <div className="min-w-0">
                             <p className="font-semibold text-slate-950">{user.name}</p>
                             <p className="truncate text-xs text-slate-500">

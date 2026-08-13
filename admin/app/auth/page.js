@@ -111,8 +111,8 @@ export default function AuthPage() {
         <section className="hidden min-h-[620px] flex-col justify-between border-r border-white/[0.08] bg-gradient-to-br from-[#2a4a52] via-[#20383e] to-[#1a2e33] p-10 lg:flex">
           <div>
             <div className="flex items-center gap-3">
-              <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-[#f28c5e] to-[#e8622a] text-lg font-black text-[#1a2e33]">K</span>
-              <span className="text-sm font-black tracking-[0.22em] text-white">KRAVIONA</span>
+              <img src="/brand-logo.png" alt="Kraviona Tech Solutions logo" className="h-11 w-11 object-contain" />
+              <span className="text-sm font-black tracking-[0.22em] text-white">KRAVIONA TECH SOLUTIONS</span>
             </div>
             <div className="mt-24 max-w-sm">
               <span className="inline-flex items-center gap-2 rounded-full border border-[#f28c5e]/25 bg-[#f28c5e]/10 px-3 py-1.5 text-xs font-semibold text-[#ffd8c8]"><ShieldCheck size={14} /> Secure workspace</span>
@@ -126,8 +126,8 @@ export default function AuthPage() {
         <section className="p-7 sm:p-10 lg:p-12">
           <div className="mb-9">
             <div className="flex items-center gap-3 lg:hidden">
-              <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[#f28c5e] to-[#e8622a] text-base font-black text-[#1a2e33]">K</span>
-              <span className="text-sm font-black tracking-[0.18em] text-white">KRAVIONA</span>
+              <img src="/brand-logo.png" alt="Kraviona Tech Solutions logo" className="h-10 w-10 object-contain" />
+              <span className="text-sm font-black tracking-[0.18em] text-white">KRAVIONA TECH SOLUTIONS</span>
             </div>
             <p className="mt-7 text-xs font-bold uppercase tracking-[0.18em] text-[#f28c5e] lg:mt-0">Admin portal</p>
             <h2 className="mt-3 text-3xl font-black tracking-tight text-white">Welcome back</h2>

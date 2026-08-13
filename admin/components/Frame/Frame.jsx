@@ -26,7 +26,11 @@ const COMMANDS = [
   { href: "/comments", label: "Comment moderation", hint: "Review discussion" },
   { href: "/media", label: "Media library", hint: "Files and uploads" },
   { href: "/team", label: "Team", hint: "Team members" },
+  { href: "/services", label: "Services", hint: "Manage frontend services" },
+  { href: "/portfolio", label: "Portfolio", hint: "Manage case studies" },
   { href: "/users", label: "Users & admins", hint: "Account access" },
+  { href: "/login-history", label: "Login history", hint: "Review account sign-ins" },
+  { href: "/account", label: "My account", hint: "Your profile details" },
   { href: "/settings", label: "Settings", hint: "Admin configuration" },
 ];
 
@@ -44,6 +48,7 @@ export default function Frame({ children }) {
   const [searchOpen, setSearchOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [analytics, setAnalytics] = useState(null);
+  const [currentUser, setCurrentUser] = useState(null);
 
   const loadAlerts = useCallback(async () => {
     try {
@@ -62,6 +67,10 @@ export default function Frame({ children }) {
       window.clearInterval(interval);
     };
   }, [loadAlerts]);
+
+  useEffect(() => {
+    apiRequest("/me").then((response) => setCurrentUser(response.data || null)).catch(() => setCurrentUser(null));
+  }, []);
 
   useEffect(() => {
     const onKeyDown = (event) => {
@@ -105,7 +114,7 @@ export default function Frame({ children }) {
 
   return (
     <div className="admin-shell flex min-h-dvh bg-slate-50 font-sans text-slate-900">
-      <Sidebar onLogout={handleLogout} isOpen={mobileNavOpen} onClose={() => setMobileNavOpen(false)} />
+      <Sidebar onLogout={handleLogout} isOpen={mobileNavOpen} onClose={() => setMobileNavOpen(false)} currentUser={currentUser} />
 
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="sticky top-0 z-20 h-16 shrink-0 border-b border-gray-200 bg-white px-4 py-3 sm:px-6 lg:px-8">
@@ -160,8 +169,8 @@ export default function Frame({ children }) {
                 {notificationsOpen && <NotificationMenu unreadMessages={unreadMessages} newLeads={newLeads} onClose={() => setNotificationsOpen(false)} />}
               </div>
               <div className="hidden items-center gap-2 border-l border-gray-200 pl-3 sm:flex">
-                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-blue-600 text-xs font-bold text-white">AA</span>
-                <span className="hidden text-sm font-medium text-gray-700 xl:block">Amar Admin</span>
+                {currentUser?.avatar ? <img src={currentUser.avatar} alt="" className="h-9 w-9 rounded-full object-cover" /> : <span className="flex h-9 w-9 items-center justify-center rounded-full bg-blue-600 text-xs font-bold text-white">{(currentUser?.name || "Admin").slice(0, 2).toUpperCase()}</span>}
+                <span className="hidden text-sm font-medium text-gray-700 xl:block">{currentUser?.name || "No data found."}</span>
               </div>
             </div>
           </div>

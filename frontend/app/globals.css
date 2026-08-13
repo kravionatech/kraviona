@@ -7,17 +7,17 @@
  * `shadow-card` directly from the same tokens used by plain CSS.
  */
 @theme {
-  --color-primary: #2a4a52;
-  --color-primary-hover: #3d6b77;
-  --color-primary-light: #5c9baa;
-  --color-primary-tint: #e8f2f4;
-  --color-accent: #e8622a;
-  --color-accent-hover: #f28c5e;
-  --color-accent-tint: #fef0e9;
-  --color-accent-dark: #b84a1a;
+  --color-primary: #0f5960;
+  --color-primary-hover: #0a454b;
+  --color-primary-light: #4d8588;
+  --color-primary-tint: #e7f1f0;
+  --color-accent: #d85e3d;
+  --color-accent-hover: #ee774d;
+  --color-accent-tint: #fff0e9;
+  --color-accent-dark: #b94b31;
   --color-surface: #f5f7f8;
   --color-surface-2: #eaeff0;
-  --color-dark: #1a2e33;
+  --color-dark: #0d4248;
   --color-dark-hover: #243e45;
   --color-brand-text: #1a2e33;
   --color-brand-muted: #5c7a82;
@@ -36,17 +36,17 @@
 @layer base {
   :root {
     /* Kraviona brand palette */
-    --color-primary: #2a4a52;
-    --color-primary-hover: #3d6b77;
-    --color-primary-light: #5c9baa;
-    --color-primary-tint: #e8f2f4;
-    --color-accent: #e8622a;
-    --color-accent-hover: #f28c5e;
-    --color-accent-tint: #fef0e9;
-    --color-accent-dark: #b84a1a;
+    --color-primary: #0f5960;
+    --color-primary-hover: #0a454b;
+    --color-primary-light: #4d8588;
+    --color-primary-tint: #e7f1f0;
+    --color-accent: #d85e3d;
+    --color-accent-hover: #ee774d;
+    --color-accent-tint: #fff0e9;
+    --color-accent-dark: #b94b31;
     --color-surface: #f5f7f8;
     --color-surface-2: #eaeff0;
-    --color-dark: #1a2e33;
+    --color-dark: #0d4248;
     --color-dark-hover: #243e45;
     --color-white: #ffffff;
     --color-text-body: #1a2e33;
@@ -74,14 +74,14 @@
     --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
 
     /* Compatibility aliases used by older page modules. */
-    --brand-ink: #1a2e33;
-    --primary-teal: #2a4a52;
-    --primary-teal-dark: #1a2e33;
-    --primary-teal-light: #5c9baa;
-    --accent-coral: #e8622a;
-    --accent-coral-deep: #b84a1a;
-    --accent-coral-hover: #f28c5e;
-    --accent-peach: #f28c5e;
+    --brand-ink: #0d4248;
+    --primary-teal: #0f5960;
+    --primary-teal-dark: #0a454b;
+    --primary-teal-light: #4d8588;
+    --accent-coral: #d85e3d;
+    --accent-coral-deep: #b94b31;
+    --accent-coral-hover: #ee774d;
+    --accent-peach: #f3bd67;
     --surface: #f5f7f8;
     --surface-teal: #e8f2f4;
     --surface-coral: #fef0e9;

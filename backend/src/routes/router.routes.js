@@ -15,6 +15,9 @@ import { createTeamMember, deleteTeamMember, getAllTeamMembers, getPublicTeamMem
 import { createUser, deleteUser, getAllUsers, updateUser } from "../controllers/users/users.controller.js";
 import { mcpLogin } from "../controllers/mcp/mcp.auth.controller.js";
 import { getPublicProjects, getPublicServices } from "../controllers/public-catalog/public-catalog.controller.js";
+import { createProject, deleteProject, getProjects, getPublicProject, updateProject } from "../controllers/portfolio/portfolio.controller.js";
+import { getLoginHistory } from "../controllers/login-history/login-history.controller.js";
+import { createService, deleteService, getServices, updateService } from "../controllers/services/services.controller.js";
 
 const Router  = express.Router();
 
@@ -34,6 +37,7 @@ Router.get('/users', verifyToken, getAllUsers)
 Router.post('/users', verifyToken, createUser)
 Router.patch('/users/:id', verifyToken, updateUser)
 Router.delete('/users/:id', verifyToken, deleteUser)
+Router.get('/login-history', verifyToken, getLoginHistory)
 
 Router.get('/team', verifyToken, getAllTeamMembers)
 Router.post('/team', verifyToken, createTeamMember)
@@ -44,7 +48,16 @@ Router.get('/public/team', getPublicTeamMembers)
 // Public catalog used by the marketing site. These endpoints keep frontend
 // sections from calling missing API routes and falling back after a 404.
 Router.get('/services', getPublicServices)
+Router.get('/admin/services', verifyToken, getServices)
+Router.post('/admin/services', verifyToken, createService)
+Router.patch('/admin/services/:id', verifyToken, updateService)
+Router.delete('/admin/services/:id', verifyToken, deleteService)
 Router.get('/projects', getPublicProjects)
+Router.get('/projects/:slug', getPublicProject)
+Router.get('/admin/projects', verifyToken, getProjects)
+Router.post('/admin/projects', verifyToken, createProject)
+Router.patch('/admin/projects/:id', verifyToken, updateProject)
+Router.delete('/admin/projects/:id', verifyToken, deleteProject)
 
 // Comment moderation
 Router.get('/comments', verifyToken, getAllComments)

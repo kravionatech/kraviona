@@ -2,14 +2,15 @@
 
 :root {
   color-scheme: light;
-  --kraviona-dark: #2c2a0c;
-  --kraviona-primary: #2e5f50;
-  --kraviona-primary-hover: #23483d;
-  --kraviona-primary-light: #5a8877;
-  --kraviona-accent: #fb8b00;
-  --kraviona-accent-hover: #ff9d1a;
-  --kraviona-accent-dark: #c66e00;
-  --kraviona-surface: #fffdf0;
+  --kraviona-dark: #0d4248;
+  --kraviona-primary: #0f5960;
+  --kraviona-primary-hover: #0a454b;
+  --kraviona-primary-light: #4d8588;
+  --kraviona-accent: #d85e3d;
+  --kraviona-accent-hover: #ee774d;
+  --kraviona-accent-dark: #b94b31;
+  --kraviona-gold: #f3bd67;
+  --kraviona-surface: #f8fbfa;
 
   /* Legacy aliases keep older admin utility classes on the shared palette. */
   --kraviona-ink: var(--kraviona-dark);
@@ -19,32 +20,32 @@
   --kraviona-coral: var(--kraviona-accent);
   --kraviona-coral-deep: var(--kraviona-accent-dark);
   --kraviona-sand: var(--kraviona-accent-hover);
-  --kraviona-sand-light: #f3ecb1;
+  --kraviona-sand-light: #fff3d7;
 }
 
 html,
 body {
-  background: #f3ecb1;
+  background: #edf5f4;
 }
 
 body {
-  color: #2c2a0c;
+  color: var(--kraviona-dark);
 }
 
 /* Shared admin palette. Most screens use Tailwind surface utilities, so these
    scoped tokens keep every CRUD page, modal and table visually consistent. */
 .admin-shell {
-  --admin-canvas: #f3ecb1;
-  --admin-surface: #fffdf0;
-  --admin-surface-raised: #e7df9f;
-  --admin-surface-muted: #fff9d9;
-  --admin-border: rgba(46, 95, 80, 0.25);
-  --admin-text: #2c2a0c;
-  --admin-text-muted: #617064;
+  --admin-canvas: #edf5f4;
+  --admin-surface: #ffffff;
+  --admin-surface-raised: #dcebea;
+  --admin-surface-muted: #f8fbfa;
+  --admin-border: rgba(21, 87, 97, 0.22);
+  --admin-text: #123f46;
+  --admin-text-muted: #5d7679;
   --admin-accent: var(--kraviona-coral);
   background:
-    radial-gradient(circle at 80% -10%, rgba(46, 95, 80, 0.13), transparent 30rem),
-    radial-gradient(circle at -10% 20%, rgba(251, 139, 0, 0.1), transparent 26rem),
+    radial-gradient(circle at 80% -10%, rgba(21, 87, 97, 0.13), transparent 30rem),
+    radial-gradient(circle at -10% 20%, rgba(232, 108, 71, 0.1), transparent 26rem),
     var(--admin-canvas);
 }
 

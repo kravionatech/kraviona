@@ -1,9 +1,9 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import Image from "next/image";
+import { API_URL } from "@/utils/api";
 
 const projects = [
   {
@@ -56,6 +56,16 @@ const itemVariants = {
 };
 
 const PortfolioSection = () => {
+  const [dynamicProjects, setDynamicProjects] = useState([]);
+
+  useEffect(() => {
+    fetch(`${API_URL}/projects`, { headers: { Accept: "application/json" } })
+      .then((response) => (response.ok ? response.json() : null))
+      .then((payload) => setDynamicProjects(Array.isArray(payload?.data) ? payload.data.filter((project) => project.isFeatured !== false).slice(0, 3) : []))
+      .catch(() => setDynamicProjects([]));
+  }, []);
+
+  const displayProjects = dynamicProjects.length ? dynamicProjects : projects;
   return (
     <section className="py-24 bg-gradient-to-b from-[#2A4A52] to-[#1A2E33] font-sans relative overflow-hidden">
       {/* Abstract Background Elements */}
@@ -121,20 +131,19 @@ const PortfolioSection = () => {
           viewport={{ once: true, amount: 0.1 }}
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10"
         >
-          {projects.map((project) => (
+          {displayProjects.map((project) => (
             <motion.div
-              key={project.id}
+              key={project.id || project._id || project.slug}
               variants={itemVariants}
               className="group relative overflow-hidden rounded-3xl aspect-[4/5] bg-[#2A4A52] border border-white/10 cursor-pointer shadow-lg hover:shadow-[0_8px_30px_rgb(42,74,82,0.3)] transition-all duration-500"
             >
+              <Link href={`/case-studies/${project.slug || ""}`} className="absolute inset-0 z-30" aria-label={`Read ${project.title} case study`} />
               {/* Project Image with Deep Zoom Effect */}
               <div className="absolute inset-0 w-full h-full bg-gray-900">
-                <Image
-                  src={project.image}
+                <img
+                  src={project.image || "/images/office/case-study-product.webp"}
                   alt={`${project.title} — ${project.category} project by Kraviona Tech Solutions`}
-                  className="object-cover transition-transform duration-1000 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] group-hover:scale-110 opacity-60 group-hover:opacity-100"
-                  fill
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  className="h-full w-full object-cover transition-transform duration-1000 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] group-hover:scale-110 opacity-60 group-hover:opacity-100"
                 />
               </div>
 
@@ -153,7 +162,7 @@ const PortfolioSection = () => {
               <div className="absolute bottom-0 left-0 w-full p-8 z-20 flex flex-col justify-end transform translate-y-8 group-hover:translate-y-0 transition-transform duration-500 ease-[cubic-bezier(0.25,0.46,0.45,0.94)]">
                 {/* Tech Stack Pills (Slide up and fade in on hover) */}
                 <div className="flex flex-wrap gap-2 mb-5 opacity-0 -translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-500 delay-100">
-                  {project.techStack.map((tech, i) => (
+                  {(project.techStack || []).map((tech, i) => (
                     <span
                       key={i}
                       className="px-3 py-1.5 bg-white/10 backdrop-blur-sm border border-white/5 text-white text-[11px] font-bold tracking-wide rounded-md"

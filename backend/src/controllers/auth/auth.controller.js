@@ -4,6 +4,7 @@ import { Auth } from "../../models/auth/auth.models.js";
 import tokenGenerate from "../../utils/tokenGeneration.js";
 import config from "../../config/config.js";
 import cookieParser  from "cookie-parser";
+import { recordLogin } from "../login-history/login-history.controller.js";
 
 export const createAccount = async (req, res) => {
   try {
@@ -209,7 +210,7 @@ export const loginAccountWithPassword = async (req, res) => {
         { phone: identifier.trim() },
       ],
     }).select(
-      "_id email username phone password role isActive isVerified"
+      "_id email username phone password role avatar isActive isVerified"
     );
 
     if (!user) {
@@ -250,6 +251,13 @@ export const loginAccountWithPassword = async (req, res) => {
         message: "Invalid credentials",
       });
     }
+
+    user.lastLoginAt = new Date();
+    await user.save();
+    // Login auditing must never prevent a valid user from accessing their account.
+    await recordLogin(user, req).catch((auditError) =>
+      console.error("Unable to record login history:", auditError.message),
+    );
 
     // ==============================
     // Generate Tokens
@@ -293,6 +301,7 @@ res.cookie("refreshToken", token.refreshToken, {
         email: user.email,
         username: user.username,
         phone: user.phone,
+        avatar: user.avatar,
         role: user.role,
         isVerified: user.isVerified,
         isActive: user.isActive,
