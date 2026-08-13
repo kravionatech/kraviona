@@ -137,7 +137,7 @@ export default function Frame({ children }) {
                 <Menu size={19} />
               </button>
               <div className="hidden min-w-0 sm:block">
-                <p className="text-[10px] font-bold uppercase tracking-[0.17em] text-blue-600">Kraviona admin</p>
+                <p className="text-[10px] font-bold uppercase tracking-[0.17em] text-[#d85e3d]">Kraviona admin</p>
                 <h1 className="truncate text-sm font-semibold text-gray-900">{pageName(pathname)}</h1>
               </div>
             </div>
@@ -150,7 +150,7 @@ export default function Frame({ children }) {
                 onFocus={() => setSearchOpen(true)}
                 onChange={(event) => { setSearch(event.target.value); setSearchOpen(true); }}
                 placeholder="Search pages, content, actions..."
-                className="w-full rounded-lg border border-gray-200 bg-white py-2.5 pl-10 pr-16 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
+                className="w-full rounded-xl border border-[#0f5960]/20 bg-white py-2.5 pl-10 pr-16 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-[#0f5960] focus:ring-4 focus:ring-[#0f5960]/10"
               />
               <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 rounded-md border border-white/10 bg-white/[0.06] px-1.5 py-0.5 text-[10px] font-semibold text-slate-400">
                 ⌘ K
@@ -159,7 +159,7 @@ export default function Frame({ children }) {
             </div>
 
             <div className="flex items-center gap-2 sm:gap-3">
-              <Link href="/blog/new" className="hidden items-center gap-2 rounded-lg bg-blue-600 px-3.5 py-2.5 text-sm font-medium text-white transition hover:bg-blue-700 sm:flex">
+              <Link href="/blog/new" className="hidden items-center gap-2 rounded-xl bg-[#d85e3d] px-3.5 py-2.5 text-sm font-bold text-white transition hover:bg-[#b94b31] sm:flex">
                 <FilePlus2 size={16} />
                 New post
               </Link>
@@ -167,17 +167,17 @@ export default function Frame({ children }) {
                 <button
                   type="button"
                   onClick={() => setNotificationsOpen((open) => !open)}
-                  className="relative rounded-lg p-2.5 text-gray-600 transition hover:bg-gray-100 hover:text-blue-600"
+                  className="relative rounded-xl p-2.5 text-gray-600 transition hover:bg-[#e7f1f0] hover:text-[#0f5960]"
                   aria-label="Open notifications"
                   aria-expanded={notificationsOpen}
                 >
                   <Bell size={18} />
-                  {alertCount > 0 && <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-blue-600 px-1 text-[10px] font-bold text-white">{alertCount > 9 ? "9+" : alertCount}</span>}
+                  {alertCount > 0 && <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-[#d85e3d] px-1 text-[10px] font-bold text-white">{alertCount > 9 ? "9+" : alertCount}</span>}
                 </button>
                 {notificationsOpen && currentUser?.role === "super_admin" && <NotificationMenu unreadMessages={unreadMessages} newLeads={newLeads} onClose={() => setNotificationsOpen(false)} />}
               </div>
               <div className="hidden items-center gap-2 border-l border-gray-200 pl-3 sm:flex">
-                {currentUser?.avatar ? <img src={currentUser.avatar} alt="" className="h-9 w-9 rounded-full object-cover" /> : <span className="flex h-9 w-9 items-center justify-center rounded-full bg-blue-600 text-xs font-bold text-white">{(currentUser?.name || "Admin").slice(0, 2).toUpperCase()}</span>}
+                {currentUser?.avatar ? <img src={currentUser.avatar} alt="" className="h-9 w-9 rounded-full object-cover" /> : <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#0f5960] text-xs font-bold text-white">{(currentUser?.name || "Admin").slice(0, 2).toUpperCase()}</span>}
                 <span className="hidden text-sm font-medium text-gray-700 xl:block">{currentUser?.name || "No data found."}</span>
               </div>
             </div>

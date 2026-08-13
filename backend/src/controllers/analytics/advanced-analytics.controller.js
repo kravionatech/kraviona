@@ -97,6 +97,10 @@ export const getAdvancedAnalytics = async (req, res) => {
     const activityScope = isSuperAdmin ? {} : { userID: ownId };
     const loginScope = isSuperAdmin ? {} : { user: ownId };
     const dateMatch = { createdAt: { $gte: start, $lte: end } };
+    const rangeDuration = Math.max(end.getTime() - start.getTime() + 1, DAY_MS);
+    const previousEnd = new Date(start.getTime() - 1);
+    const previousStart = new Date(start.getTime() - rangeDuration);
+    const previousDateMatch = { createdAt: { $gte: previousStart, $lte: previousEnd } };
 
     const [posts, services, projects, media, leads, users, timelineSeries, seoPosts, activityLogs, loginHistory] = await Promise.all([
       PostModel.countDocuments({ ...postScope, ...dateMatch }),
@@ -126,6 +130,14 @@ export const getAdvancedAnalytics = async (req, res) => {
       PostModel.countDocuments({ ...postScope, ...dateMatch, status: "draft" }),
       Service.countDocuments({ ...serviceScope, isActive: true }),
       Project.countDocuments({ ...projectScope, isActive: true }),
+    ]);
+
+    const [previousPosts, previousServices, previousProjects, previousLeads, previousUsers] = await Promise.all([
+      PostModel.countDocuments({ ...postScope, ...previousDateMatch }),
+      Service.countDocuments({ ...serviceScope, ...previousDateMatch }),
+      Project.countDocuments({ ...projectScope, ...previousDateMatch }),
+      isSuperAdmin ? Lead.countDocuments(previousDateMatch) : Promise.resolve(0),
+      isSuperAdmin ? Auth.countDocuments(previousDateMatch) : Promise.resolve(0),
     ]);
 
     const seo = {
@@ -195,6 +207,7 @@ export const getAdvancedAnalytics = async (req, res) => {
         scope: isSuperAdmin ? "workspace" : "personal",
         range: { key: range, start, end },
         kpis: { users, services, posts, projects, media, leads, published, draft, activeServices, activeProjects, seoScore: seo.score },
+        comparison: { users: previousUsers, services: previousServices, posts: previousPosts, projects: previousProjects, leads: previousLeads },
         timeline,
         seo,
         servicePerformance,

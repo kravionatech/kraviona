@@ -1,5 +1,5 @@
 import express from "express";
-import { createAccount, getMe, loginAccountWithPassword, logoutUser } from "../controllers/auth/auth.controller.js";
+import { createAccount, getMe, loginAccountWithPassword, logoutUser, updateMyAccount } from "../controllers/auth/auth.controller.js";
 import verifyToken from "../middleware/verifyToken.js";
 import { createCategory, deleteCategory, getAllCategories, getCategories, getCategoryByIdOrSlug, updateCategory } from "../controllers/categories/categories.controller.js";
 import { createPost, deletePost, privatePosts, privateViewPost, publicPosts, singleViewPost, updatePost } from "../controllers/post/post.controller.js";
@@ -28,6 +28,7 @@ export  default Router;
 Router.post('/create-account',createAccount)
 Router.post('/login',loginAccountWithPassword)
 Router.get('/me',verifyToken, getMe)
+Router.patch('/me', verifyToken, updateMyAccount)
 Router.post('/auth/logout', verifyToken, logoutUser)
 
 // Analytics

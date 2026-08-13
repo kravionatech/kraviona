@@ -357,7 +357,75 @@ return res.status(200).json({message:"User found",success:true,data:isUser})
   return res.status(500).json({message:error.message,success:false})
 
 }
-} 
+};
+
+export const updateMyAccount = async (req, res) => {
+  try {
+    const sessionUser = req.user;
+    if (!sessionUser?.id) {
+      return res.status(401).json({ success: false, message: "Unauthorized" });
+    }
+
+    const user = await Auth.findById(sessionUser.id);
+    if (!user || !ADMIN_PANEL_ROLES.includes(user.role)) {
+      return res.status(403).json({ success: false, message: "You are not authorized to update this account." });
+    }
+
+    const clean = (value) => String(value || "").trim();
+    const editable = ["name", "email", "username", "phone", "avatar"];
+    for (const field of editable) {
+      if (req.body[field] !== undefined) {
+        user[field] = field === "email" ? clean(req.body[field]).toLowerCase() : clean(req.body[field]);
+      }
+    }
+
+    if (req.body.profile !== undefined) {
+      user.profile = {
+        ...(user.profile?.toObject?.() || user.profile || {}),
+        bio: clean(req.body.profile?.bio),
+        jobTitle: clean(req.body.profile?.jobTitle),
+      };
+    }
+
+    if (req.body.preferences !== undefined) {
+      user.preferences = {
+        ...(user.preferences?.toObject?.() || user.preferences || {}),
+        ...(req.body.preferences || {}),
+      };
+    }
+
+    if (req.body.password) {
+      const password = String(req.body.password);
+      if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(password)) {
+        return res.status(400).json({ success: false, message: "Password must be 8+ characters with uppercase, lowercase, number and special character." });
+      }
+      user.password = await bcrypt.hash(password, 12);
+    }
+
+    await user.save();
+    await recordActivity(req, {
+      userID: user._id,
+      module: "profile",
+      action: "updated",
+      resourceId: user._id,
+      resourceName: user.name,
+      after: { name: user.name, email: user.email, username: user.username },
+    });
+
+    const safeUser = user.toObject();
+    delete safeUser.password;
+    return res.status(200).json({ success: true, message: "Account updated successfully.", data: safeUser });
+  } catch (error) {
+    if (error.code === 11000) {
+      const field = Object.keys(error.keyValue || {})[0] || "field";
+      return res.status(409).json({ success: false, message: `${field} already exists.` });
+    }
+    if (error.name === "ValidationError") {
+      return res.status(400).json({ success: false, message: Object.values(error.errors)[0]?.message || "Please check your account details." });
+    }
+    return res.status(500).json({ success: false, message: error.message || "Unable to update account." });
+  }
+};
 
 
 export const logoutUser = async (req, res) => {
