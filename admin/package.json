@@ -24,6 +24,8 @@
     "@tiptap/pm": "^3.30.0",
     "@tiptap/react": "^3.30.0",
     "@tiptap/starter-kit": "^3.30.0",
+    "@vercel/analytics": "^2.0.1",
+    "@vercel/speed-insights": "^2.0.0",
     "axios": "^1.18.0",
     "framer-motion": "^12.41.0",
     "js-cookie": "^3.0.8",

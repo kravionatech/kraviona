@@ -1,5 +1,7 @@
 import "./globals.css";
 import ToastProvider from "./ToastProvider";
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 export const metadata = {
   title: "Kraviona Admin",
@@ -19,6 +21,8 @@ export default function RootLayout({ children }) {
       >
         {children}
         <ToastProvider />
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
