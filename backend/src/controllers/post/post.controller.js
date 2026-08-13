@@ -835,9 +835,18 @@ export const singleViewPost = async (req, res) => {
 
     // Public detail fetch must be read-only. Views are recorded through the
     // engagement endpoint only after a real browser reader opens the article.
-    const blog = await PostModel.findOne({ slug, ...publicPostFilter() })
+    let blog = await PostModel.findOne({ slug, ...publicPostFilter() })
       .select("-reactions")
       .populate("relatedPosts", "title slug excerpt featuredImage");
+
+    if (!blog) {
+      blog = await PostModel.findOne({
+        "previousSlugs.slug": slug,
+        ...publicPostFilter(),
+      })
+        .select("-reactions")
+        .populate("relatedPosts", "title slug excerpt featuredImage");
+    }
 
     if (!blog) {
       return res.status(404).json({ success: false, message: "Blog not found" });

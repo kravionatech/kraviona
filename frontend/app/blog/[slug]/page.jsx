@@ -1,4 +1,4 @@
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import Script from "next/script";
@@ -99,6 +99,17 @@ const plainText = (value = "") =>
     .replace(/\s+/g, " ")
     .trim();
 
+function getArticleSchemaType(blog) {
+  if (["BlogPosting", "Article", "NewsArticle"].includes(blog?.schemaType)) {
+    return blog.schemaType;
+  }
+
+  const categorySlug = blog?.category?.slug;
+  return ["ai-and-automation", "tech-news"].includes(categorySlug)
+    ? "NewsArticle"
+    : "BlogPosting";
+}
+
 function getAuthorProfile(blog) {
   const author = blog?.author || {};
 
@@ -192,8 +203,17 @@ export async function generateMetadata({ params }) {
     };
   }
 
+  const seoTitle = blog.metaTitle || blog.title;
   const description =
-    cleanExcerpt(blog.excerpt || blog.content || blog.title, 158) || blog.title;
+    cleanExcerpt(
+      blog.metaDescription || blog.excerpt || blog.content || blog.title,
+      158,
+    ) || blog.title;
+  const openGraphTitle = blog.ogTitle || seoTitle;
+  const openGraphDescription = blog.ogDescription || description;
+  const twitterTitle = blog.twitterTitle || openGraphTitle;
+  const twitterDescription =
+    blog.twitterDescription || openGraphDescription;
 
   const blogCanonical = canonicalUrl(`/blog/${slug}`);
   const authorProfile = getAuthorProfile(blog);
@@ -202,7 +222,7 @@ export async function generateMetadata({ params }) {
   const modifiedTime = getDate(blog.updatedAt || blog.publishedAt || blog.createdAt);
 
   return {
-    title: blog.title,
+    title: seoTitle,
 
     description,
 
@@ -233,9 +253,9 @@ export async function generateMetadata({ params }) {
     },
 
     openGraph: {
-      title: blog.title,
+      title: openGraphTitle,
 
-      description,
+      description: openGraphDescription,
 
       url: blogCanonical,
 
@@ -268,9 +288,9 @@ export async function generateMetadata({ params }) {
     twitter: {
       card: "summary_large_image",
 
-      title: blog.title,
+      title: twitterTitle,
 
-      description,
+      description: twitterDescription,
 
       images: [featuredImageUrl || `${blogCanonical}/opengraph-image`],
 
@@ -278,9 +298,10 @@ export async function generateMetadata({ params }) {
       site: SITE_TWITTER,
     },
 
-    robots: blog.isNoIndex
-      ? { index: false, follow: true }
-      : defaultRobots,
+    robots:
+      blog.isNoIndex || blog.isNoFollow
+        ? { index: !blog.isNoIndex, follow: !blog.isNoFollow }
+        : defaultRobots,
   };
 }
 
@@ -293,6 +314,12 @@ const BlogDetail = async ({ params }) => {
   ]);
 
   if (!blog) notFound();
+
+  // The API also resolves recorded previousSlugs. Redirect the public page to
+  // the current canonical slug instead of rendering duplicate content.
+  if (blog.slug && blog.slug !== slug) {
+    permanentRedirect(`/blog/${blog.slug}`);
+  }
 
   const featuredImageUrl = getImageUrl(blog);
   const featuredImageAlt = getImageAlt(blog);
@@ -365,7 +392,12 @@ const BlogDetail = async ({ params }) => {
     : [];
 
   const articleImage = absoluteImageUrl(featuredImageUrl || "/og-image.jpg");
-  const articleDescription = (blog.excerpt || blog.content || "")
+  const articleDescription = (
+    blog.metaDescription ||
+    blog.excerpt ||
+    blog.content ||
+    ""
+  )
     .replace(/<[^>]*>?/gm, "")
     .replace(/\s+/g, " ")
     .trim()
@@ -380,7 +412,7 @@ const BlogDetail = async ({ params }) => {
       : [];
   const articleTags = Array.isArray(blog.tags) ? blog.tags : [];
 
-  const supportedArticleType = "BlogPosting";
+  const supportedArticleType = getArticleSchemaType(blog);
   const generatedArticleSchema = {
     "@context": "https://schema.org",
 

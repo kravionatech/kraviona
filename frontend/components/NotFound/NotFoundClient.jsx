@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
+import { API_URL } from "@/utils/api";
 import {
   ArrowRight,
   BookOpen,
@@ -16,7 +17,6 @@ import {
   Phone,
   Search,
   Wrench,
-  Tag,
   Sparkles,
 } from "lucide-react";
 
@@ -77,9 +77,37 @@ const contactLinks = [
   },
 ];
 
-export default function NotFoundClient() {
+export default function NotFoundClient({ suggestedPosts = [] }) {
   const [searchQuery, setSearchQuery] = useState("");
+  const [recommendedPosts, setRecommendedPosts] = useState(suggestedPosts);
   const router = useRouter();
+
+  useEffect(() => {
+    if (recommendedPosts.length > 0) return;
+
+    let active = true;
+    fetch(`${API_URL}/public/posts?page=1&limit=3`, {
+      headers: { Accept: "application/json" },
+    })
+      .then((response) => (response.ok ? response.json() : null))
+      .then((json) => {
+        if (!active || !Array.isArray(json?.data)) return;
+        setRecommendedPosts(
+          json.data
+            .filter((post) => post?.slug && post?.title)
+            .map((post) => ({
+              slug: post.slug,
+              title: post.title,
+              excerpt: post.excerpt || "",
+            })),
+        );
+      })
+      .catch(() => {});
+
+    return () => {
+      active = false;
+    };
+  }, [recommendedPosts.length]);
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
@@ -271,6 +299,39 @@ export default function NotFoundClient() {
                   );
                 })}
               </div>
+
+              {recommendedPosts.length > 0 && (
+                <section className="mt-10" aria-labelledby="suggested-articles">
+                  <p className="text-xs font-black uppercase tracking-[0.2em] text-[#E8622A]">
+                    Latest from the blog
+                  </p>
+                  <h2
+                    id="suggested-articles"
+                    className="mt-2 text-2xl font-black text-[#1A2E33]"
+                  >
+                    Suggested Articles
+                  </h2>
+                  <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-3">
+                    {recommendedPosts.map((post) => (
+                      <Link
+                        key={post.slug}
+                        href={`/blog/${post.slug}`}
+                        className="group rounded-2xl border border-gray-200 bg-white p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:border-[#E8622A]/40 hover:shadow-md"
+                      >
+                        <span className="block text-base font-black leading-snug text-[#1A2E33] group-hover:text-[#E8622A]">
+                          {post.title}
+                        </span>
+                        {post.excerpt && (
+                          <span className="mt-2 block text-sm leading-relaxed text-gray-600">
+                            {post.excerpt.replace(/<[^>]*>/g, "").slice(0, 110)}
+                            {post.excerpt.length > 110 ? "…" : ""}
+                          </span>
+                        )}
+                      </Link>
+                    ))}
+                  </div>
+                </section>
+              )}
             </div>
 
             <aside className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">

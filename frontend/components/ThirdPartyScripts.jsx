@@ -14,24 +14,8 @@ const loadScript = ({ id, src, onLoad }) => {
   document.body.appendChild(script);
 };
 
-function loadAnalytics() {
+function loadGoogleTagManager() {
   window.dataLayer = window.dataLayer || [];
-  window.gtag =
-    window.gtag ||
-    function gtag() {
-      window.dataLayer.push(arguments);
-    };
-
-  loadScript({
-    id: "google-analytics-src",
-    src: "https://www.googletagmanager.com/gtag/js?id=G-WKDGR26N2Q",
-    onLoad: () => {
-      window.gtag("js", new Date());
-      window.gtag("config", "G-WKDGR26N2Q", {
-        page_path: window.location.pathname,
-      });
-    },
-  });
 
   if (!document.getElementById("google-tag-manager-src")) {
     window.dataLayer.push({
@@ -100,9 +84,9 @@ function loadGoogleNewsSwg() {
 
 export default function ThirdPartyScripts() {
   useEffect(() => {
-    // Start GA4 after hydration so a visit that ends without an interaction is
-    // still counted. The optional News integration can remain interaction-led.
-    loadAnalytics();
+    // GA4 is configured inside GTM. Loading gtag.js here as well would fire the
+    // same page view twice.
+    loadGoogleTagManager();
 
     const loadNews = () => {
       // loadChatbase();
