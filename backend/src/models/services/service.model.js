@@ -9,10 +9,12 @@ const serviceSchema = new Schema(
     features: [{ type: String, trim: true, maxlength: 120 }],
     isActive: { type: Boolean, default: true },
     order: { type: Number, default: 0 },
+    createdBy: { type: Schema.Types.ObjectId, ref: "User", index: true },
   },
   { timestamps: true },
 );
 
 serviceSchema.index({ isActive: 1, order: 1 });
+serviceSchema.index({ createdBy: 1, createdAt: -1 });
 
 export const Service = mongoose.models.Service || model("Service", serviceSchema);

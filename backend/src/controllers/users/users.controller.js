@@ -2,7 +2,7 @@ import bcrypt from "bcryptjs";
 import { Auth } from "../../models/auth/auth.models.js";
 
 const USER_ROLES = ["super_admin", "admin", "editor", "viewer", "user"];
-const MANAGER_ROLES = ["admin", "super_admin"];
+const MANAGER_ROLES = ["super_admin"];
 
 const canManageUsers = (user) => user && MANAGER_ROLES.includes(user.role);
 const isSuperAdmin = (user) => user?.role === "super_admin";

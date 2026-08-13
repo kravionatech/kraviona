@@ -9,7 +9,7 @@ import { MessageModel } from "../../models/messages/message.model.js";
 import { newsLatterModel } from "../../models/newslatter/newslatter.model.js";
 import { TeamMemberModel } from "../../models/team/team.model.js";
 
-const ANALYTICS_ROLES = ["admin", "super_admin"];
+const ANALYTICS_ROLES = ["editor", "admin", "super_admin"];
 const DAY_MS = 24 * 60 * 60 * 1000;
 
 const canViewAnalytics = (user) => user && ANALYTICS_ROLES.includes(user.role);
@@ -150,6 +150,32 @@ const buildCard = (key, label, total, month, description) => ({
   description,
 });
 
+const buildPersonalTimeline = async (userId, days = 14) => {
+  const [posts, media] = await Promise.all([
+    aggregateByDay(PostModel, days, { userID: userId }),
+    aggregateByDay(mediaModel, days, { userID: userId, isDeleted: { $ne: true } }),
+  ]);
+
+  return Array.from({ length: days }, (_, index) => {
+    const date = new Date(Date.now() - (days - 1 - index) * DAY_MS);
+    date.setHours(0, 0, 0, 0);
+    const key = dayKey(date);
+    return { date: key, label: dayLabel(date), leads: 0, messages: 0, posts: posts.get(key) || 0, comments: 0, subscribers: 0, media: media.get(key) || 0 };
+  });
+};
+
+const getPersonalDashboard = async (user) => {
+  const postMatch = { userID: user.id };
+  const mediaMatch = { userID: user.id, isDeleted: { $ne: true } };
+  const [postsTotal, publishedPosts, draftPosts, scheduledPosts, totalPostViews, totalPostComments, totalPostLikes, totalPostDislikes, totalPostShares, mediaTotal, mediaStorage, postMonth, mediaMonth, postStatuses, mediaTypes, timeline, recentPosts, recentMedia, topPosts] = await Promise.all([
+    PostModel.countDocuments(postMatch), PostModel.countDocuments({ ...postMatch, status: "published" }), PostModel.countDocuments({ ...postMatch, status: "draft" }), PostModel.countDocuments({ ...postMatch, status: "scheduled" }), sumField(PostModel, "views", postMatch), sumField(PostModel, "commentCount", postMatch), sumField(PostModel, "reactions.like", postMatch), sumField(PostModel, "reactions.dislike", postMatch), sumField(PostModel, "reactions.share", postMatch), mediaModel.countDocuments(mediaMatch), sumField(mediaModel, "fileSize", mediaMatch), monthCounts(PostModel, postMatch), monthCounts(mediaModel, mediaMatch), groupByField(PostModel, "status", postMatch), groupByField(mediaModel, "mediaType", mediaMatch), buildPersonalTimeline(user.id), PostModel.find(postMatch).select("title slug status category views reactions commentCount publishedAt updatedAt createdAt").sort({ updatedAt: -1, createdAt: -1 }).limit(6).lean(), mediaModel.find(mediaMatch).select("fileName originalName mediaType fileSize fileUrl createdAt").sort({ createdAt: -1 }).limit(6).lean(), PostModel.find(postMatch).select("title slug status category views reactions commentCount publishedAt").sort({ views: -1, updatedAt: -1 }).limit(6).lean(),
+  ]);
+  const totalPostReactions = totalPostLikes + totalPostDislikes + totalPostShares;
+  const totalPostEngagements = totalPostReactions + totalPostComments;
+  const summary = { usersTotal: 0, activeUsers: 0, teamMembersTotal: 0, activeTeamMembers: 0, postsTotal, publishedPosts, draftPosts, totalPostViews, totalPostComments, totalPostLikes, totalPostDislikes, totalPostShares, totalPostReactions, totalPostEngagements, postEngagementRate: totalPostViews ? Number(((totalPostEngagements / totalPostViews) * 100).toFixed(2)) : 0, averageViewsPerPublishedPost: publishedPosts ? Math.round(totalPostViews / publishedPosts) : 0, categoriesTotal: 0, publishedCategories: 0, leadsTotal: 0, newLeads: 0, wonLeads: 0, conversionRate: 0, pipelineValue: 0, wonValue: 0, messagesTotal: 0, unreadMessages: 0, subscribersTotal: 0, activeSubscribers: 0, mediaTotal, mediaStorage, mediaStorageLabel: formatBytes(mediaStorage) };
+  return { generatedAt: new Date().toISOString(), access: { role: user.role, scope: "own" }, summary, modelCards: [buildCard("posts", "My Posts", postsTotal, postMonth, `${publishedPosts} published, ${draftPosts} drafts`), buildCard("media", "My Media", mediaTotal, mediaMonth, `${formatBytes(mediaStorage)} stored`)], timeline, breakdowns: { userRoles: [], postStatuses, categoryStatuses: [], commentStatuses: [], reactionTypes: [], leadStatuses: [], leadSources: [], messageStatuses: [], mediaTypes }, recent: { leads: [], messages: [], posts: recentPosts, media: recentMedia, subscribers: [] }, topPosts };
+};
+
 export const getDashboardAnalytics = async (req, res) => {
   try {
     const user = req.user;
@@ -159,6 +185,10 @@ export const getDashboardAnalytics = async (req, res) => {
 
     if (!canViewAnalytics(user)) {
       return res.status(403).json({ message: "Forbidden", success: false });
+    }
+
+    if (user.role !== "super_admin") {
+      return res.status(200).json({ success: true, message: "Personal dashboard analytics fetched successfully", data: await getPersonalDashboard(user) });
     }
 
     const activeMediaMatch = { isDeleted: { $ne: true } };

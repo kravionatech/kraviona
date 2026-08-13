@@ -5,6 +5,9 @@ import tokenGenerate from "../../utils/tokenGeneration.js";
 import config from "../../config/config.js";
 import cookieParser  from "cookie-parser";
 import { recordLogin } from "../login-history/login-history.controller.js";
+import { recordActivity } from "../../utils/activityLogger.js";
+
+const ADMIN_PANEL_ROLES = ["super_admin", "admin", "editor"];
 
 export const createAccount = async (req, res) => {
   try {
@@ -252,12 +255,20 @@ export const loginAccountWithPassword = async (req, res) => {
       });
     }
 
+    if (!ADMIN_PANEL_ROLES.includes(user.role)) {
+      return res.status(403).json({
+        success: false,
+        message: "This account is not authorized to access the admin panel.",
+      });
+    }
+
     user.lastLoginAt = new Date();
     await user.save();
     // Login auditing must never prevent a valid user from accessing their account.
     await recordLogin(user, req).catch((auditError) =>
       console.error("Unable to record login history:", auditError.message),
     );
+    await recordActivity(req, { userID: user._id, module: "security", action: "login", resourceName: "Admin panel" });
 
     // ==============================
     // Generate Tokens
@@ -327,12 +338,17 @@ res.cookie("refreshToken", token.refreshToken, {
 // get me
 export const getMe = async (req, res) => {
 try {
-  const user = req.user;
-  if(!user) return res.status(401).json({message:"Unauthorized",success:false})
-console.log("user",user)
+    const user = req.user;
+    if(!user) return res.status(401).json({message:"Unauthorized",success:false})
     // is User exits
     const isUser = await Auth.findById(user.id).select("-password");
     if(!isUser) return res.status(404).json({message:"User not found",success:false})
+    if (!ADMIN_PANEL_ROLES.includes(isUser.role)) {
+      return res.status(403).json({
+        message: "This account is not authorized to access the admin panel.",
+        success: false,
+      });
+    }
 return res.status(200).json({message:"User found",success:true,data:isUser})
     
 
@@ -346,6 +362,9 @@ return res.status(200).json({message:"User found",success:true,data:isUser})
 
 export const logoutUser = async (req, res) => {
     try {
+        if (req.user?.id || req.user?._id) {
+          await recordActivity(req, { userID: req.user.id || req.user._id, module: "security", action: "logout", resourceName: "Admin panel" });
+        }
         // IMPORTANT: yeh exact same options hone chahiye jo login/signin ke
         // waqt cookie set karte time diye gaye the — naam, path, domain match
         // hona zaroori hai, warna browser cookie clear nahi karega.

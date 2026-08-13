@@ -7,9 +7,7 @@ export const createCategory = async (req, res) => {
   try {
     const user = req.user;
     if (!user) return res.status(401).json({ message: "Unauthorized", success: false });
-if(user.role ==="user") return res.status(403).json({
-  message:"User Not authorized"
-})
+    if (user.role !== "super_admin") return res.status(403).json({ message: "Only super admin can manage categories", success: false });
     const isExist = await Auth.findById(user.id);
     if (!isExist) return res.status(404).json({ message: "User not found", success: false });
 
@@ -94,6 +92,9 @@ export const getAllCategories = async (req, res) => {
   try {
     const user = req.user;
     if (!user) return res.status(401).json({ message: "Unauthorized", success: false });
+    if (user.role !== "super_admin" && String(category.userID) !== String(user.id)) {
+      return res.status(403).json({ message: "You can update only your own category", success: false });
+    }
 
     const { status, page = 1, limit = 20, search } = req.query;
     const currentPage = Math.max(Number.parseInt(page, 10) || 1, 1);
@@ -162,10 +163,12 @@ export const updateCategory = async (req, res) => {
   try {
     const user = req.user;
     if (!user) return res.status(401).json({ message: "Unauthorized", success: false });
-
     const { id } = req.params;
     const category = await CategoryModel.findById(id);
     if (!category) return res.status(404).json({ message: "Category not found", success: false });
+    if (user.role !== "super_admin" && String(category.userID) !== String(user.id)) {
+      return res.status(403).json({ message: "You can update only your own category", success: false });
+    }
 
     const {
       name, description, slug, status,
@@ -224,6 +227,9 @@ export const deleteCategory = async (req, res) => {
     const { id } = req.params;
     const category = await CategoryModel.findById(id);
     if (!category) return res.status(404).json({ message: "Category not found", success: false });
+    if (user.role !== "super_admin" && String(category.userID) !== String(user.id)) {
+      return res.status(403).json({ message: "You can delete only your own category", success: false });
+    }
 
     const attachedPostCount = await PostModel.countDocuments({ categoryID: category._id });
     if (attachedPostCount > 0) {

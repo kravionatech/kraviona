@@ -1,7 +1,7 @@
 import Lead from "../../models/leads/lead.model.js";
 
 const canManageLeads = (user) =>
-  user && (user.role === "admin" || user.role === "super_admin");
+  user && user.role === "super_admin";
 
 const cleanText = (value) => String(value).trim();
 

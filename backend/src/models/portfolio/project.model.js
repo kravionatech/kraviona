@@ -16,7 +16,9 @@ const projectSchema = new Schema({
   isActive: { type: Boolean, default: true },
   isFeatured: { type: Boolean, default: true },
   order: { type: Number, default: 0 },
+  createdBy: { type: Schema.Types.ObjectId, ref: "User", index: true },
 }, { timestamps: true });
 
 projectSchema.index({ isActive: 1, isFeatured: 1, order: 1 });
+projectSchema.index({ createdBy: 1, createdAt: -1 });
 export const Project = mongoose.models.Project || model("Project", projectSchema);

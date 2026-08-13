@@ -3,6 +3,7 @@ import { cloudinary } from "../../config/cloudinary.js";
 
 import { mediaModel } from "../../models/media/media.model.js";
 import { Auth } from "../../models/auth/auth.models.js";
+import { recordActivity } from "../../utils/activityLogger.js";
 
 export const uploadMedia = async (req, res) => {
     try {
@@ -73,6 +74,14 @@ export const uploadMedia = async (req, res) => {
             });
 
             uploadedFiles.push(media);
+            await recordActivity(req, {
+                userID: isUser._id,
+                module: "media",
+                action: "uploaded",
+                resourceId: media._id,
+                resourceName: media.originalName,
+                after: { mediaType: media.mediaType, fileName: media.originalName },
+            });
         }
 
         return res.status(201).json({
@@ -165,7 +174,7 @@ export const deleteMedia = async (req, res) => {
         }
 
         const isOwner = String(media.userID) === String(user.id || user._id);
-        const canManageAll = user.role === "admin" || user.role === "super_admin";
+        const canManageAll = user.role === "super_admin";
 
         if (!isOwner && !canManageAll) {
             return res.status(403).json({
@@ -186,6 +195,14 @@ export const deleteMedia = async (req, res) => {
 
         media.isDeleted = true;
         await media.save();
+        await recordActivity(req, {
+            userID: user.id || user._id,
+            module: "media",
+            action: "deleted",
+            resourceId: media._id,
+            resourceName: media.originalName,
+            before: { mediaType: media.mediaType, fileName: media.originalName },
+        });
 
         return res.status(200).json({
             success: true,

@@ -26,7 +26,7 @@ export const getAllSubscribers = async (req,res)=>{
     try {
         const user = req.user;
         if(!user) return res.status(401).json({message:"Unauthorized",success:false})
-        if(user.role !== "admin" && user.role !== "super_admin") return res.status(403).json({message:"Forbidden",success:false})
+        if(user.role !== "super_admin") return res.status(403).json({message:"Only super admin can view subscribers",success:false})
 
         const currentPage = Math.max(Number.parseInt(req.query.page, 10) || 1, 1);
         const perPage = Math.min(
@@ -75,8 +75,8 @@ export const deleteSubscriber = async (req,res)=>{
     try {
         const user = req.user;
         if(!user) return res.status(401).json({message:"Unauthorized",success:false})
-            if(user.role !== "admin" && user.role !== "super_admin")
-                return res.status(403).json({message:"Forbidden",success:false})
+            if(user.role !== "super_admin")
+                return res.status(403).json({message:"Only super admin can delete subscribers",success:false})
 
             // check subscriber are exits
         const isSubscriber = await newsLatterModel.findById(req.params.id)

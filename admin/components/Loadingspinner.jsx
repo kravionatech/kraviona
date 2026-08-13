@@ -24,7 +24,7 @@ export function Spinner({ size = "md", className = "" }) {
       aria-label="Loading"
     >
       {/* faint track */}
-      <circle cx="25" cy="25" r="20" stroke="#1f2c47" strokeWidth="5" />
+      <circle cx="25" cy="25" r="20" stroke="#d7e8e6" strokeWidth="5" />
       {/* glowing accent arc */}
       <circle
         cx="25"
@@ -43,8 +43,8 @@ export function Spinner({ size = "md", className = "" }) {
           x2="100%"
           y2="100%"
         >
-          <stop offset="0%" stopColor="#fb7a3c" />
-          <stop offset="100%" stopColor="#fb7a3c" stopOpacity="0" />
+          <stop offset="0%" stopColor="#d85e3d" />
+          <stop offset="100%" stopColor="#f3bd67" stopOpacity="0" />
         </linearGradient>
       </defs>
     </svg>

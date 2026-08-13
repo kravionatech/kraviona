@@ -2,6 +2,7 @@ import { Auth } from "../../models/auth/auth.models.js";
 import { CategoryModel } from "../../models/blog/category.model.js";
 import { PostModel } from "../../models/blog/post.model.js";
 import slugify from "slugify";
+import { recordActivity } from "../../utils/activityLogger.js";
 
 // ==========================================
 // CONSTANTS
@@ -20,8 +21,9 @@ const ROLES = {
 // it was never added to the block-list. A whitelist fails closed instead.
 const CONTENT_MANAGER_ROLES = [ROLES.EDITOR, ROLES.ADMIN, ROLES.SUPER_ADMIN];
 
-// Roles allowed to update/delete/view posts that belong to someone else.
-const FULL_ACCESS_ROLES = [ROLES.ADMIN, ROLES.SUPER_ADMIN];
+// Only the super admin may read or manage content belonging to another user.
+// Every other role, including admin, is restricted to records it created.
+const FULL_ACCESS_ROLES = [ROLES.SUPER_ADMIN];
 
 // ==========================================
 // HELPERS
@@ -343,6 +345,15 @@ export const createPost = async (req, res) => {
     });
 
     await post.save();
+
+    await recordActivity(req, {
+      userID: user.id,
+      module: "blog",
+      action: "created",
+      resourceId: post._id,
+      resourceName: post.title,
+      after: { title: post.title, slug: post.slug, status: post.status },
+    });
     await CategoryModel.findByIdAndUpdate(post.categoryID, {
       $inc: { postCount: 1 },
     });
@@ -476,7 +487,7 @@ export const privatePosts = async (req, res) => {
     const requestedPage = Math.max(1, parseInt(req.query.page, 10) || 1);
     const limit = Math.min(50, Math.max(1, parseInt(req.query.limit, 10) || 20));
 
-    // Admin/super_admin manage everyone's posts; editors see their own.
+    // Super admin manages everyone's posts; every other role sees only its own.
     const baseFilter = FULL_ACCESS_ROLES.includes(user.role)
       ? {}
       : { userID: user.id };
@@ -563,6 +574,14 @@ export const deletePost = async (req, res) => {
     }
 
     await post.deleteOne();
+    await recordActivity(req, {
+      userID: user.id,
+      module: "blog",
+      action: "deleted",
+      resourceId: post._id,
+      resourceName: post.title,
+      before: { title: post.title, slug: post.slug, status: post.status },
+    });
     await CategoryModel.findOneAndUpdate(
       { _id: post.categoryID, postCount: { $gt: 0 } },
       { $inc: { postCount: -1 } },
@@ -672,6 +691,7 @@ export const updatePost = async (req, res) => {
 
     // Only re-validate the category if the client actually sent one.
     const previousCategoryId = post.categoryID;
+    const before = { title: post.title, slug: post.slug, status: post.status };
 
     if (category !== undefined) {
       const matchedCategory = await validateCategory(category);
@@ -762,6 +782,15 @@ export const updatePost = async (req, res) => {
     if (nextReviewDueAt !== undefined) post.nextReviewDueAt = nextReviewDueAt;
 
     await post.save();
+    await recordActivity(req, {
+      userID: user.id,
+      module: "blog",
+      action: "updated",
+      resourceId: post._id,
+      resourceName: post.title,
+      before,
+      after: { title: post.title, slug: post.slug, status: post.status },
+    });
 
     if (String(previousCategoryId) !== String(post.categoryID)) {
       await Promise.all([

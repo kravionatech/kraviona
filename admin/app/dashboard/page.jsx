@@ -1,27 +1,19 @@
 "use client";
 
-import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Activity,
-  AlertCircle,
   BarChart3,
-  CheckCircle2,
-  Clock,
+  CalendarDays,
   Database,
-  Eye,
   FileText,
-  Image as ImageIcon,
-  Inbox,
-  Mail,
-  MessageSquare,
-  Newspaper,
+  FolderKanban,
+  Layers3,
+  MousePointerClick,
   RefreshCw,
-  Tag,
-  Share2,
-  ThumbsDown,
-  ThumbsUp,
-  TrendingUp,
+  SearchCheck,
+  ShieldCheck,
+  Sparkles,
   Users,
 } from "lucide-react";
 import {
@@ -39,831 +31,123 @@ import {
   YAxis,
 } from "recharts";
 import Frame from "@/components/Frame/Frame";
-import { apiRequest, formatCurrency, formatDate } from "@/components/api";
+import { apiRequest } from "@/components/api";
+import { ContentLoader, EmptyState } from "@/components/AsyncState";
 
-const COLORS = {
-  ink: "#f5f7f8",
-  soft: "#b4c9ce",
-  faint: "#89abb3",
-  border: "rgba(92, 155, 170, 0.32)",
-  surface: "#213b42",
-  bg: "#1a2e33",
-  primary: "#2a4a52",
-  accent: "#e8622a",
-  amber: "#f28c5e",
-  blue: "#5c9baa",
-  green: "#7ba4a2",
-  violet: "#b84a1a",
-  rose: "#b84a1a",
-  cyan: "#8eb9c2",
-};
-
-const CHART_COLORS = [
-  COLORS.primary,
-  COLORS.accent,
-  COLORS.blue,
-  COLORS.green,
-  COLORS.violet,
-  COLORS.amber,
-  COLORS.rose,
-  COLORS.cyan,
+const periods = [
+  ["today", "Today"], ["yesterday", "Yesterday"], ["7d", "Last 7 days"],
+  ["30d", "Last 30 days"], ["90d", "Last 90 days"], ["this-month", "This month"], ["last-month", "Last month"],
 ];
 
-const MODEL_META = {
-  users: { icon: Users, color: COLORS.blue },
-  team: { icon: Users, color: COLORS.green },
-  posts: { icon: Newspaper, color: COLORS.primary },
-  categories: { icon: Tag, color: COLORS.violet },
-  comments: { icon: MessageSquare, color: COLORS.amber },
-  media: { icon: ImageIcon, color: COLORS.cyan },
-  leads: { icon: Inbox, color: COLORS.accent },
-  messages: { icon: Mail, color: COLORS.rose },
-  newsletters: { icon: FileText, color: COLORS.green },
+const chartColors = ["#0f5960", "#e35d3d", "#f7c56d", "#5c9baa"];
+const number = (value) => new Intl.NumberFormat("en-IN").format(Number(value || 0));
+const relativeTime = (value) => {
+  const seconds = Math.max(0, Math.floor((Date.now() - new Date(value).getTime()) / 1000));
+  if (seconds < 60) return "just now";
+  if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`;
+  if (seconds < 86400) return `${Math.floor(seconds / 3600)}h ago`;
+  return `${Math.floor(seconds / 86400)}d ago`;
 };
 
-const STATUS_STYLES = {
-  New: "bg-blue-50 text-blue-700 border-blue-100",
-  Contacted: "bg-violet-50 text-violet-700 border-violet-100",
-  Qualified: "bg-cyan-50 text-cyan-700 border-cyan-100",
-  Proposal: "bg-amber-50 text-amber-700 border-amber-100",
-  Won: "bg-emerald-50 text-emerald-700 border-emerald-100",
-  Lost: "bg-rose-50 text-rose-700 border-rose-100",
-  unread: "bg-rose-50 text-rose-700 border-rose-100",
-  read: "bg-blue-50 text-blue-700 border-blue-100",
-  replied: "bg-emerald-50 text-emerald-700 border-emerald-100",
-  archived: "bg-slate-50 text-slate-600 border-slate-100",
-  published: "bg-emerald-50 text-emerald-700 border-emerald-100",
-  draft: "bg-amber-50 text-amber-700 border-amber-100",
-  scheduled: "bg-blue-50 text-blue-700 border-blue-100",
-};
-
-const numberFormatter = new Intl.NumberFormat("en-IN");
-const compactFormatter = new Intl.NumberFormat("en-IN", {
-  notation: "compact",
-  maximumFractionDigits: 1,
-});
-
-const formatNumber = (value) => numberFormatter.format(Number(value || 0));
-const formatCompact = (value) => compactFormatter.format(Number(value || 0));
-
-function StatusBadge({ status }) {
-  return (
-    <span
-      className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[11px] font-semibold ${
-        STATUS_STYLES[status] || "bg-slate-50 text-slate-600 border-slate-100"
-      }`}
-    >
-      {status || "Unknown"}
-    </span>
-  );
-}
-
-function EmptyState({ label = "No data yet" }) {
-  return (
-    <div className="flex min-h-[140px] items-center justify-center rounded-lg border border-dashed border-slate-200 bg-slate-50 text-sm text-slate-500">
-      {label}
-    </div>
-  );
-}
-
-function LoadingDashboard() {
-  return (
-    <Frame>
-      <div className="min-h-full bg-slate-50 p-6 lg:p-8">
-        <div className="mb-6 h-24 animate-pulse rounded-lg bg-white" />
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
-          {Array.from({ length: 8 }).map((_, index) => (
-            <div
-              key={index}
-              className="h-32 animate-pulse rounded-lg bg-white"
-            />
-          ))}
-        </div>
-      </div>
-    </Frame>
-  );
+function Card({ icon: Icon, label, value, detail, tone = "teal" }) {
+  const tones = {
+    teal: "bg-[#0f5960]/10 text-[#0f5960]", orange: "bg-[#e35d3d]/10 text-[#e35d3d]",
+    gold: "bg-[#f7c56d]/25 text-[#8a5b09]", blue: "bg-[#5c9baa]/15 text-[#276370]",
+  };
+  return <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
+    <div className="flex items-start justify-between gap-3"><div><p className="text-xs font-bold uppercase tracking-[0.13em] text-slate-500">{label}</p><p className="mt-2 text-3xl font-black tracking-tight text-slate-900">{number(value)}</p></div><span className={`flex h-11 w-11 items-center justify-center rounded-xl ${tones[tone]}`}><Icon size={20} /></span></div>
+    <p className="mt-3 text-xs text-slate-500">{detail}</p>
+  </article>;
 }
 
 function ChartTooltip({ active, payload, label }) {
   if (!active || !payload?.length) return null;
-
-  return (
-    <div className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs shadow-sm">
-      <p className="mb-1 font-semibold text-slate-900">{label}</p>
-      {payload.map((item) => (
-        <p key={item.dataKey} className="text-slate-600">
-          <span style={{ color: item.color }}>●</span>{" "}
-          {item.name || item.dataKey}: {formatNumber(item.value)}
-        </p>
-      ))}
-    </div>
-  );
+  return <div className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs shadow-xl"><p className="mb-1 font-bold text-slate-800">{label}</p>{payload.map((entry) => <p key={entry.dataKey} style={{ color: entry.color }} className="capitalize">{entry.name}: {number(entry.value)}</p>)}</div>;
 }
 
-function KpiCard({ title, value, caption, icon: Icon, color = COLORS.primary }) {
-  return (
-    <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-      <div className="mb-4 flex items-center justify-between">
-        <span
-          className="flex h-10 w-10 items-center justify-center rounded-lg"
-          style={{ backgroundColor: `${color}14`, color }}
-        >
-          <Icon size={18} />
-        </span>
-        <TrendingUp size={16} className="text-slate-300" />
-      </div>
-      <p className="text-2xl font-bold tracking-tight text-slate-950">
-        {value}
-      </p>
-      <p className="mt-1 text-sm font-medium text-slate-700">{title}</p>
-      <p className="mt-1 text-xs text-slate-500">{caption}</p>
-    </div>
-  );
-}
-
-function ModelCard({ item }) {
-  const meta = MODEL_META[item.key] || { icon: Database, color: COLORS.soft };
-  const Icon = meta.icon;
-  const trendPositive = Number(item.trendPercent || 0) >= 0;
-
-  return (
-    <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-      <div className="flex items-start justify-between gap-3">
-        <div className="flex min-w-0 items-center gap-3">
-          <span
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg"
-            style={{ backgroundColor: `${meta.color}14`, color: meta.color }}
-          >
-            <Icon size={18} />
-          </span>
-          <div className="min-w-0">
-            <p className="truncate text-sm font-semibold text-slate-900">
-              {item.label}
-            </p>
-            <p className="mt-0.5 truncate text-xs text-slate-500">
-              {item.description}
-            </p>
-          </div>
-        </div>
-        <span
-          className={`rounded-full px-2 py-0.5 text-[11px] font-bold ${
-            trendPositive
-              ? "bg-emerald-50 text-emerald-700"
-              : "bg-rose-50 text-rose-700"
-          }`}
-        >
-          {trendPositive ? "+" : ""}
-          {item.trendPercent || 0}%
-        </span>
-      </div>
-      <div className="mt-4 flex items-end justify-between">
-        <div>
-          <p className="text-2xl font-bold text-slate-950">
-            {formatNumber(item.total)}
-          </p>
-          <p className="text-xs text-slate-500">total records</p>
-        </div>
-        <div className="text-right">
-          <p className="text-sm font-bold text-slate-800">
-            {formatNumber(item.currentMonth)}
-          </p>
-          <p className="text-xs text-slate-500">this month</p>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function BreakdownList({ title, data }) {
-  const total = data.reduce((sum, item) => sum + Number(item.value || 0), 0);
-
-  return (
-    <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
-      <h2 className="mb-4 text-sm font-bold text-slate-900">{title}</h2>
-      {!data.length ? (
-        <EmptyState />
-      ) : (
-        <div className="space-y-3">
-          {data.map((item, index) => {
-            const percentage = total
-              ? Math.round((Number(item.value || 0) / total) * 100)
-              : 0;
-
-            return (
-              <div key={item.name}>
-                <div className="mb-1 flex items-center justify-between text-xs">
-                  <span className="font-medium text-slate-600">{item.name}</span>
-                  <span className="font-bold text-slate-900">
-                    {formatNumber(item.value)} ({percentage}%)
-                  </span>
-                </div>
-                <div className="h-2 rounded-full bg-slate-100">
-                  <div
-                    className="h-2 rounded-full"
-                    style={{
-                      width: `${percentage}%`,
-                      backgroundColor: CHART_COLORS[index % CHART_COLORS.length],
-                    }}
-                  />
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      )}
-    </div>
-  );
+function SectionTitle({ icon: Icon, title, description, action }) {
+  return <div className="mb-5 flex items-start justify-between gap-4"><div className="flex gap-3"><span className="mt-0.5 rounded-xl bg-[#0f5960]/10 p-2 text-[#0f5960]"><Icon size={18} /></span><div><h2 className="font-bold text-slate-900">{title}</h2><p className="mt-0.5 text-xs text-slate-500">{description}</p></div></div>{action}</div>;
 }
 
 export default function DashboardPage() {
+  const [period, setPeriod] = useState("30d");
+  const [customStart, setCustomStart] = useState(() => new Date(Date.now() - 29 * 86400000).toISOString().slice(0, 10));
+  const [customEnd, setCustomEnd] = useState(() => new Date().toISOString().slice(0, 10));
   const [analytics, setAnalytics] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   const loadAnalytics = useCallback(async () => {
+    setLoading(true); setError("");
     try {
-      setError("");
-      setIsLoading(true);
-      const result = await apiRequest("/analytics/dashboard");
-      setAnalytics(result.data);
-    } catch (err) {
-      setError(err.message || "Unable to load analytics dashboard");
-    } finally {
-      setIsLoading(false);
+      const query = period === "custom" ? `range=custom&start=${customStart}&end=${customEnd}` : `range=${period}`;
+      const response = await apiRequest(`/analytics/insights?${query}`);
+      setAnalytics(response.data);
     }
-  }, []);
+    catch (requestError) { setError(requestError.message || "Unable to load analytics."); }
+    finally { setLoading(false); }
+  }, [period, customStart, customEnd]);
 
-  useEffect(() => {
-    let isActive = true;
+  useEffect(() => { loadAnalytics(); }, [loadAnalytics]);
 
-    async function loadInitialAnalytics() {
-      try {
-        const result = await apiRequest("/analytics/dashboard");
-        if (!isActive) return;
+  const seoData = useMemo(() => {
+    const seo = analytics?.seo;
+    if (!seo?.total) return [];
+    return [{ name: "Indexed", value: seo.indexed }, { name: "No index", value: seo.noIndex }, { name: "Needs SEO", value: Math.max(0, seo.total - seo.indexed - seo.noIndex) }];
+  }, [analytics]);
 
-        setAnalytics(result.data);
-        setError("");
-      } catch (err) {
-        if (!isActive) return;
-        setError(err.message || "Unable to load analytics dashboard");
-      } finally {
-        if (isActive) setIsLoading(false);
-      }
-    }
+  const kpis = analytics?.kpis || {};
+  const scopeLabel = analytics?.scope === "workspace" ? "Workspace analytics" : "My analytics";
 
-    loadInitialAnalytics();
-
-    return () => {
-      isActive = false;
-    };
-  }, []);
-
-  const summary = analytics?.summary || {};
-  const timeline = analytics?.timeline || [];
-  const modelCards = analytics?.modelCards || [];
-  const breakdowns = analytics?.breakdowns || {};
-  const recent = analytics?.recent || {};
-
-  const leadSourceChart = useMemo(
-    () =>
-      (breakdowns.leadSources || []).map((item, index) => ({
-        ...item,
-        fill: CHART_COLORS[index % CHART_COLORS.length],
-      })),
-    [breakdowns.leadSources],
-  );
-
-  const postStatusChart = useMemo(
-    () =>
-      (breakdowns.postStatuses || []).map((item, index) => ({
-        ...item,
-        fill: CHART_COLORS[index % CHART_COLORS.length],
-      })),
-    [breakdowns.postStatuses],
-  );
-
-  if (isLoading && !analytics) return <LoadingDashboard />;
-
-  return (
-    <Frame>
-      <div className="min-h-full bg-slate-50 text-slate-950">
-        <main className="px-4 py-6 sm:px-6 lg:px-8">
-          <div className="mb-6 rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
-            <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-              <div>
-                <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#e8622a]">
-                  Admin analytics
-                </p>
-                <h1 className="mt-2 text-2xl font-black tracking-tight text-slate-950">
-                  Kraviona Business Dashboard
-                </h1>
-                <p className="mt-1 max-w-2xl text-sm text-slate-500">
-                  Real-time view of users, content, leads, messages, media,
-                  newsletters, and sales pipeline from the backend database.
-                </p>
-              </div>
-              <div className="flex flex-wrap items-center gap-3">
-                <div className="rounded-lg bg-slate-50 px-3 py-2 text-xs text-slate-500">
-                  Updated: {formatDate(analytics?.generatedAt)}
-                </div>
-                <button
-                  type="button"
-                  onClick={loadAnalytics}
-                  disabled={isLoading}
-                  className="inline-flex items-center gap-2 rounded-lg bg-[#2a4a52] px-4 py-2 text-sm font-bold text-white transition hover:bg-[#3d6b77] disabled:cursor-not-allowed disabled:opacity-60"
-                >
-                  <RefreshCw
-                    size={16}
-                    className={isLoading ? "animate-spin" : ""}
-                  />
-                  Refresh
-                </button>
-              </div>
-            </div>
-
-            {error && (
-              <div className="mt-4 flex items-start gap-2 rounded-lg border border-red-100 bg-red-50 px-3 py-2 text-sm text-red-700">
-                <AlertCircle size={16} className="mt-0.5 shrink-0" />
-                <span>{error}</span>
-              </div>
-            )}
+  return <Frame>
+    <main className="min-h-full bg-[#f4f8f7] px-4 py-6 sm:px-6 lg:px-9 lg:py-8">
+      <div className="mx-auto max-w-[1600px]">
+        <section className="mb-6 overflow-hidden rounded-3xl border border-[#0f5960]/20 bg-gradient-to-br from-[#103f46] via-[#0f5960] to-[#195663] p-6 text-white shadow-xl shadow-[#0f5960]/15 sm:p-8">
+          <div className="flex flex-col justify-between gap-6 xl:flex-row xl:items-end"><div><div className="mb-3 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs font-bold uppercase tracking-[0.15em] text-[#f7d994]"><Sparkles size={13} /> Live CMS insights</div><h1 className="text-3xl font-black tracking-tight sm:text-4xl">{scopeLabel}</h1><p className="mt-2 max-w-2xl text-sm text-[#dcebea] sm:text-base">Date-wise content, SEO and operational activity for Kraviona. Your access is automatically limited to permitted data.</p></div>
+            <div className="flex flex-wrap items-center gap-3"><label className="inline-flex items-center gap-2 rounded-xl border border-white/15 bg-white/10 px-3 py-2 text-sm text-white"><CalendarDays size={16} /><select value={period} onChange={(event) => setPeriod(event.target.value)} className="bg-transparent font-semibold outline-none"><option className="text-slate-900" value="today">Today</option>{periods.slice(1).map(([value, label]) => <option className="text-slate-900" key={value} value={value}>{label}</option>)}<option className="text-slate-900" value="custom">Custom range</option></select></label>{period === "custom" && <><input aria-label="Custom range start date" type="date" value={customStart} max={customEnd} onChange={(event) => setCustomStart(event.target.value)} className="rounded-xl border border-white/15 bg-white/10 px-3 py-2 text-sm text-white outline-none [color-scheme:dark]"/><input aria-label="Custom range end date" type="date" value={customEnd} min={customStart} max={new Date().toISOString().slice(0, 10)} onChange={(event) => setCustomEnd(event.target.value)} className="rounded-xl border border-white/15 bg-white/10 px-3 py-2 text-sm text-white outline-none [color-scheme:dark]"/></>}<button type="button" onClick={loadAnalytics} disabled={loading} className="inline-flex items-center gap-2 rounded-xl bg-[#f7c56d] px-4 py-2.5 text-sm font-bold text-[#123f46] transition hover:bg-[#ffe09c] disabled:opacity-60"><RefreshCw size={16} className={loading ? "animate-spin" : ""} /> Refresh</button></div>
           </div>
+        </section>
 
-          <section className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
-            <KpiCard title="Total Posts" value={formatNumber(summary.postsTotal)} caption="All blog content" icon={FileText} color="#2563eb" />
-            <KpiCard title="Published" value={formatNumber(summary.publishedPosts)} caption="Live on the website" icon={CheckCircle2} color="#16a34a" />
-            <KpiCard title="Drafts" value={formatNumber(summary.draftPosts)} caption="Ready to finish" icon={Clock} color="#ca8a04" />
-            <KpiCard title="Total Views" value={formatNumber(summary.totalPostViews)} caption="Across published posts" icon={Eye} color="#7c3aed" />
+        {loading ? <div className="rounded-2xl border border-slate-200 bg-white"><ContentLoader label="Loading analytics dashboard…" /></div> : error ? <div className="rounded-2xl border border-rose-200 bg-rose-50"><EmptyState title="Analytics could not be loaded." message={error} /></div> : <>
+          <section className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+            {analytics?.scope === "workspace" && <Card icon={Users} label="New users" value={kpis.users} detail="Accounts created in selected period" tone="blue" />}
+            <Card icon={Layers3} label={analytics?.scope === "workspace" ? "Services" : "My services"} value={kpis.services} detail={`${number(kpis.activeServices)} active in your accessible catalog`} />
+            <Card icon={FileText} label={analytics?.scope === "workspace" ? "Blog posts" : "My blog posts"} value={kpis.posts} detail={`${number(kpis.published)} published · ${number(kpis.draft)} drafts`} tone="orange" />
+            <Card icon={FolderKanban} label={analytics?.scope === "workspace" ? "Projects" : "My projects"} value={kpis.projects} detail={`${number(kpis.activeProjects)} active portfolio entries`} tone="gold" />
+            {analytics?.scope === "workspace" && <Card icon={MousePointerClick} label="Leads received" value={kpis.leads} detail="Website inquiries in selected period" tone="blue" />}
+            <Card icon={SearchCheck} label="SEO coverage" value={`${kpis.seoScore || 0}%`} detail="Meta title, description and OG image coverage" tone="gold" />
           </section>
 
-          <section className="mb-6">
-            <div className="mb-3 flex items-center justify-between">
-              <h2 className="text-sm font-black uppercase tracking-[0.14em] text-slate-500">
-                Post performance
-              </h2>
-              <span className="text-xs text-slate-400">
-                Views, reactions, comments, and engagement
-              </span>
-            </div>
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-6">
-              <KpiCard
-                title="Total Views"
-                value={formatNumber(summary.totalPostViews)}
-                caption={`${formatNumber(summary.averageViewsPerPublishedPost)} avg / published`}
-                icon={Eye}
-                color={COLORS.blue}
-              />
-              <KpiCard
-                title="Total Likes"
-                value={formatNumber(summary.totalPostLikes)}
-                caption="Positive reactions"
-                icon={ThumbsUp}
-                color={COLORS.green}
-              />
-              <KpiCard
-                title="Dislikes"
-                value={formatNumber(summary.totalPostDislikes)}
-                caption="Negative reactions"
-                icon={ThumbsDown}
-                color={COLORS.rose}
-              />
-              <KpiCard
-                title="Shares"
-                value={formatNumber(summary.totalPostShares)}
-                caption="Post share clicks"
-                icon={Share2}
-                color={COLORS.violet}
-              />
-              <KpiCard
-                title="Comments"
-                value={formatNumber(summary.totalPostComments)}
-                caption="Post comment count"
-                icon={MessageSquare}
-                color={COLORS.amber}
-              />
-              <KpiCard
-                title="Engagement"
-                value={`${summary.postEngagementRate || 0}%`}
-                caption={`${formatNumber(summary.totalPostEngagements)} actions`}
-                icon={Activity}
-                color={COLORS.primary}
-              />
-            </div>
+          <section className="mb-6 grid grid-cols-1 gap-5 xl:grid-cols-3">
+            <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm xl:col-span-2"><SectionTitle icon={BarChart3} title="Content creation timeline" description="Posts, services, projects, uploads and tracked activity update with the selected date range." />
+              {analytics?.timeline?.some((row) => row.posts || row.services || row.projects || row.media || row.activity || row.leads) ? <div className="h-80"><ResponsiveContainer width="100%" height="100%"><AreaChart data={analytics.timeline} margin={{ top: 10, right: 6, left: -20, bottom: 0 }}><defs><linearGradient id="kravionaPosts" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#0f5960" stopOpacity={0.3}/><stop offset="100%" stopColor="#0f5960" stopOpacity={0}/></linearGradient></defs><CartesianGrid vertical={false} stroke="#e2e8f0"/><XAxis dataKey="label" tickLine={false} axisLine={false} tick={{fontSize: 11, fill:"#64748b"}} minTickGap={22}/><YAxis allowDecimals={false} tickLine={false} axisLine={false} tick={{fontSize: 11, fill:"#64748b"}}/><Tooltip content={<ChartTooltip/>}/><Area type="monotone" dataKey="posts" name="Posts" stroke="#0f5960" strokeWidth={2.5} fill="url(#kravionaPosts)"/><Area type="monotone" dataKey="services" name="Services" stroke="#e35d3d" strokeWidth={2} fill="transparent"/><Area type="monotone" dataKey="projects" name="Projects" stroke="#f7a723" strokeWidth={2} fill="transparent"/><Area type="monotone" dataKey="activity" name="Activity" stroke="#5c9baa" strokeWidth={2} fill="transparent"/></AreaChart></ResponsiveContainer></div> : <EmptyState title="No analytics data found for the selected period." message="Create or update content to begin tracking its performance." />}
+            </article>
+            <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"><SectionTitle icon={SearchCheck} title="SEO intelligence" description="Metadata coverage across accessible blog content." />
+              {seoData.length ? <><div className="h-48"><ResponsiveContainer width="100%" height="100%"><PieChart><Pie data={seoData} dataKey="value" nameKey="name" innerRadius={48} outerRadius={78} paddingAngle={3}>{seoData.map((item, index) => <Cell key={item.name} fill={chartColors[index]} />)}</Pie><Tooltip content={<ChartTooltip/>}/></PieChart></ResponsiveContainer></div><div className="space-y-2">{seoData.map((item, index) => <div key={item.name} className="flex items-center justify-between text-sm"><span className="flex items-center gap-2 text-slate-600"><i className="h-2.5 w-2.5 rounded-full" style={{background:chartColors[index]}} />{item.name}</span><b>{number(item.value)}</b></div>)}</div><div className="mt-4 rounded-xl bg-amber-50 p-3 text-xs text-amber-900">{analytics.seo.metaDescription < analytics.seo.total ? `${analytics.seo.total - analytics.seo.metaDescription} item(s) need a meta description.` : "All accessible posts have meta descriptions."}</div></> : <EmptyState title="No SEO data found." message="Add a blog post to see SEO coverage and recommendations." />}
+            </article>
           </section>
 
-          <section className="mb-6">
-            <div className="mb-3 flex items-center justify-between">
-              <h2 className="text-sm font-black uppercase tracking-[0.14em] text-slate-500">
-                All model analytics
-              </h2>
-              <span className="text-xs text-slate-400">
-                Connected to backend models
-              </span>
-            </div>
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
-              {modelCards.map((item) => (
-                <ModelCard key={item.key} item={item} />
-              ))}
-            </div>
+          <section className="mb-6 grid grid-cols-1 gap-5 xl:grid-cols-2">
+            <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"><SectionTitle icon={Layers3} title="Service performance" description={analytics?.scope === "workspace" ? "Inquiry counts for services in the selected period." : "Your service inventory. Lead totals are visible to super admins."} />
+              {analytics?.servicePerformance?.length ? <div className="h-72"><ResponsiveContainer width="100%" height="100%"><BarChart data={analytics.servicePerformance} layout="vertical" margin={{left:10,right:20}}><CartesianGrid horizontal={false} stroke="#e2e8f0"/><XAxis type="number" allowDecimals={false} tickLine={false} axisLine={false}/><YAxis type="category" dataKey="name" width={115} tickLine={false} axisLine={false} tick={{fontSize:11,fill:"#475569"}}/><Tooltip content={<ChartTooltip/>}/><Bar dataKey="inquiries" name="Inquiries" fill="#0f5960" radius={[0,7,7,0]}/></BarChart></ResponsiveContainer></div> : <EmptyState title="No services found." message="Your services will appear here when you create them." />}
+            </article>
+            <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"><SectionTitle icon={FileText} title="Top content" description="Ranked by tracked lifetime post views." />
+              <div className="divide-y divide-slate-100">{analytics?.topPosts?.length ? analytics.topPosts.map((post, index) => <div key={post.slug} className="flex items-center gap-3 py-3"><span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#0f5960]/10 text-xs font-black text-[#0f5960]">{index + 1}</span><div className="min-w-0 flex-1"><p className="truncate text-sm font-semibold text-slate-800">{post.title}</p><p className="mt-0.5 text-xs text-slate-500">{post.status} · {post.readTime} min read</p></div><b className="text-sm text-slate-700">{number(post.views)}</b></div>) : <EmptyState title="No blog posts found." message="No data found for the selected period." />}</div>
+            </article>
           </section>
 
-          <section className="mb-6 grid grid-cols-1 gap-4 xl:grid-cols-3">
-            <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm xl:col-span-2">
-              <div className="mb-4 flex items-center justify-between gap-3">
-                <div>
-                  <h2 className="text-sm font-bold text-slate-900">
-                    14-day activity trend
-                  </h2>
-                  <p className="text-xs text-slate-500">
-                    Leads, messages, posts, comments, and subscribers created.
-                  </p>
-                </div>
-                <Activity className="text-slate-300" size={18} />
-              </div>
-              {timeline.length ? (
-                <div className="h-80">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <AreaChart
-                      data={timeline}
-                      margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
-                    >
-                      <defs>
-                        <linearGradient id="leadsFill" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="0%" stopColor={COLORS.accent} stopOpacity={0.25} />
-                          <stop offset="100%" stopColor={COLORS.accent} stopOpacity={0} />
-                        </linearGradient>
-                        <linearGradient id="messagesFill" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="0%" stopColor={COLORS.rose} stopOpacity={0.2} />
-                          <stop offset="100%" stopColor={COLORS.rose} stopOpacity={0} />
-                        </linearGradient>
-                      </defs>
-                      <CartesianGrid stroke={COLORS.border} vertical={false} />
-                      <XAxis
-                        dataKey="label"
-                        axisLine={false}
-                        tickLine={false}
-                        tick={{ fontSize: 11, fill: COLORS.faint }}
-                      />
-                      <YAxis
-                        axisLine={false}
-                        tickLine={false}
-                        allowDecimals={false}
-                        tick={{ fontSize: 11, fill: COLORS.faint }}
-                      />
-                      <Tooltip content={<ChartTooltip />} />
-                      <Area
-                        type="monotone"
-                        dataKey="leads"
-                        name="Leads"
-                        stroke={COLORS.accent}
-                        strokeWidth={2}
-                        fill="url(#leadsFill)"
-                      />
-                      <Area
-                        type="monotone"
-                        dataKey="messages"
-                        name="Messages"
-                        stroke={COLORS.rose}
-                        strokeWidth={2}
-                        fill="url(#messagesFill)"
-                      />
-                      <Area
-                        type="monotone"
-                        dataKey="posts"
-                        name="Posts"
-                        stroke={COLORS.primary}
-                        strokeWidth={2}
-                        fill="transparent"
-                      />
-                      <Area
-                        type="monotone"
-                        dataKey="comments"
-                        name="Comments"
-                        stroke={COLORS.amber}
-                        strokeWidth={2}
-                        fill="transparent"
-                      />
-                      <Area
-                        type="monotone"
-                        dataKey="subscribers"
-                        name="Subscribers"
-                        stroke={COLORS.green}
-                        strokeWidth={2}
-                        fill="transparent"
-                      />
-                    </AreaChart>
-                  </ResponsiveContainer>
-                </div>
-              ) : (
-                <EmptyState />
-              )}
-            </div>
-
-            <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
-              <h2 className="mb-4 text-sm font-bold text-slate-900">
-                Lead sources
-              </h2>
-              {leadSourceChart.length ? (
-                <>
-                  <div className="h-56">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <PieChart>
-                        <Pie
-                          data={leadSourceChart}
-                          dataKey="value"
-                          nameKey="name"
-                          innerRadius={54}
-                          outerRadius={82}
-                          paddingAngle={2}
-                          strokeWidth={0}
-                        >
-                          {leadSourceChart.map((entry) => (
-                            <Cell key={entry.name} fill={entry.fill} />
-                          ))}
-                        </Pie>
-                        <Tooltip content={<ChartTooltip />} />
-                      </PieChart>
-                    </ResponsiveContainer>
-                  </div>
-                  <BreakdownList title="Source split" data={leadSourceChart} />
-                </>
-              ) : (
-                <EmptyState />
-              )}
-            </div>
+          <section className="mb-6 grid grid-cols-1 gap-5 xl:grid-cols-3">
+            <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"><SectionTitle icon={Activity} title="Activity heatmap" description="Login and CMS actions by day." />
+              <div className="grid grid-cols-10 gap-1.5 sm:grid-cols-[repeat(15,minmax(0,1fr))]">{analytics?.heatmap?.map((day) => <span key={day.date} title={`${day.date}: ${day.value} events`} className="aspect-square rounded-[4px]" style={{background:day.value >= 5 ? "#0f5960" : day.value >= 3 ? "#3c8086" : day.value >= 1 ? "#a8d3d2" : "#e8eeee"}} />)}</div><p className="mt-4 text-xs text-slate-500">Darker tiles indicate more recorded activity.</p>
+            </article>
+            <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm xl:col-span-2"><SectionTitle icon={Activity} title="Live activity & audit trail" description="Only events you are permitted to view are shown here." />
+              <div className="max-h-80 divide-y divide-slate-100 overflow-auto">{analytics?.activity?.length ? analytics.activity.map((item) => <div key={item.id} className="flex gap-3 py-3"><div>{item.avatar ? <img src={item.avatar} alt="" className="h-9 w-9 rounded-full object-cover"/> : <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#f7c56d] text-xs font-bold text-[#123f46]">{item.user.slice(0,2).toUpperCase()}</span>}</div><div className="min-w-0 flex-1"><p className="text-sm text-slate-700"><b>{item.user}</b> <span className="capitalize">{item.action}</span> <span className="font-medium">{item.resourceName || item.module}</span></p><p className="mt-0.5 text-xs text-slate-500">{item.module} · {relativeTime(item.createdAt)} {item.ipAddress ? `· ${item.ipAddress}` : ""}</p></div><span className="rounded-full bg-slate-100 px-2 py-1 text-[10px] font-bold uppercase text-slate-500">{item.module}</span></div>) : <EmptyState title="No activity found." message="Activity will be recorded after logins and content changes." />}</div>
+            </article>
           </section>
 
-          <section className="mb-6 grid grid-cols-1 gap-4 lg:grid-cols-3">
-            <BreakdownList
-              title="Lead pipeline"
-              data={breakdowns.leadStatuses || []}
-            />
-            <BreakdownList
-              title="Message statuses"
-              data={breakdowns.messageStatuses || []}
-            />
-            <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
-              <h2 className="mb-4 text-sm font-bold text-slate-900">
-                Post status mix
-              </h2>
-              {postStatusChart.length ? (
-                <div className="h-56">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={postStatusChart}>
-                      <CartesianGrid vertical={false} stroke={COLORS.border} />
-                      <XAxis
-                        dataKey="name"
-                        axisLine={false}
-                        tickLine={false}
-                        tick={{ fontSize: 11, fill: COLORS.faint }}
-                      />
-                      <YAxis
-                        allowDecimals={false}
-                        axisLine={false}
-                        tickLine={false}
-                        tick={{ fontSize: 11, fill: COLORS.faint }}
-                      />
-                      <Tooltip content={<ChartTooltip />} />
-                      <Bar dataKey="value" radius={[6, 6, 0, 0]}>
-                        {postStatusChart.map((entry) => (
-                          <Cell key={entry.name} fill={entry.fill} />
-                        ))}
-                      </Bar>
-                    </BarChart>
-                  </ResponsiveContainer>
-                </div>
-              ) : (
-                <EmptyState />
-              )}
-            </div>
-          </section>
-
-          <section className="mb-6 grid grid-cols-1 gap-4 lg:grid-cols-3">
-            <BreakdownList
-              title="Comment statuses"
-              data={breakdowns.commentStatuses || []}
-            />
-            <BreakdownList
-              title="Reaction types"
-              data={breakdowns.reactionTypes || []}
-            />
-            <BreakdownList
-              title="Media types"
-              data={breakdowns.mediaTypes || []}
-            />
-          </section>
-
-          <section className="mb-6 grid grid-cols-1 gap-4 xl:grid-cols-3">
-            <div className="rounded-lg border border-slate-200 bg-white shadow-sm xl:col-span-2">
-              <div className="flex items-center justify-between border-b border-slate-100 px-5 py-4">
-                <div>
-                  <h2 className="text-sm font-bold text-slate-900">
-                    Recent leads
-                  </h2>
-                  <p className="text-xs text-slate-500">
-                    Latest contact and service inquiries.
-                  </p>
-                </div>
-                <Link
-                  href="/leads"
-                  className="text-xs font-bold text-[#f28c5e] hover:text-[#5c9baa]"
-                >
-                  View all
-                </Link>
-              </div>
-              <div className="overflow-x-auto">
-                <table className="w-full text-left text-sm">
-                  <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
-                    <tr>
-                      <th className="px-5 py-3">Lead</th>
-                      <th className="px-5 py-3">Service</th>
-                      <th className="px-5 py-3">Status</th>
-                      <th className="px-5 py-3">Value</th>
-                      <th className="px-5 py-3">Created</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-100">
-                    {(recent.leads || []).map((lead) => (
-                      <tr key={lead._id} className="hover:bg-slate-50">
-                        <td className="px-5 py-3">
-                          <p className="font-semibold text-slate-900">
-                            {lead.name}
-                          </p>
-                          <p className="text-xs text-slate-500">{lead.email}</p>
-                        </td>
-                        <td className="px-5 py-3 text-slate-600">
-                          {lead.service || lead.source || "-"}
-                        </td>
-                        <td className="px-5 py-3">
-                          <StatusBadge status={lead.status} />
-                        </td>
-                        <td className="px-5 py-3 font-semibold text-slate-800">
-                          {formatCurrency(lead.dealValue, lead.currency || "INR")}
-                        </td>
-                        <td className="px-5 py-3 text-xs text-slate-500">
-                          {formatDate(lead.createdAt)}
-                        </td>
-                      </tr>
-                    ))}
-                    {!recent.leads?.length && (
-                      <tr>
-                        <td colSpan={5} className="px-5 py-10">
-                          <EmptyState label="No leads found" />
-                        </td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-            <div className="rounded-lg border border-slate-200 bg-white shadow-sm">
-              <div className="border-b border-slate-100 px-5 py-4">
-                <h2 className="text-sm font-bold text-slate-900">Top posts</h2>
-                <p className="text-xs text-slate-500">Ranked by total views.</p>
-              </div>
-              <div className="divide-y divide-slate-100">
-                {(analytics?.topPosts || []).map((post) => (
-                  <Link
-                    key={post._id}
-                    href={`/blog/view/${post.slug}`}
-                    className="block px-5 py-3 hover:bg-slate-50"
-                  >
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="min-w-0">
-                        <p className="line-clamp-2 text-sm font-semibold text-slate-900">
-                          {post.title}
-                        </p>
-                        <p className="mt-1 text-xs text-slate-500">
-                          {post.category?.name || post.category?.slug || "Uncategorized"}
-                        </p>
-                      </div>
-                      <StatusBadge status={post.status} />
-                    </div>
-                    <div className="mt-2 flex items-center gap-3 text-xs text-slate-500">
-                      <span className="inline-flex items-center gap-1">
-                        <Eye size={12} />
-                        {formatNumber(post.views)}
-                      </span>
-                      <span className="inline-flex items-center gap-1">
-                        <ThumbsUp size={12} />
-                        {formatNumber(post.reactions?.like)}
-                      </span>
-                      <span className="inline-flex items-center gap-1">
-                        <Share2 size={12} />
-                        {formatNumber(post.reactions?.share)}
-                      </span>
-                      <span className="inline-flex items-center gap-1">
-                        <MessageSquare size={12} />
-                        {formatNumber(post.commentCount)}
-                      </span>
-                    </div>
-                  </Link>
-                ))}
-                {!analytics?.topPosts?.length && (
-                  <div className="p-5">
-                    <EmptyState label="No posts found" />
-                  </div>
-                )}
-              </div>
-            </div>
-          </section>
-
-          <section className="grid grid-cols-1 gap-4 xl:grid-cols-3">
-            <div className="rounded-lg border border-slate-200 bg-white shadow-sm">
-              <div className="border-b border-slate-100 px-5 py-4">
-                <h2 className="text-sm font-bold text-slate-900">
-                  Recent messages
-                </h2>
-              </div>
-              <div className="divide-y divide-slate-100">
-                {(recent.messages || []).map((message) => (
-                  <div key={message._id} className="px-5 py-3">
-                    <div className="flex items-center justify-between gap-3">
-                      <p className="truncate text-sm font-semibold text-slate-900">
-                        {message.firstName} {message.lastName}
-                      </p>
-                      <StatusBadge status={message.status} />
-                    </div>
-                    <p className="mt-1 truncate text-xs text-slate-500">
-                      {message.subject}
-                    </p>
-                    <p className="mt-1 text-xs text-slate-400">
-                      {formatDate(message.createdAt)}
-                    </p>
-                  </div>
-                ))}
-                {!recent.messages?.length && (
-                  <div className="p-5">
-                    <EmptyState label="No messages found" />
-                  </div>
-                )}
-              </div>
-            </div>
-
-            <div className="rounded-lg border border-slate-200 bg-white shadow-sm">
-              <div className="border-b border-slate-100 px-5 py-4">
-                <h2 className="text-sm font-bold text-slate-900">
-                  Recent media
-                </h2>
-                <p className="text-xs text-slate-500">
-                  Storage: {summary.mediaStorageLabel || "0 B"}
-                </p>
-              </div>
-              <div className="divide-y divide-slate-100">
-                {(recent.media || []).map((media) => (
-                  <div key={media._id} className="flex items-center gap-3 px-5 py-3">
-                    <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-slate-100 text-slate-500">
-                      <ImageIcon size={16} />
-                    </span>
-                    <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-semibold text-slate-900">
-                        {media.originalName || media.fileName}
-                      </p>
-                      <p className="text-xs text-slate-500">
-                        {media.mediaType} · {formatDate(media.createdAt)}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-                {!recent.media?.length && (
-                  <div className="p-5">
-                    <EmptyState label="No media found" />
-                  </div>
-                )}
-              </div>
-            </div>
-
-            <div className="rounded-lg border border-slate-200 bg-white shadow-sm">
-              <div className="border-b border-slate-100 px-5 py-4">
-                <h2 className="text-sm font-bold text-slate-900">
-                  Newsletter subscribers
-                </h2>
-              </div>
-              <div className="divide-y divide-slate-100">
-                {(recent.subscribers || []).map((subscriber) => (
-                  <div key={subscriber._id} className="px-5 py-3">
-                    <div className="flex items-center justify-between gap-3">
-                      <p className="truncate text-sm font-semibold text-slate-900">
-                        {subscriber.email}
-                      </p>
-                      <StatusBadge status={subscriber.status} />
-                    </div>
-                    <p className="mt-1 text-xs text-slate-400">
-                      {formatDate(subscriber.createdAt)}
-                    </p>
-                  </div>
-                ))}
-                {!recent.subscribers?.length && (
-                  <div className="p-5">
-                    <EmptyState label="No subscribers found" />
-                  </div>
-                )}
-              </div>
-            </div>
-          </section>
-        </main>
+          <section className="grid grid-cols-1 gap-5 lg:grid-cols-2"><article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"><SectionTitle icon={MousePointerClick} title="Visitor tracking" description="Website visitors, page views and conversion events." /><div className="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-5"><p className="font-semibold text-slate-800">Tracking not connected</p><p className="mt-1 text-sm text-slate-500">{analytics?.tracking?.message}</p></div></article>{analytics?.system && <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"><SectionTitle icon={ShieldCheck} title="System & audit health" description="Visible to super admins only." /><div className="grid grid-cols-2 gap-3"><div className="rounded-xl bg-emerald-50 p-4"><Database className="mb-2 text-emerald-600" size={18}/><p className="text-xs text-emerald-800">Database</p><p className="font-bold capitalize text-emerald-900">{analytics.system.database}</p></div><div className="rounded-xl bg-[#0f5960]/8 p-4"><Activity className="mb-2 text-[#0f5960]" size={18}/><p className="text-xs text-slate-600">Recent audit events</p><p className="font-bold text-slate-900">{number(analytics.system.auditEvents)}</p></div></div></article>}</section>
+        </>}
       </div>
-    </Frame>
-  );
+    </main>
+  </Frame>;
 }

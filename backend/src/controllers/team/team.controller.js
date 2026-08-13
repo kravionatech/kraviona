@@ -1,7 +1,7 @@
 import slugify from "slugify";
 import { TeamMemberModel } from "../../models/team/team.model.js";
 
-const MANAGER_ROLES = ["admin", "super_admin", "editor"];
+const MANAGER_ROLES = ["super_admin"];
 const TEAM_STATUSES = ["active", "inactive"];
 
 const canManageTeam = (user) => user && MANAGER_ROLES.includes(user.role);

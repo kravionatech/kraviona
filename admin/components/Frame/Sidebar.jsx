@@ -27,19 +27,19 @@ const primaryNavigation = [
   { href: "/blog", label: "All Posts", icon: FileText },
   { href: "/blog/new", label: "Create Post", icon: PlusCircle },
   { href: "/media", label: "Media Library", icon: ImageIcon },
-  { href: "/settings", label: "Settings", icon: Settings },
+  { href: "/settings", label: "Settings", icon: Settings, superAdminOnly: true },
 ];
 
 const workspaceNavigation = [
-  { href: "/leads", label: "Leads", icon: Inbox },
-  { href: "/messages", label: "Messages", icon: MessageSquare },
-  { href: "/newsletters", label: "Audience", icon: Mail },
-  { href: "/category", label: "Categories", icon: Tag },
-  { href: "/comments", label: "Moderation", icon: BookOpen },
-  { href: "/team", label: "Team", icon: Users },
+  { href: "/leads", label: "Leads", icon: Inbox, superAdminOnly: true },
+  { href: "/messages", label: "Messages", icon: MessageSquare, superAdminOnly: true },
+  { href: "/newsletters", label: "Audience", icon: Mail, superAdminOnly: true },
+  { href: "/category", label: "Categories", icon: Tag, superAdminOnly: true },
+  { href: "/comments", label: "Moderation", icon: BookOpen, superAdminOnly: true },
+  { href: "/team", label: "Team", icon: Users, superAdminOnly: true },
   { href: "/services", label: "Services", icon: BriefcaseBusiness },
   { href: "/portfolio", label: "Portfolio", icon: BriefcaseBusiness },
-  { href: "/users", label: "Users", icon: Users },
+  { href: "/users", label: "Users", icon: Users, superAdminOnly: true },
   { href: "/login-history", label: "Login history", icon: History },
   { href: "/account", label: "My account", icon: UserRound },
 ];
@@ -70,6 +70,9 @@ function NavLink({ item, pathname, onClick }) {
 
 export default function Sidebar({ onLogout, isOpen, onClose, currentUser }) {
   const pathname = usePathname();
+  const isSuperAdmin = currentUser?.role === "super_admin";
+  const visiblePrimaryNavigation = primaryNavigation.filter((item) => !item.superAdminOnly || isSuperAdmin);
+  const visibleWorkspaceNavigation = workspaceNavigation.filter((item) => !item.superAdminOnly || isSuperAdmin);
 
   return (
     <>
@@ -105,7 +108,7 @@ export default function Sidebar({ onLogout, isOpen, onClose, currentUser }) {
 
         <div className="min-h-0 flex-1 overflow-y-auto pb-4">
           <nav className="space-y-1 py-2" aria-label="Primary navigation">
-            {primaryNavigation.map((item) => (
+            {visiblePrimaryNavigation.map((item) => (
               <NavLink key={item.href} item={item} pathname={pathname} onClick={onClose} />
             ))}
           </nav>
@@ -113,7 +116,7 @@ export default function Sidebar({ onLogout, isOpen, onClose, currentUser }) {
           <div className="mx-4 my-5 border-t border-[#2d6b73]" />
           <p className="px-6 pb-2 text-xs font-semibold uppercase tracking-wider text-[#f7c56d]">Workspace</p>
           <nav className="space-y-1" aria-label="Workspace navigation">
-            {workspaceNavigation.map((item) => (
+            {visibleWorkspaceNavigation.map((item) => (
               <NavLink key={item.href} item={item} pathname={pathname} onClick={onClose} />
             ))}
           </nav>

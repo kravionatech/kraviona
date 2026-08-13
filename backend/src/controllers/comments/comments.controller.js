@@ -2,7 +2,7 @@ import { CommentModel } from "../../models/blog/comment.js";
 import { PostModel } from "../../models/blog/post.model.js";
 
 const COMMENT_STATUSES = ["approved", "pending", "spam", "trash"];
-const MODERATOR_ROLES = ["editor", "admin", "super_admin"];
+const MODERATOR_ROLES = ["super_admin"];
 
 const canModerateComments = (user) =>
   user && MODERATOR_ROLES.includes(user.role);

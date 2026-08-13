@@ -9,6 +9,7 @@ import { createNewsLatter, deleteSubscriber, getAllSubscribers } from "../contro
 import { createMessage, deleteMessage, getAllMessages, getMessageById, updateMessage } from "../controllers/messages/message.controller.js";
 import { createLead, deleteLead, getAllLeads, getLeadById, updateLead } from "../controllers/leads/lead.controller.js";
 import { getDashboardAnalytics } from "../controllers/analytics/analytics.controller.js";
+import { getAdvancedAnalytics } from "../controllers/analytics/advanced-analytics.controller.js";
 import { createPostComment, getPostEngagement, recordPostView } from "../controllers/blog-engagement/blog-engagement.controller.js";
 import { deleteComment, getAllComments, updateComment } from "../controllers/comments/comments.controller.js";
 import { createTeamMember, deleteTeamMember, getAllTeamMembers, getPublicTeamMembers, updateTeamMember } from "../controllers/team/team.controller.js";
@@ -31,6 +32,7 @@ Router.post('/auth/logout', verifyToken, logoutUser)
 
 // Analytics
 Router.get('/analytics/dashboard', verifyToken, getDashboardAnalytics)
+Router.get('/analytics/insights', verifyToken, getAdvancedAnalytics)
 
 // Users & team
 Router.get('/users', verifyToken, getAllUsers)

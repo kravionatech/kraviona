@@ -17,21 +17,21 @@ import { apiRequest } from "@/components/api";
 
 const COMMANDS = [
   { href: "/dashboard", label: "Dashboard", hint: "Performance overview" },
-  { href: "/leads", label: "Leads", hint: "Manage sales opportunities" },
-  { href: "/messages", label: "Messages", hint: "Customer inbox" },
-  { href: "/newsletters", label: "Newsletter audience", hint: "Subscribers" },
+  { href: "/leads", label: "Leads", hint: "Manage sales opportunities", superAdminOnly: true },
+  { href: "/messages", label: "Messages", hint: "Customer inbox", superAdminOnly: true },
+  { href: "/newsletters", label: "Newsletter audience", hint: "Subscribers", superAdminOnly: true },
   { href: "/blog", label: "Posts", hint: "Manage blog content" },
   { href: "/blog/new", label: "Create post", hint: "Write a new article" },
-  { href: "/category", label: "Categories", hint: "Organize content" },
-  { href: "/comments", label: "Comment moderation", hint: "Review discussion" },
+  { href: "/category", label: "Categories", hint: "Organize content", superAdminOnly: true },
+  { href: "/comments", label: "Comment moderation", hint: "Review discussion", superAdminOnly: true },
   { href: "/media", label: "Media library", hint: "Files and uploads" },
-  { href: "/team", label: "Team", hint: "Team members" },
+  { href: "/team", label: "Team", hint: "Team members", superAdminOnly: true },
   { href: "/services", label: "Services", hint: "Manage frontend services" },
   { href: "/portfolio", label: "Portfolio", hint: "Manage case studies" },
-  { href: "/users", label: "Users & admins", hint: "Account access" },
+  { href: "/users", label: "Users & admins", hint: "Account access", superAdminOnly: true },
   { href: "/login-history", label: "Login history", hint: "Review account sign-ins" },
   { href: "/account", label: "My account", hint: "Your profile details" },
-  { href: "/settings", label: "Settings", hint: "Admin configuration" },
+  { href: "/settings", label: "Settings", hint: "Admin configuration", superAdminOnly: true },
 ];
 
 function pageName(pathname) {
@@ -69,8 +69,15 @@ export default function Frame({ children }) {
   }, [loadAlerts]);
 
   useEffect(() => {
-    apiRequest("/me").then((response) => setCurrentUser(response.data || null)).catch(() => setCurrentUser(null));
-  }, []);
+    apiRequest("/me")
+      .then((response) => setCurrentUser(response.data || null))
+      .catch(() => {
+        document.cookie = "adminSession=; path=/; SameSite=Lax; Max-Age=0";
+        document.cookie = "accessToken=; path=/; SameSite=Lax; Max-Age=0";
+        document.cookie = "refreshToken=; path=/; SameSite=Lax; Max-Age=0";
+        router.replace("/auth");
+      });
+  }, [router]);
 
   useEffect(() => {
     const onKeyDown = (event) => {
@@ -91,9 +98,10 @@ export default function Frame({ children }) {
 
   const results = useMemo(() => {
     const query = search.trim().toLowerCase();
-    if (!query) return COMMANDS.slice(0, 6);
-    return COMMANDS.filter((item) => `${item.label} ${item.hint}`.toLowerCase().includes(query));
-  }, [search]);
+    const visibleCommands = COMMANDS.filter((item) => !item.superAdminOnly || currentUser?.role === "super_admin");
+    if (!query) return visibleCommands.slice(0, 6);
+    return visibleCommands.filter((item) => `${item.label} ${item.hint}`.toLowerCase().includes(query));
+  }, [search, currentUser?.role]);
 
   const unreadMessages = Number(analytics?.summary?.unreadMessages || 0);
   const newLeads = Number(analytics?.summary?.newLeads || 0);
@@ -166,7 +174,7 @@ export default function Frame({ children }) {
                   <Bell size={18} />
                   {alertCount > 0 && <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-blue-600 px-1 text-[10px] font-bold text-white">{alertCount > 9 ? "9+" : alertCount}</span>}
                 </button>
-                {notificationsOpen && <NotificationMenu unreadMessages={unreadMessages} newLeads={newLeads} onClose={() => setNotificationsOpen(false)} />}
+                {notificationsOpen && currentUser?.role === "super_admin" && <NotificationMenu unreadMessages={unreadMessages} newLeads={newLeads} onClose={() => setNotificationsOpen(false)} />}
               </div>
               <div className="hidden items-center gap-2 border-l border-gray-200 pl-3 sm:flex">
                 {currentUser?.avatar ? <img src={currentUser.avatar} alt="" className="h-9 w-9 rounded-full object-cover" /> : <span className="flex h-9 w-9 items-center justify-center rounded-full bg-blue-600 text-xs font-bold text-white">{(currentUser?.name || "Admin").slice(0, 2).toUpperCase()}</span>}

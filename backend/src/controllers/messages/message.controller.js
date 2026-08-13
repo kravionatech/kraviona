@@ -1,7 +1,7 @@
 import { MessageModel } from "../../models/messages/message.model.js";
 
 const canManageMessages = (user) =>
-  user && (user.role === "admin" || user.role === "super_admin");
+  user && user.role === "super_admin";
 
 const handleMessageError = (error, res) => {
   if (error.name === "ValidationError") {
