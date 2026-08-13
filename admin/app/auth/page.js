@@ -111,7 +111,9 @@ export default function AuthPage() {
         <section className="hidden min-h-[620px] flex-col justify-between border-r border-white/[0.08] bg-gradient-to-br from-[#2a4a52] via-[#20383e] to-[#1a2e33] p-10 lg:flex">
           <div>
             <div className="flex items-center gap-3">
-              <img src="/brand-logo.png" alt="Kraviona Tech Solutions logo" className="h-11 w-11 object-contain" />
+              <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-white/80 bg-gradient-to-br from-white via-[#f8fbfa] to-[#d8e8e6] p-2 shadow-xl shadow-black/20">
+                <img src="/brand-logo.png" alt="Kraviona Tech Solutions logo" className="h-full w-full object-contain" />
+              </span>
               <span className="text-sm font-black tracking-[0.22em] text-white">KRAVIONA TECH SOLUTIONS</span>
             </div>
             <div className="mt-24 max-w-sm">
@@ -126,7 +128,9 @@ export default function AuthPage() {
         <section className="p-7 sm:p-10 lg:p-12">
           <div className="mb-9">
             <div className="flex items-center gap-3 lg:hidden">
-              <img src="/brand-logo.png" alt="Kraviona Tech Solutions logo" className="h-10 w-10 object-contain" />
+              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-white/80 bg-gradient-to-br from-white via-[#f8fbfa] to-[#d8e8e6] p-1.5 shadow-lg shadow-black/15">
+                <img src="/brand-logo.png" alt="Kraviona Tech Solutions logo" className="h-full w-full object-contain" />
+              </span>
               <span className="text-sm font-black tracking-[0.18em] text-white">KRAVIONA TECH SOLUTIONS</span>
             </div>
             <p className="mt-7 text-xs font-bold uppercase tracking-[0.18em] text-[#f28c5e] lg:mt-0">Admin portal</p>

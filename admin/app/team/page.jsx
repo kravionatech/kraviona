@@ -20,6 +20,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import Pagination from "@/components/Pagination";
 import AvatarPicker from "@/components/AvatarPicker";
 import CompanyIdCard from "@/components/CompanyIdCard";
+import DepartmentSelect from "@/components/DepartmentSelect";
 
 const STATUS_OPTIONS = ["all", "active", "inactive"];
 const USER_ROLES = ["super_admin", "admin", "editor"];
@@ -151,7 +152,7 @@ function FeaturedToggle({ checked, onChange }) {
   );
 }
 
-function TeamModal({ form, accounts, isEditing, saving, onChange, onClose, onSubmit }) {
+function TeamModal({ form, accounts, departments, isEditing, saving, onChange, onClose, onSubmit }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/45 p-4">
       <div className="flex max-h-[90vh] w-full max-w-4xl flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl">
@@ -208,14 +209,10 @@ function TeamModal({ form, accounts, isEditing, saving, onChange, onClose, onSub
               />
             </Field>
             <Field label="Department">
-              <Input
-                value={form.department}
-                onChange={(event) => onChange("department", event.target.value)}
-                placeholder="Engineering"
-              />
+              <DepartmentSelect value={form.department} departments={departments} onChange={(value) => onChange("department", value)} required />
             </Field>
             <Field label="Linked user account">
-              <Select value={form.userID} onChange={(event) => { const account = accounts.find((item) => item._id === event.target.value); onChange("userID", event.target.value); onChange("role", account?.role || ""); }}>
+              <Select value={form.userID} onChange={(event) => { const account = accounts.find((item) => item._id === event.target.value); onChange("userID", event.target.value); onChange("role", account?.role || ""); if (account) onChange("department", account.profile?.department || account.teamMember?.department || form.department); }}>
                 <option value="">No linked user account</option>
                 {accounts.map((account) => <option key={account._id} value={account._id}>{account.name} · {account.email} ({account.role.replace("_", " ")})</option>)}
               </Select>
@@ -301,6 +298,7 @@ export default function TeamPage() {
   const [members, setMembers] = useState([]);
   const [accounts, setAccounts] = useState([]);
   const [counts, setCounts] = useState([]);
+  const [departments, setDepartments] = useState([]);
   const [pagination, setPagination] = useState({ total: 0 });
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("all");
@@ -342,6 +340,7 @@ export default function TeamPage() {
       setMembers(Array.isArray(response.data) ? response.data : []);
       setAccounts(Array.isArray(accountsResponse.data) ? accountsResponse.data.filter((account) => USER_ROLES.includes(account.role)) : []);
       setCounts(Array.isArray(response.counts) ? response.counts : []);
+      setDepartments(Array.isArray(response.departments) ? response.departments : []);
       setPagination(response.pagination || { total: 0 });
     } catch (err) {
       setError(err.message || "Unable to load team members");
@@ -684,6 +683,7 @@ export default function TeamPage() {
           <TeamModal
             form={form}
             accounts={accounts}
+            departments={departments}
             isEditing={Boolean(editingMember)}
             saving={saving}
             onChange={changeForm}

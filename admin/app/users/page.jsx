@@ -19,6 +19,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import Pagination from "@/components/Pagination";
 import AvatarPicker from "@/components/AvatarPicker";
 import CompanyIdCard from "@/components/CompanyIdCard";
+import DepartmentSelect from "@/components/DepartmentSelect";
 import Swal from "sweetalert2";
 
 const ROLES = ["super_admin", "admin", "editor", "viewer", "user"];
@@ -35,6 +36,7 @@ const EMPTY_USER = {
   isActive: true,
   isVerified: true,
   jobTitle: "",
+  department: "General",
   bio: "",
 };
 
@@ -69,6 +71,7 @@ function buildUserForm(user = {}) {
     isActive: user.isActive ?? true,
     isVerified: user.isVerified ?? true,
     jobTitle: user.profile?.jobTitle || "",
+    department: user.profile?.department || user.teamMember?.department || "General",
     bio: user.profile?.bio || "",
   };
 }
@@ -159,7 +162,7 @@ function Toggle({ checked, onChange, label }) {
   );
 }
 
-function UserModal({ form, isEditing, saving, onChange, onClose, onSubmit }) {
+function UserModal({ form, departments, isEditing, saving, onChange, onClose, onSubmit }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/45 p-4">
       <div className="flex max-h-[90vh] w-full max-w-4xl flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl">
@@ -248,6 +251,9 @@ function UserModal({ form, isEditing, saving, onChange, onClose, onSubmit }) {
                 placeholder="Content Manager"
               />
             </Field>
+            <Field label="Department">
+              <DepartmentSelect value={form.department} departments={departments} onChange={(value) => onChange("department", value)} required />
+            </Field>
             <AvatarPicker label="Profile image" name={form.name} value={form.avatar} onChange={(value) => onChange("avatar", value)} />
             <div className="md:col-span-2">
               <Field label="Bio">
@@ -300,6 +306,7 @@ function UserModal({ form, isEditing, saving, onChange, onClose, onSubmit }) {
 export default function UsersPage() {
   const [users, setUsers] = useState([]);
   const [counts, setCounts] = useState([]);
+  const [departments, setDepartments] = useState([]);
   const [pagination, setPagination] = useState({ total: 0 });
   const [search, setSearch] = useState("");
   const [role, setRole] = useState("all");
@@ -334,6 +341,7 @@ export default function UsersPage() {
       const response = await apiRequest(`/users?${params.toString()}`);
       setUsers(Array.isArray(response.data) ? response.data : []);
       setCounts(Array.isArray(response.counts) ? response.counts : []);
+      setDepartments(Array.isArray(response.departments) ? response.departments : []);
       setPagination(response.pagination || { total: 0 });
     } catch (err) {
       setError(err.message || "Unable to load users");
@@ -386,6 +394,7 @@ export default function UsersPage() {
         isVerified: form.isVerified,
         profile: {
           jobTitle: form.jobTitle,
+          department: form.department,
           bio: form.bio,
         },
       };
@@ -572,6 +581,9 @@ export default function UsersPage() {
                       Role
                     </th>
                     <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider text-slate-500">
+                      Department
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider text-slate-500">
                       Status
                     </th>
                     <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider text-slate-500">
@@ -603,6 +615,9 @@ export default function UsersPage() {
                       </td>
                       <td className="px-4 py-4">
                         <RoleBadge role={user.role} />
+                      </td>
+                      <td className="px-4 py-4 text-sm font-medium text-slate-700">
+                        {user.profile?.department || user.teamMember?.department || "General"}
                       </td>
                       <td className="px-4 py-4">
                         <div className="flex flex-col gap-1.5 text-xs font-semibold">
@@ -677,6 +692,7 @@ export default function UsersPage() {
         {modalOpen && (
           <UserModal
             form={form}
+            departments={departments}
             isEditing={Boolean(editingUser)}
             saving={saving}
             onChange={changeForm}

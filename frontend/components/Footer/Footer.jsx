@@ -129,14 +129,14 @@ export default function Footer() {
               aria-label="Kraviona homepage"
               className="mb-5 inline-flex items-center gap-3"
             >
-              <span className="flex h-16 w-16 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.04]">
+              <span className="flex h-16 w-16 items-center justify-center rounded-2xl border border-white/80 bg-gradient-to-br from-white via-[#f8fbfa] to-[#d8e8e6] p-1.5 shadow-xl shadow-black/20">
                 <Image
                   src="/logo.png"
                   alt="Kraviona Tech Solutions logo"
                   width={64}
                   height={64}
                   sizes="64px"
-                  className="h-auto w-12 object-contain"
+                  className="h-full w-full object-contain"
                 />
               </span>
               <span>

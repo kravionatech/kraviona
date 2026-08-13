@@ -81,17 +81,19 @@ export default function Sidebar({ onLogout, isOpen, onClose, currentUser }) {
           type="button"
           aria-label="Close navigation"
           onClick={onClose}
-          className="fixed inset-0 z-30 bg-slate-950/30 lg:hidden"
+          className="fixed inset-0 z-40 bg-slate-950/30 lg:hidden"
         />
       )}
       <aside
-        className={`fixed inset-y-0 left-0 z-40 flex h-dvh w-72 flex-col overflow-hidden border-r border-[#2d6b73] bg-[#123f46] shadow-2xl shadow-slate-950/15 transition-transform duration-300 lg:sticky lg:top-0 lg:z-10 lg:h-screen lg:w-64 lg:shrink-0 lg:self-start lg:translate-x-0 lg:shadow-none ${
+        className={`fixed inset-y-0 left-0 z-50 flex h-dvh w-72 flex-col overflow-hidden border-r border-[#2d6b73] bg-[#123f46] shadow-2xl shadow-slate-950/15 transition-transform duration-300 lg:sticky lg:top-0 lg:z-10 lg:h-screen lg:w-64 lg:shrink-0 lg:self-start lg:translate-x-0 lg:shadow-none ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
         <div className="flex items-center justify-between px-6 py-6">
           <Link href="/dashboard" onClick={onClose} className="flex items-center gap-3">
-            <img src="/brand-logo.png" alt="Kraviona Tech Solutions logo" className="h-10 w-10 rounded-lg object-contain" />
+            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-white/80 bg-gradient-to-br from-white via-[#f8fbfa] to-[#d8e8e6] p-1.5 shadow-lg shadow-black/15">
+              <img src="/brand-logo.png" alt="Kraviona Tech Solutions logo" className="h-full w-full object-contain" />
+            </span>
             <span><span className="block text-lg font-bold text-white">KRAVIONA</span>
             <span className="text-sm text-[#f7c56d]">Tech Solutions · Admin</span>
             </span>

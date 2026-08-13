@@ -122,6 +122,7 @@ const userSchema = new Schema(
     profile: {
       bio: { type: String, maxlength: 500, trim: true },
       jobTitle: { type: String, trim: true, maxlength: 100 }, // e.g., "MERN Stack Developer"
+      department: { type: String, trim: true, maxlength: 80, default: "General" },
       socialLinks: [
         {
           name: {

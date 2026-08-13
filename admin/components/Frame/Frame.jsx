@@ -125,7 +125,7 @@ export default function Frame({ children }) {
       <Sidebar onLogout={handleLogout} isOpen={mobileNavOpen} onClose={() => setMobileNavOpen(false)} currentUser={currentUser} />
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="sticky top-0 z-20 h-16 shrink-0 border-b border-gray-200 bg-white px-4 py-3 sm:px-6 lg:px-8">
+        <header className="sticky top-0 z-30 h-16 shrink-0 border-b border-gray-200 bg-white px-4 py-3 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between gap-3">
             <div className="flex min-w-0 items-center gap-3">
               <button
@@ -184,7 +184,7 @@ export default function Frame({ children }) {
           </div>
         </header>
 
-        <main className="min-h-[calc(100dvh-4rem)] min-w-0 flex-1">{children}</main>
+        <main className="relative z-0 min-h-[calc(100dvh-4rem)] min-w-0 flex-1">{children}</main>
       </div>
     </div>
   );

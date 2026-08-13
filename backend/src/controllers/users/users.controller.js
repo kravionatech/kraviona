@@ -44,7 +44,7 @@ const syncStaffAccountToTeam = async (account) => {
     member = new TeamMemberModel({
       slug: `${slugify(account.name, { lower: true, strict: true }) || "team-member"}-${String(account._id).slice(-8)}`,
       designation: cleanText(account.profile?.jobTitle) || roleLabel(account.role),
-      department: account.role === "editor" ? "Content" : "Administration",
+      department: cleanText(account.profile?.department) || (account.role === "editor" ? "Content" : "Administration"),
       skills: [],
       order: 0,
       isFeatured: false,
@@ -58,6 +58,7 @@ const syncStaffAccountToTeam = async (account) => {
   member.avatar = cleanText(account.avatar);
   member.bio = cleanText(account.profile?.bio);
   member.designation = cleanText(account.profile?.jobTitle) || member.designation || roleLabel(account.role);
+  member.department = cleanText(account.profile?.department) || member.department || "General";
   member.status = account.isActive ? "active" : "inactive";
   await member.save();
   return member;
@@ -147,10 +148,11 @@ export const getAllUsers = async (req, res) => {
         { username: regex },
         { phone: regex },
         { "profile.jobTitle": regex },
+        { "profile.department": regex },
       ];
     }
 
-    const [users, total, roleCounts] = await Promise.all([
+    const [users, total, roleCounts, userDepartments, teamDepartments] = await Promise.all([
       Auth.find(query)
         .select("-password -loginAttempts -lockUntil -passwordResetToken -passwordResetExpires")
         .sort({ createdAt: -1 })
@@ -162,6 +164,8 @@ export const getAllUsers = async (req, res) => {
         { $group: { _id: "$role", count: { $sum: 1 } } },
         { $sort: { count: -1 } },
       ]),
+      Auth.distinct("profile.department", { "profile.department": { $nin: [null, ""] } }),
+      TeamMemberModel.distinct("department", { department: { $nin: [null, ""] } }),
     ]);
 
     const teamMembers = await TeamMemberModel.find({ userID: { $in: users.map((item) => item._id) } })
@@ -177,6 +181,7 @@ export const getAllUsers = async (req, res) => {
         label: item._id || "unknown",
         value: item.count,
       })),
+      departments: [...new Set([...userDepartments, ...teamDepartments].map(cleanText).filter(Boolean))].sort((a, b) => a.localeCompare(b)),
       pagination: {
         total,
         page: currentPage,
@@ -246,6 +251,7 @@ export const createUser = async (req, res) => {
       profile: {
         bio: cleanText(profile.bio),
         jobTitle: cleanText(profile.jobTitle),
+        department: cleanText(profile.department) || "General",
         socialLinks: Array.isArray(profile.socialLinks) ? profile.socialLinks : [],
       },
       preferences: {
@@ -332,6 +338,9 @@ export const updateUser = async (req, res) => {
         ...(targetUser.profile?.toObject?.() || targetUser.profile || {}),
         bio: cleanText(req.body.profile.bio),
         jobTitle: cleanText(req.body.profile.jobTitle),
+        department: req.body.profile.department !== undefined
+          ? cleanText(req.body.profile.department) || "General"
+          : cleanText(targetUser.profile?.department) || "General",
         socialLinks: Array.isArray(req.body.profile.socialLinks)
           ? req.body.profile.socialLinks
           : targetUser.profile?.socialLinks || [],

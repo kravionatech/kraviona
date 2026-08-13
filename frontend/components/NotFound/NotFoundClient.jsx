@@ -118,7 +118,7 @@ export default function NotFoundClient() {
                 aria-label="Kraviona home"
                 className="mb-8 inline-flex items-center gap-3 group"
               >
-                <span className="flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 bg-white shadow-sm transition-transform group-hover:scale-105">
+                <span className="flex h-14 w-14 items-center justify-center rounded-2xl border border-white/80 bg-gradient-to-br from-white via-[#f8fbfa] to-[#d8e8e6] p-1.5 shadow-xl shadow-black/20 transition-transform group-hover:scale-105">
                   <Image
                     src="/logo.png"
                     alt="Kraviona Tech Solutions logo"
@@ -126,7 +126,7 @@ export default function NotFoundClient() {
                     height={44}
                     priority
                     sizes="48px"
-                    className="h-auto w-10 object-contain"
+                    className="h-full w-full object-contain"
                   />
                 </span>
                 <span>

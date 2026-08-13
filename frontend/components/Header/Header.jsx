@@ -436,7 +436,7 @@ export default function Header() {
           aria-label="Kraviona – Homepage"
           className="flex flex-shrink-0 items-center gap-3 group"
         >
-          <span className="flex h-10 w-10 items-center justify-center rounded-lg border border-gray-200 bg-white shadow-sm">
+          <span className="flex h-11 w-11 items-center justify-center rounded-xl border border-[#0f5960]/15 bg-gradient-to-br from-white via-[#f8fbfa] to-[#d8e8e6] p-1 shadow-md shadow-[#0f5960]/10">
             <Image
               src="/logo.png"
               alt="Kraviona Tech Solutions logo"
@@ -444,7 +444,7 @@ export default function Header() {
               height={40}
               priority
               sizes="44px"
-              className="h-auto w-8 object-contain transition-transform duration-200 group-hover:scale-105"
+              className="h-full w-full object-contain transition-transform duration-200 group-hover:scale-105"
             />
           </span>
           <span className="min-w-0">
@@ -737,7 +737,7 @@ export default function Header() {
           aria-label="Kraviona – Homepage"
           className="flex items-center gap-2.5"
         >
-          <span className="flex h-10 w-10 items-center justify-center rounded-lg border border-gray-200 bg-white shadow-sm">
+          <span className="flex h-11 w-11 items-center justify-center rounded-xl border border-[#0f5960]/15 bg-gradient-to-br from-white via-[#f8fbfa] to-[#d8e8e6] p-1 shadow-md shadow-[#0f5960]/10">
             <Image
               src="/logo.png"
               alt="Kraviona Tech Solutions logo"
@@ -745,7 +745,7 @@ export default function Header() {
               height={33}
               priority
               sizes="36px"
-              className="h-auto w-8 object-contain"
+              className="h-full w-full object-contain"
             />
           </span>
           <span>
@@ -794,14 +794,14 @@ export default function Header() {
         {/* Drawer header */}
         <div className="flex h-[70px] items-center justify-between border-b border-white/15 bg-primary px-5">
           <div className="flex items-center gap-2.5">
-            <span className="flex h-10 w-10 items-center justify-center rounded-lg border border-gray-200 bg-white shadow-sm">
+            <span className="flex h-11 w-11 items-center justify-center rounded-xl border border-white/80 bg-gradient-to-br from-white via-[#f8fbfa] to-[#d8e8e6] p-1 shadow-lg shadow-black/15">
               <Image
                 src="/logo.png"
                 alt="Kraviona Tech Solutions logo"
                 width={36}
                 height={33}
                 sizes="36px"
-                className="h-auto w-8 object-contain"
+                className="h-full w-full object-contain"
               />
             </span>
             <span>
