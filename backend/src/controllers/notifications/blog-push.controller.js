@@ -10,13 +10,22 @@ const ALLOWED_PUSH_HOSTS = new Set([
   "web.push.apple.com",
 ]);
 
+const ALLOWED_PUSH_HOST_SUFFIXES = [
+  ".push.apple.com",
+  // Microsoft Edge can return WNS endpoints such as
+  // https://wns2-by3p.notify.windows.com/...
+  ".notify.windows.com",
+];
+
 const isAllowedPushEndpoint = (endpoint) => {
   try {
     const url = new URL(endpoint);
     return (
       url.protocol === "https:" &&
       (ALLOWED_PUSH_HOSTS.has(url.hostname) ||
-        url.hostname.endsWith(".push.apple.com"))
+        ALLOWED_PUSH_HOST_SUFFIXES.some((suffix) =>
+          url.hostname.endsWith(suffix),
+        ))
     );
   } catch {
     return false;
@@ -46,6 +55,7 @@ export const subscribeToBlogPush = async (req, res) => {
 
     if (
       !isAllowedPushEndpoint(endpoint) ||
+      endpoint.length > 2048 ||
       !p256dh ||
       !auth ||
       p256dh.length > 512 ||
@@ -61,9 +71,13 @@ export const subscribeToBlogPush = async (req, res) => {
       subscription.expirationTime == null
         ? Number.NaN
         : Number(subscription.expirationTime);
-    const expirationTime = Number.isFinite(expirationValue)
+    const parsedExpirationTime = Number.isFinite(expirationValue)
       ? new Date(expirationValue)
       : null;
+    const expirationTime =
+      parsedExpirationTime && !Number.isNaN(parsedExpirationTime.getTime())
+        ? parsedExpirationTime
+        : null;
     const endpointHash = hashPushEndpoint(endpoint);
 
     await BlogPushSubscription.findOneAndUpdate(

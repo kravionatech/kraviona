@@ -4,16 +4,21 @@ import config from "../config/config.js";
 import { PostModel } from "../models/blog/post.model.js";
 import { BlogPushSubscription } from "../models/notifications/blog-push-subscription.model.js";
 
-const hasVapidConfiguration = Boolean(
+let hasVapidConfiguration = Boolean(
   config.WEB_PUSH_VAPID_PUBLIC_KEY && config.WEB_PUSH_VAPID_PRIVATE_KEY,
 );
 
 if (hasVapidConfiguration) {
-  webPush.setVapidDetails(
-    config.WEB_PUSH_VAPID_SUBJECT,
-    config.WEB_PUSH_VAPID_PUBLIC_KEY,
-    config.WEB_PUSH_VAPID_PRIVATE_KEY,
-  );
+  try {
+    webPush.setVapidDetails(
+      config.WEB_PUSH_VAPID_SUBJECT,
+      config.WEB_PUSH_VAPID_PUBLIC_KEY,
+      config.WEB_PUSH_VAPID_PRIVATE_KEY,
+    );
+  } catch (error) {
+    hasVapidConfiguration = false;
+    console.error("[blog-push] Invalid VAPID configuration:", error.message);
+  }
 }
 
 const plainText = (value = "") =>
@@ -40,9 +45,13 @@ const buildPayload = (post) => ({
   renotify: false,
   data: {
     topic: "blog",
-    url: `https://kraviona.com/blog/${post.slug}`,
+    // Keep navigation on the origin that owns the service worker. This also
+    // makes preview and local subscriptions open their matching deployment.
+    url: `/blog/${post.slug}`,
   },
 });
+
+const SEND_CONCURRENCY = 20;
 
 const markFailure = async (subscription, permanent) => {
   if (permanent) {
@@ -96,21 +105,33 @@ export async function notifyBlogSubscribers(post) {
   let sent = 0;
   let failed = 0;
 
-  await Promise.allSettled(
-    subscriptions.map(async (subscription) => {
-      try {
-        await webPush.sendNotification(
-          {
-            endpoint: subscription.endpoint,
-            keys: {
-              p256dh: subscription.keys.p256dh,
-              auth: subscription.keys.auth,
+  for (let offset = 0; offset < subscriptions.length; offset += SEND_CONCURRENCY) {
+    const batch = subscriptions.slice(offset, offset + SEND_CONCURRENCY);
+
+    await Promise.allSettled(
+      batch.map(async (subscription) => {
+        try {
+          await webPush.sendNotification(
+            {
+              endpoint: subscription.endpoint,
+              keys: {
+                p256dh: subscription.keys.p256dh,
+                auth: subscription.keys.auth,
+              },
             },
-          },
-          payload,
-          { TTL: 86400, urgency: "normal", timeout: 8000 },
-        );
-        sent += 1;
+            payload,
+            { TTL: 86400, urgency: "normal", timeout: 8000 },
+          );
+          sent += 1;
+        } catch (error) {
+          failed += 1;
+          const permanent = [404, 410].includes(error?.statusCode);
+          await markFailure(subscription, permanent).catch(() => null);
+          return;
+        }
+
+        // A bookkeeping failure must not mark a successfully delivered push
+        // as failed or disable a healthy browser subscription.
         await BlogPushSubscription.updateOne(
           { _id: subscription._id },
           {
@@ -120,14 +141,10 @@ export async function notifyBlogSubscribers(post) {
               lastNotifiedAt: new Date(),
             },
           },
-        );
-      } catch (error) {
-        failed += 1;
-        const permanent = [404, 410].includes(error?.statusCode);
-        await markFailure(subscription, permanent);
-      }
-    }),
-  );
+        ).catch(() => null);
+      }),
+    );
+  }
 
   return { sent, failed, skipped: false };
 }

@@ -150,6 +150,38 @@ const publishDueScheduledPosts = async () => {
   }
 };
 
+// Public reads must never wait for scheduled publishing or Web Push delivery.
+// Keep one background run in flight and throttle the inexpensive due-post check
+// so a burst of page requests does not create a burst of MongoDB writes.
+const SCHEDULED_PUBLISH_CHECK_INTERVAL_MS = 30_000;
+let scheduledPublishPromise = null;
+let lastScheduledPublishCheckAt = 0;
+
+const queueDueScheduledPosts = () => {
+  const now = Date.now();
+  if (scheduledPublishPromise) return scheduledPublishPromise;
+  if (now - lastScheduledPublishCheckAt < SCHEDULED_PUBLISH_CHECK_INTERVAL_MS) {
+    return null;
+  }
+
+  lastScheduledPublishCheckAt = now;
+  scheduledPublishPromise = publishDueScheduledPosts()
+    .catch((error) => {
+      console.error("[scheduled-posts] Background publish failed:", error.message);
+    })
+    .finally(() => {
+      scheduledPublishPromise = null;
+    });
+
+  return scheduledPublishPromise;
+};
+
+const queueBlogNotification = (post) => {
+  void notifyBlogSubscribers(post).catch((error) => {
+    console.error("[blog-push] Background delivery failed:", error.message);
+  });
+};
+
 const publicPostFilter = () => ({
   status: "published",
   $or: [{ publishedAt: { $exists: false } }, { publishedAt: null }, { publishedAt: { $lte: new Date() } }],
@@ -370,7 +402,7 @@ export const createPost = async (req, res) => {
     });
 
     if (post.status === "published") {
-      await notifyBlogSubscribers(post).catch(() => null);
+      queueBlogNotification(post);
     }
 
     return res.status(201).json({
@@ -388,7 +420,8 @@ export const createPost = async (req, res) => {
 // ==========================================
 export const publicPosts = async (req, res) => {
   try {
-    await publishDueScheduledPosts();
+    queueDueScheduledPosts();
+    res.set("Cache-Control", "public, max-age=30, stale-while-revalidate=300");
 
     const page = Math.max(1, parseInt(req.query.page, 10) || 1);
     const limit = Math.min(24, Math.max(1, parseInt(req.query.limit, 10) || 12));
@@ -485,7 +518,7 @@ export const publicPosts = async (req, res) => {
 // ==========================================
 export const privatePosts = async (req, res) => {
   try {
-    await publishDueScheduledPosts();
+    queueDueScheduledPosts();
 
     const user = req.user;
 
@@ -626,7 +659,7 @@ export const deletePost = async (req, res) => {
 export const updatePost = async (req, res) => {
   try {
     applyUploadedFeaturedImage(req);
-    await publishDueScheduledPosts();
+    queueDueScheduledPosts();
 
     const user = req.user;
 
@@ -827,7 +860,7 @@ export const updatePost = async (req, res) => {
     }
 
     if (!wasPublished && post.status === "published") {
-      await notifyBlogSubscribers(post).catch(() => null);
+      queueBlogNotification(post);
     }
 
     return res.status(200).json({
@@ -845,7 +878,8 @@ export const updatePost = async (req, res) => {
 // ==========================================
 export const singleViewPost = async (req, res) => {
   try {
-    await publishDueScheduledPosts();
+    queueDueScheduledPosts();
+    res.set("Cache-Control", "public, max-age=60, stale-while-revalidate=300");
 
     const { slug } = req.params;
 
@@ -887,7 +921,7 @@ export const singleViewPost = async (req, res) => {
 // this powers an edit screen, not a public card.
 export const privateViewPost = async (req, res) => {
   try {
-    await publishDueScheduledPosts();
+    queueDueScheduledPosts();
 
     const user = req.user;
 

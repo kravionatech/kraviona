@@ -92,6 +92,43 @@ const parsePosts = (json) =>
         ? json
         : [];
 
+export const dynamicParams = true;
+
+export async function generateStaticParams() {
+  const slugs = new Set();
+  let page = 1;
+  let totalPages = 1;
+
+  try {
+    do {
+      const response = await fetch(
+        `${API_URL}/public/posts?page=${page}&limit=24`,
+        {
+          next: { revalidate: 300 },
+          headers: { Accept: "application/json" },
+        },
+      );
+
+      if (!response.ok) break;
+      const json = await response.json();
+      parsePosts(json).forEach((post) => {
+        if (post?.slug) slugs.add(String(post.slug));
+      });
+
+      totalPages = Math.min(
+        100,
+        Math.max(1, Number(json?.pagination?.totalPages) || 1),
+      );
+      page += 1;
+    } while (page <= totalPages);
+  } catch {
+    // A temporary API outage should not fail the whole frontend deployment.
+    // dynamicParams keeps on-demand article rendering available as fallback.
+  }
+
+  return [...slugs].map((slug) => ({ slug }));
+}
+
 const plainText = (value = "") =>
   String(value)
     .replace(/<[^>]*>?/gm, "")

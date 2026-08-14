@@ -6,6 +6,7 @@ import { Bell, BellOff, Check, Loader2, X } from "lucide-react";
 import { API_URL } from "@/utils/api";
 
 const DISMISSED_KEY = "kraviona_blog_push_prompt_dismissed";
+const REQUEST_TIMEOUT_MS = 8000;
 
 const toApplicationServerKey = (base64) => {
   const padding = "=".repeat((4 - (base64.length % 4)) % 4);
@@ -14,39 +15,133 @@ const toApplicationServerKey = (base64) => {
   return Uint8Array.from([...raw].map((character) => character.charCodeAt(0)));
 };
 
+const applicationServerKeysMatch = (subscription, expectedKey) => {
+  const currentKey = subscription?.options?.applicationServerKey;
+  if (!currentKey) return true;
+
+  const currentBytes = new Uint8Array(currentKey);
+  return (
+    currentBytes.length === expectedKey.length &&
+    currentBytes.every((value, index) => value === expectedKey[index])
+  );
+};
+
+const requestJson = async (url, options = {}) => {
+  const controller = new AbortController();
+  const timeout = window.setTimeout(
+    () => controller.abort(),
+    REQUEST_TIMEOUT_MS,
+  );
+
+  try {
+    const response = await fetch(url, { ...options, signal: controller.signal });
+    const result = await response.json().catch(() => ({}));
+    return { response, result };
+  } finally {
+    window.clearTimeout(timeout);
+  }
+};
+
+const saveSubscription = async (current) => {
+  const { response, result } = await requestJson(
+    `${API_URL}/push/blog/subscribe`,
+    {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        subscription: current.toJSON(),
+        language: navigator.language || "en-IN",
+      }),
+    },
+  );
+
+  if (!response.ok || result?.success === false) {
+    throw new Error(result?.message || "Unable to enable blog alerts.");
+  }
+};
+
 export default function BlogPushSubscribe() {
   const [supported, setSupported] = useState(false);
   const [expanded, setExpanded] = useState(false);
   const [subscription, setSubscription] = useState(null);
+  const [publicKey, setPublicKey] = useState("");
   const [status, setStatus] = useState("");
   const [busy, setBusy] = useState(false);
 
   const getRegistration = useCallback(async () => {
-    const registration = await navigator.serviceWorker.register("/sw.js", {
+    await navigator.serviceWorker.register("/sw.js", {
       scope: "/",
     });
-    await navigator.serviceWorker.ready;
-    return registration;
+    return navigator.serviceWorker.ready;
   }, []);
 
   useEffect(() => {
     const canUsePush =
+      window.isSecureContext &&
       "serviceWorker" in navigator &&
       "PushManager" in window &&
       "Notification" in window;
-    setSupported(canUsePush);
 
     if (!canUsePush) return undefined;
 
     let active = true;
-    getRegistration()
-      .then((registration) => registration.pushManager.getSubscription())
-      .then((current) => {
-        if (active) setSubscription(current);
-      })
-      .catch(() => {
-        if (active) setStatus("Notifications are unavailable in this browser.");
-      });
+    const initialize = async () => {
+      try {
+        // Do not ask for notification permission when the backend is not
+        // configured. Production returns 503 here until VAPID keys exist.
+        const { response, result } = await requestJson(
+          `${API_URL}/push/blog/public-key`,
+          { headers: { Accept: "application/json" } },
+        );
+        const nextPublicKey = result?.data?.publicKey;
+        if (!response.ok || !nextPublicKey) return;
+
+        const expectedKey = toApplicationServerKey(nextPublicKey);
+        const registration = await getRegistration();
+        let current = await registration.pushManager.getSubscription();
+
+        // A subscription created with an old VAPID key can never receive a
+        // push signed by the current private key. Remove it so the next user
+        // action creates a healthy subscription.
+        if (current && !applicationServerKeysMatch(current, expectedKey)) {
+          const oldEndpoint = current.endpoint;
+          await current.unsubscribe();
+          current = null;
+          void requestJson(`${API_URL}/push/blog/unsubscribe`, {
+            method: "DELETE",
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ endpoint: oldEndpoint }),
+          }).catch(() => null);
+        }
+
+        if (!active) return;
+        setPublicKey(nextPublicKey);
+        setSubscription(current);
+        setSupported(true);
+
+        // Restore the backend record after a database restore or deployment
+        // without forcing the visitor to opt in a second time.
+        if (current) {
+          void saveSubscription(current).catch(() => {
+            if (active) {
+              setStatus("Alerts are on in this browser, but sync is pending.");
+            }
+          });
+        }
+      } catch (error) {
+        if (active && error?.name !== "AbortError") {
+          setStatus("Notifications are temporarily unavailable.");
+        }
+      }
+    };
+
+    void initialize();
 
     return () => {
       active = false;
@@ -89,38 +184,27 @@ export default function BlogPushSubscribe() {
         return;
       }
 
-      const keyResponse = await fetch(`${API_URL}/push/blog/public-key`, {
-        headers: { Accept: "application/json" },
-      });
-      const keyResult = await keyResponse.json();
-      const publicKey = keyResult?.data?.publicKey;
-      if (!keyResponse.ok || !publicKey) {
-        throw new Error(keyResult?.message || "Blog alerts are not configured.");
-      }
+      if (!publicKey) throw new Error("Blog alerts are not configured.");
 
       const registration = await getRegistration();
-      const current =
-        (await registration.pushManager.getSubscription()) ||
-        (await registration.pushManager.subscribe({
+      let current = await registration.pushManager.getSubscription();
+      let createdHere = false;
+
+      if (!current) {
+        current = await registration.pushManager.subscribe({
           userVisibleOnly: true,
           applicationServerKey: toApplicationServerKey(publicKey),
-        }));
+        });
+        createdHere = true;
+      }
 
-      const response = await fetch(`${API_URL}/push/blog/subscribe`, {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          subscription: current.toJSON(),
-          language: navigator.language || "en-IN",
-        }),
-      });
-      const result = await response.json();
-      if (!response.ok || result?.success === false) {
-        await current.unsubscribe();
-        throw new Error(result?.message || "Unable to enable blog alerts.");
+      try {
+        await saveSubscription(current);
+      } catch (error) {
+        // Do not destroy a previously healthy browser subscription because of
+        // a temporary API failure. Only roll back a subscription made now.
+        if (createdHere) await current.unsubscribe().catch(() => null);
+        throw error;
       }
 
       setSubscription(current);
@@ -140,17 +224,20 @@ export default function BlogPushSubscribe() {
       setStatus("");
       const endpoint = subscription.endpoint;
 
-      await fetch(`${API_URL}/push/blog/unsubscribe`, {
+      await subscription.unsubscribe();
+      setSubscription(null);
+      setStatus("Blog alerts disabled.");
+
+      // Local unsubscribe is authoritative for the visitor. Server cleanup is
+      // best-effort; an unreachable stale endpoint is also removed on 404/410.
+      void requestJson(`${API_URL}/push/blog/unsubscribe`, {
         method: "DELETE",
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ endpoint }),
-      });
-      await subscription.unsubscribe();
-      setSubscription(null);
-      setStatus("Blog alerts disabled.");
+      }).catch(() => null);
     } catch (error) {
       setStatus(error.message || "Unable to disable blog alerts.");
     } finally {

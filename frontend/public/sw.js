@@ -1,4 +1,15 @@
-const DEFAULT_URL = "https://kraviona.com/blog";
+const DEFAULT_URL = "/blog";
+
+const getSafeDestination = (value) => {
+  try {
+    const destination = new URL(value || DEFAULT_URL, self.location.origin);
+    return destination.origin === self.location.origin
+      ? destination.href
+      : new URL(DEFAULT_URL, self.location.origin).href;
+  } catch {
+    return new URL(DEFAULT_URL, self.location.origin).href;
+  }
+};
 
 self.addEventListener("install", () => self.skipWaiting());
 self.addEventListener("activate", (event) => event.waitUntil(self.clients.claim()));
@@ -32,15 +43,18 @@ self.addEventListener("push", (event) => {
 
 self.addEventListener("notificationclick", (event) => {
   event.notification.close();
-  const destination = event.notification.data?.url || DEFAULT_URL;
+  const destination = getSafeDestination(event.notification.data?.url);
 
   event.waitUntil(
     self.clients.matchAll({ type: "window", includeUncontrolled: true }).then(
       async (clients) => {
         for (const client of clients) {
           if (new URL(client.url).origin === self.location.origin) {
+            if (client.url === destination) return client.focus();
+
+            await client.navigate(destination);
             await client.focus();
-            return client.navigate(destination);
+            return client;
           }
         }
 

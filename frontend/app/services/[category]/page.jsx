@@ -228,7 +228,10 @@ export async function generateMetadata({ params }) {
 export default async function ServicesDetails({ params }) {
   const { category } = await params;
   const slug = category?.toLowerCase()?.trim();
-  const service = await getService(slug);
+  const [service, serviceLinks] = await Promise.all([
+    getService(slug),
+    getServiceLinks(),
+  ]);
 
   if (!service) {
     notFound();
@@ -237,7 +240,7 @@ export default async function ServicesDetails({ params }) {
   const pageUrl = canonicalUrl(`/services/${slug}`);
   const serviceFaqs = service.faqs.length ? service.faqs : getServiceFaqs({ ...service, outcomes: service.outcomes.map((item) => item.title) });
   const expert = service.expert;
-  const relatedServices = (await getServiceLinks()).filter(
+  const relatedServices = serviceLinks.filter(
     (item) => item.href !== `/services/${slug}` && item.category === service.category,
   ).slice(0, 4);
 

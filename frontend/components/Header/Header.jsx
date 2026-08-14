@@ -2,7 +2,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import React, { useState, useEffect, useRef } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   ArrowRight,
   BarChart3,
@@ -261,6 +261,7 @@ export default function Header() {
   const [openDropdown, setOpenDropdown] = useState(null);
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
   const megaTimer = useRef(null);
   const dropTimer = useRef(null);
   const mobileDialogRef = useRef(null);
@@ -271,6 +272,26 @@ export default function Header() {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  useEffect(() => {
+    // Services and Blog sit behind menu buttons, so Next.js cannot always
+    // viewport-prefetch them like a visible Link. Warm their RSC payloads once
+    // the browser is idle to make the two heaviest navigations immediate.
+    const prefetchPrimaryRoutes = () => {
+      router.prefetch("/services");
+      router.prefetch("/blog");
+    };
+
+    if ("requestIdleCallback" in window) {
+      const idleId = window.requestIdleCallback(prefetchPrimaryRoutes, {
+        timeout: 2500,
+      });
+      return () => window.cancelIdleCallback(idleId);
+    }
+
+    const timer = window.setTimeout(prefetchPrimaryRoutes, 1200);
+    return () => window.clearTimeout(timer);
+  }, [router]);
 
   useEffect(() => {
     if (!mobileOpen) return undefined;
@@ -347,6 +368,7 @@ export default function Header() {
   };
 
   const onMegaEnter = () => {
+    router.prefetch("/services");
     clearTimeout(megaTimer.current);
     setOpenDropdown(null);
     setMegaOpen(true);
@@ -355,6 +377,7 @@ export default function Header() {
     megaTimer.current = setTimeout(() => setMegaOpen(false), 160);
   };
   const onDropEnter = (idx) => {
+    router.prefetch(NAV_ITEMS[idx]?.path || "/blog");
     clearTimeout(dropTimer.current);
     setMegaOpen(false);
     setOpenDropdown(idx);
@@ -364,6 +387,7 @@ export default function Header() {
   };
 
   const toggleMega = () => {
+    router.prefetch("/services");
     clearTimeout(megaTimer.current);
     clearTimeout(dropTimer.current);
     setOpenDropdown(null);
@@ -371,6 +395,7 @@ export default function Header() {
   };
 
   const toggleDropdown = (idx) => {
+    router.prefetch(NAV_ITEMS[idx]?.path || "/blog");
     clearTimeout(megaTimer.current);
     clearTimeout(dropTimer.current);
     setMegaOpen(false);
@@ -841,9 +866,10 @@ export default function Header() {
             <MobileAccordion
               label="Services"
               open={mobileAcc === "services"}
-              onToggle={() =>
+              onToggle={() => {
+                router.prefetch("/services");
                 setMobileAcc(mobileAcc === "services" ? null : "services")
-              }
+              }}
             >
               <Link
                 href="/services"
@@ -887,9 +913,10 @@ export default function Header() {
             <MobileAccordion
               label="Insights"
               open={mobileAcc === "insights"}
-              onToggle={() =>
+              onToggle={() => {
+                router.prefetch("/blog");
                 setMobileAcc(mobileAcc === "insights" ? null : "insights")
-              }
+              }}
             >
               {SIMPLE_MENUS.Insights.map((s) => (
                 <Link
@@ -915,9 +942,10 @@ export default function Header() {
             <MobileAccordion
               label="Company"
               open={mobileAcc === "company"}
-              onToggle={() =>
+              onToggle={() => {
+                router.prefetch("/about");
                 setMobileAcc(mobileAcc === "company" ? null : "company")
-              }
+              }}
             >
               {SIMPLE_MENUS.Company.map((s) => (
                 <Link
