@@ -326,6 +326,8 @@ const postSchema = new Schema(
     },
 
     publishedAt: { type: Date },
+    // Server-managed idempotency marker: one browser push per article.
+    pushNotificationSentAt: { type: Date, default: null, select: false },
     scheduledAt: { type: Date },
 
     // Google 2026 content provenance signal

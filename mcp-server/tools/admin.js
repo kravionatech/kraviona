@@ -6,6 +6,7 @@ import Lead from "../../backend/src/models/leads/lead.model.js";
 import { mediaModel } from "../../backend/src/models/media/media.model.js";
 import { MessageModel } from "../../backend/src/models/messages/message.model.js";
 import { newsLatterModel } from "../../backend/src/models/newslatter/newslatter.model.js";
+import { BlogPushSubscription } from "../../backend/src/models/notifications/blog-push-subscription.model.js";
 import { Project } from "../../backend/src/models/portfolio/project.model.js";
 import { Service } from "../../backend/src/models/services/service.model.js";
 import { TeamMemberModel } from "../../backend/src/models/team/team.model.js";
@@ -277,6 +278,7 @@ const dashboard = async () => {
     leads,
     messages,
     subscribers,
+    blogPushSubscribers,
     media,
     team,
     services,
@@ -290,6 +292,7 @@ const dashboard = async () => {
     Lead.countDocuments({ isArchived: { $ne: true } }),
     MessageModel.countDocuments(),
     newsLatterModel.countDocuments({ status: "subscriber" }),
+    BlogPushSubscription.countDocuments({ topic: "blog", isActive: true }),
     mediaModel.countDocuments({ isDeleted: { $ne: true } }),
     TeamMemberModel.countDocuments({ status: "active" }),
     Service.countDocuments({ isActive: true }),
@@ -311,6 +314,7 @@ const dashboard = async () => {
       activeLeads: leads,
       messages,
       activeSubscribers: subscribers,
+      activeBlogPushSubscribers: blogPushSubscribers,
       activeMedia: media,
       activeTeamMembers: team,
       activeServices: services,
@@ -458,4 +462,3 @@ export const statusWithoutDatabase = () => ({
   server: { name: config.name, version: config.version },
   database: getDBStatus(),
 });
-

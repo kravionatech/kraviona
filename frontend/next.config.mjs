@@ -147,6 +147,13 @@ const nextConfig = {
         ],
       },
       {
+        source: "/sw.js",
+        headers: [
+          { key: "Cache-Control", value: "public, max-age=0, must-revalidate" },
+          { key: "Service-Worker-Allowed", value: "/" },
+        ],
+      },
+      {
         source: "/:path(robots.txt|sitemap.xml|rss.xml|llms.txt|ai.txt)",
         headers: [
           { key: "X-Robots-Tag", value: "noindex, follow, noarchive" },

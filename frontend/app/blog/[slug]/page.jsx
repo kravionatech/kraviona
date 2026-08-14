@@ -28,8 +28,7 @@ import { API_URL } from "@/utils/api";
 import { formatDate, getDate, getImageAlt, getImageUrl } from "@/utils/dataHelpers";
 import { getAuthorAvatar } from "@/lib/utils/imageUrl";
 
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
+export const revalidate = 60;
 
 const DEFAULT_AUTHOR = {
   name: "Amar Kumar",
@@ -154,7 +153,8 @@ function getRelevantServices(blog) {
 async function getBlog(slug) {
   try {
     const res = await fetch(`${API_URL}/post/${slug}`, {
-      cache: "no-store",
+      next: { revalidate },
+      headers: { Accept: "application/json" },
     });
 
     if (!res.ok) return null;
@@ -174,7 +174,7 @@ async function getBlog(slug) {
 async function getRecommendedPosts() {
   try {
     const res = await fetch(`${API_URL}/public/posts?limit=24`, {
-      cache: "no-store",
+      next: { revalidate: 300 },
       headers: { Accept: "application/json" },
     });
 
@@ -598,7 +598,7 @@ const BlogDetail = async ({ params }) => {
       />
 
       {/* ─── Article Header ───────────────────────────────────────────── */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-[#1A2E33] via-[#2A4A52] to-[#1A2E33] px-4 pb-24 pt-40 sm:px-6 lg:px-8">
+      <section className="relative overflow-hidden bg-[#102f33] px-4 pb-28 pt-32 sm:px-6 sm:pt-36 lg:px-8 lg:pb-32">
         {heroImageUrl && (
           <>
             <Image
@@ -608,15 +608,15 @@ const BlogDetail = async ({ params }) => {
               priority
               sizes="100vw"
               quality={85}
-              className="object-cover"
+              className="scale-105 object-cover opacity-30"
             />
-            <div className="absolute inset-0 bg-gradient-to-br from-[#10272c]/90 via-[#1A2E33]/80 to-[#10272c]/90" />
+            <div className="absolute inset-0 bg-gradient-to-r from-[#102f33] via-[#102f33]/92 to-[#102f33]/65" />
           </>
         )}
         <div className="absolute inset-0 bg-[url('/noise.svg')] opacity-[0.03]" />
-        <div className="relative z-10 mx-auto max-w-6xl">
+        <div className="relative z-10 mx-auto max-w-7xl">
           <nav
-            className="mb-10 flex flex-wrap items-center gap-2 text-sm text-gray-400"
+            className="mb-9 flex flex-wrap items-center gap-2 text-xs font-bold text-white/55"
             aria-label="Breadcrumb"
           >
             <Link href="/" className="hover:text-white">
@@ -634,18 +634,18 @@ const BlogDetail = async ({ params }) => {
             )}
           </nav>
 
-          <div className="max-w-4xl">
+          <div className="max-w-5xl">
             {blog.category?.name && (
-              <p className="mb-5 text-xs font-black uppercase tracking-[0.2em] text-[#F28C5E]">
+              <p className="mb-6 inline-flex items-center rounded-full border border-[#F6A27D]/25 bg-[#E8622A]/10 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.22em] text-[#F6A27D]">
                 {blog.category.name}
               </p>
             )}
 
-            <h1 className="mb-6 text-4xl font-extrabold capitalize leading-tight text-white sm:text-5xl md:text-6xl">
+            <h1 className="mb-6 max-w-5xl text-4xl font-black leading-[1.08] tracking-[-0.035em] text-white sm:text-5xl lg:text-[4rem]">
               {blog.title}
             </h1>
 
-            <p className="mb-9 max-w-3xl text-lg leading-relaxed text-gray-300 md:text-xl">
+            <p className="mb-9 max-w-3xl text-base leading-8 text-white/70 sm:text-lg md:text-xl">
               {bannerExcerpt}
             </p>
 
@@ -679,12 +679,12 @@ const BlogDetail = async ({ params }) => {
       </section>
 
       {/* ─── Main Content ─────────────────────────────────────────────── */}
-      <div id="article-content" className="mx-auto max-w-6xl px-4 py-12 lg:px-8 lg:py-14">
-        <div className="grid grid-cols-1 gap-12 lg:grid-cols-[minmax(0,740px)_300px] lg:items-start lg:gap-14">
+      <div id="article-content" className="bg-[#F3F6F6] px-4 pb-20 pt-6 sm:px-6 lg:px-8 lg:pt-0">
+        <div className="relative z-20 mx-auto grid max-w-7xl grid-cols-1 gap-8 lg:-mt-14 lg:grid-cols-[minmax(0,790px)_320px] lg:items-start lg:justify-center lg:gap-10">
           {/* LEFT CONTENT */}
-          <div className="min-w-0">
+          <div className="min-w-0 rounded-[1.75rem] border border-[#DCE5E6] bg-white p-5 shadow-[0_24px_70px_rgba(26,46,51,0.09)] sm:p-8 lg:p-10">
             {featuredImageUrl && (
-              <figure className="mb-10 overflow-hidden rounded-lg border border-gray-200 bg-[#F5F7F8]">
+              <figure className="mb-10 overflow-hidden rounded-2xl border border-gray-200 bg-[#F5F7F8] shadow-sm">
                 <div className="relative aspect-[16/9] w-full">
                   <Image
                     src={featuredImageUrl}
@@ -692,7 +692,7 @@ const BlogDetail = async ({ params }) => {
                     fill
                     quality={90}
                     sizes="(max-width: 768px) 100vw, 800px"
-                    className="object-contain"
+                    className="object-cover"
                   />
                 </div>
               </figure>
@@ -724,11 +724,11 @@ const BlogDetail = async ({ params }) => {
           </div>
 
           {/* RIGHT SIDEBAR */}
-          <aside className="w-full lg:sticky lg:top-28 lg:h-fit">
+          <aside className="w-full pb-4 pt-2 lg:sticky lg:top-24 lg:h-fit">
             <div className="space-y-6">
               {/* Up Next Section */}
               {relatedPosts.length > 0 && (
-                <div className="rounded-lg border border-gray-100 bg-white p-5 shadow-sm">
+                <div className="rounded-2xl border border-[#DCE5E6] bg-white p-5 shadow-sm">
                   <div className="flex items-center gap-3 mb-6">
                     <span className="w-8 h-0.5 bg-[#E8622A]"></span>
                     <h2 className="text-xs font-black text-[#1A2E33] uppercase tracking-[0.2em]">
@@ -748,7 +748,7 @@ const BlogDetail = async ({ params }) => {
                 </div>
               )}
 
-              <section className="rounded-lg border border-gray-100 bg-[#F5F7F8] p-5">
+              <section className="rounded-2xl border border-[#DCE5E6] bg-white p-5 shadow-sm">
                 <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#E8622A]">
                   Build on this insight
                 </p>
@@ -772,7 +772,7 @@ const BlogDetail = async ({ params }) => {
               </section>
 
               {/* Author Card */}
-              <div className="rounded-lg border border-gray-100 bg-white p-6 shadow-sm">
+              <div className="rounded-2xl border border-[#DCE5E6] bg-white p-6 shadow-sm">
                 <p className="mb-4 text-[9px] font-black uppercase tracking-[0.3em] text-gray-400">
                   Author
                 </p>

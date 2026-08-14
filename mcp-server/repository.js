@@ -2,6 +2,7 @@ import slugify from "slugify";
 import { ActivityLog } from "../backend/src/models/analytics/activity-log.model.js";
 import { CategoryModel } from "../backend/src/models/blog/category.model.js";
 import { PostModel } from "../backend/src/models/blog/post.model.js";
+import { notifyBlogSubscribers } from "../backend/src/services/blog-push.service.js";
 import { assertDeleteAllowed, assertWriteAllowed } from "./config.js";
 import { connectDB } from "./db.js";
 import { getResource, resources } from "./catalog.js";
@@ -292,6 +293,9 @@ export const createRecord = async (name, payload, actor) => {
   const document = new resource.model(data);
   await document.save();
   if (resource.syncCategoryCount) await syncCategoryCount(document.categoryID);
+  if (name === "posts" && document.status === "published") {
+    await notifyBlogSubscribers(document).catch(() => null);
+  }
   const after = clean(resource, document);
   await audit({
     actor,
@@ -323,6 +327,7 @@ export const updateRecord = async (name, args, changes, actor) => {
   }
 
   const beforeCategory = document.categoryID?.toString?.();
+  const wasPublished = name === "posts" && document.status === "published";
   const before = clean(resource, document);
   let updates = { ...changes };
   if (resource.prepareUpdate) {
@@ -332,6 +337,9 @@ export const updateRecord = async (name, args, changes, actor) => {
   await document.save();
   if (resource.syncCategoryCount) {
     await syncCategoryCount(beforeCategory, document.categoryID);
+  }
+  if (name === "posts" && !wasPublished && document.status === "published") {
+    await notifyBlogSubscribers(document).catch(() => null);
   }
   const after = clean(resource, document);
   const changedFields = Object.keys(updates);

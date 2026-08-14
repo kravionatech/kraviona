@@ -1,11 +1,10 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Loader2, ExternalLink } from "lucide-react";
-import { API_URL } from "@/utils/api";
+import { ExternalLink } from "lucide-react";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -21,39 +20,8 @@ const cardVariants = {
   },
 };
 
-const GalleryPage = () => {
-  const [projects, setProjects] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchProjects = async () => {
-      try {
-        const response = await fetch(`${API_URL}/projects`, {
-          cache: "no-store",
-          headers: { Accept: "application/json" },
-        });
-
-        const json = response.ok ? await response.json() : [];
-
-        const data = Array.isArray(json?.data)
-          ? json.data
-          : Array.isArray(json)
-            ? json
-            : [];
-
-        setProjects(data);
-      } catch (err) {
-        if (process.env.NODE_ENV !== "production") {
-          console.error("[GalleryPage] fetch error:", err);
-        }
-        setProjects([]);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchProjects();
-  }, []);
+const GalleryPage = ({ initialProjects = [] }) => {
+  const projects = Array.isArray(initialProjects) ? initialProjects : [];
 
   return (
     <div className="min-h-screen bg-[#F5F7F8] pb-24">
@@ -77,11 +45,7 @@ const GalleryPage = () => {
 
       {/* Projects Grid */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-16">
-        {isLoading ? (
-          <div className="flex justify-center py-24">
-            <Loader2 size={40} className="animate-spin text-[#2A4A52]" />
-          </div>
-        ) : projects.length === 0 ? (
+        {projects.length === 0 ? (
           <div className="text-center py-24 bg-white rounded-3xl border border-gray-100 shadow-sm">
             <div className="w-16 h-16 rounded-full bg-[#F5F7F8] flex items-center justify-center mx-auto mb-6">
               <span className="text-3xl font-black text-[#2A4A52] opacity-30">

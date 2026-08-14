@@ -130,7 +130,7 @@ const Gallery = async () => {
           ]),
         ].filter(Boolean)}
       />
-      <GalleryPage />
+      <GalleryPage initialProjects={projects} />
     </div>
   );
 };

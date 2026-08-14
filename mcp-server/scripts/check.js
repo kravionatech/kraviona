@@ -39,6 +39,7 @@ for (const expected of [
   "leads",
   "messages",
   "newsletter_subscriptions",
+  "blog_push_subscriptions",
   "media",
   "team_members",
   "services",

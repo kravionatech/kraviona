@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { API_URL } from "@/utils/api";
@@ -140,10 +141,12 @@ const PortfolioSection = () => {
               <Link href={`/case-studies/${project.slug || ""}`} className="absolute inset-0 z-30" aria-label={`Read ${project.title} case study`} />
               {/* Project Image with Deep Zoom Effect */}
               <div className="absolute inset-0 w-full h-full bg-gray-900">
-                <img
+                <Image
                   src={project.image || "/images/office/case-study-product.webp"}
                   alt={`${project.title} — ${project.category} project by Kraviona Tech Solutions`}
-                  className="h-full w-full object-cover transition-transform duration-1000 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] group-hover:scale-110 opacity-60 group-hover:opacity-100"
+                  fill
+                  sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  className="object-cover transition-transform duration-1000 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] group-hover:scale-110 opacity-60 group-hover:opacity-100"
                 />
               </div>
 

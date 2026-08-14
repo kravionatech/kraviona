@@ -178,7 +178,7 @@ export default function BlogEngagement({
   };
 
   return (
-    <section className="mt-12 rounded-lg border border-gray-100 bg-white p-5 shadow-sm md:p-6">
+    <section className="mt-12 rounded-2xl border border-[#DCE5E6] bg-white p-5 shadow-sm md:p-6">
       <div className="mb-5 flex flex-col gap-3 border-b border-gray-100 pb-5 md:flex-row md:items-start md:justify-between">
         <div>
           <p className="text-[10px] font-black uppercase tracking-[0.24em] text-[#E8622A]">

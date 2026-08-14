@@ -49,25 +49,17 @@ const parsePosts = (json) =>
 async function getInitialPosts() {
   try {
     const url = `${API_URL}/public/posts?page=1&limit=12`;
-    console.warn("[Blog SSR] Fetching initial posts:", url);
     const response = await fetch(url, {
       next: { revalidate: 300 },
       headers: { Accept: "application/json" },
     });
 
-    console.warn("[Blog SSR] Response status:", response.status, response.ok);
-    if (!response.ok) {
-      console.warn("[Blog SSR] Response NOT OK");
-      return { posts: [], pagination: null };
-    }
+    if (!response.ok) return { posts: [], pagination: null };
 
     const json = await response.json();
-    console.warn("[Blog SSR] Response keys:", Object.keys(json));
     const posts = parsePosts(json).filter((post) => post?.slug);
-    console.warn("[Blog SSR] Final posts count:", posts.length);
     return { posts, pagination: json.pagination || null };
-  } catch (error) {
-    console.warn("[Blog SSR] Fetch error:", error?.message || error);
+  } catch {
     return { posts: [], pagination: null };
   }
 }

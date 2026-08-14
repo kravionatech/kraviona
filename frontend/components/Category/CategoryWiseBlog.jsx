@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Loader2 } from "lucide-react";
@@ -36,16 +36,26 @@ const CategoryWiseBlog = ({
   const [page, setPage] = useState(1);
   const [pagination, setPagination] = useState(initialPagination);
   const [isLoading, setIsLoading] = useState(initialPosts.length === 0);
+  const skipInitialRequest = useRef(initialPosts.length > 0);
 
   // 1. Fetch Posts based on the category slug
   useEffect(() => {
+    if (skipInitialRequest.current && page === 1) {
+      skipInitialRequest.current = false;
+      return undefined;
+    }
+
+    skipInitialRequest.current = false;
+    const controller = new AbortController();
+
     const fetchCategoryPosts = async () => {
       setIsLoading(true);
       try {
         const url = `${API_URL}/public/posts?category=${encodeURIComponent(category)}&page=${page}&limit=12`;
         const response = await fetch(url, {
-          cache: "no-store",
+          cache: "force-cache",
           headers: { Accept: "application/json" },
+          signal: controller.signal,
         });
 
         if (!response.ok) {
@@ -74,6 +84,7 @@ const CategoryWiseBlog = ({
         );
         setPagination(result.pagination || null);
       } catch (error) {
+        if (error?.name === "AbortError") return;
         console.warn("[CategoryWiseBlog] Fetch error:", error?.message || error);
         setPosts([]);
       } finally {
@@ -83,6 +94,8 @@ const CategoryWiseBlog = ({
     if (category) {
       fetchCategoryPosts();
     }
+
+    return () => controller.abort();
   }, [category, page]);
 
   // 2. Format the Category Name for the Header

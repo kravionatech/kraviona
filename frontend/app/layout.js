@@ -5,9 +5,11 @@ import "@fontsource/poppins/600.css";
 import "@fontsource/poppins/700.css";
 import "@fontsource/poppins/800.css";
 
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import Header from "@/components/Header/Header";
 import Footer from "@/components/Footer/Footer";
-import LeadGenerationPopup from "@/components/Lead/LeadGenerationPopup";
+import DeferredGlobalWidgets from "@/components/DeferredGlobalWidgets";
 import { JsonLd } from "@/components/JsonLd";
 import ThirdPartyScripts from "@/components/ThirdPartyScripts";
 import { WhatsAppFloat } from "@/components/WhatsAppFloat";
@@ -150,9 +152,11 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" dir="ltr">
       <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
-        <link rel="dns-prefetch" href="https://cdn.kraviona.com" />
+        <link rel="preconnect" href="https://api.kraviona.com" crossOrigin="" />
+        <link rel="dns-prefetch" href="https://api.kraviona.com" />
+        <link rel="preconnect" href="https://res.cloudinary.com" crossOrigin="" />
+        <link rel="dns-prefetch" href="https://res.cloudinary.com" />
+        <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
         <meta name="google-adsense-account" content="ca-pub-9100707044750397"></meta>
       </head>
 
@@ -186,9 +190,11 @@ export default function RootLayout({ children }) {
 
         <Footer />
 
-        <LeadGenerationPopup />
+        <DeferredGlobalWidgets />
         <WhatsAppFloat />
         <ThirdPartyScripts />
+        <Analytics />
+        <SpeedInsights />
 
       </body>
     </html>

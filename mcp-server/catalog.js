@@ -10,6 +10,7 @@ import Lead from "../backend/src/models/leads/lead.model.js";
 import { mediaModel } from "../backend/src/models/media/media.model.js";
 import { MessageModel } from "../backend/src/models/messages/message.model.js";
 import { newsLatterModel } from "../backend/src/models/newslatter/newslatter.model.js";
+import { BlogPushSubscription } from "../backend/src/models/notifications/blog-push-subscription.model.js";
 import { Project } from "../backend/src/models/portfolio/project.model.js";
 import { Service } from "../backend/src/models/services/service.model.js";
 import { TeamMemberModel } from "../backend/src/models/team/team.model.js";
@@ -199,6 +200,25 @@ const definitions = [
     projection: "email status createdAt updatedAt",
   },
   {
+    name: "blog_push_subscriptions",
+    singular: "blog_push_subscription",
+    model: BlogPushSubscription,
+    capabilities: ["list", "get", "delete"],
+    searchFields: ["endpointHash", "language", "userAgent"],
+    filterFields: ["topic", "isActive", "language"],
+    projection:
+      "endpointHash topic isActive expirationTime language failureCount lastNotifiedAt createdAt updatedAt",
+    redactedPaths: ["endpoint", "keys"],
+    serverManagedPaths: [
+      "endpoint",
+      "endpointHash",
+      "keys",
+      "topic",
+      "failureCount",
+      "lastNotifiedAt",
+    ],
+  },
+  {
     name: "media",
     singular: "media_item",
     model: mediaModel,
@@ -290,4 +310,3 @@ export const getResource = (name) => {
   }
   return resource;
 };
-

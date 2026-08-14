@@ -3,6 +3,7 @@ import { CategoryModel } from "../../models/blog/category.model.js";
 import { PostModel } from "../../models/blog/post.model.js";
 import slugify from "slugify";
 import { recordActivity } from "../../utils/activityLogger.js";
+import { notifyBlogSubscribers } from "../../services/blog-push.service.js";
 
 // ==========================================
 // CONSTANTS
@@ -132,11 +133,21 @@ const normalizePublishingFields = ({ status, scheduledAt, currentPost }) => {
 
 const publishDueScheduledPosts = async () => {
   const now = new Date();
+  // Atomically claim one scheduled post at a time so parallel public requests
+  // cannot publish (and notify for) the same article twice.
+  for (let processed = 0; processed < 100; processed += 1) {
+    const post = await PostModel.findOneAndUpdate(
+      { status: "scheduled", scheduledAt: { $lte: now } },
+      {
+        $set: { status: "published", publishedAt: now },
+        $unset: { scheduledAt: "" },
+      },
+      { new: true },
+    );
 
-  await PostModel.updateMany(
-    { status: "scheduled", scheduledAt: { $lte: now } },
-    { $set: { status: "published", publishedAt: now }, $unset: { scheduledAt: "" } },
-  );
+    if (!post) break;
+    await notifyBlogSubscribers(post).catch(() => null);
+  }
 };
 
 const publicPostFilter = () => ({
@@ -357,6 +368,10 @@ export const createPost = async (req, res) => {
     await CategoryModel.findByIdAndUpdate(post.categoryID, {
       $inc: { postCount: 1 },
     });
+
+    if (post.status === "published") {
+      await notifyBlogSubscribers(post).catch(() => null);
+    }
 
     return res.status(201).json({
       message: "Post created successfully",
@@ -697,6 +712,7 @@ export const updatePost = async (req, res) => {
 
     // Only re-validate the category if the client actually sent one.
     const previousCategoryId = post.categoryID;
+    const wasPublished = post.status === "published";
     const before = { title: post.title, slug: post.slug, status: post.status };
 
     if (category !== undefined) {
@@ -808,6 +824,10 @@ export const updatePost = async (req, res) => {
           $inc: { postCount: 1 },
         }),
       ]);
+    }
+
+    if (!wasPublished && post.status === "published") {
+      await notifyBlogSubscribers(post).catch(() => null);
     }
 
     return res.status(200).json({

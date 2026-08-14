@@ -19,6 +19,7 @@ import { getPublicProjects, getPublicServices } from "../controllers/public-cata
 import { createProject, deleteProject, getProjects, getPublicProject, updateProject } from "../controllers/portfolio/portfolio.controller.js";
 import { getLoginHistory } from "../controllers/login-history/login-history.controller.js";
 import { createService, deleteService, getPublicServiceBySlug, getServices, updateService } from "../controllers/services/services.controller.js";
+import { getPublicKey, subscribeToBlogPush, unsubscribeFromBlogPush } from "../controllers/notifications/blog-push.controller.js";
 
 const Router  = express.Router();
 
@@ -99,6 +100,12 @@ Router.get('/post/:slug/engagement', getPostEngagement)
 Router.post('/post/:slug/views', recordPostView)
 Router.post('/post/:slug/comments', createPostComment)
 Router.get('/post/:slug', singleViewPost)
+
+// Blog-only Web Push subscriptions. These routes never accept arbitrary
+// callback URLs; the controller restricts endpoints to browser push services.
+Router.get('/push/blog/public-key', getPublicKey)
+Router.post('/push/blog/subscribe', subscribeToBlogPush)
+Router.delete('/push/blog/unsubscribe', unsubscribeFromBlogPush)
 
 // FIX: new route — mirrors the /private/posts naming used for the list
 // route above. Lives under /private/post/:id (by id, for the editor UI),

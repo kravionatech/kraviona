@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -639,10 +639,22 @@ export default function EwayBlogLayout({
   const [isLoading, setIsLoading] = useState(initialPosts.length === 0);
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
-
-  console.warn("[EwayBlogLayout] initialPosts.length:", initialPosts.length);
+  const skipInitialRequest = useRef(initialPosts.length > 0);
 
   useEffect(() => {
+    const isUnfilteredFirstPage =
+      archivePage === 1 &&
+      selectedCategory === "all" &&
+      !searchQuery.trim();
+
+    if (skipInitialRequest.current && isUnfilteredFirstPage) {
+      skipInitialRequest.current = false;
+      return undefined;
+    }
+
+    skipInitialRequest.current = false;
+    const controller = new AbortController();
+
     const fetchPosts = async () => {
       setArchiveLoading(true);
       try {
@@ -657,8 +669,9 @@ export default function EwayBlogLayout({
         const response = await fetch(
           `${API_URL}/public/posts?${params.toString()}`,
           {
-            cache: "no-store",
+            cache: "force-cache",
             headers: { Accept: "application/json" },
+            signal: controller.signal,
           },
         );
         if (!response.ok) throw new Error("Unable to load articles");
@@ -668,14 +681,16 @@ export default function EwayBlogLayout({
         setArchivePosts(posts);
         setArchivePagination(json.pagination || null);
         if (
-          allPosts.length === 0 &&
           archivePage === 1 &&
           selectedCategory === "all" &&
           !searchQuery.trim()
         ) {
-          setAllPosts(posts);
+          setAllPosts((currentPosts) =>
+            currentPosts.length === 0 ? posts : currentPosts,
+          );
         }
       } catch (error) {
+        if (error?.name === "AbortError") return;
         console.warn("[EwayBlogLayout] Fetch error:", error?.message || error);
         setArchivePosts([]);
       } finally {
@@ -685,8 +700,11 @@ export default function EwayBlogLayout({
     };
 
     const timeout = setTimeout(fetchPosts, searchQuery.trim() ? 300 : 0);
-    return () => clearTimeout(timeout);
-  }, [allPosts.length, archivePage, searchQuery, selectedCategory]);
+    return () => {
+      clearTimeout(timeout);
+      controller.abort();
+    };
+  }, [archivePage, searchQuery, selectedCategory]);
 
   const categories = useMemo(() => buildCategories(allPosts), [allPosts]);
   const navCategories =

@@ -1,10 +1,13 @@
 import { NextResponse } from "next/server";
+import {
+  classifyPublicRequest,
+  isInfrastructurePath,
+} from "@/lib/requestProtection";
 
-const BOT_BLOCKLIST = [
-  "bytespider", "petalbot", "mj12bot", "ahrefsbot",
-  "semrushbot", "ccbot", "gptbot", "dotbot", "dataforseobot",
-];
-
+// User-Agent checks are a fast first layer. Search engines and link-preview
+// services stay available; known scrapers, scanners, and generic automation do
+// not. Vercel Firewall rate limits remain the correct outer layer for IP-based
+// abuse because serverless instances do not share reliable in-memory counters.
 const CANONICAL_HOST = "kraviona.com";
 const WWW_HOST = "www.kraviona.com";
 const SESSION_QUERY_PARAMETERS = new Set([
@@ -23,6 +26,16 @@ const SESSION_QUERY_PARAMETERS = new Set([
 const SESSION_PATH_PARAMETER =
   /;(?:sid|session(?:[_-]?id)?|jsessionid|phpsessid|php_session_id|asp(?:\.net)?[_-]?session[_-]?id|aspsessionid[a-z0-9]*)=[^/;?]*/gi;
 
+const protectedResponse = (message, status) =>
+  new NextResponse(message, {
+    status,
+    headers: {
+      "Cache-Control": "private, no-store, max-age=0",
+      "X-Content-Type-Options": "nosniff",
+      "X-Robots-Tag": "noindex, nofollow, noarchive",
+    },
+  });
+
 const isSessionQueryParameter = (key) => {
   const normalizedKey = key.toLowerCase();
   return (
@@ -33,23 +46,18 @@ const isSessionQueryParameter = (key) => {
 
 export function proxy(request) {
   const url = request.nextUrl;
-  const excludedBotCheckPaths = [
-    "/_next/",
-    "/api/",
-    "/favicon.ico",
-    "/robots.txt",
-    "/sitemap.xml",
-  ];
-  const shouldSkipBotCheck = excludedBotCheckPaths.some((path) =>
-    url.pathname.startsWith(path),
-  );
+  const pathname = url.pathname;
 
-  if (!shouldSkipBotCheck) {
-    const userAgent = (request.headers.get("user-agent") || "").toLowerCase();
-    if (BOT_BLOCKLIST.some((bot) => userAgent.includes(bot))) {
-      return new NextResponse("Forbidden", { status: 403 });
-    }
-  }
+  // Do not interfere with Next.js assets or Vercel Analytics/Speed Insights.
+  if (isInfrastructurePath(pathname)) return NextResponse.next();
+
+  const blocked = classifyPublicRequest({
+    pathname,
+    search: url.search,
+    method: request.method,
+    userAgent: request.headers.get("user-agent") || "",
+  });
+  if (blocked) return protectedResponse(blocked.message, blocked.status);
 
   const host = (
     request.headers.get("x-forwarded-host") || request.headers.get("host") || ""
@@ -58,25 +66,16 @@ export function proxy(request) {
     .trim()
     .split(":")[0]
     .toLowerCase();
-  // Vercel/Cloudflare performs the HTTP-to-HTTPS upgrade before this proxy.
-  // Restrict hostname canonicalization to the production www hostname so local
-  // development and Vercel preview deployments remain usable and are not sent
-  // to production.
   const sessionQueryKeys = Array.from(url.searchParams.keys()).filter(
     isSessionQueryParameter,
   );
-  const cleanedPathname = url.pathname.replace(SESSION_PATH_PARAMETER, "");
-  const hasPathSessionId = cleanedPathname !== url.pathname;
+  const cleanedPathname = pathname.replace(SESSION_PATH_PARAMETER, "");
+  const hasPathSessionId = cleanedPathname !== pathname;
   const hasSessionId = sessionQueryKeys.length > 0 || hasPathSessionId;
 
   if (hasSessionId) {
-    for (const key of sessionQueryKeys) {
-      url.searchParams.delete(key);
-    }
-
-    if (hasPathSessionId) {
-      url.pathname = cleanedPathname || "/";
-    }
+    for (const key of sessionQueryKeys) url.searchParams.delete(key);
+    if (hasPathSessionId) url.pathname = cleanedPathname || "/";
   }
 
   if (host === WWW_HOST || hasSessionId) {
@@ -93,5 +92,5 @@ export function proxy(request) {
 }
 
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
+  matcher: ["/((?!_next/static|_next/image|_vercel|favicon.ico).*)"],
 };
