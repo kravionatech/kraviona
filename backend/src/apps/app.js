@@ -6,6 +6,7 @@ import Router from '../routes/router.routes.js';
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import { v2 as cloudinary } from 'cloudinary';
+import config from '../config/config.js';
 
 const app = express();
 
@@ -13,7 +14,7 @@ app.use(cookieParser());
 
 app.use(
   cors({
-    origin: ["http://localhost:3000", "https://kraviona.com", "https://superadmin.kraviona.com", "http://localhost:3001"],
+    origin: config.CORS_ORIGINS,
     credentials: true,
   })
 );

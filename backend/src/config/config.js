@@ -2,6 +2,19 @@ import dotenv from 'dotenv';
 
 dotenv.config({ quiet: true });
 
+const defaultCorsOrigins = [
+  "http://localhost:3000",
+  "http://localhost:3001",
+  "https://kraviona.com",
+  "https://admin.kraviona.com",
+  "https://superadmin.kraviona.com",
+];
+
+const corsOrigins = (process.env.CORS_ORIGINS || defaultCorsOrigins.join(","))
+  .split(",")
+  .map((origin) => origin.trim().replace(/\/$/, ""))
+  .filter(Boolean);
+
 const config = {
   PORT: process.env.PORT || 5000,
   MONGO_URI: process.env.MONGO_URI,
@@ -17,6 +30,8 @@ const config = {
   APP_NAME: process.env.APP_NAME,
   APP_VERSION: process.env.APP_VERSION,
   NODE_ENV: process.env.NODE_ENV,
+
+  CORS_ORIGINS: corsOrigins,
 
   CLOUDINARY_CLOUD_NAME:process.env.CLOUDINARY_CLOUD_NAME,
   CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY,
