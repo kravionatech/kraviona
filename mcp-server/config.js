@@ -3,6 +3,7 @@ import { fileURLToPath } from "url";
 import path from "path";
 
 const directory = path.dirname(fileURLToPath(import.meta.url));
+const hostProvidedPort = process.env.PORT;
 
 // The MCP must use the same database as the backend. Values explicitly
 // supplied by the host win, then backend/.env, then optional MCP-only values.
@@ -30,7 +31,12 @@ export const config = Object.freeze({
     process.env.MONGODB_URI,
   directMongoUri: process.env.MONGO_DIRECT_URI,
   databaseName: process.env.DB_NAME,
-  transport: "stdio",
+  transport: (
+    process.env.MCP_TRANSPORT ||
+    (hostProvidedPort ? "streamable-http" : "stdio")
+  ).toLowerCase(),
+  port: integerFromEnv("PORT", 3000, 1, 65_535),
+  apiKey: (process.env.MCP_API_KEY || "").trim(),
   readOnly: booleanFromEnv("MCP_READ_ONLY", false),
   allowDeletes: booleanFromEnv("MCP_ALLOW_DELETES", false),
   sessionFile:

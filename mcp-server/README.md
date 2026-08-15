@@ -1,6 +1,6 @@
 # Kraviona Admin MCP
 
-Private, local MCP access to the complete Kraviona admin data plane. The server
+Private MCP access to the complete Kraviona admin data plane. The server
 uses the same Mongoose models as `backend`, so field names, enums, required
 values, defaults, validation, and nested data shapes stay synchronized.
 
@@ -9,7 +9,8 @@ start until a real, active, verified `super_admin` creates a revocable session.
 
 ## Security model
 
-- Local stdio only; no public HTTP endpoint and no shared OAuth password.
+- Local clients use stdio. Deployments with `PORT` use Streamable HTTP at
+  `/mcp`, protected by a constant-time checked Bearer `MCP_API_KEY`.
 - Login verifies the password against the backend `User` collection.
 - Default allowed role: `super_admin` only.
 - The session token is random, stored locally in ignored `.admin-session`, and
@@ -70,6 +71,32 @@ To revoke the local session:
 ```powershell
 npm run logout
 ```
+
+## Render deployment
+
+Set the Render Root Directory to `mcp-server`. The normal `npm install` build
+now installs the backend production dependencies as well, because the MCP
+imports the backend's Mongoose models directly. Use this start command:
+
+```text
+npm start
+```
+
+Render supplies `PORT`, so the server automatically selects Streamable HTTP.
+Configure these secret environment variables:
+
+```text
+MONGO_URI=<same database used by the backend>
+DB_NAME=kraviona
+MCP_API_KEY=<strong random secret>
+MCP_ADMIN_SESSION_TOKEN=<token created by npm run login>
+```
+
+Instead of copying a session token, `MCP_ADMIN_IDENTIFIER` and
+`MCP_ADMIN_PASSWORD` may be set so the service creates a revocable session at
+startup. The session-token option avoids keeping an admin password in the
+deployment environment. The health endpoint is `/`; MCP clients connect to
+`/mcp` and send `Authorization: Bearer <MCP_API_KEY>`.
 
 ## Commands
 
