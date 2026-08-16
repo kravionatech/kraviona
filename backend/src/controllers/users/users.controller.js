@@ -2,6 +2,7 @@ import bcrypt from "bcryptjs";
 import slugify from "slugify";
 import { Auth } from "../../models/auth/auth.models.js";
 import { TeamMemberModel } from "../../models/team/team.model.js";
+import { hasOwn, parseBoolean } from "../../utils/requestValues.js";
 
 const USER_ROLES = ["super_admin", "admin", "editor", "viewer", "user"];
 const TEAM_ACCOUNT_ROLES = ["super_admin", "admin", "editor"];
@@ -62,11 +63,6 @@ const syncStaffAccountToTeam = async (account) => {
   member.status = account.isActive ? "active" : "inactive";
   await member.save();
   return member;
-};
-
-const toBoolean = (value, fallback = false) => {
-  if (value === undefined || value === null) return fallback;
-  return Boolean(value);
 };
 
 const sanitizeUser = (user) => {
@@ -246,8 +242,8 @@ export const createUser = async (req, res) => {
       password: hashedPassword,
       role,
       avatar: avatar ? cleanText(avatar) : undefined,
-      isActive: toBoolean(isActive, true),
-      isVerified: toBoolean(isVerified, true),
+      isActive: parseBoolean(isActive, true),
+      isVerified: parseBoolean(isVerified, true),
       profile: {
         bio: cleanText(profile.bio),
         jobTitle: cleanText(profile.jobTitle),
@@ -326,25 +322,25 @@ export const updateUser = async (req, res) => {
     }
 
     if (req.body.isActive !== undefined) {
-      targetUser.isActive = toBoolean(req.body.isActive, targetUser.isActive);
+      targetUser.isActive = parseBoolean(req.body.isActive, targetUser.isActive);
     }
 
     if (req.body.isVerified !== undefined) {
-      targetUser.isVerified = toBoolean(req.body.isVerified, targetUser.isVerified);
+      targetUser.isVerified = parseBoolean(req.body.isVerified, targetUser.isVerified);
     }
 
     if (req.body.profile) {
-      targetUser.profile = {
-        ...(targetUser.profile?.toObject?.() || targetUser.profile || {}),
-        bio: cleanText(req.body.profile.bio),
-        jobTitle: cleanText(req.body.profile.jobTitle),
-        department: req.body.profile.department !== undefined
-          ? cleanText(req.body.profile.department) || "General"
-          : cleanText(targetUser.profile?.department) || "General",
-        socialLinks: Array.isArray(req.body.profile.socialLinks)
-          ? req.body.profile.socialLinks
-          : targetUser.profile?.socialLinks || [],
-      };
+      const profileInput = req.body.profile;
+      const profile = targetUser.profile?.toObject?.() || targetUser.profile || {};
+      if (hasOwn(profileInput, "bio")) profile.bio = cleanText(profileInput.bio);
+      if (hasOwn(profileInput, "jobTitle")) profile.jobTitle = cleanText(profileInput.jobTitle);
+      if (hasOwn(profileInput, "department")) {
+        profile.department = cleanText(profileInput.department) || "General";
+      }
+      if (hasOwn(profileInput, "socialLinks")) {
+        profile.socialLinks = Array.isArray(profileInput.socialLinks) ? profileInput.socialLinks : [];
+      }
+      targetUser.profile = profile;
     }
 
     if (req.body.preferences) {

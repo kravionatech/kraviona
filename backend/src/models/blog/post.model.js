@@ -100,6 +100,10 @@ const faqItemSchema = new Schema(
 
 const sourceSchema = new Schema(
   {
+    // `name` and `publishedDate` are the fields used by the admin editor.
+    // Legacy fields remain readable so existing posts are not discarded.
+    name:      { type: String, trim: true },
+    publishedDate: { type: String, trim: true },
     title:     { type: String, trim: true },
     url:       { type: String, trim: true },
     publisher: { type: String, trim: true },
@@ -109,6 +113,9 @@ const sourceSchema = new Schema(
 
 const statisticSchema = new Schema(
   {
+    // Match the admin editor payload while retaining the legacy schema keys.
+    stat:      { type: String, trim: true },
+    source:    { type: String, trim: true },
     claim:     { type: String, trim: true },
     sourceUrl: { type: String, trim: true },
     year:      { type: Number },

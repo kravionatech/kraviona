@@ -6,6 +6,7 @@ import config from "../../config/config.js";
 import cookieParser  from "cookie-parser";
 import { recordLogin } from "../login-history/login-history.controller.js";
 import { recordActivity } from "../../utils/activityLogger.js";
+import { hasOwn } from "../../utils/requestValues.js";
 
 const ADMIN_PANEL_ROLES = ["super_admin", "admin", "editor"];
 
@@ -380,11 +381,11 @@ export const updateMyAccount = async (req, res) => {
     }
 
     if (req.body.profile !== undefined) {
-      user.profile = {
-        ...(user.profile?.toObject?.() || user.profile || {}),
-        bio: clean(req.body.profile?.bio),
-        jobTitle: clean(req.body.profile?.jobTitle),
-      };
+      const profileInput = req.body.profile || {};
+      const profile = user.profile?.toObject?.() || user.profile || {};
+      if (hasOwn(profileInput, "bio")) profile.bio = clean(profileInput.bio);
+      if (hasOwn(profileInput, "jobTitle")) profile.jobTitle = clean(profileInput.jobTitle);
+      user.profile = profile;
     }
 
     if (req.body.preferences !== undefined) {

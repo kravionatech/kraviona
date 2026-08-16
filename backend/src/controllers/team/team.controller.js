@@ -1,6 +1,7 @@
 import slugify from "slugify";
 import { TeamMemberModel } from "../../models/team/team.model.js";
 import { Auth } from "../../models/auth/auth.models.js";
+import { hasOwn, parseBoolean } from "../../utils/requestValues.js";
 
 const MANAGER_ROLES = ["super_admin"];
 const TEAM_STATUSES = ["active", "inactive"];
@@ -50,23 +51,34 @@ const normalizeSocialLinks = (links) =>
         .filter((link) => link.name || link.url)
     : [];
 
-const buildTeamPayload = (body) => ({
-  name: cleanText(body.name),
-  slug: body.slug ? slugify(cleanText(body.slug), { lower: true, strict: true }) : undefined,
-  email: body.email ? cleanText(body.email).toLowerCase() : undefined,
-  phone: cleanText(body.phone),
-  designation: cleanText(body.designation),
-  department: cleanText(body.department) || "General",
-  bio: cleanText(body.bio),
-  avatar: cleanText(body.avatar),
-  skills: normalizeArray(body.skills),
-  socialLinks: normalizeSocialLinks(body.socialLinks),
-  userID: body.userID === "" ? null : body.userID || undefined,
-  role: body.role || undefined,
-  order: Number(body.order || 0),
-  isFeatured: Boolean(body.isFeatured),
-  status: TEAM_STATUSES.includes(body.status) ? body.status : "active",
-});
+export const buildTeamPayload = (body = {}, { partial = false } = {}) => {
+  const payload = {};
+  const include = (key) => !partial || hasOwn(body, key);
+
+  if (include("name")) payload.name = cleanText(body.name);
+  if (include("slug")) {
+    payload.slug = body.slug
+      ? slugify(cleanText(body.slug), { lower: true, strict: true })
+      : undefined;
+  }
+  if (include("email")) {
+    payload.email = body.email ? cleanText(body.email).toLowerCase() : undefined;
+  }
+  if (include("phone")) payload.phone = cleanText(body.phone);
+  if (include("designation")) payload.designation = cleanText(body.designation);
+  if (include("department")) payload.department = cleanText(body.department) || "General";
+  if (include("bio")) payload.bio = cleanText(body.bio);
+  if (include("avatar")) payload.avatar = cleanText(body.avatar);
+  if (include("skills")) payload.skills = normalizeArray(body.skills);
+  if (include("socialLinks")) payload.socialLinks = normalizeSocialLinks(body.socialLinks);
+  if (include("userID")) payload.userID = body.userID === "" ? null : body.userID || undefined;
+  if (include("role")) payload.role = body.role || undefined;
+  if (include("order")) payload.order = body.order === undefined ? 0 : Number(body.order);
+  if (include("isFeatured")) payload.isFeatured = parseBoolean(body.isFeatured, false);
+  if (include("status")) payload.status = body.status === undefined ? "active" : cleanText(body.status);
+
+  return payload;
+};
 
 const resolveLinkedAccount = async (userID, role, department) => {
   if (!userID) return null;
@@ -245,7 +257,7 @@ export const updateTeamMember = async (req, res) => {
       return res.status(404).json({ success: false, message: "Team member not found" });
     }
 
-    const payload = buildTeamPayload(req.body);
+    const payload = buildTeamPayload(req.body, { partial: true });
     const requestedUserID = payload.userID === undefined ? member.userID : payload.userID;
     const linkedAccount = await resolveLinkedAccount(requestedUserID, payload.role, payload.department);
     delete payload.role;

@@ -2,6 +2,7 @@ import slugify from "slugify";
 import { Service } from "../../models/services/service.model.js";
 import { recordActivity } from "../../utils/activityLogger.js";
 import { publicServices } from "../../data/publicCatalog.js";
+import { mergeNestedFields, parseBoolean } from "../../utils/requestValues.js";
 
 const canManageServices = (user) => ["super_admin", "admin", "editor"].includes(user?.role);
 const canManageAllServices = (user) => user?.role === "super_admin";
@@ -50,7 +51,7 @@ const normalize = (body) => ({
     metaDescription: cleanText(body.seo?.metaDescription),
     keywords: getList(body.seo?.keywords),
     ogImage: safeLink(body.seo?.ogImage),
-    noIndex: Boolean(body.seo?.noIndex),
+    noIndex: parseBoolean(body.seo?.noIndex, false),
   },
   expert: {
     name: cleanText(body.expert?.name),
@@ -72,8 +73,8 @@ const normalize = (body) => ({
     expertise: getList(body.expert?.expertise),
     credentials: getList(body.expert?.credentials),
   },
-  isFeatured: Boolean(body.isFeatured),
-  isActive: body.isActive !== false,
+  isFeatured: parseBoolean(body.isFeatured, false),
+  isActive: parseBoolean(body.isActive, true),
   order: Number(body.order) || 0,
 });
 
@@ -132,7 +133,8 @@ export const updateService = async (req, res) => {
     const service = await Service.findOne(canManageAllServices(req.user) ? { _id: req.params.id } : { _id: req.params.id, createdBy: req.user.id });
     if (!service) return res.status(404).json({ success: false, message: "No data found." });
     const before = { title: service.title, slug: service.slug, isActive: service.isActive };
-    Object.assign(service, normalize({ ...service.toObject(), ...req.body }));
+    const merged = mergeNestedFields(service.toObject(), req.body, ["hero", "cta", "seo", "expert"]);
+    Object.assign(service, normalize(merged));
     await service.save();
     await recordActivity(req, { userID: req.user.id, module: "service", action: "updated", resourceId: service._id, resourceName: service.title, before, after: { title: service.title, slug: service.slug, isActive: service.isActive } });
     return res.status(200).json({ success: true, message: "Service updated", data: service });

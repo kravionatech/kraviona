@@ -4,6 +4,7 @@ import { PostModel } from "../../models/blog/post.model.js";
 import slugify from "slugify";
 import { recordActivity } from "../../utils/activityLogger.js";
 import { notifyBlogSubscribers } from "../../services/blog-push.service.js";
+import { parseBoolean } from "../../utils/requestValues.js";
 
 // ==========================================
 // CONSTANTS
@@ -344,8 +345,8 @@ export const createPost = async (req, res) => {
       focusKeywords: normalizedFocusKeywords,
       semanticKeywords: normalizedSemanticKeywords,
       canonicalUrl: canonicalUrl?.trim(),
-      isNoIndex: Boolean(isNoIndex),
-      isNoFollow: Boolean(isNoFollow),
+      isNoIndex: parseBoolean(isNoIndex, false),
+      isNoFollow: parseBoolean(isNoFollow, false),
       schemaType,
       structuredDataOverride,
       language,
@@ -363,11 +364,11 @@ export const createPost = async (req, res) => {
       sources: Array.isArray(sources) ? sources : [],
       statistics: Array.isArray(statistics) ? statistics : [],
       relatedPosts: Array.isArray(relatedPosts) ? relatedPosts : [],
-      isAccessibleForFree: isAccessibleForFree ?? true,
+      isAccessibleForFree: parseBoolean(isAccessibleForFree, true),
       status: publishing.status,
       scheduledAt: publishing.scheduledAt,
       contentSourceType,
-      isCommentEnabled,
+      isCommentEnabled: parseBoolean(isCommentEnabled, true),
       userID: existingUser._id,
       author: {
         name: existingUser.name,
@@ -790,8 +791,8 @@ export const updatePost = async (req, res) => {
     if (focusKeywords !== undefined) post.focusKeywords = normalizeStringArray(focusKeywords);
     if (semanticKeywords !== undefined) post.semanticKeywords = normalizeStringArray(semanticKeywords);
     if (canonicalUrl !== undefined) post.canonicalUrl = canonicalUrl.trim();
-    if (isNoIndex !== undefined) post.isNoIndex = Boolean(isNoIndex);
-    if (isNoFollow !== undefined) post.isNoFollow = Boolean(isNoFollow);
+    if (isNoIndex !== undefined) post.isNoIndex = parseBoolean(isNoIndex, post.isNoIndex);
+    if (isNoFollow !== undefined) post.isNoFollow = parseBoolean(isNoFollow, post.isNoFollow);
     if (schemaType !== undefined) post.schemaType = schemaType;
     if (structuredDataOverride !== undefined) post.structuredDataOverride = structuredDataOverride;
     if (language !== undefined) post.language = language;
@@ -806,7 +807,9 @@ export const updatePost = async (req, res) => {
     if (sources !== undefined) post.sources = sources;
     if (statistics !== undefined) post.statistics = statistics;
     if (relatedPosts !== undefined) post.relatedPosts = relatedPosts;
-    if (isAccessibleForFree !== undefined) post.isAccessibleForFree = isAccessibleForFree;
+    if (isAccessibleForFree !== undefined) {
+      post.isAccessibleForFree = parseBoolean(isAccessibleForFree, post.isAccessibleForFree);
+    }
     if (status !== undefined || scheduledAt !== undefined) {
       const publishing = normalizePublishingFields({
         status,
@@ -825,7 +828,9 @@ export const updatePost = async (req, res) => {
       post.scheduledAt = publishing.scheduledAt;
     }
     if (contentSourceType !== undefined) post.contentSourceType = contentSourceType;
-    if (isCommentEnabled !== undefined) post.isCommentEnabled = isCommentEnabled;
+    if (isCommentEnabled !== undefined) {
+      post.isCommentEnabled = parseBoolean(isCommentEnabled, post.isCommentEnabled);
+    }
 
     // E-E-A-T fields — usually set by a reviewer rather than the original
     // author. Left open here; gate this behind a stricter role check in

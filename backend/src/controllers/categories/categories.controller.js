@@ -92,42 +92,37 @@ export const getAllCategories = async (req, res) => {
   try {
     const user = req.user;
     if (!user) return res.status(401).json({ message: "Unauthorized", success: false });
-    if (user.role !== "super_admin" && String(category.userID) !== String(user.id)) {
-      return res.status(403).json({ message: "You can update only your own category", success: false });
+    if (!["super_admin", "admin", "editor"].includes(user.role)) {
+      return res.status(403).json({ message: "Forbidden (Not An Admin)", success: false });
     }
 
     const { status, page = 1, limit = 20, search } = req.query;
     const currentPage = Math.max(Number.parseInt(page, 10) || 1, 1);
     const perPage = Math.min(Math.max(Number.parseInt(limit, 10) || 20, 1), 50);
-    const query = {
-      userID: user.id,
-    };
-    if (user.role === "user") {
-      return res.status(403).json({ message: "Forbidden (Not An Admin)", success: false });
-    } else {
-      if (user.role === "admin" || user.role === "super_admin" || user.role === "editor") {
-        if (status) query.status = status;
-        if (search) query.name = { $regex: search, $options: "i" };
-        const categories = await CategoryModel.find(query)
-          .select("-__v")
-          .sort({ createdAt: -1 })
-          .skip((currentPage - 1) * perPage)
-          .limit(perPage);
+    const query = user.role === "super_admin" ? {} : { userID: user.id };
+    if (status) query.status = status;
+    if (search) query.name = { $regex: search, $options: "i" };
 
-        const total = await CategoryModel.countDocuments(query);
-        return res.status(200).json({
-          message: categories.length ? "Categories found" : "No categories found",
-          success: true,
-          data: categories,
-          pagination: {
-            total,
-            page: currentPage,
-            limit: perPage,
-            totalPages: Math.ceil(total / perPage),
-          },
-        });
-      }
-    }
+    const [categories, total] = await Promise.all([
+      CategoryModel.find(query)
+        .select("-__v")
+        .sort({ createdAt: -1 })
+        .skip((currentPage - 1) * perPage)
+        .limit(perPage),
+      CategoryModel.countDocuments(query),
+    ]);
+
+    return res.status(200).json({
+      message: categories.length ? "Categories found" : "No categories found",
+      success: true,
+      data: categories,
+      pagination: {
+        total,
+        page: currentPage,
+        limit: perPage,
+        totalPages: Math.ceil(total / perPage),
+      },
+    });
 
   } catch (error) {
     return res.status(500).json({ message: error.message, success: false });
@@ -178,10 +173,15 @@ export const updateCategory = async (req, res) => {
     } = req.body;
 
     // Conflict check — exclude current doc
-    if (name || slug) {
+    const normalizedName = name !== undefined ? String(name).toLowerCase().trim() : undefined;
+    const normalizedSlug = slug !== undefined
+      ? slugify(String(slug).trim(), { lower: true, strict: true })
+      : undefined;
+
+    if (normalizedName || normalizedSlug) {
       const conflictQuery = { _id: { $ne: id }, $or: [] };
-      if (name) conflictQuery.$or.push({ name: name.toLowerCase().trim() });
-      if (slug) conflictQuery.$or.push({ slug: slug.toLowerCase().trim() });
+      if (normalizedName) conflictQuery.$or.push({ name: normalizedName });
+      if (normalizedSlug) conflictQuery.$or.push({ slug: normalizedSlug });
 
       if (conflictQuery.$or.length) {
         const conflict = await CategoryModel.findOne(conflictQuery).select("name slug");
@@ -190,10 +190,10 @@ export const updateCategory = async (req, res) => {
     }
 
     const updates = {
-      ...(name && { name: name.toLowerCase().trim() }),
-      ...(description && { description: description.trim() }),
-      ...(slug && { slug: slug.toLowerCase().trim() }),
-      ...(status && { status }),
+      ...(normalizedName !== undefined && { name: normalizedName }),
+      ...(description !== undefined && { description: String(description).trim() }),
+      ...(normalizedSlug !== undefined && { slug: normalizedSlug }),
+      ...(status !== undefined && { status }),
       ...(metaTitle !== undefined && { metaTitle }),
       ...(metaDescription !== undefined && { metaDescription }),
       ...(metaKeywords !== undefined && { metaKeywords }),

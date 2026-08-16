@@ -116,7 +116,7 @@ Router.get('/private/post/:id', verifyToken, privateViewPost)
 
 
 // Media Folder
-Router.post('/media/upload',upload.array("file",10),verifyToken,uploadMedia)
+Router.post('/media/upload',verifyToken,upload.array("file",10),uploadMedia)
 Router.get('/media/me',verifyToken,getMyMedias)
 Router.delete('/media/:id',verifyToken,deleteMedia)
 
