@@ -5,6 +5,14 @@
   "scripts": {
     "build": "npm --prefix frontend run build",
     "dev": "npm --prefix frontend run dev",
-    "start": "npm --prefix frontend run start"
+    "start": "npm --prefix frontend run start",
+    "mcp:install": "npm install --prefix mcp-server",
+    "mcp:login": "npm --prefix mcp-server run login",
+    "mcp:logout": "npm --prefix mcp-server run logout",
+    "mcp:whoami": "npm --prefix mcp-server run whoami",
+    "mcp:check": "npm --prefix mcp-server run check",
+    "mcp:tools": "npm --prefix mcp-server run tools",
+    "mcp:smoke": "npm --prefix mcp-server run smoke",
+    "mcp:start": "npm --prefix mcp-server start"
   }
 }
