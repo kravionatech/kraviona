@@ -98,15 +98,15 @@ MCP_ADMIN_ROLES=super_admin
 MCP_READ_ONLY=false
 MCP_ALLOW_DELETES=true
 MCP_DB_TIMEOUT_MS=20000
+MCP_PUBLIC_URL=https://mcp.kraviona.com
 MCP_OAUTH_REDIRECT_URIS=https://claude.ai/api/mcp/auth_callback
 MCP_OAUTH_ACCESS_TOKEN_SECONDS=3600
 MCP_OAUTH_REFRESH_TOKEN_DAYS=30
 ```
 
-The first deployment can omit `MCP_PUBLIC_URL`; the function uses Vercel's
-production URL, deployment URL, or the incoming HTTPS hostname. After assigning
-a stable production or custom domain, set
-`MCP_PUBLIC_URL=https://<your-domain>` and redeploy.
+The production OAuth issuer is `https://mcp.kraviona.com`. The function can
+infer a Vercel deployment URL when this variable is absent, but production must
+keep the explicit stable domain shown above.
 
 Do not set `PORT`, `MCP_ADMIN_PASSWORD`, `MCP_ADMIN_SESSION_TOKEN`, or
 `MCP_API_KEY` for the Claude Chat OAuth deployment. After Vercel reports a
@@ -117,7 +117,7 @@ In Claude Chat, open `Customize > Connectors`, choose `Add custom connector`,
 and enter:
 
 ```text
-https://<stable-vercel-production-domain>/mcp
+https://mcp.kraviona.com/mcp
 ```
 
 Do not enter a client ID or client secret. Claude dynamically registers and
