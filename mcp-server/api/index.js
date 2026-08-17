@@ -1,8 +1,53 @@
-import { createHttpApp } from "../http.js";
+let appPromise;
 
-// Vercel caches this module between warm invocations. The app and MongoDB
-// connection can therefore be reused without storing user authorization state
-// in function memory.
-const app = createHttpApp();
+const firstHeaderValue = (value) =>
+  String(value || "")
+    .split(",", 1)[0]
+    .trim();
 
-export default app;
+const inferPublicUrl = (request) => {
+  const host = firstHeaderValue(
+    request.headers["x-forwarded-host"] || request.headers.host,
+  );
+  if (!host || !/^[a-z0-9.-]+(?::\d+)?$/i.test(host)) {
+    throw new Error("Cannot determine a valid public MCP hostname");
+  }
+
+  const forwardedProtocol = firstHeaderValue(request.headers["x-forwarded-proto"]);
+  const protocol = forwardedProtocol === "http" ? "http" : "https";
+  return `${protocol}://${host}`;
+};
+
+const createApp = async (request) => {
+  if (
+    !process.env.MCP_PUBLIC_URL &&
+    !process.env.VERCEL_PROJECT_PRODUCTION_URL &&
+    !process.env.VERCEL_URL
+  ) {
+    // Some Vercel projects do not expose system environment variables. Delay
+    // configuration until the first request so OAuth can still use its origin.
+    process.env.MCP_PUBLIC_URL = inferPublicUrl(request);
+  }
+
+  const { createHttpApp } = await import("../http.js");
+  return createHttpApp();
+};
+
+export default async function handler(request, response) {
+  try {
+    appPromise ||= createApp(request);
+    const app = await appPromise;
+    return app(request, response);
+  } catch (error) {
+    appPromise = undefined;
+    console.error(`[MCP] Vercel initialization failed: ${error.message}`);
+    if (!response.headersSent) {
+      return response.status(500).json({
+        status: "error",
+        code: "MCP_INITIALIZATION_FAILED",
+        message: error.message,
+      });
+    }
+    return response.end();
+  }
+}

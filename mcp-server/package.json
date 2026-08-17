@@ -11,7 +11,7 @@
     "login": "node scripts/login.js",
     "logout": "node scripts/logout.js",
     "whoami": "node scripts/whoami.js",
-    "check": "node scripts/check.js && node scripts/check-oauth.js",
+    "check": "node scripts/check.js && node scripts/check-oauth.js && node scripts/check-vercel-entry.js",
     "tools": "node scripts/list-tools.js",
     "smoke": "node scripts/smoke-test.js"
   },

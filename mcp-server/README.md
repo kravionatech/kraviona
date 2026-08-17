@@ -103,9 +103,10 @@ MCP_OAUTH_ACCESS_TOKEN_SECONDS=3600
 MCP_OAUTH_REFRESH_TOKEN_DAYS=30
 ```
 
-The first deployment can omit `MCP_PUBLIC_URL`; Vercel's production hostname
-is detected automatically. After assigning a stable production or custom domain,
-set `MCP_PUBLIC_URL=https://<your-domain>` and redeploy.
+The first deployment can omit `MCP_PUBLIC_URL`; the function uses Vercel's
+production URL, deployment URL, or the incoming HTTPS hostname. After assigning
+a stable production or custom domain, set
+`MCP_PUBLIC_URL=https://<your-domain>` and redeploy.
 
 Do not set `PORT`, `MCP_ADMIN_PASSWORD`, `MCP_ADMIN_SESSION_TOKEN`, or
 `MCP_API_KEY` for the Claude Chat OAuth deployment. After Vercel reports a

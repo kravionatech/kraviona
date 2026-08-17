@@ -26,8 +26,10 @@ const normalizedUrl = (value) =>
   String(value || "")
     .trim()
     .replace(/\/$/, "");
-const vercelProductionUrl = process.env.VERCEL_PROJECT_PRODUCTION_URL
-  ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+const vercelHostname =
+  process.env.VERCEL_PROJECT_PRODUCTION_URL || process.env.VERCEL_URL;
+const vercelProductionUrl = vercelHostname
+  ? `https://${vercelHostname}`
   : "";
 const publicUrl = normalizedUrl(
   process.env.MCP_PUBLIC_URL || vercelProductionUrl,
