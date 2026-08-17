@@ -40,11 +40,19 @@ process.once("SIGINT", shutdown);
 process.once("SIGTERM", shutdown);
 
 try {
-  const session = await authenticateServiceAdmin();
-
   if (config.transport === "streamable-http" || config.transport === "http") {
+    let session = null;
+    if (config.apiKey) {
+      try {
+        session = await authenticateServiceAdmin();
+      } catch (error) {
+        if (!config.oauth.enabled) throw error;
+        console.error(`[MCP] Static API key disabled: ${error.message}`);
+      }
+    }
     httpServer = await startHttpServer(session);
   } else if (config.transport === "stdio") {
+    const session = await authenticateServiceAdmin();
     const server = createMcpServer(session);
     const transport = new StdioServerTransport();
     await server.connect(transport);

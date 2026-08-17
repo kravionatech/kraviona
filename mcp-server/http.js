@@ -1,7 +1,17 @@
 import { timingSafeEqual } from "node:crypto";
 import { createMcpExpressApp } from "@modelcontextprotocol/sdk/server/express.js";
+import { requireBearerAuth } from "@modelcontextprotocol/sdk/server/auth/middleware/bearerAuth.js";
+import {
+  getOAuthProtectedResourceMetadataUrl,
+  mcpAuthRouter,
+} from "@modelcontextprotocol/sdk/server/auth/router.js";
 import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
 import { config } from "./config.js";
+import {
+  createOAuthLoginRouter,
+  oauthProvider,
+  oauthScopes,
+} from "./oauth.js";
 import { createMcpServer } from "./server.js";
 
 const jsonRpcError = (response, status, message) => {
@@ -32,29 +42,90 @@ const validApiKey = (supplied) => {
   );
 };
 
-const requireApiKey = (request, response, next) => {
-  const token = readBearerToken(request);
-  if (!validApiKey(token)) {
+const oauthBearerMiddleware = () =>
+  requireBearerAuth({
+    verifier: oauthProvider,
+    requiredScopes: [...oauthScopes],
+    resourceMetadataUrl: getOAuthProtectedResourceMetadataUrl(
+      new URL(config.oauth.resourceUrl),
+    ),
+  });
+
+const requireMcpAuthorization = (serviceSession) => {
+  const verifyOAuth = config.oauth.enabled ? oauthBearerMiddleware() : null;
+
+  return (request, response, next) => {
+    const token = readBearerToken(request);
+    if (serviceSession?.actor && validApiKey(token)) {
+      request.auth = {
+        token,
+        clientId: "static-api-key",
+        scopes: ["mcp:tools"],
+      };
+      request.mcpSession = {
+        ...serviceSession,
+        actor: { ...serviceSession.actor },
+      };
+      return next();
+    }
+
+    if (verifyOAuth) {
+      return verifyOAuth(request, response, () => {
+        const actor = request.auth?.extra?.actor;
+        if (!actor) return jsonRpcError(response, 401, "Unauthorized");
+        request.mcpSession = {
+          actor: { ...actor },
+          expiresAt: request.auth.expiresAt
+            ? new Date(request.auth.expiresAt * 1000)
+            : undefined,
+        };
+        next();
+      });
+    }
+
     response.setHeader("WWW-Authenticate", 'Bearer realm="Kraviona MCP"');
     return jsonRpcError(response, 401, "Unauthorized");
-  }
-
-  request.auth = {
-    token,
-    clientId: "static-api-key",
-    scopes: ["mcp:tools"],
   };
-  next();
 };
 
-export const createHttpApp = (serviceSession) => {
-  if (!config.apiKey) {
+export const createHttpApp = (serviceSession = null) => {
+  if (!config.oauth.enabled && !(config.apiKey && serviceSession?.actor)) {
     throw new Error(
-      "MCP_API_KEY is required when MCP_TRANSPORT is streamable-http",
+      "HTTP MCP requires MCP_PUBLIC_URL for OAuth or MCP_API_KEY with an admin service session",
     );
   }
 
-  const app = createMcpExpressApp({ host: "0.0.0.0" });
+  const allowedHosts = config.oauth.enabled
+    ? [
+        ...new Set(
+          [
+            new URL(config.oauth.publicUrl).hostname,
+            process.env.VERCEL_URL,
+            process.env.VERCEL_BRANCH_URL,
+            process.env.VERCEL_PROJECT_PRODUCTION_URL,
+            "127.0.0.1",
+            "localhost",
+            "[::1]",
+          ].filter(Boolean),
+        ),
+      ]
+    : undefined;
+  const app = createMcpExpressApp({ host: "0.0.0.0", allowedHosts });
+
+  if (config.oauth.enabled) {
+    const publicUrl = new URL(config.oauth.publicUrl);
+    app.use(createOAuthLoginRouter());
+    app.use(
+      mcpAuthRouter({
+        provider: oauthProvider,
+        issuerUrl: publicUrl,
+        baseUrl: publicUrl,
+        resourceServerUrl: new URL(config.oauth.resourceUrl),
+        scopesSupported: [...oauthScopes],
+        resourceName: "Kraviona Admin MCP",
+      }),
+    );
+  }
 
   app.get("/", (_request, response) => {
     response.json({
@@ -63,16 +134,14 @@ export const createHttpApp = (serviceSession) => {
       version: config.version,
       transport: "streamable-http",
       endpoint: "/mcp",
+      authentication: config.oauth.enabled ? "oauth-2.1" : "bearer-api-key",
     });
   });
 
-  app.use("/mcp", requireApiKey);
+  app.use("/mcp", requireMcpAuthorization(serviceSession));
 
   app.post("/mcp", async (request, response) => {
-    const session = {
-      ...serviceSession,
-      actor: { ...serviceSession.actor },
-    };
+    const session = request.mcpSession;
     const server = createMcpServer(session);
     const transport = new StreamableHTTPServerTransport({
       sessionIdGenerator: undefined,
@@ -117,7 +186,7 @@ export const startHttpServer = async (session) => {
   return new Promise((resolve, reject) => {
     const server = app.listen(config.port, "0.0.0.0", () => {
       console.error(
-        `[MCP] ${config.name} ${config.version} listening on port ${config.port} as ${session.actor.role}`,
+        `[MCP] ${config.name} ${config.version} listening on port ${config.port} with ${config.oauth.enabled ? "OAuth 2.1" : session.actor.role}`,
       );
       resolve(server);
     });

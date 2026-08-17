@@ -21,7 +21,8 @@ this project after login and approve the `kraviona-admin` server. Permanent
 deletes are available only when `MCP_ALLOW_DELETES=true` is deliberately set;
 each delete also requires the exact `PERMANENTLY_DELETE` confirmation.
 
-The remote MCP endpoint can be deployed from `mcp-server` as a Render Web
-Service. It is available at `/mcp` and requires the `MCP_API_KEY` bearer token.
-See [mcp-server/README.md](mcp-server/README.md#render-deployment) for the build,
-session, and environment configuration.
+The remote MCP endpoint deploys as a dedicated Vercel Node project from
+`mcp-server`. Claude Chat connects to `/mcp` through OAuth 2.1 with dynamic
+client registration and PKCE. See
+[mcp-server/README.md](mcp-server/README.md#vercel--claude-chat-deployment) for
+the exact project and environment configuration.

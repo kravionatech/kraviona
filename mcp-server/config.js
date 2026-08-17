@@ -22,9 +22,20 @@ const integerFromEnv = (name, fallback, minimum, maximum) => {
   return Math.min(maximum, Math.max(minimum, parsed));
 };
 
+const normalizedUrl = (value) =>
+  String(value || "")
+    .trim()
+    .replace(/\/$/, "");
+const vercelProductionUrl = process.env.VERCEL_PROJECT_PRODUCTION_URL
+  ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+  : "";
+const publicUrl = normalizedUrl(
+  process.env.MCP_PUBLIC_URL || vercelProductionUrl,
+);
+
 export const config = Object.freeze({
   name: "kraviona-admin-mcp",
-  version: "3.0.0",
+  version: "4.0.0",
   mongoUri:
     process.env.MONGO_URI ||
     process.env.DATABASE_URL ||
@@ -50,6 +61,32 @@ export const config = Object.freeze({
       .filter(Boolean),
   ),
   sessionTtlDays: integerFromEnv("MCP_ADMIN_SESSION_DAYS", 30, 1, 90),
+  oauth: Object.freeze({
+    enabled: Boolean(publicUrl),
+    publicUrl,
+    resourceUrl: publicUrl ? `${publicUrl}/mcp` : "",
+    clientId: (process.env.MCP_OAUTH_CLIENT_ID || "").trim(),
+    clientSecret: process.env.MCP_OAUTH_CLIENT_SECRET || "",
+    redirectUris: Object.freeze(
+      (process.env.MCP_OAUTH_REDIRECT_URIS ||
+        "https://claude.ai/api/mcp/auth_callback")
+        .split(",")
+        .map(normalizedUrl)
+        .filter(Boolean),
+    ),
+    accessTokenTtlSeconds: integerFromEnv(
+      "MCP_OAUTH_ACCESS_TOKEN_SECONDS",
+      3600,
+      300,
+      86400,
+    ),
+    refreshTokenTtlDays: integerFromEnv(
+      "MCP_OAUTH_REFRESH_TOKEN_DAYS",
+      30,
+      1,
+      90,
+    ),
+  }),
   serverSelectionTimeoutMs: integerFromEnv(
     "MCP_DB_TIMEOUT_MS",
     10_000,

@@ -50,7 +50,7 @@ const assertEligibleAdmin = (admin) => {
   }
 };
 
-const safeActor = (admin) => ({
+export const safeActor = (admin) => ({
   id: admin._id.toString(),
   name: admin.name,
   email: admin.email,
@@ -59,15 +59,7 @@ const safeActor = (admin) => ({
 });
 
 export const createAdminSession = async ({ identifier, password }) => {
-  await connectDB();
-  const admin = await findAdmin(identifier);
-  assertEligibleAdmin(admin);
-
-  const passwordMatches = await bcrypt.compare(
-    String(password || ""),
-    String(admin.password || ""),
-  );
-  if (!passwordMatches) throw new Error("Invalid admin credentials");
+  const admin = await authenticateAdminCredentials({ identifier, password });
 
   const token = randomBytes(48).toString("base64url");
   const now = new Date();
@@ -91,6 +83,22 @@ export const createAdminSession = async ({ identifier, password }) => {
   await chmod(config.sessionFile, 0o600).catch(() => {});
 
   return { actor: safeActor(admin), expiresAt };
+};
+
+export const authenticateAdminCredentials = async ({
+  identifier,
+  password,
+}) => {
+  await connectDB();
+  const admin = await findAdmin(identifier);
+  assertEligibleAdmin(admin);
+
+  const passwordMatches = await bcrypt.compare(
+    String(password || ""),
+    String(admin.password || ""),
+  );
+  if (!passwordMatches) throw new Error("Invalid admin credentials");
+  return admin;
 };
 
 const readSessionToken = async () => {

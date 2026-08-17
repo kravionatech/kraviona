@@ -4,19 +4,20 @@ Private MCP access to the complete Kraviona admin data plane. The server
 uses the same Mongoose models as `backend`, so field names, enums, required
 values, defaults, validation, and nested data shapes stay synchronized.
 
-The old unauthenticated business MCP has been replaced. This server refuses to
-start until a real, active, verified `super_admin` creates a revocable session.
+The old unauthenticated business MCP has been replaced. Local stdio access uses
+a revocable admin session. Remote Claude connectors use per-admin OAuth tokens.
 
 ## Security model
 
-- Local clients use stdio. Deployments with `PORT` use Streamable HTTP at
-  `/mcp`, protected by a constant-time checked Bearer `MCP_API_KEY`.
-- Login verifies the password against the backend `User` collection.
+- Local clients use stdio. Vercel exposes Streamable HTTP at `/mcp`.
+- Claude Chat discovers OAuth 2.1 metadata, dynamically registers a public
+  client, uses authorization-code PKCE, and rotates refresh tokens.
+- OAuth login verifies the password against the backend `User` collection.
 - Default allowed role: `super_admin` only.
-- The session token is random, stored locally in ignored `.admin-session`, and
-  stored only as a SHA-256 hash in MongoDB.
-- Expiry defaults to 30 days and the account role/status is rechecked on every
-  MCP tool call.
+- Local sessions and remote access/refresh tokens are random and stored only as
+  SHA-256 hashes in MongoDB. Authorization codes and pending requests use TTL
+  indexes and expire automatically.
+- Account role/status is rechecked on every MCP tool call.
 - Every create, update, delete, and lead activity is written to `ActivityLog`
   with the authenticated admin ID.
 - Passwords, OTPs, reset tokens, lock data, and reaction IP hashes are never
@@ -62,9 +63,8 @@ Check the current identity:
 npm run whoami
 ```
 
-Then restart Codex/ChatGPT desktop or reconnect MCP. Project-scoped Codex
-configuration is in `../.codex/config.toml`; Claude-compatible configuration is
-in `../.mcp.json`.
+Then restart Claude Code or reconnect the local MCP. Claude Chat uses the remote
+Vercel connector flow below and does not use `.mcp.json`.
 
 To revoke the local session:
 
@@ -72,31 +72,56 @@ To revoke the local session:
 npm run logout
 ```
 
-## Render deployment
+## Vercel + Claude Chat deployment
 
-Set the Render Root Directory to `mcp-server`. The normal `npm install` build
-now installs the backend production dependencies as well, because the MCP
-imports the backend's Mongoose models directly. Use this start command:
+Create a separate Vercel project for MCP only:
+
+- Root Directory: `mcp-server`
+- Application Preset: `Node`
+- Install Command: `npm install`
+- Build Command: none
+- Output Directory: none
+- Enable `Include source files outside of the Root Directory`, because the MCP
+  imports the backend Mongoose models from `../backend`.
+
+`api/index.js` is the Vercel function and `vercel.json` maps the MCP, OAuth,
+discovery, registration, token, and revocation endpoints to it. Set these
+Production environment variables before deploying (a paste-ready local copy is
+kept in the Git-ignored `.env.production`; `vercel.env.example` is safe to
+commit):
 
 ```text
-npm start
-```
-
-Render supplies `PORT`, so the server automatically selects Streamable HTTP.
-Configure these secret environment variables:
-
-```text
-MONGO_URI=<same database used by the backend>
+MONGO_URI=<same production MongoDB URI used by the backend>
 DB_NAME=kraviona
-MCP_API_KEY=<strong random secret>
-MCP_ADMIN_SESSION_TOKEN=<token created by npm run login>
+MCP_TRANSPORT=streamable-http
+MCP_ADMIN_ROLES=super_admin
+MCP_READ_ONLY=false
+MCP_ALLOW_DELETES=true
+MCP_DB_TIMEOUT_MS=20000
+MCP_OAUTH_REDIRECT_URIS=https://claude.ai/api/mcp/auth_callback
+MCP_OAUTH_ACCESS_TOKEN_SECONDS=3600
+MCP_OAUTH_REFRESH_TOKEN_DAYS=30
 ```
 
-Instead of copying a session token, `MCP_ADMIN_IDENTIFIER` and
-`MCP_ADMIN_PASSWORD` may be set so the service creates a revocable session at
-startup. The session-token option avoids keeping an admin password in the
-deployment environment. The health endpoint is `/`; MCP clients connect to
-`/mcp` and send `Authorization: Bearer <MCP_API_KEY>`.
+The first deployment can omit `MCP_PUBLIC_URL`; Vercel's production hostname
+is detected automatically. After assigning a stable production or custom domain,
+set `MCP_PUBLIC_URL=https://<your-domain>` and redeploy.
+
+Do not set `PORT`, `MCP_ADMIN_PASSWORD`, `MCP_ADMIN_SESSION_TOKEN`, or
+`MCP_API_KEY` for the Claude Chat OAuth deployment. After Vercel reports a
+successful deployment, verify that `/` reports `oauth-2.1` and that
+`/.well-known/oauth-protected-resource/mcp` returns JSON.
+
+In Claude Chat, open `Customize > Connectors`, choose `Add custom connector`,
+and enter:
+
+```text
+https://<stable-vercel-production-domain>/mcp
+```
+
+Do not enter a client ID or client secret. Claude dynamically registers and
+opens the Kraviona consent page. Sign in with an active, verified
+`super_admin`; Claude receives scoped tokens, never the password.
 
 ## Commands
 
@@ -115,14 +140,14 @@ npm start        # Start the stdio MCP server
 Default configuration permits audited creates and updates but blocks permanent
 deletion. To temporarily make the entire server read-only, set:
 
-```toml
-MCP_READ_ONLY = "true"
+```text
+MCP_READ_ONLY=true
 ```
 
 Only enable deletes for a deliberate maintenance session:
 
-```toml
-MCP_ALLOW_DELETES = "true"
+```text
+MCP_ALLOW_DELETES=true
 ```
 
 Disable it again and reconnect immediately afterward.
