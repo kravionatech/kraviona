@@ -6,7 +6,10 @@ delete process.env.VERCEL_PROJECT_PRODUCTION_URL;
 delete process.env.VERCEL_URL;
 process.env.MCP_TRANSPORT = "streamable-http";
 
-const { default: handler } = await import("../api/index.js");
+// Vercel's Node preset imports the package root index.js as its function.
+// Importing it must export HTTP without starting the local stdio process.
+const { default: handler } = await import("../index.js");
+assert.equal(typeof handler, "function");
 const server = http.createServer(handler);
 
 await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve));
