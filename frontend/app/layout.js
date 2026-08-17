@@ -157,7 +157,8 @@ export default function RootLayout({ children }) {
         <link rel="preconnect" href="https://res.cloudinary.com" crossOrigin="" />
         <link rel="dns-prefetch" href="https://res.cloudinary.com" />
         <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
-        <meta name="google-adsense-account" content="ca-pub-9100707044750397"></meta>
+      
+        <meta name="google-adsense-account" content="ca-pub-8546579821208945"></meta>
       </head>
 
       <body className="font-sans antialiased bg-surface">
