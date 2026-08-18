@@ -4,7 +4,11 @@ import app from "../src/apps/app.js";
 import { getAllCategories } from "../src/controllers/categories/categories.controller.js";
 import { buildTeamPayload } from "../src/controllers/team/team.controller.js";
 import { CategoryModel } from "../src/models/blog/category.model.js";
-import { PostModel } from "../src/models/blog/post.model.js";
+import { PostModel, normalizePublishedAt } from "../src/models/blog/post.model.js";
+import {
+  appendPublicPostFilterClause,
+  publicPostFilter,
+} from "../src/controllers/post/post.controller.js";
 import { mergeNestedFields, parseBoolean } from "../src/utils/requestValues.js";
 
 const createResponse = () => ({
@@ -63,6 +67,30 @@ test("blog source and statistic schemas accept the admin editor field names", ()
   assert.equal(post.sources[0].publishedDate, "2026-08-01");
   assert.equal(post.statistics[0].stat, "75% adoption");
   assert.equal(post.statistics[0].source, "Industry survey");
+});
+
+test("published posts cannot retain a future publication timestamp", () => {
+  const now = new Date("2026-08-18T02:15:00.000Z");
+  const post = {
+    status: "published",
+    publishedAt: new Date("2026-08-18T07:00:00.000Z"),
+  };
+
+  normalizePublishedAt(post, now);
+
+  assert.equal(post.publishedAt.toISOString(), now.toISOString());
+});
+
+test("public post filters retain publication, search, and category clauses", () => {
+  const now = new Date("2026-08-18T02:15:00.000Z");
+  const filter = publicPostFilter(now);
+
+  appendPublicPostFilterClause(filter, { $or: [{ title: /AI/i }] });
+  appendPublicPostFilterClause(filter, { $or: [{ "category.slug": "ai" }] });
+
+  assert.equal(filter.status, "published");
+  assert.equal(filter.$and.length, 3);
+  assert.deepEqual(filter.$and[0].$or[2], { publishedAt: { $lte: now } });
 });
 
 test("super admin category listing no longer references an undefined category", async () => {

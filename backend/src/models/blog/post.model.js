@@ -387,6 +387,21 @@ postSchema.index(
 // HOOKS
 // ============================================================
 
+export const normalizePublishedAt = (post, now = new Date()) => {
+  if (post.status !== "published") return post;
+
+  const publishedAt = post.publishedAt ? new Date(post.publishedAt) : null;
+  if (
+    !publishedAt ||
+    Number.isNaN(publishedAt.getTime()) ||
+    publishedAt.getTime() > now.getTime()
+  ) {
+    post.publishedAt = now;
+  }
+
+  return post;
+};
+
 // Capture slug on load so pre('save') can detect changes
 postSchema.post("init", function () {
   this._originalSlug = this.slug;
@@ -394,6 +409,10 @@ postSchema.post("init", function () {
 
 // Run after all fields are assigned — safe to read cross-field values
 postSchema.pre("validate", function (next) {
+  // A future date belongs to a scheduled post. Once status is published,
+  // normalize it to now so public detail and list filters agree immediately.
+  normalizePublishedAt(this);
+
   // Auto-fill featuredImage altText from first focusKeyword
   if (this.featuredImage && !this.featuredImage.altText && this.focusKeywords?.length) {
     this.featuredImage.altText = this.focusKeywords[0];
@@ -418,11 +437,6 @@ postSchema.pre("save", function (next) {
     this._originalSlug !== this.slug
   ) {
     this.previousSlugs.push({ slug: this._originalSlug });
-  }
-
-  // Stamp publishedAt on first publish
-  if (this.isModified("status") && this.status === "published" && !this.publishedAt) {
-    this.publishedAt = new Date();
   }
 
   // Clear scheduledAt when post leaves scheduled state

@@ -183,10 +183,23 @@ const queueBlogNotification = (post) => {
   });
 };
 
-const publicPostFilter = () => ({
+export const publicPostFilter = (now = new Date()) => ({
   status: "published",
-  $or: [{ publishedAt: { $exists: false } }, { publishedAt: null }, { publishedAt: { $lte: new Date() } }],
+  $and: [
+    {
+      $or: [
+        { publishedAt: { $exists: false } },
+        { publishedAt: null },
+        { publishedAt: { $lte: now } },
+      ],
+    },
+  ],
 });
+
+export const appendPublicPostFilterClause = (filter, clause) => {
+  filter.$and = [...(filter.$and || []), clause];
+  return filter;
+};
 
 // ==========================================
 // 1. Create Post
@@ -437,13 +450,15 @@ export const publicPosts = async (req, res) => {
 
     if (search) {
       const searchRegex = { $regex: search, $options: "i" };
-      filter.$or = [
-        { title: searchRegex },
-        { excerpt: searchRegex },
-        { tags: searchRegex },
-        { primaryTopicCluster: searchRegex },
-        { "category.name": searchRegex },
-      ];
+      appendPublicPostFilterClause(filter, {
+        $or: [
+          { title: searchRegex },
+          { excerpt: searchRegex },
+          { tags: searchRegex },
+          { primaryTopicCluster: searchRegex },
+          { "category.name": searchRegex },
+        ],
+      });
     }
 
     // Category feeds must be filtered by MongoDB before pagination. Filtering
@@ -472,14 +487,12 @@ export const publicPosts = async (req, res) => {
         });
       }
 
-      filter.$and = [
-        {
-          $or: [
-            { categoryID: matchedCategory._id },
-            { "category.slug": category },
-          ],
-        },
-      ];
+      appendPublicPostFilterClause(filter, {
+        $or: [
+          { categoryID: matchedCategory._id },
+          { "category.slug": category },
+        ],
+      });
     }
 
     const [posts, totalPosts] = await Promise.all([
