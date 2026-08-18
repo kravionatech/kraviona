@@ -17,6 +17,9 @@ const scriptSources = [
   "https://www.google-analytics.com",
   "https://www.chatbase.co",
   "https://news.google.com",
+  // AdSense uses changing serving domains. Google supports a permissive
+  // HTTPS source policy when a per-request nonce policy is not in use.
+  "https:",
 ].join(" ");
 const contentSecurityPolicy = [
   "default-src 'self'",
@@ -28,8 +31,8 @@ const contentSecurityPolicy = [
   "font-src 'self' data: https://fonts.gstatic.com",
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
   `script-src ${scriptSources}`,
-  "connect-src 'self' https://api.kraviona.com https://www.google-analytics.com https://www.googletagmanager.com https://www.chatbase.co",
-  "frame-src 'self' https://www.google.com https://maps.google.com https://www.googletagmanager.com https://calendly.com https://www.chatbase.co https://news.google.com",
+  "connect-src 'self' https:",
+  "frame-src 'self' https:",
 ].join("; ");
 
 const nextConfig = {

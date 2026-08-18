@@ -7,6 +7,7 @@ import "@fontsource/poppins/800.css";
 
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import Script from "next/script";
 import Header from "@/components/Header/Header";
 import Footer from "@/components/Footer/Footer";
 import DeferredGlobalWidgets from "@/components/DeferredGlobalWidgets";
@@ -144,6 +145,10 @@ export const metadata = {
     google: "yYmrp2HizDB-EGRruieHxpCxHFLCqmFsQblkGULJHtc",
   },
 
+  other: {
+    "google-adsense-account": "ca-pub-8546579821208945",
+  },
+
   category: "technology",
   classification: "Web Development & SEO Services",
 };
@@ -157,8 +162,22 @@ export default function RootLayout({ children }) {
         <link rel="preconnect" href="https://res.cloudinary.com" crossOrigin="" />
         <link rel="dns-prefetch" href="https://res.cloudinary.com" />
         <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
-      
-        <meta name="google-adsense-account" content="ca-pub-8546579821208945"></meta>
+        <link
+          rel="preconnect"
+          href="https://pagead2.googlesyndication.com"
+          crossOrigin="anonymous"
+        />
+        <link
+          rel="dns-prefetch"
+          href="https://pagead2.googlesyndication.com"
+        />
+        <Script
+          id="google-adsense"
+          async
+          strategy="beforeInteractive"
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8546579821208945"
+          crossOrigin="anonymous"
+        />
       </head>
 
       <body className="font-sans antialiased bg-surface">
