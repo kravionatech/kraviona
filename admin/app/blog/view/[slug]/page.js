@@ -1,62 +1,69 @@
 "use client"
 
 import Frame from '@/components/Frame/Frame'
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
-import { Clock, Eye, ChevronRight, ArrowLeft } from 'lucide-react'
+import {
+  ArrowLeft,
+  CalendarDays,
+  ChevronRight,
+  Clock,
+  Eye,
+  FileText,
+  Pencil,
+} from 'lucide-react'
 import Link from 'next/link'
 
-/* ── Reading progress bar ─────────────────────────── */
 const ProgressBar = () => {
   const [pct, setPct] = useState(0)
+
   useEffect(() => {
     const onScroll = () => {
-      const el = document.documentElement
-      const scrolled = el.scrollTop
-      const total = el.scrollHeight - el.clientHeight
-      setPct(total > 0 ? Math.min(100, (scrolled / total) * 100) : 0)
+      const page = document.documentElement
+      const total = page.scrollHeight - page.clientHeight
+      setPct(total > 0 ? Math.min(100, (page.scrollTop / total) * 100) : 0)
     }
+
+    onScroll()
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
+
   return (
-    <div className="fixed top-0 left-0 right-0 z-50 h-[3px] bg-[#2a4a52]">
+    <div className="fixed top-0 left-0 right-0 lg:left-64 z-50 h-[3px] bg-[#0f5960]/20">
       <div
-        className="h-full bg-[#e8622a] transition-all duration-75"
+        className="h-full bg-[#e8622a] transition-[width] duration-75"
         style={{ width: `${pct}%` }}
       />
     </div>
   )
 }
 
-/* ── Skeleton loader ──────────────────────────────── */
 const Skeleton = () => (
   <Frame>
     <ProgressBar />
-    <div className="max-w-3xl mx-auto px-4 py-16 animate-pulse space-y-6">
-      <div className="h-3 w-24 bg-gray-200 rounded" />
-      <div className="h-10 w-3/4 bg-gray-200 rounded" />
-      <div className="h-10 w-1/2 bg-gray-200 rounded" />
-      <div className="flex gap-3 items-center">
-        <div className="w-10 h-10 rounded-full bg-gray-200" />
-        <div className="h-3 w-32 bg-gray-200 rounded" />
-      </div>
-      <div className="h-72 w-full bg-gray-200 rounded-2xl" />
-      <div className="space-y-3">
-        {[...Array(6)].map((_, i) => (
-          <div key={i} className={`h-3 bg-gray-200 rounded ${i % 3 === 2 ? 'w-2/3' : 'w-full'}`} />
-        ))}
+    <div className="min-h-screen bg-[#edf5f4] px-4 py-8 animate-pulse">
+      <div className="mx-auto max-w-5xl space-y-5">
+        <div className="flex justify-between gap-4">
+          <div className="h-9 w-28 rounded-lg bg-gray-200" />
+          <div className="h-9 w-24 rounded-lg bg-gray-200" />
+        </div>
+        <div className="h-[380px] w-full rounded-lg bg-gray-200" />
+        <div className="mx-auto max-w-4xl space-y-4 py-5">
+          <div className="h-4 w-full rounded bg-gray-200" />
+          <div className="h-4 w-4/5 rounded bg-gray-200" />
+          <div className="h-48 w-full rounded-lg bg-gray-200" />
+        </div>
       </div>
     </div>
   </Frame>
 )
 
-/* ── Not found ────────────────────────────────────── */
 const NotFound = () => (
   <Frame>
     <div className="min-h-[60vh] flex flex-col items-center justify-center gap-4 text-center px-4">
-      <div className="w-16 h-16 rounded-full bg-[#2a4a52]/30 flex items-center justify-center">
-        <span className="text-2xl">📄</span>
+      <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center">
+        <FileText size={26} className="text-gray-400" />
       </div>
       <h2 className="text-xl font-bold text-gray-900">Post not found</h2>
       <p className="text-gray-500 text-sm max-w-xs">
@@ -64,31 +71,55 @@ const NotFound = () => (
       </p>
       <Link
         href="/blog"
-        className="inline-flex items-center gap-2 text-[#f28c5e] hover:text-[#e8622a] font-semibold text-sm"
+        className="inline-flex items-center gap-2 text-[#e8622a] hover:text-[#b94b31] font-semibold text-sm"
       >
-        <ArrowLeft size={15} /> Back to blog
+        <ArrowLeft size={15} /> Back to posts
       </Link>
     </div>
   </Frame>
 )
 
-/* ── Accordion FAQ ────────────────────────────────── */
+const AuthorAvatar = ({ author }) => {
+  const [imageFailed, setImageFailed] = useState(false)
+  const initial = (author?.name || '?').trim().charAt(0).toUpperCase()
+
+  if (author?.avatar && !imageFailed) {
+    return (
+      <img
+        src={author.avatar}
+        alt={author.name || 'Post author'}
+        className="h-9 w-9 rounded-full object-cover ring-2 ring-[#e8622a]/25"
+        onError={() => setImageFailed(true)}
+      />
+    )
+  }
+
+  return (
+    <div className="h-9 w-9 rounded-full bg-[#0f5960] flex items-center justify-center text-white text-xs font-bold ring-2 ring-[#0f5960]/15">
+      {initial}
+    </div>
+  )
+}
+
 const FaqItem = ({ faq }) => {
   const [open, setOpen] = useState(false)
+
   return (
-    <div className="border border-gray-200 rounded-xl overflow-hidden">
+    <div className="overflow-hidden rounded-lg border border-gray-200 bg-white">
       <button
-        onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-gray-50 transition-colors"
+        type="button"
+        aria-expanded={open}
+        onClick={() => setOpen((current) => !current)}
+        className="w-full flex items-center justify-between gap-4 px-5 py-4 text-left hover:bg-gray-50 transition-colors"
       >
-        <span className="font-semibold text-gray-900 text-sm pr-4">{faq.question}</span>
+        <span className="font-semibold text-gray-900 text-sm">{faq.question}</span>
         <ChevronRight
-          size={16}
+          size={17}
           className={`text-gray-400 flex-shrink-0 transition-transform duration-200 ${open ? 'rotate-90' : ''}`}
         />
       </button>
       {open && (
-        <div className="px-5 pb-5 text-gray-600 text-sm leading-relaxed border-t border-gray-100 pt-4">
+        <div className="border-t border-gray-100 px-5 py-4 text-gray-600 text-sm leading-relaxed">
           {faq.answer}
         </div>
       )}
@@ -96,12 +127,22 @@ const FaqItem = ({ faq }) => {
   )
 }
 
-/* ── Main component ───────────────────────────────── */
+const formatDate = (value) => {
+  if (!value) return null
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) return null
+
+  return new Intl.DateTimeFormat('en-IN', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+  }).format(date)
+}
+
 const SingleBlogView = () => {
   const { slug } = useParams()
   const [blog, setBlog] = useState(null)
   const [loading, setLoading] = useState(true)
-  const articleRef = useRef(null)
 
   useEffect(() => {
     const fetchBlogDetails = async () => {
@@ -121,174 +162,176 @@ const SingleBlogView = () => {
         setLoading(false)
       }
     }
+
     if (slug) fetchBlogDetails()
   }, [slug])
 
   if (loading) return <Skeleton />
   if (!blog) return <NotFound />
 
+  const postDate = formatDate(blog.publishedAt || blog.createdAt)
+
   return (
     <Frame>
       <ProgressBar />
 
-      {/* ── Hero image with overlay title ── */}
-      {blog.featuredImage?.url ? (
-        <div className="relative w-full h-[56vh] min-h-[380px] overflow-hidden">
-          <img
-            src={blog.featuredImage.url}
-            alt={blog.featuredImage.altText || blog.title}
-            className="w-full h-full object-cover"
-          />
-          {/* gradient fade */}
-          <div className="absolute inset-0 bg-gradient-to-t from-[#1a2e33] via-[#1a2e33]/70 to-transparent" />
-
-          {/* title on hero */}
-          <div className="absolute bottom-0 left-0 right-0 max-w-3xl mx-auto px-4 pb-10">
-            {blog.category?.name && (
-              <span className="inline-block text-xs font-bold tracking-widest text-[#f28c5e] uppercase mb-3">
-                {blog.category.name}
-              </span>
+      <div className="post-preview-page min-h-screen bg-[#edf5f4] pb-16">
+        <div className="border-b border-gray-200 bg-white">
+          <div className="mx-auto flex min-h-14 max-w-5xl items-center justify-between gap-3 px-4 sm:px-6">
+            <Link
+              href="/blog"
+              className="inline-flex items-center gap-2 text-sm font-semibold text-gray-600 hover:text-[#0f5960] transition-colors"
+            >
+              <ArrowLeft size={16} /> All posts
+            </Link>
+            {blog._id && (
+              <Link
+                href={`/blog/edit/${blog._id}`}
+                className="inline-flex h-9 items-center gap-2 rounded-lg bg-[#e8622a] px-4 text-sm font-semibold text-white hover:bg-[#b94b31] transition-colors"
+              >
+                <Pencil size={15} /> Edit post
+              </Link>
             )}
-            <h1 className="text-3xl sm:text-4xl font-extrabold text-white leading-tight">
-              {blog.title}
-            </h1>
           </div>
         </div>
-      ) : (
-        /* fallback: no image, plain header */
-        <div className="bg-[#2a4a52] py-16">
-          <div className="max-w-3xl mx-auto px-4">
-            {blog.category?.name && (
-              <span className="inline-block text-xs font-bold tracking-widest text-[#f28c5e] uppercase mb-3">
-                {blog.category.name}
-              </span>
-            )}
-            <h1 className="text-3xl sm:text-4xl font-extrabold text-white leading-tight">
-              {blog.title}
-            </h1>
-          </div>
-        </div>
-      )}
 
-      {/* ── Author strip ── */}
-      <div className="bg-white border-b border-gray-100 sticky top-[3px] z-40">
-        <div className="max-w-3xl mx-auto px-4 py-3 flex items-center gap-4 flex-wrap">
-          {blog.author?.avatar ? (
-            <img
-              src={blog.author.avatar}
-              alt={blog.author.name}
-              className="w-8 h-8 rounded-full object-cover ring-2 ring-[#e8622a]/35"
-            />
-          ) : (
-            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#f28c5e] to-[#e8622a] flex items-center justify-center text-white text-xs font-bold ring-2 ring-[#e8622a]/35">
-              {(blog.author?.name || '?')[0].toUpperCase()}
+        <div className="mx-auto max-w-5xl px-4 pt-6 sm:px-6">
+          <header className="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
+            {blog.featuredImage?.url ? (
+              <div className="relative h-[clamp(280px,42vw,480px)] overflow-hidden">
+                <img
+                  src={blog.featuredImage.url}
+                  alt={blog.featuredImage.altText || blog.title}
+                  className="h-full w-full object-cover"
+                />
+                <div className="post-preview-hero-overlay absolute inset-0" />
+                <div className="absolute inset-x-0 bottom-0 max-w-4xl px-5 pb-6 sm:px-8 sm:pb-8">
+                  {blog.category?.name && (
+                    <span className="mb-3 inline-block text-xs font-bold uppercase text-[#ff936c]">
+                      {blog.category.name}
+                    </span>
+                  )}
+                  <h1 className="max-w-4xl text-2xl font-extrabold leading-tight text-white sm:text-4xl">
+                    {blog.title}
+                  </h1>
+                </div>
+              </div>
+            ) : (
+              <div className="px-5 py-10 sm:px-8 sm:py-14">
+                {blog.category?.name && (
+                  <span className="mb-3 inline-block text-xs font-bold uppercase text-[#d85e3d]">
+                    {blog.category.name}
+                  </span>
+                )}
+                <h1 className="max-w-4xl text-2xl font-extrabold leading-tight text-gray-900 sm:text-4xl">
+                  {blog.title}
+                </h1>
+              </div>
+            )}
+
+            <div className="flex flex-wrap items-center gap-x-5 gap-y-3 border-t border-gray-100 px-5 py-4 sm:px-8">
+              <div className="flex items-center gap-3">
+                <AuthorAvatar author={blog.author} />
+                <div>
+                  <p className="text-sm font-semibold text-gray-900">{blog.author?.name || 'Unknown author'}</p>
+                  <p className="text-xs text-gray-500">Author</p>
+                </div>
+              </div>
+
+              <div className="ml-auto flex flex-wrap items-center gap-4 text-xs text-gray-500">
+                {postDate && (
+                  <span className="flex items-center gap-1.5">
+                    <CalendarDays size={14} /> {postDate}
+                  </span>
+                )}
+                {blog.readingTimeMinutes && (
+                  <span className="flex items-center gap-1.5">
+                    <Clock size={14} /> {blog.readingTimeMinutes} min read
+                  </span>
+                )}
+                {blog.views !== undefined && (
+                  <span className="flex items-center gap-1.5">
+                    <Eye size={14} /> {blog.views.toLocaleString()} views
+                  </span>
+                )}
+              </div>
             </div>
-          )}
-          <span className="text-sm font-semibold text-gray-800">{blog.author?.name || 'Unknown'}</span>
-
-          <div className="flex items-center gap-3 ml-auto text-xs text-gray-400">
-            {blog.readingTimeMinutes && (
-              <span className="flex items-center gap-1">
-                <Clock size={12} /> {blog.readingTimeMinutes} min read
-              </span>
-            )}
-            {blog.views !== undefined && (
-              <span className="flex items-center gap-1">
-                <Eye size={12} /> {blog.views.toLocaleString()} views
-              </span>
-            )}
-          </div>
+          </header>
         </div>
-      </div>
 
-      {/* ── Body ── */}
-      <div className="bg-[#1a2e33] min-h-screen">
-        <div className="max-w-3xl mx-auto px-4 py-10 space-y-10" ref={articleRef}>
-
-          {/* Excerpt */}
+        <main className="mx-auto max-w-4xl space-y-7 px-4 py-8 sm:px-6 sm:py-10">
           {blog.excerpt && (
-            <p className="text-lg text-gray-600 leading-relaxed font-light border-l-4 border-[#e8622a] pl-5">
+            <p className="border-l-4 border-[#e8622a] pl-5 text-lg leading-8 text-gray-700">
               {blog.excerpt}
             </p>
           )}
 
-          {/* Quick Answer */}
           {blog.quickAnswer && (
-            <div className="bg-[#2a4a52]/45 border border-[#e8622a]/35 rounded-2xl p-6">
-              <p className="text-xs font-bold tracking-widest text-[#f28c5e] uppercase mb-2">Quick Answer</p>
-              <p className="text-gray-800 text-sm leading-relaxed">{blog.quickAnswer}</p>
-            </div>
+            <section className="rounded-lg border border-[#e8622a]/30 bg-[#fff7f2] p-5 sm:p-6">
+              <h2 className="mb-2 text-xs font-bold uppercase text-[#b94b31]">Quick answer</h2>
+              <p className="text-sm leading-7 text-gray-700">{blog.quickAnswer}</p>
+            </section>
           )}
 
-          {/* Key Takeaways */}
           {blog.keyTakeaways?.length > 0 && (
-            <section className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
-              <p className="text-xs font-bold tracking-widest text-gray-400 uppercase mb-4">Key Takeaways</p>
+            <section className="rounded-lg border border-gray-200 bg-white p-5 shadow-sm sm:p-6">
+              <h2 className="mb-4 text-xs font-bold uppercase text-gray-500">Key takeaways</h2>
               <ul className="space-y-3">
-                {blog.keyTakeaways.map((item, i) => (
-                  <li key={i} className="flex gap-3 text-sm text-gray-700 leading-relaxed">
-                    <span className="mt-0.5 w-5 h-5 rounded-full bg-[#e8622a]/15 text-[#f28c5e] flex-shrink-0 flex items-center justify-center text-xs font-bold">
-                      {i + 1}
+                {blog.keyTakeaways.map((item, index) => (
+                  <li key={index} className="flex gap-3 text-sm leading-6 text-gray-700">
+                    <span className="mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-[#e8622a]/15 text-xs font-bold text-[#b94b31]">
+                      {index + 1}
                     </span>
-                    {item}
+                    <span>{item}</span>
                   </li>
                 ))}
               </ul>
             </section>
           )}
 
-          {/* Table of Contents */}
           {blog.tableOfContents?.length > 0 && (
-            <section className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
-              <p className="text-xs font-bold tracking-widest text-gray-400 uppercase mb-4">Contents</p>
-              <ol className="space-y-2">
-                {blog.tableOfContents.map((toc, i) => (
-                  <li key={toc._id} className="flex items-start gap-3">
-                    <span className="text-xs text-gray-300 font-mono mt-0.5 w-5 flex-shrink-0">
-                      {String(i + 1).padStart(2, '0')}
+            <nav aria-label="Table of contents" className="rounded-lg border border-gray-200 bg-white p-5 shadow-sm sm:p-6">
+              <h2 className="mb-4 text-xs font-bold uppercase text-gray-500">Contents</h2>
+              <ol className="grid gap-2 sm:grid-cols-2 sm:gap-x-8">
+                {blog.tableOfContents.map((toc, index) => (
+                  <li key={toc._id || toc.anchor} className="flex items-start gap-3">
+                    <span className="mt-0.5 w-5 flex-shrink-0 font-mono text-xs text-gray-400">
+                      {String(index + 1).padStart(2, '0')}
                     </span>
                     <a
                       href={`#${toc.anchor}`}
-                      className="text-sm text-[#f28c5e] hover:text-[#e8622a] hover:underline underline-offset-2 transition-colors"
+                      className="text-sm leading-6 text-[#d85e3d] hover:text-[#b94b31] hover:underline underline-offset-2"
                     >
                       {toc.heading}
                     </a>
                   </li>
                 ))}
               </ol>
-            </section>
+            </nav>
           )}
 
-          {/* Main content */}
           {blog.content && (
-            <div className="prose prose-gray prose-sm sm:prose max-w-none
-              prose-headings:text-[#f5f7f8] prose-headings:font-bold
-              prose-a:text-[#f28c5e] prose-a:no-underline hover:prose-a:underline
-              prose-blockquote:border-[#e8622a] prose-blockquote:text-gray-600
-              prose-code:text-[#f28c5e] prose-code:bg-[#2a4a52] prose-code:px-1 prose-code:rounded
-              prose-img:rounded-xl">
-              {/* If content is HTML use dangerouslySetInnerHTML, else render as text */}
+            <article className="admin-article-content rounded-lg border border-gray-200 bg-white p-5 shadow-sm sm:p-8">
               {typeof blog.content === 'string' && blog.content.trim().startsWith('<')
                 ? <div dangerouslySetInnerHTML={{ __html: blog.content }} />
-                : <p className="text-gray-700 leading-relaxed">{blog.content}</p>
+                : <p className="whitespace-pre-wrap">{blog.content}</p>
               }
-            </div>
+            </article>
           )}
 
-          {/* Gallery */}
           {blog.gallery?.length > 0 && (
             <section>
-              <p className="text-xs font-bold tracking-widest text-gray-400 uppercase mb-5">Gallery</p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <h2 className="mb-4 text-xs font-bold uppercase text-gray-500">Gallery</h2>
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 {blog.gallery.map((image) => (
-                  <figure key={image._id} className="group overflow-hidden rounded-xl">
+                  <figure key={image._id || image.url} className="overflow-hidden rounded-lg border border-gray-200 bg-white">
                     <img
                       src={image.url}
-                      alt={image.altText}
-                      className="w-full h-52 object-cover group-hover:scale-105 transition-transform duration-300"
+                      alt={image.altText || ''}
+                      className="h-52 w-full object-cover"
                     />
                     {image.caption && (
-                      <figcaption className="text-xs text-gray-400 mt-2 text-center">
+                      <figcaption className="px-4 py-3 text-center text-xs text-gray-500">
                         {image.caption}
                       </figcaption>
                     )}
@@ -298,45 +341,40 @@ const SingleBlogView = () => {
             </section>
           )}
 
-          {/* FAQs */}
           {blog.faqSchema?.length > 0 && (
             <section>
-              <p className="text-xs font-bold tracking-widest text-gray-400 uppercase mb-5">Frequently Asked</p>
+              <h2 className="mb-4 text-xs font-bold uppercase text-gray-500">Frequently asked</h2>
               <div className="space-y-3">
                 {blog.faqSchema.map((faq) => (
-                  <FaqItem key={faq._id} faq={faq} />
+                  <FaqItem key={faq._id || faq.question} faq={faq} />
                 ))}
               </div>
             </section>
           )}
 
-          {/* Tags */}
           {blog.tags?.length > 0 && (
-            <div className="pt-4 border-t border-gray-200">
-              <p className="text-xs font-bold tracking-widest text-gray-400 uppercase mb-3">Tags</p>
+            <section className="border-t border-gray-200 pt-6">
+              <h2 className="mb-3 text-xs font-bold uppercase text-gray-500">Tags</h2>
               <div className="flex flex-wrap gap-2">
                 {blog.tags.map((tag) => (
                   <span
                     key={tag}
-                    className="bg-white border border-gray-200 hover:border-[#e8622a]/50 hover:text-[#f28c5e] text-gray-600 px-3 py-1 rounded-full text-xs font-medium transition-colors cursor-pointer"
+                    className="rounded-full border border-gray-200 bg-white px-3 py-1 text-xs font-medium text-gray-600"
                   >
                     #{tag}
                   </span>
                 ))}
               </div>
-            </div>
+            </section>
           )}
 
-          {/* Back link */}
-          <div className="pt-4">
-            <Link
-              href="/blog"
-              className="inline-flex items-center gap-2 text-sm font-semibold text-gray-400 hover:text-[#f28c5e] transition-colors"
-            >
-              <ArrowLeft size={15} /> Back to all posts
-            </Link>
-          </div>
-        </div>
+          <Link
+            href="/blog"
+            className="inline-flex items-center gap-2 text-sm font-semibold text-gray-600 hover:text-[#0f5960] transition-colors"
+          >
+            <ArrowLeft size={15} /> Back to all posts
+          </Link>
+        </main>
       </div>
     </Frame>
   )

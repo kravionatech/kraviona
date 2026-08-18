@@ -421,3 +421,133 @@ body {
 .tiptap-editor .ProseMirror ol {
   list-style: decimal;
 }
+
+/* Blog previews render stored HTML outside Tiptap. Keep this typography scoped
+   to the preview so rich post content stays readable inside the admin shell. */
+.post-preview-hero-overlay {
+  background: linear-gradient(0deg, rgba(10, 35, 39, 0.94) 0%, rgba(10, 35, 39, 0.45) 55%, rgba(10, 35, 39, 0.08) 100%);
+}
+
+.admin-article-content {
+  color: #36575b;
+  font-size: 1rem;
+  line-height: 1.8;
+  overflow-wrap: anywhere;
+}
+
+.admin-article-content > div > * + *,
+.admin-article-content > * + * {
+  margin-top: 1.15rem;
+}
+
+.admin-article-content h1,
+.admin-article-content h2,
+.admin-article-content h3,
+.admin-article-content h4,
+.admin-article-content h5,
+.admin-article-content h6 {
+  color: #123f46;
+  font-weight: 800;
+  line-height: 1.3;
+  scroll-margin-top: 6rem;
+}
+
+.admin-article-content h1 { font-size: 2rem; }
+.admin-article-content h2 { font-size: 1.5rem; }
+.admin-article-content h3 { font-size: 1.25rem; }
+.admin-article-content h4,
+.admin-article-content h5,
+.admin-article-content h6 { font-size: 1.05rem; }
+
+.admin-article-content strong {
+  color: #123f46;
+  font-weight: 700;
+}
+
+.admin-article-content em {
+  font-style: italic;
+}
+
+.admin-article-content a {
+  color: #b94b31;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.admin-article-content ul,
+.admin-article-content ol {
+  padding-left: 1.5rem;
+}
+
+.admin-article-content ul { list-style: disc; }
+.admin-article-content ol { list-style: decimal; }
+.admin-article-content li + li { margin-top: 0.45rem; }
+
+.admin-article-content blockquote {
+  border-left: 4px solid var(--kraviona-coral);
+  background: #fff7f2;
+  color: #526e74;
+  margin-left: 0;
+  padding: 0.9rem 1rem;
+}
+
+.admin-article-content code {
+  border-radius: 4px;
+  background: #e6efee;
+  color: #963e2b;
+  font-size: 0.9em;
+  padding: 0.15rem 0.35rem;
+}
+
+.admin-article-content pre {
+  overflow-x: auto;
+  border-radius: 8px;
+  background: #123f46;
+  color: #f4f8f7;
+  padding: 1rem;
+}
+
+.admin-article-content pre code {
+  background: transparent;
+  color: inherit;
+  padding: 0;
+}
+
+.admin-article-content img {
+  height: auto;
+  max-width: 100%;
+  border-radius: 8px;
+}
+
+.admin-article-content hr {
+  border: 0;
+  border-top: 1px solid var(--admin-border);
+}
+
+.admin-article-content table {
+  display: block;
+  width: 100%;
+  overflow-x: auto;
+  border-collapse: collapse;
+}
+
+.admin-article-content th,
+.admin-article-content td {
+  border: 1px solid var(--admin-border);
+  padding: 0.65rem 0.75rem;
+  text-align: left;
+  vertical-align: top;
+}
+
+.admin-article-content th {
+  background: #e6efee;
+  color: #123f46;
+  font-weight: 700;
+}
+
+@media (max-width: 640px) {
+  .admin-article-content h1 { font-size: 1.65rem; }
+  .admin-article-content h2 { font-size: 1.35rem; }
+  .admin-article-content h3 { font-size: 1.15rem; }
+}
