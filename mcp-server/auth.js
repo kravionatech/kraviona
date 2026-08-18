@@ -36,7 +36,7 @@ const findAdmin = async (identifier) => {
       { username: clean },
       { phone: clean },
     ],
-  }).select("+password name email username role isActive isVerified");
+  }).select("password name email username role isActive isVerified");
 };
 
 const assertEligibleAdmin = (admin) => {
