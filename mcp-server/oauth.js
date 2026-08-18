@@ -324,9 +324,9 @@ const renderLogin = (response, requestToken, error = "") => {
   response
     .status(error ? 401 : 200)
     .set({
-      "Cache-Control": "no-store",
+      "Cache-Control": "no-store, no-transform",
       "Content-Security-Policy":
-        "default-src 'none'; style-src 'unsafe-inline'; form-action 'self'; base-uri 'none'; frame-ancestors 'none'",
+        "default-src 'none'; style-src 'unsafe-inline'; form-action 'self' https://claude.ai; base-uri 'none'; frame-ancestors 'none'",
       "Referrer-Policy": "no-referrer",
       "X-Content-Type-Options": "nosniff",
       "X-Frame-Options": "DENY",
