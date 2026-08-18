@@ -422,7 +422,9 @@ export const createPost = async (req, res) => {
 export const publicPosts = async (req, res) => {
   try {
     queueDueScheduledPosts();
-    res.set("Cache-Control", "public, max-age=30, stale-while-revalidate=300");
+    // Publishing is managed from a separate admin deployment. Public feeds
+    // must re-check MongoDB so a newly published post is visible immediately.
+    res.set("Cache-Control", "no-store, max-age=0, must-revalidate");
 
     const page = Math.max(1, parseInt(req.query.page, 10) || 1);
     const limit = Math.min(24, Math.max(1, parseInt(req.query.limit, 10) || 12));
@@ -884,7 +886,7 @@ export const updatePost = async (req, res) => {
 export const singleViewPost = async (req, res) => {
   try {
     queueDueScheduledPosts();
-    res.set("Cache-Control", "public, max-age=60, stale-while-revalidate=300");
+    res.set("Cache-Control", "no-store, max-age=0, must-revalidate");
 
     const { slug } = req.params;
 

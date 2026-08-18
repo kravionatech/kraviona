@@ -37,8 +37,6 @@ const LatestBlog = ({ initialPosts = [] }) => {
 
   useEffect(() => {
     const fetchLatestPosts = async () => {
-      if (validInitialPosts.length > 0) return;
-
       try {
         const url = `${API_URL}/public/posts?page=1&limit=3`;
         const response = await fetch(url, {
@@ -64,7 +62,7 @@ const LatestBlog = ({ initialPosts = [] }) => {
       }
     };
     fetchLatestPosts();
-  }, [validInitialPosts.length]);
+  }, []);
 
   return (
     <section

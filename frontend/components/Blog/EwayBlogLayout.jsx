@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -639,7 +639,6 @@ export default function EwayBlogLayout({
   const [isLoading, setIsLoading] = useState(initialPosts.length === 0);
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
-  const skipInitialRequest = useRef(initialPosts.length > 0);
 
   useEffect(() => {
     const isUnfilteredFirstPage =
@@ -647,12 +646,6 @@ export default function EwayBlogLayout({
       selectedCategory === "all" &&
       !searchQuery.trim();
 
-    if (skipInitialRequest.current && isUnfilteredFirstPage) {
-      skipInitialRequest.current = false;
-      return undefined;
-    }
-
-    skipInitialRequest.current = false;
     const controller = new AbortController();
 
     const fetchPosts = async () => {
@@ -669,7 +662,7 @@ export default function EwayBlogLayout({
         const response = await fetch(
           `${API_URL}/public/posts?${params.toString()}`,
           {
-            cache: "force-cache",
+            cache: "no-store",
             headers: { Accept: "application/json" },
             signal: controller.signal,
           },
@@ -680,14 +673,8 @@ export default function EwayBlogLayout({
         const posts = parsePosts(json).filter((post) => post?.slug);
         setArchivePosts(posts);
         setArchivePagination(json.pagination || null);
-        if (
-          archivePage === 1 &&
-          selectedCategory === "all" &&
-          !searchQuery.trim()
-        ) {
-          setAllPosts((currentPosts) =>
-            currentPosts.length === 0 ? posts : currentPosts,
-          );
+        if (isUnfilteredFirstPage) {
+          setAllPosts(posts);
         }
       } catch (error) {
         if (error?.name === "AbortError") return;
@@ -725,8 +712,8 @@ export default function EwayBlogLayout({
 
   const filteredPosts = archivePosts;
   const totalArticles =
-    initialPagination?.totalPosts ||
     archivePagination?.totalPosts ||
+    initialPagination?.totalPosts ||
     allPosts.length;
 
   return (

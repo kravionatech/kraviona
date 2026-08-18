@@ -258,7 +258,7 @@ export const metadata = {
 async function getLatestPosts() {
   try {
     const response = await fetch(`${API_URL}/public/posts?page=1&limit=3`, {
-      next: { revalidate: 300 },
+      cache: "no-store",
       headers: { Accept: "application/json" },
     });
     if (!response.ok) return [];

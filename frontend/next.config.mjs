@@ -77,15 +77,6 @@ const nextConfig = {
   async headers() {
     return [
       {
-        source: "/blog/:slug*",
-        headers: [
-          {
-            key: "Cache-Control",
-            value: "public, s-maxage=3600, stale-while-revalidate=86400",
-          },
-        ],
-      },
-      {
         source: "/((?!api|_next/static|_next/image|favicon.ico|blog/).*)",
         headers: [
           {
@@ -95,6 +86,35 @@ const nextConfig = {
           { key: "X-Content-Type-Options", value: "nosniff" },
           { key: "X-Frame-Options", value: "SAMEORIGIN" },
           { key: "X-Robots-Tag", value: "index, follow" },
+        ],
+      },
+      // CMS-backed pages must not wait for the general HTML cache to expire.
+      // Keep these entries after the general rule so their header wins.
+      {
+        source: "/",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "private, no-cache, no-store, max-age=0, must-revalidate",
+          },
+        ],
+      },
+      {
+        source: "/blog/:slug*",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "private, no-cache, no-store, max-age=0, must-revalidate",
+          },
+        ],
+      },
+      {
+        source: "/category/:path*",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "private, no-cache, no-store, max-age=0, must-revalidate",
+          },
         ],
       },
       {

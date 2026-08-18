@@ -50,7 +50,7 @@ async function getInitialPosts() {
   try {
     const url = `${API_URL}/public/posts?page=1&limit=12`;
     const response = await fetch(url, {
-      next: { revalidate: 300 },
+      cache: "no-store",
       headers: { Accept: "application/json" },
     });
 

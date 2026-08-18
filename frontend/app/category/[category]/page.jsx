@@ -14,7 +14,7 @@ async function getCategoryData(slug) {
       fetch(
         `${API_URL}/public/posts?category=${encodeURIComponent(slug)}&page=1&limit=12`,
         {
-          next: { revalidate: 300 },
+          cache: "no-store",
           headers: { Accept: "application/json" },
         },
       ),
