@@ -113,7 +113,11 @@ export const createHttpApp = (serviceSession = null) => {
   const app = createMcpExpressApp({ host: "0.0.0.0", allowedHosts });
 
   if (config.oauth.enabled) {
+    // Production traffic reaches Express through Cloudflare and Vercel. Trust
+    // both hops so the SDK's endpoint rate limits use the originating address.
+    app.set("trust proxy", 2);
     const publicUrl = new URL(config.oauth.publicUrl);
+    const proxyAwareRateLimit = { validate: false };
     app.use(createOAuthLoginRouter());
     app.use(
       mcpAuthRouter({
@@ -123,6 +127,10 @@ export const createHttpApp = (serviceSession = null) => {
         resourceServerUrl: new URL(config.oauth.resourceUrl),
         scopesSupported: [...oauthScopes],
         resourceName: "Kraviona Admin MCP",
+        authorizationOptions: { rateLimit: proxyAwareRateLimit },
+        tokenOptions: { rateLimit: proxyAwareRateLimit },
+        clientRegistrationOptions: { rateLimit: proxyAwareRateLimit },
+        revocationOptions: { rateLimit: proxyAwareRateLimit },
       }),
     );
   }

@@ -338,7 +338,7 @@ const renderLogin = (response, requestToken, error = "") => {
 body{margin:0;background:#f5f7f9;color:#172027;font:16px system-ui,sans-serif;min-height:100vh;display:grid;place-items:center}.panel{width:min(420px,calc(100% - 32px));background:#fff;border:1px solid #dce2e7;border-radius:8px;padding:28px;box-sizing:border-box}h1{font-size:24px;margin:0 0 8px}p{color:#53616b;line-height:1.5;margin:0 0 22px}label{display:block;font-size:14px;font-weight:600;margin:14px 0 6px}input{width:100%;box-sizing:border-box;border:1px solid #b9c3ca;border-radius:6px;padding:11px 12px;font:inherit}button{width:100%;margin-top:22px;border:0;border-radius:6px;padding:12px;background:#147d64;color:#fff;font:inherit;font-weight:700;cursor:pointer}.error{color:#a82828;background:#fff1f1;border:1px solid #f0caca;border-radius:6px;padding:10px;margin-bottom:14px;font-size:14px}.scope{font-size:13px;color:#53616b;border-top:1px solid #e5e9ec;padding-top:16px;margin-top:20px}
 </style></head><body><main class="panel"><h1>Kraviona Admin</h1><p>Sign in to authorize Claude to manage Kraviona using your administrator permissions.</p>
 ${error ? `<div class="error">${escapeHtml(error)}</div>` : ""}
-<form method="post" action="/oauth/login"><input type="hidden" name="request" value="${escapeHtml(requestToken)}">
+<form method="post" action="/oauth/login?request=${escapeHtml(requestToken)}"><input type="hidden" name="request" value="${escapeHtml(requestToken)}">
 <label for="identifier">Email, username, or phone</label><input id="identifier" name="identifier" autocomplete="username" required autofocus>
 <label for="password">Password</label><input id="password" name="password" type="password" autocomplete="current-password" required>
 <button type="submit">Authorize Claude</button></form><div class="scope">Access: complete audited admin tools. Permanent deletion still requires explicit confirmation.</div></main></body></html>`);
@@ -362,7 +362,7 @@ export const createOAuthLoginRouter = () => {
   });
 
   router.post("/oauth/login", async (request, response) => {
-    const requestToken = String(request.body.request || "");
+    const requestToken = String(request.body.request || request.query.request || "");
     const { pending, codes } = await getCollections();
     const authorization = await pending.findOne({
       requestHash: hashToken(requestToken),
