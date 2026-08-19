@@ -146,7 +146,7 @@ export const metadata = {
   },
 
   other: {
-    "google-adsense-account": "ca-pub-8546579821208945",
+    "google-adsense-account": "ca-pub-2639855770462648",
   },
 
   category: "technology",
@@ -175,7 +175,7 @@ export default function RootLayout({ children }) {
           id="google-adsense"
           async
           strategy="beforeInteractive"
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8546579821208945"
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2639855770462648"
           crossOrigin="anonymous"
         />
       </head>
