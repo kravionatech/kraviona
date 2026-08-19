@@ -10,6 +10,8 @@ import {
   publicPostFilter,
 } from "../src/controllers/post/post.controller.js";
 import { mergeNestedFields, parseBoolean } from "../src/utils/requestValues.js";
+import { buildCareerPayload } from "../src/controllers/careers/careers.controller.js";
+import { CareerModel } from "../src/models/Careers/career.model.js";
 
 const createResponse = () => ({
   statusCode: 200,
@@ -55,6 +57,35 @@ test("nested service PATCH data preserves fields omitted from nested objects", (
   );
 
   assert.deepEqual(merged.seo, { metaTitle: "Existing title", noIndex: true });
+});
+
+test("career request payload normalizes structured job data", () => {
+  const payload = buildCareerPayload({
+    jobTitle: "  Senior MERN Developer  ",
+    summary: "  Build reliable products with an experienced delivery team.  ",
+    content: "Detailed role content ".repeat(8),
+    skills: ["Node.js", " React ", ""],
+    compensation: { minimum: "600000", isDisclosed: "false" },
+    application: { email: " CAREERS@KRAVIONA.COM " },
+  });
+
+  assert.equal(payload.jobTitle, "Senior MERN Developer");
+  assert.deepEqual(payload.skills, ["Node.js", "React"]);
+  assert.equal(payload.compensation.minimum, 600000);
+  assert.equal(payload.compensation.isDisclosed, false);
+  assert.equal(payload.application.email, "careers@kraviona.com");
+});
+
+test("published careers require an application target and receive a slug", async () => {
+  const career = new CareerModel({
+    jobTitle: "Platform Engineer",
+    summary: "Own reliable platform systems for growing product teams.",
+    content: "Design, operate, document, and improve reliable platform services for product engineering teams. ".repeat(2),
+    status: "published",
+  });
+
+  await assert.rejects(career.validate(), /application email or URL/i);
+  assert.equal(career.slug, "platform-engineer");
 });
 
 test("blog source and statistic schemas accept the admin editor field names", () => {

@@ -24,6 +24,7 @@ const canonicalStaticRoutes = [
   { path: "/solutions", changeFrequency: "monthly", priority: 0.9 },
   { path: "/blog", changeFrequency: "daily", priority: 0.85 },
   { path: "/case-studies", changeFrequency: "monthly", priority: 0.86 },
+  { path: "/careers", changeFrequency: "weekly", priority: 0.86 },
   { path: "/pricing", changeFrequency: "monthly", priority: 0.9 },
   { path: "/about", changeFrequency: "monthly", priority: 0.75 },
   { path: "/team", changeFrequency: "monthly", priority: 0.75 },
@@ -153,6 +154,33 @@ async function getPublishedServices() {
   }
 }
 
+async function getPublishedCareers() {
+  try {
+    const json = await fetchJson("/careers?limit=50");
+    return parseCollection(json).filter(
+      (career) => career?.slug && !career?.seo?.noIndex,
+    );
+  } catch (error) {
+    console.error("[SITEMAP_CAREERS_ERROR]", error?.message);
+    return [];
+  }
+}
+
+function buildCareerRoutes(careers) {
+  return careers.map((career) =>
+    createRoute({
+      path: `/careers/${career.slug}`,
+      changeFrequency: "weekly",
+      priority: 0.82,
+      lastModified: getNewestIsoDate(
+        career.updatedAt,
+        career.publishedAt,
+        career.createdAt,
+      ),
+    }),
+  );
+}
+
 function buildBlogPostRoutes(posts) {
   return posts.map((post) => {
     const lastModified = getNewestIsoDate(
@@ -241,15 +269,17 @@ function mergeRoutes(routes) {
 }
 
 export default async function sitemap() {
-  const [posts, categories, services] = await Promise.all([
+  const [posts, categories, services, careers] = await Promise.all([
     getPublishedPosts(),
     getPublishedCategories(),
     getPublishedServices(),
+    getPublishedCareers(),
   ]);
 
   return mergeRoutes([
     ...staticRoutes,
     ...buildServiceRoutes(services),
+    ...buildCareerRoutes(careers),
     ...buildCategoryRoutes(posts, categories),
     ...buildBlogPostRoutes(posts),
   ]);

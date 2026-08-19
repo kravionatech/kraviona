@@ -39,6 +39,7 @@ const workspaceNavigation = [
   { href: "/team", label: "Team", icon: Users, superAdminOnly: true },
   { href: "/services", label: "Services", icon: BriefcaseBusiness },
   { href: "/portfolio", label: "Portfolio", icon: BriefcaseBusiness },
+  { href: "/careers", label: "Careers", icon: BriefcaseBusiness },
   { href: "/users", label: "Users", icon: Users, superAdminOnly: true },
   { href: "/login-history", label: "Login history", icon: History },
   { href: "/account", label: "My account", icon: UserRound },

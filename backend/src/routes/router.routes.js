@@ -20,6 +20,7 @@ import { createProject, deleteProject, getProjects, getPublicProject, updateProj
 import { getLoginHistory } from "../controllers/login-history/login-history.controller.js";
 import { createService, deleteService, getPublicServiceBySlug, getServices, updateService } from "../controllers/services/services.controller.js";
 import { getPublicKey, subscribeToBlogPush, unsubscribeFromBlogPush } from "../controllers/notifications/blog-push.controller.js";
+import { createCareer, deleteCareer, getAdminCareers, getPublicCareerBySlug, getPublicCareers, updateCareer } from "../controllers/careers/careers.controller.js";
 
 const Router  = express.Router();
 
@@ -63,6 +64,14 @@ Router.get('/admin/projects', verifyToken, getProjects)
 Router.post('/admin/projects', verifyToken, createProject)
 Router.patch('/admin/projects/:id', verifyToken, updateProject)
 Router.delete('/admin/projects/:id', verifyToken, deleteProject)
+
+// Careers
+Router.get('/careers', getPublicCareers)
+Router.get('/careers/:slug', getPublicCareerBySlug)
+Router.get('/admin/careers', verifyToken, getAdminCareers)
+Router.post('/admin/careers', verifyToken, createCareer)
+Router.patch('/admin/careers/:id', verifyToken, updateCareer)
+Router.delete('/admin/careers/:id', verifyToken, deleteCareer)
 
 // Comment moderation
 Router.get('/comments', verifyToken, getAllComments)

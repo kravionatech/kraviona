@@ -18,6 +18,7 @@ import { SOCIAL_LINKS } from "@/lib/social";
 const NAV = {
   company: [
     { name: "About Us", path: "/about" },
+    { name: "Careers", path: "/careers" },
     { name: "Blog", path: "/blog" },
     { name: "Portfolio", path: "/gallery" },
     { name: "Pricing", path: "/pricing" },

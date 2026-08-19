@@ -1,5 +1,9 @@
 import mongoose from "mongoose";
+import dns from "node:dns";
+
 import config from "./config.js";
+
+dns.setServers(["1.1.1.1", "8.8.8.8"]);
 
 console.log("Connecting to MongoDB...");
 
