@@ -10,7 +10,6 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import Script from "next/script";
 import Header from "@/components/Header/Header";
 import Footer from "@/components/Footer/Footer";
-import DeferredGlobalWidgets from "@/components/DeferredGlobalWidgets";
 import { JsonLd } from "@/components/JsonLd";
 import ThirdPartyScripts from "@/components/ThirdPartyScripts";
 import { WhatsAppFloat } from "@/components/WhatsAppFloat";
@@ -210,7 +209,6 @@ export default function RootLayout({ children }) {
 
         <Footer />
 
-        <DeferredGlobalWidgets />
         <WhatsAppFloat />
         <ThirdPartyScripts />
         <Analytics />
