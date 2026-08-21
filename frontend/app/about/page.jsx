@@ -4,7 +4,7 @@ import CoreValues from "@/components/About/CoreValues";
 import TeamSection from "@/components/About/TeamSection";
 import BlogCTA from "@/components/Blog/BlogCTA";
 import { JsonLd } from "@/components/JsonLd";
-import { breadcrumbSchema, personSchema } from "@/lib/schema";
+import { breadcrumbSchema } from "@/lib/schema";
 import { defaultRobots } from "@/app/seoConfig.js";
 
 const aboutPageSchema = {
@@ -87,7 +87,6 @@ const AboutPage = () => {
       <JsonLd
         data={[
           aboutPageSchema,
-          personSchema,
           breadcrumbSchema([
             { name: "Home", url: "https://kraviona.com" },
             { name: "About Us", url: "https://kraviona.com/about" },

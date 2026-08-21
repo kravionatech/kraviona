@@ -43,6 +43,27 @@ const normalizeStringArray = (arr) =>
     ? arr.map((item) => String(item).toLowerCase().trim()).filter(Boolean)
     : [];
 
+const publicAuthorAccountFields =
+  "name username avatar profile.bio profile.jobTitle profile.socialLinks";
+
+const socialUrl = (links, name) =>
+  Array.isArray(links)
+    ? links.find((link) => String(link?.name || "").toLowerCase().includes(name))?.url || ""
+    : "";
+
+const authorSnapshotFromAccount = (account) => ({
+  name: account.name,
+  email: account.email,
+  avatar: account.avatar,
+  username: account.username,
+  jobTitle: account.profile?.jobTitle || "",
+  bio: account.profile?.bio || "",
+  linkedInUrl: socialUrl(account.profile?.socialLinks, "linkedin"),
+  sameAs: Array.isArray(account.profile?.socialLinks)
+    ? account.profile.socialLinks.map((link) => link?.url).filter(Boolean)
+    : [],
+});
+
 // Multipart requests deliver nested values as strings. Normalize only the
 // featured image payload here, then let the existing controller validation
 // and document mapping keep handling the same `featuredImage.url` field.
@@ -383,14 +404,7 @@ export const createPost = async (req, res) => {
       contentSourceType,
       isCommentEnabled: parseBoolean(isCommentEnabled, true),
       userID: existingUser._id,
-      author: {
-        name: existingUser.name,
-        email: existingUser.email,
-        avatar: existingUser.avatar,
-        username: existingUser.username,
-        jobTitle: existingUser.jobTitle,
-        linkedInUrl: existingUser.linkedInUrl,
-      },
+      author: authorSnapshotFromAccount(existingUser),
       categoryID: matchedCategory._id,
       // FIX: removed `status` from the embedded category snapshot — the
       // Post schema's `category` sub-object only defines `name` and `slug`,
@@ -499,8 +513,9 @@ export const publicPosts = async (req, res) => {
       PostModel.find(filter)
         // Keep public cards focused on visible site fields.
         .select(
-          "title slug excerpt author category categoryID views featuredImage contentSourceType commentCount tags primaryTopicCluster readingTimeMinutes publishedAt createdAt updatedAt"
+          "title slug excerpt author userID category categoryID views featuredImage contentSourceType commentCount tags primaryTopicCluster readingTimeMinutes publishedAt createdAt updatedAt"
         )
+        .populate({ path: "userID", select: publicAuthorAccountFields })
         // FIX: there was no sort at all before — results came back in
         // whatever order Mongo happened to store them in.
         .sort({ publishedAt: -1, createdAt: -1 })
@@ -911,7 +926,8 @@ export const singleViewPost = async (req, res) => {
     // engagement endpoint only after a real browser reader opens the article.
     let blog = await PostModel.findOne({ slug, ...publicPostFilter() })
       .select("-reactions")
-      .populate("relatedPosts", "title slug excerpt featuredImage");
+      .populate("relatedPosts", "title slug excerpt featuredImage")
+      .populate({ path: "userID", select: publicAuthorAccountFields });
 
     if (!blog) {
       blog = await PostModel.findOne({
@@ -919,7 +935,8 @@ export const singleViewPost = async (req, res) => {
         ...publicPostFilter(),
       })
         .select("-reactions")
-        .populate("relatedPosts", "title slug excerpt featuredImage");
+        .populate("relatedPosts", "title slug excerpt featuredImage")
+        .populate({ path: "userID", select: publicAuthorAccountFields });
     }
 
     if (!blog) {

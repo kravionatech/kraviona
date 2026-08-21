@@ -31,16 +31,6 @@ import { getAuthorAvatar } from "@/lib/utils/imageUrl";
 export const revalidate = 0;
 export const dynamic = "force-dynamic";
 
-const DEFAULT_AUTHOR = {
-  name: "Amar Kumar",
-  username: "amarkumar96085",
-  role: "Founder & Lead Engineer",
-  bio: "Full-stack developer and founder of Kraviona Tech Solutions. Amar writes about MERN stack development, technical SEO, web performance, AI automation, and practical growth systems for modern businesses.",
-  avatar: "/amar.jpeg",
-  email: "kravionatech@gmail.com",
-  linkedin: "https://www.linkedin.com/in/amarkumar96085/",
-};
-
 const SERVICE_LINKS = {
   default: [
     {
@@ -114,18 +104,25 @@ function getArticleSchemaType(blog) {
 
 function getAuthorProfile(blog) {
   const author = blog?.author || {};
+  const account = blog?.userID && typeof blog.userID === "object" ? blog.userID : {};
+  const profile = account.profile || {};
+  const socialLinks = Array.isArray(profile.socialLinks) ? profile.socialLinks : [];
+  const socialUrl = (platform) =>
+    socialLinks.find((link) =>
+      String(link?.name || "").toLowerCase().includes(platform),
+    )?.url || "";
 
   return {
-    name: author.name || DEFAULT_AUTHOR.name,
-    username: author.username || DEFAULT_AUTHOR.username,
-    role: author.role || author.title || DEFAULT_AUTHOR.role,
-    bio: author.bio || author.description || DEFAULT_AUTHOR.bio,
+    name: account.name || author.name || "Kraviona Team",
+    username: account.username || author.username || "",
+    role: profile.jobTitle || author.jobTitle || author.role || author.title || "Author",
+    bio: profile.bio || author.bio || author.description || "",
     avatar: getAuthorAvatar(
-      author.avatar?.url || author.avatar || author.image?.url || author.image,
+      account.avatar || author.avatar?.url || author.avatar || author.image?.url || author.image,
     ),
-    email: author.email || DEFAULT_AUTHOR.email,
-    linkedin: author.linkedin || author.linkedinUrl || DEFAULT_AUTHOR.linkedin,
-    twitter: author.twitter || author.twitterUrl || DEFAULT_AUTHOR.twitter,
+    email: author.email || "",
+    linkedin: socialUrl("linkedin") || author.linkedin || author.linkedInUrl || author.linkedinUrl || "",
+    twitter: socialUrl("twitter") || socialUrl("x.com") || author.twitter || author.twitterUrl || "",
   };
 }
 
@@ -377,7 +374,7 @@ const BlogDetail = async ({ params }) => {
     },
     {
       name: "Email",
-      href: `mailto:${authorProfile.email}`,
+      href: authorProfile.email ? `mailto:${authorProfile.email}` : "",
       icon: Mail,
     },
   ].filter((item) => item.href);

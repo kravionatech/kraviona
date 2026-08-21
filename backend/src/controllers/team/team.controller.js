@@ -73,6 +73,7 @@ export const buildTeamPayload = (body = {}, { partial = false } = {}) => {
   if (include("socialLinks")) payload.socialLinks = normalizeSocialLinks(body.socialLinks);
   if (include("userID")) payload.userID = body.userID === "" ? null : body.userID || undefined;
   if (include("role")) payload.role = body.role || undefined;
+  if (include("isVerified")) payload.isVerified = parseBoolean(body.isVerified, false);
   if (include("order")) payload.order = body.order === undefined ? 0 : Number(body.order);
   if (include("isFeatured")) payload.isFeatured = parseBoolean(body.isFeatured, false);
   if (include("status")) payload.status = body.status === undefined ? "active" : cleanText(body.status);
@@ -80,7 +81,7 @@ export const buildTeamPayload = (body = {}, { partial = false } = {}) => {
   return payload;
 };
 
-const resolveLinkedAccount = async (userID, role, department) => {
+const resolveLinkedAccount = async (userID, role, department, isVerified) => {
   if (!userID) return null;
   let account;
   try {
@@ -103,6 +104,10 @@ const resolveLinkedAccount = async (userID, role, department) => {
   let accountChanged = false;
   if (role && account.role !== role) {
     account.role = role;
+    accountChanged = true;
+  }
+  if (isVerified !== undefined && account.isVerified !== isVerified) {
+    account.isVerified = isVerified;
     accountChanged = true;
   }
   const cleanDepartment = cleanText(department);
@@ -220,8 +225,9 @@ export const createTeamMember = async (req, res) => {
     }
 
     const payload = buildTeamPayload(req.body);
-    const linkedAccount = await resolveLinkedAccount(payload.userID, payload.role, payload.department);
+    const linkedAccount = await resolveLinkedAccount(payload.userID, payload.role, payload.department, payload.isVerified);
     delete payload.role;
+    delete payload.isVerified;
     if (linkedAccount) {
       payload.userID = linkedAccount._id;
       if (!payload.email) payload.email = linkedAccount.email;
@@ -259,8 +265,9 @@ export const updateTeamMember = async (req, res) => {
 
     const payload = buildTeamPayload(req.body, { partial: true });
     const requestedUserID = payload.userID === undefined ? member.userID : payload.userID;
-    const linkedAccount = await resolveLinkedAccount(requestedUserID, payload.role, payload.department);
+    const linkedAccount = await resolveLinkedAccount(requestedUserID, payload.role, payload.department, payload.isVerified);
     delete payload.role;
+    delete payload.isVerified;
     if (linkedAccount) {
       payload.userID = linkedAccount._id;
       if (!payload.email) payload.email = linkedAccount.email;

@@ -39,6 +39,8 @@ const EMPTY_MEMBER = {
   status: "active",
   userID: "",
   role: "",
+  isVerified: false,
+  socialLinks: "",
 };
 
 function initials(name = "") {
@@ -79,7 +81,19 @@ function buildMemberForm(member = {}) {
     status: member.status || "active",
     userID: member.userID?._id || member.userID || "",
     role: member.userID?.role || "",
+    isVerified: member.userID?.isVerified ?? false,
+    socialLinks: Array.isArray(member.socialLinks)
+      ? member.socialLinks.map((link) => `${link.name || "Social"} | ${link.url || ""}`).join("\n")
+      : "",
   };
+}
+
+function parseSocialLinks(value = "") {
+  return String(value)
+    .split("\n")
+    .map((line) => line.split("|").map((part) => part.trim()))
+    .filter(([, url]) => Boolean(url))
+    .map(([name, url]) => ({ name: name || "Social", url }));
 }
 
 function StatCard({ label, value, icon: Icon, tone = "text-[#235056]" }) {
@@ -212,7 +226,7 @@ function TeamModal({ form, accounts, departments, isEditing, saving, onChange, o
               <DepartmentSelect value={form.department} departments={departments} onChange={(value) => onChange("department", value)} required />
             </Field>
             <Field label="Linked user account">
-              <Select value={form.userID} onChange={(event) => { const account = accounts.find((item) => item._id === event.target.value); onChange("userID", event.target.value); onChange("role", account?.role || ""); if (account) onChange("department", account.profile?.department || account.teamMember?.department || form.department); }}>
+              <Select value={form.userID} onChange={(event) => { const account = accounts.find((item) => item._id === event.target.value); onChange("userID", event.target.value); onChange("role", account?.role || ""); onChange("isVerified", account?.isVerified ?? false); if (account) onChange("department", account.profile?.department || account.teamMember?.department || form.department); }}>
                 <option value="">No linked user account</option>
                 {accounts.map((account) => <option key={account._id} value={account._id}>{account.name} · {account.email} ({account.role.replace("_", " ")})</option>)}
               </Select>
@@ -225,6 +239,16 @@ function TeamModal({ form, accounts, departments, isEditing, saving, onChange, o
               </Select>
               <p className="mt-1.5 text-xs text-slate-500">Saving this form updates the linked account role.</p>
             </Field>
+            <label className={`flex items-center gap-3 rounded-lg border px-3 py-2.5 text-sm font-semibold ${form.userID ? "border-slate-200 bg-slate-50 text-slate-700" : "border-slate-100 bg-slate-50 text-slate-400"}`}>
+              <input
+                type="checkbox"
+                checked={form.isVerified}
+                disabled={!form.userID}
+                onChange={(event) => onChange("isVerified", event.target.checked)}
+                className="h-4 w-4 accent-[#0f5960]"
+              />
+              Verified linked account
+            </label>
             <Field label="Display order">
               <Input
                 type="number"
@@ -259,6 +283,16 @@ function TeamModal({ form, accounts, departments, isEditing, saving, onChange, o
                   value={form.bio}
                   onChange={(event) => onChange("bio", event.target.value)}
                   placeholder="Short team profile"
+                />
+              </Field>
+            </div>
+            <div className="md:col-span-2">
+              <Field label="Social links">
+                <Textarea
+                  rows={3}
+                  value={form.socialLinks}
+                  onChange={(event) => onChange("socialLinks", event.target.value)}
+                  placeholder={"LinkedIn | https://linkedin.com/in/name\nWebsite | https://example.com"}
                 />
               </Field>
             </div>
@@ -393,6 +427,8 @@ export default function TeamPage() {
     status: form.status,
     userID: form.userID,
     role: form.role,
+    isVerified: form.isVerified,
+    socialLinks: parseSocialLinks(form.socialLinks),
   });
 
   const submitMember = async (event) => {

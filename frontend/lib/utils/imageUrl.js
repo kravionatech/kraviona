@@ -1,5 +1,5 @@
 const DEFAULT_IMAGE = "/images/blog-default.jpg";
-const DEFAULT_AUTHOR_AVATAR = "/amar.jpeg";
+const DEFAULT_AUTHOR_AVATAR = "";
 const RETIRED_UNSPLASH_IMAGE_IDS = ["photo-1677756119517-756a188d2d94"];
 
 export function cleanImageUrl(url) {

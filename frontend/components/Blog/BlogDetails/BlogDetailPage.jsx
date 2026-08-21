@@ -81,7 +81,7 @@ const renderArticleContent = (html = "") =>
 const BlogDetailPage = ({ blog }) => {
   if (!blog) return null;
 
-  const authorName = blog.author?.name || "Amar Kumar";
+  const authorName = blog.userID?.name || blog.author?.name || "Kraviona Team";
   const contentHtml = normalizeContentImages(blog.content || "");
   const publishedDate = formatDate(blog.publishedAt || blog.createdAt);
   const quickAnswer = stripHtml(blog.quickAnswer || "");
