@@ -1,11 +1,9 @@
 import slugify from "slugify";
 import { TeamMemberModel } from "../../models/team/team.model.js";
-import { Auth } from "../../models/auth/auth.models.js";
 import { hasOwn, parseBoolean } from "../../utils/requestValues.js";
 
 const MANAGER_ROLES = ["super_admin"];
 const TEAM_STATUSES = ["active", "inactive"];
-const USER_ROLES = ["super_admin", "admin", "editor"];
 
 const canManageTeam = (user) => user && MANAGER_ROLES.includes(user.role);
 const cleanText = (value) => String(value || "").trim();
@@ -71,55 +69,11 @@ export const buildTeamPayload = (body = {}, { partial = false } = {}) => {
   if (include("avatar")) payload.avatar = cleanText(body.avatar);
   if (include("skills")) payload.skills = normalizeArray(body.skills);
   if (include("socialLinks")) payload.socialLinks = normalizeSocialLinks(body.socialLinks);
-  if (include("userID")) payload.userID = body.userID === "" ? null : body.userID || undefined;
-  if (include("role")) payload.role = body.role || undefined;
-  if (include("isVerified")) payload.isVerified = parseBoolean(body.isVerified, false);
   if (include("order")) payload.order = body.order === undefined ? 0 : Number(body.order);
   if (include("isFeatured")) payload.isFeatured = parseBoolean(body.isFeatured, false);
   if (include("status")) payload.status = body.status === undefined ? "active" : cleanText(body.status);
 
   return payload;
-};
-
-const resolveLinkedAccount = async (userID, role, department, isVerified) => {
-  if (!userID) return null;
-  let account;
-  try {
-    account = await Auth.findById(userID);
-  } catch {
-    const error = new Error("Choose a valid user account.");
-    error.status = 400;
-    throw error;
-  }
-  if (!account) {
-    const error = new Error("Linked user account was not found.");
-    error.status = 404;
-    throw error;
-  }
-  if (role && !USER_ROLES.includes(role)) {
-    const error = new Error("Invalid account role.");
-    error.status = 400;
-    throw error;
-  }
-  let accountChanged = false;
-  if (role && account.role !== role) {
-    account.role = role;
-    accountChanged = true;
-  }
-  if (isVerified !== undefined && account.isVerified !== isVerified) {
-    account.isVerified = isVerified;
-    accountChanged = true;
-  }
-  const cleanDepartment = cleanText(department);
-  if (cleanDepartment && account.profile?.department !== cleanDepartment) {
-    account.profile = {
-      ...(account.profile?.toObject?.() || account.profile || {}),
-      department: cleanDepartment,
-    };
-    accountChanged = true;
-  }
-  if (accountChanged) await account.save();
-  return account;
 };
 
 export const getAllTeamMembers = async (req, res) => {
@@ -152,9 +106,8 @@ export const getAllTeamMembers = async (req, res) => {
       ];
     }
 
-    const [members, total, statusCounts, teamDepartments, userDepartments] = await Promise.all([
+    const [members, total, statusCounts, teamDepartments] = await Promise.all([
       TeamMemberModel.find(query)
-        .populate({ path: "userID", select: "name email role avatar isActive isVerified profile.department createdAt" })
         .sort({ order: 1, createdAt: -1 })
         .skip((currentPage - 1) * perPage)
         .limit(perPage)
@@ -165,7 +118,6 @@ export const getAllTeamMembers = async (req, res) => {
         { $sort: { count: -1 } },
       ]),
       TeamMemberModel.distinct("department", { department: { $nin: [null, ""] } }),
-      Auth.distinct("profile.department", { "profile.department": { $nin: [null, ""] } }),
     ]);
 
     return res.status(200).json({
@@ -176,7 +128,7 @@ export const getAllTeamMembers = async (req, res) => {
         label: item._id || "unknown",
         value: item.count,
       })),
-      departments: [...new Set([...teamDepartments, ...userDepartments].map(cleanText).filter(Boolean))].sort((a, b) => a.localeCompare(b)),
+      departments: [...new Set(teamDepartments.map(cleanText).filter(Boolean))].sort((a, b) => a.localeCompare(b)),
       pagination: {
         total,
         page: currentPage,
@@ -225,14 +177,6 @@ export const createTeamMember = async (req, res) => {
     }
 
     const payload = buildTeamPayload(req.body);
-    const linkedAccount = await resolveLinkedAccount(payload.userID, payload.role, payload.department, payload.isVerified);
-    delete payload.role;
-    delete payload.isVerified;
-    if (linkedAccount) {
-      payload.userID = linkedAccount._id;
-      if (!payload.email) payload.email = linkedAccount.email;
-      if (!payload.avatar) payload.avatar = linkedAccount.avatar;
-    }
     const member = await TeamMemberModel.create(payload);
 
     return res.status(201).json({
@@ -264,24 +208,13 @@ export const updateTeamMember = async (req, res) => {
     }
 
     const payload = buildTeamPayload(req.body, { partial: true });
-    const requestedUserID = payload.userID === undefined ? member.userID : payload.userID;
-    const linkedAccount = await resolveLinkedAccount(requestedUserID, payload.role, payload.department, payload.isVerified);
-    delete payload.role;
-    delete payload.isVerified;
-    if (linkedAccount) {
-      payload.userID = linkedAccount._id;
-      if (!payload.email) payload.email = linkedAccount.email;
-      if (!payload.avatar) payload.avatar = linkedAccount.avatar;
-    }
     Object.entries(payload).forEach(([key, value]) => {
       if (value !== undefined) member[key] = value;
     });
 
     await member.save();
 
-    const updatedMember = await TeamMemberModel.findById(member._id)
-      .populate({ path: "userID", select: "name email role avatar isActive isVerified profile.department createdAt" })
-      .lean();
+    const updatedMember = await TeamMemberModel.findById(member._id).lean();
 
     return res.status(200).json({
       success: true,

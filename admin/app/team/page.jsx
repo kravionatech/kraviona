@@ -4,7 +4,6 @@ import Frame from "@/components/Frame/Frame";
 import { apiRequest, formatDate } from "@/components/api";
 import {
   Briefcase,
-  CreditCard,
   Edit3,
   Loader2,
   Plus,
@@ -19,11 +18,9 @@ import {
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Pagination from "@/components/Pagination";
 import AvatarPicker from "@/components/AvatarPicker";
-import CompanyIdCard from "@/components/CompanyIdCard";
 import DepartmentSelect from "@/components/DepartmentSelect";
 
 const STATUS_OPTIONS = ["all", "active", "inactive"];
-const USER_ROLES = ["super_admin", "admin", "editor"];
 
 const EMPTY_MEMBER = {
   name: "",
@@ -37,9 +34,6 @@ const EMPTY_MEMBER = {
   order: 0,
   isFeatured: false,
   status: "active",
-  userID: "",
-  role: "",
-  isVerified: false,
   socialLinks: "",
 };
 
@@ -56,7 +50,7 @@ function initials(name = "") {
 
 function MemberAvatar({ member, size = "md" }) {
   const [failedSource, setFailedSource] = useState("");
-  const source = member.avatar || member.userID?.avatar;
+  const source = member.avatar;
   const classes = size === "lg" ? "h-16 w-16" : "h-11 w-11";
 
   if (source && failedSource !== source) {
@@ -79,9 +73,6 @@ function buildMemberForm(member = {}) {
     order: member.order || 0,
     isFeatured: member.isFeatured || false,
     status: member.status || "active",
-    userID: member.userID?._id || member.userID || "",
-    role: member.userID?.role || "",
-    isVerified: member.userID?.isVerified ?? false,
     socialLinks: Array.isArray(member.socialLinks)
       ? member.socialLinks.map((link) => `${link.name || "Social"} | ${link.url || ""}`).join("\n")
       : "",
@@ -166,7 +157,7 @@ function FeaturedToggle({ checked, onChange }) {
   );
 }
 
-function TeamModal({ form, accounts, departments, isEditing, saving, onChange, onClose, onSubmit }) {
+function TeamModal({ form, departments, isEditing, saving, onChange, onClose, onSubmit }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/45 p-4">
       <div className="flex max-h-[90vh] w-full max-w-4xl flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl">
@@ -225,6 +216,8 @@ function TeamModal({ form, accounts, departments, isEditing, saving, onChange, o
             <Field label="Department">
               <DepartmentSelect value={form.department} departments={departments} onChange={(value) => onChange("department", value)} required />
             </Field>
+            {/* Team profiles are independent from user accounts. */}
+            {/*
             <Field label="Linked user account">
               <Select value={form.userID} onChange={(event) => { const account = accounts.find((item) => item._id === event.target.value); onChange("userID", event.target.value); onChange("role", account?.role || ""); onChange("isVerified", account?.isVerified ?? false); if (account) onChange("department", account.profile?.department || account.teamMember?.department || form.department); }}>
                 <option value="">No linked user account</option>
@@ -249,6 +242,7 @@ function TeamModal({ form, accounts, departments, isEditing, saving, onChange, o
               />
               Verified linked account
             </label>
+            */}
             <Field label="Display order">
               <Input
                 type="number"
@@ -330,7 +324,6 @@ function TeamModal({ form, accounts, departments, isEditing, saving, onChange, o
 
 export default function TeamPage() {
   const [members, setMembers] = useState([]);
-  const [accounts, setAccounts] = useState([]);
   const [counts, setCounts] = useState([]);
   const [departments, setDepartments] = useState([]);
   const [pagination, setPagination] = useState({ total: 0 });
@@ -342,7 +335,6 @@ export default function TeamPage() {
   const [editingMember, setEditingMember] = useState(null);
   const [form, setForm] = useState(EMPTY_MEMBER);
   const [modalOpen, setModalOpen] = useState(false);
-  const [idCardMember, setIdCardMember] = useState(null);
   const [page, setPage] = useState(1);
 
   const countMap = useMemo(
@@ -367,12 +359,8 @@ export default function TeamPage() {
       if (search.trim()) params.set("search", search.trim());
       if (status !== "all") params.set("status", status);
 
-      const [response, accountsResponse] = await Promise.all([
-        apiRequest(`/team?${params.toString()}`),
-        apiRequest("/users?limit=50"),
-      ]);
+      const response = await apiRequest(`/team?${params.toString()}`);
       setMembers(Array.isArray(response.data) ? response.data : []);
-      setAccounts(Array.isArray(accountsResponse.data) ? accountsResponse.data.filter((account) => USER_ROLES.includes(account.role)) : []);
       setCounts(Array.isArray(response.counts) ? response.counts : []);
       setDepartments(Array.isArray(response.departments) ? response.departments : []);
       setPagination(response.pagination || { total: 0 });
@@ -425,9 +413,6 @@ export default function TeamPage() {
     order: Number(form.order || 0),
     isFeatured: form.isFeatured,
     status: form.status,
-    userID: form.userID,
-    role: form.role,
-    isVerified: form.isVerified,
     socialLinks: parseSocialLinks(form.socialLinks),
   });
 
@@ -602,9 +587,6 @@ export default function TeamPage() {
                       Status
                     </th>
                     <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider text-slate-500">
-                      Account ID
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider text-slate-500">
                       Created
                     </th>
                     <th className="px-4 py-3 text-right text-xs font-bold uppercase tracking-wider text-slate-500">
@@ -668,15 +650,11 @@ export default function TeamPage() {
                           {member.status}
                         </span>
                       </td>
-                      <td className="px-4 py-4">
-                        {member.userID ? <div className="space-y-1"><span className="inline-flex rounded-full bg-[#e7f1f0] px-2 py-1 text-[11px] font-bold capitalize text-[#0a454b]">{member.userID.role?.replace("_", " ")}</span><p className={`text-xs font-semibold ${member.userID.isVerified ? "text-emerald-600" : "text-amber-600"}`}>{member.userID.isVerified ? "Verified account" : "Unverified account"}</p></div> : <span className="text-xs font-semibold text-amber-700">Not linked</span>}
-                      </td>
                       <td className="px-4 py-4 text-sm text-slate-500">
                         {formatDate(member.createdAt)}
                       </td>
                       <td className="px-4 py-4">
                         <div className="flex justify-end gap-2">
-                          <button type="button" onClick={() => setIdCardMember(member)} className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-[#0f5960]/20 bg-[#e7f1f0] text-[#0f5960] transition hover:bg-[#0f5960] hover:text-white" aria-label="View company ID card" title="Company ID card"><CreditCard size={15}/></button>
                           <button
                             type="button"
                             onClick={() => openEdit(member)}
@@ -718,7 +696,6 @@ export default function TeamPage() {
         {modalOpen && (
           <TeamModal
             form={form}
-            accounts={accounts}
             departments={departments}
             isEditing={Boolean(editingMember)}
             saving={saving}
@@ -727,7 +704,6 @@ export default function TeamPage() {
             onSubmit={submitMember}
           />
         )}
-        <CompanyIdCard open={Boolean(idCardMember)} onClose={() => setIdCardMember(null)} user={idCardMember?.userID || null} teamMember={idCardMember} />
       </div>
     </Frame>
   );

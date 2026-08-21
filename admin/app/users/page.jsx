@@ -4,7 +4,6 @@ import Frame from "@/components/Frame/Frame";
 import { apiRequest, formatDate } from "@/components/api";
 import {
   Edit3,
-  CreditCard,
   Loader2,
   Plus,
   RefreshCw,
@@ -18,7 +17,6 @@ import {
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Pagination from "@/components/Pagination";
 import AvatarPicker from "@/components/AvatarPicker";
-import CompanyIdCard from "@/components/CompanyIdCard";
 import DepartmentSelect from "@/components/DepartmentSelect";
 import Swal from "sweetalert2";
 
@@ -71,7 +69,7 @@ function buildUserForm(user = {}) {
     isActive: user.isActive ?? true,
     isVerified: user.isVerified ?? true,
     jobTitle: user.profile?.jobTitle || "",
-    department: user.profile?.department || user.teamMember?.department || "General",
+    department: user.profile?.department || "General",
     bio: user.profile?.bio || "",
   };
 }
@@ -241,7 +239,7 @@ function UserModal({ form, departments, isEditing, saving, onChange, onClose, on
                 ))}
               </Select>
               <p className="mt-1.5 text-xs text-slate-500">
-                Super admin, admin and editor accounts are added to Team automatically.
+                User accounts are managed independently from Team profiles.
               </p>
             </Field>
             <Field label="Job title">
@@ -317,7 +315,6 @@ export default function UsersPage() {
   const [editingUser, setEditingUser] = useState(null);
   const [form, setForm] = useState(EMPTY_USER);
   const [modalOpen, setModalOpen] = useState(false);
-  const [idCardUser, setIdCardUser] = useState(null);
   const [page, setPage] = useState(1);
 
   const countMap = useMemo(
@@ -617,7 +614,7 @@ export default function UsersPage() {
                         <RoleBadge role={user.role} />
                       </td>
                       <td className="px-4 py-4 text-sm font-medium text-slate-700">
-                        {user.profile?.department || user.teamMember?.department || "General"}
+                        {user.profile?.department || "General"}
                       </td>
                       <td className="px-4 py-4">
                         <div className="flex flex-col gap-1.5 text-xs font-semibold">
@@ -642,15 +639,6 @@ export default function UsersPage() {
                       </td>
                       <td className="px-4 py-4">
                         <div className="flex justify-end gap-2">
-                          <button
-                            type="button"
-                            onClick={() => setIdCardUser(user)}
-                            className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-[#0f5960]/20 bg-[#e7f1f0] text-[#0f5960] transition hover:bg-[#0f5960] hover:text-white"
-                            aria-label="View company ID card"
-                            title="Company ID card"
-                          >
-                            <CreditCard size={15} />
-                          </button>
                           <button
                             type="button"
                             onClick={() => openEdit(user)}
@@ -700,7 +688,6 @@ export default function UsersPage() {
             onSubmit={submitUser}
           />
         )}
-        <CompanyIdCard open={Boolean(idCardUser)} onClose={() => setIdCardUser(null)} user={idCardUser} teamMember={idCardUser?.teamMember || null} />
       </div>
     </Frame>
   );
