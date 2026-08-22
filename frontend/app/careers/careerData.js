@@ -11,7 +11,7 @@ export async function getCareers(filters = {}) {
       `${API_URL}/careers${params.size ? `?${params.toString()}` : ""}`,
       {
         headers: { Accept: "application/json" },
-        next: { revalidate: 60 },
+        next: { revalidate: 3600 },
       },
     );
     if (!response.ok) return { data: [], pagination: {} };
@@ -32,7 +32,7 @@ export async function getCareer(slug) {
       `${API_URL}/careers/${encodeURIComponent(slug)}`,
       {
         headers: { Accept: "application/json" },
-        next: { revalidate: 60 },
+        next: { revalidate: 3600 },
       },
     );
     if (!response.ok) return null;

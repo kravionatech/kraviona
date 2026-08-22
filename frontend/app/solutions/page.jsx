@@ -19,6 +19,8 @@ const solutionsPageSchema = {
   ],
 };
 
+export const dynamic = "force-static";
+
 export const metadata = buildMetadata({
   title: "Industry Technology Solutions & Digital Transformation",
   description:

@@ -9,10 +9,12 @@ import { defaultRobots } from "@/app/seoConfig.js";
 import { breadcrumbSchema } from "@/lib/schema";
 import { API_URL } from "@/utils/api";
 
+export const revalidate = 3600;
+
 async function getServicePages() {
   try {
     const response = await fetch(`${API_URL}/services`, {
-      next: { revalidate: 60 },
+      next: { revalidate: 3600 },
       headers: { Accept: "application/json" },
     });
     if (response.ok) {

@@ -13,6 +13,8 @@ const title = "Terms and Conditions";
 const description =
   "Read Kraviona's bilingual Terms and Conditions for website use, IT services, payments, intellectual property, delivery, confidentiality, liability, and dispute resolution.";
 
+export const dynamic = "force-static";
+
 export const metadata = {
   title: "Terms and Conditions | Kraviona",
   description,

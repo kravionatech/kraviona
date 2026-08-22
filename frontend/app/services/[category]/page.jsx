@@ -22,11 +22,7 @@ import {
 } from "lucide-react";
 import ContactFormDetails from "@/components/Contact/ContactFormDetails";
 import { JsonLd } from "@/components/JsonLd";
-import {
-  canonicalUrl,
-  defaultRobots,
-  SITE_URL,
-} from "@/app/seoConfig.js";
+import { canonicalUrl, defaultRobots, SITE_URL } from "@/app/seoConfig.js";
 import {
   breadcrumbSchema as buildBreadcrumbSchema,
   faqSchema as buildFaqSchema,
@@ -41,10 +37,24 @@ import {
 } from "../serviceData.js";
 import { API_URL } from "@/utils/api";
 
+export const revalidate = 3600;
+
 const DEFAULT_TRUST_POINTS = [
-  { title: "Clear ownership", description: "You know what Kraviona is handling, what is needed from your side, and what gets delivered at each step." },
-  { title: "No vague handover", description: "The work is explained in plain language with setup notes, next actions, and practical guidance after launch." },
-  { title: "Built for progress", description: "Every task connects back to a real business goal such as leads, speed, ranking, sales, automation, or cleaner operations." },
+  {
+    title: "Clear ownership",
+    description:
+      "You know what Kraviona is handling, what is needed from your side, and what gets delivered at each step.",
+  },
+  {
+    title: "No vague handover",
+    description:
+      "The work is explained in plain language with setup notes, next actions, and practical guidance after launch.",
+  },
+  {
+    title: "Built for progress",
+    description:
+      "Every task connects back to a real business goal such as leads, speed, ranking, sales, automation, or cleaner operations.",
+  },
 ];
 const DEFAULT_SUCCESS_METRICS = [
   "Clear scope and accountable milestones",
@@ -62,10 +72,14 @@ const DEFAULT_PROCESS_DESCRIPTIONS = [
 const mergeExpert = (overrides = {}) => {
   const expert = { ...SERVICE_EXPERT };
   Object.entries(overrides || {}).forEach(([key, value]) => {
-    if (Array.isArray(value) ? value.length : String(value || "").trim()) expert[key] = value;
+    if (Array.isArray(value) ? value.length : String(value || "").trim())
+      expert[key] = value;
   });
-  expert.knowsAbout = expert.expertise?.length ? expert.expertise : expert.knowsAbout;
-  expert.phoneHref = expert.phoneHref || `tel:${String(expert.phone || "").replace(/\s+/g, "")}`;
+  expert.knowsAbout = expert.expertise?.length
+    ? expert.expertise
+    : expert.knowsAbout;
+  expert.phoneHref =
+    expert.phoneHref || `tel:${String(expert.phone || "").replace(/\s+/g, "")}`;
   return expert;
 };
 
@@ -74,12 +88,39 @@ const normalizeService = (record, slug) => {
   const category = record.category || "General";
   const defaults = CATEGORY_DETAILS[category] || {};
   const name = record.title || record.name;
-  const outcomes = (record.outcomes?.length ? record.outcomes : record.features || []).map((item, index) => typeof item === "string"
-    ? { title: item, description: getOutcomeNote(item, { name, category }, index) }
-    : { title: item.title, description: item.description || getOutcomeNote(item.title, { name, category }, index) });
-  const process = (record.process?.length ? record.process : defaults.process || []).map((item, index) => typeof item === "string"
-    ? { title: item, description: DEFAULT_PROCESS_DESCRIPTIONS[index] || DEFAULT_PROCESS_DESCRIPTIONS[3] }
-    : { title: item.title, description: item.description || DEFAULT_PROCESS_DESCRIPTIONS[index] || DEFAULT_PROCESS_DESCRIPTIONS[3] });
+  const outcomes = (
+    record.outcomes?.length ? record.outcomes : record.features || []
+  ).map((item, index) =>
+    typeof item === "string"
+      ? {
+          title: item,
+          description: getOutcomeNote(item, { name, category }, index),
+        }
+      : {
+          title: item.title,
+          description:
+            item.description ||
+            getOutcomeNote(item.title, { name, category }, index),
+        },
+  );
+  const process = (
+    record.process?.length ? record.process : defaults.process || []
+  ).map((item, index) =>
+    typeof item === "string"
+      ? {
+          title: item,
+          description:
+            DEFAULT_PROCESS_DESCRIPTIONS[index] ||
+            DEFAULT_PROCESS_DESCRIPTIONS[3],
+        }
+      : {
+          title: item.title,
+          description:
+            item.description ||
+            DEFAULT_PROCESS_DESCRIPTIONS[index] ||
+            DEFAULT_PROCESS_DESCRIPTIONS[3],
+        },
+  );
 
   return {
     ...record,
@@ -94,16 +135,26 @@ const normalizeService = (record, slug) => {
     },
     intro: record.intro || defaults.intro || record.description,
     outcomes,
-    trustPoints: record.trustPoints?.length ? record.trustPoints : DEFAULT_TRUST_POINTS,
-    deliverables: record.deliverables?.length ? record.deliverables : defaults.deliverables || [],
-    idealFor: record.idealFor?.length ? record.idealFor : defaults.idealFor || [],
-    successMetrics: record.successMetrics?.length ? record.successMetrics : DEFAULT_SUCCESS_METRICS,
+    trustPoints: record.trustPoints?.length
+      ? record.trustPoints
+      : DEFAULT_TRUST_POINTS,
+    deliverables: record.deliverables?.length
+      ? record.deliverables
+      : defaults.deliverables || [],
+    idealFor: record.idealFor?.length
+      ? record.idealFor
+      : defaults.idealFor || [],
+    successMetrics: record.successMetrics?.length
+      ? record.successMetrics
+      : DEFAULT_SUCCESS_METRICS,
     process,
     techStack: record.techStack || [],
     faqs: record.faqs || [],
     cta: {
       title: record.cta?.title || `Ready to start your ${name} project?`,
-      description: record.cta?.description || "Talk with Kraviona about your goals, current setup, and the most practical next step.",
+      description:
+        record.cta?.description ||
+        "Talk with Kraviona about your goals, current setup, and the most practical next step.",
       label: record.cta?.label || "Discuss Your Project",
       href: record.cta?.href || "/contact",
     },
@@ -115,16 +166,24 @@ const normalizeService = (record, slug) => {
 const getService = async (slug) => {
   const cleanSlug = slug?.toLowerCase()?.trim();
   try {
-    const response = await fetch(`${API_URL}/services/${encodeURIComponent(cleanSlug)}`, { next: { revalidate: 60 }, headers: { Accept: "application/json" } });
+    const response = await fetch(
+      `${API_URL}/services/${encodeURIComponent(cleanSlug)}`,
+      { next: { revalidate: 3600 }, headers: { Accept: "application/json" } },
+    );
     if (response.ok) {
       const json = await response.json();
       if (json?.data) {
         const legacy = SERVICE_PAGES[cleanSlug] || {};
-        return normalizeService({
-          ...legacy,
-          ...json.data,
-          outcomes: json.data.outcomes?.length ? json.data.outcomes : legacy.outcomes,
-        }, cleanSlug);
+        return normalizeService(
+          {
+            ...legacy,
+            ...json.data,
+            outcomes: json.data.outcomes?.length
+              ? json.data.outcomes
+              : legacy.outcomes,
+          },
+          cleanSlug,
+        );
       }
     }
   } catch {}
@@ -133,12 +192,21 @@ const getService = async (slug) => {
 
 const getServiceLinks = async () => {
   try {
-    const response = await fetch(`${API_URL}/services`, { next: { revalidate: 60 }, headers: { Accept: "application/json" } });
+    const response = await fetch(`${API_URL}/services`, {
+      next: { revalidate: 3600 },
+      headers: { Accept: "application/json" },
+    });
     if (response.ok) {
       const json = await response.json();
       if (json?.data?.length) {
         const links = new Map(SERVICE_LINKS.map((item) => [item.href, item]));
-        json.data.forEach((item) => links.set(`/services/${item.slug}`, { name: item.title || item.name, href: `/services/${item.slug}`, category: item.category }));
+        json.data.forEach((item) =>
+          links.set(`/services/${item.slug}`, {
+            name: item.title || item.name,
+            href: `/services/${item.slug}`,
+            category: item.category,
+          }),
+        );
         return Array.from(links.values());
       }
     }
@@ -181,20 +249,25 @@ export async function generateMetadata({ params }) {
   }
 
   const pageUrl = canonicalUrl(`/services/${slug}`);
-  const metaDescription = (service.seo?.metaDescription || `Expert ${service.name} services in Delhi NCR from Kraviona. ${service.description}`)
+  const metaDescription = (
+    service.seo?.metaDescription ||
+    `Expert ${service.name} services in Delhi NCR from Kraviona. ${service.description}`
+  )
     .replace(/\s+/g, " ")
     .slice(0, 160);
 
   return {
     title: service.seo?.metaTitle || `${service.name} Services in Delhi NCR`,
     description: metaDescription,
-    keywords: service.seo?.keywords?.length ? service.seo.keywords : [
-      service.name,
-      `${service.name} India`,
-      `${service.name} Services`,
-      service.category,
-      "Kraviona Tech Solutions",
-    ],
+    keywords: service.seo?.keywords?.length
+      ? service.seo.keywords
+      : [
+          service.name,
+          `${service.name} India`,
+          `${service.name} Services`,
+          service.category,
+          "Kraviona Tech Solutions",
+        ],
     authors: [{ name: service.expert.name, url: SITE_URL }],
     creator: service.expert.name,
     alternates: { canonical: pageUrl },
@@ -221,7 +294,9 @@ export async function generateMetadata({ params }) {
       description: service.description,
       images: [service.seo?.ogImage || "/og-web-development.jpg"],
     },
-    robots: service.seo?.noIndex ? { index: false, follow: false } : defaultRobots,
+    robots: service.seo?.noIndex
+      ? { index: false, follow: false }
+      : defaultRobots,
   };
 }
 
@@ -238,11 +313,19 @@ export default async function ServicesDetails({ params }) {
   }
 
   const pageUrl = canonicalUrl(`/services/${slug}`);
-  const serviceFaqs = service.faqs.length ? service.faqs : getServiceFaqs({ ...service, outcomes: service.outcomes.map((item) => item.title) });
+  const serviceFaqs = service.faqs.length
+    ? service.faqs
+    : getServiceFaqs({
+        ...service,
+        outcomes: service.outcomes.map((item) => item.title),
+      });
   const expert = service.expert;
-  const relatedServices = serviceLinks.filter(
-    (item) => item.href !== `/services/${slug}` && item.category === service.category,
-  ).slice(0, 4);
+  const relatedServices = serviceLinks
+    .filter(
+      (item) =>
+        item.href !== `/services/${slug}` && item.category === service.category,
+    )
+    .slice(0, 4);
 
   const serviceJsonLd = buildServiceSchema({
     name: service.name,
@@ -376,7 +459,13 @@ export default async function ServicesDetails({ params }) {
                     className="rounded-xl border border-[#2A4A52]/15 bg-white p-5"
                   >
                     <span className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-[#2A4A52]/10 text-[#2A4A52]">
-                      {[<ShieldCheck key="shield" className="h-5 w-5" />, <ClipboardCheck key="check" className="h-5 w-5" />, <Rocket key="rocket" className="h-5 w-5" />][index % 3]}
+                      {
+                        [
+                          <ShieldCheck key="shield" className="h-5 w-5" />,
+                          <ClipboardCheck key="check" className="h-5 w-5" />,
+                          <Rocket key="rocket" className="h-5 w-5" />,
+                        ][index % 3]
+                      }
                     </span>
                     <h3 className="font-extrabold text-[#1A2E33]">
                       {item.title}
@@ -566,9 +655,18 @@ export default async function ServicesDetails({ params }) {
       {service.techStack.length > 0 && (
         <section className="border-b border-gray-100 bg-white py-12">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <p className="mb-5 text-center text-xs font-black uppercase tracking-[0.2em] text-[#E8622A]">Technology & Tools</p>
+            <p className="mb-5 text-center text-xs font-black uppercase tracking-[0.2em] text-[#E8622A]">
+              Technology & Tools
+            </p>
             <div className="flex flex-wrap justify-center gap-3">
-              {service.techStack.map((technology) => <span key={technology} className="rounded-xl border border-[#2A4A52]/15 bg-[#F5F7F8] px-5 py-3 text-sm font-bold text-[#1A2E33]">{technology}</span>)}
+              {service.techStack.map((technology) => (
+                <span
+                  key={technology}
+                  className="rounded-xl border border-[#2A4A52]/15 bg-[#F5F7F8] px-5 py-3 text-sm font-bold text-[#1A2E33]"
+                >
+                  {technology}
+                </span>
+              ))}
             </div>
           </div>
         </section>
@@ -586,7 +684,10 @@ export default async function ServicesDetails({ params }) {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
             {service.process.map((step, index) => (
-              <div key={`${step.title}-${index}`} className="rounded-xl bg-white p-6 border border-gray-200">
+              <div
+                key={`${step.title}-${index}`}
+                className="rounded-xl bg-white p-6 border border-gray-200"
+              >
                 <span className="mb-5 flex h-10 w-10 items-center justify-center rounded-full bg-[#1A2E33] text-sm font-black text-white">
                   {index + 1}
                 </span>
@@ -605,7 +706,20 @@ export default async function ServicesDetails({ params }) {
       <section className="bg-white px-4 py-16 sm:px-6 lg:px-8">
         <div className="relative mx-auto max-w-6xl overflow-hidden rounded-[2rem] bg-gradient-to-br from-[#1A2E33] to-[#2A4A52] px-6 py-14 text-center text-white shadow-xl sm:px-10">
           <div className="absolute inset-0 opacity-[0.08] bg-[radial-gradient(#F28C5E_1px,transparent_1px)] [background-size:24px_24px]" />
-          <div className="relative mx-auto max-w-3xl"><h2 className="text-3xl font-extrabold sm:text-4xl">{service.cta.title}</h2><p className="mx-auto mt-4 max-w-2xl leading-relaxed text-gray-200">{service.cta.description}</p><Link href={service.cta.href} className="mt-8 inline-flex items-center justify-center rounded-xl bg-[#E8622A] px-7 py-4 font-bold text-white transition-colors hover:bg-white hover:text-[#1A2E33]">{service.cta.label}</Link></div>
+          <div className="relative mx-auto max-w-3xl">
+            <h2 className="text-3xl font-extrabold sm:text-4xl">
+              {service.cta.title}
+            </h2>
+            <p className="mx-auto mt-4 max-w-2xl leading-relaxed text-gray-200">
+              {service.cta.description}
+            </p>
+            <Link
+              href={service.cta.href}
+              className="mt-8 inline-flex items-center justify-center rounded-xl bg-[#E8622A] px-7 py-4 font-bold text-white transition-colors hover:bg-white hover:text-[#1A2E33]"
+            >
+              {service.cta.label}
+            </Link>
+          </div>
         </div>
       </section>
 
@@ -621,7 +735,10 @@ export default async function ServicesDetails({ params }) {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             {serviceFaqs.map((faq) => (
-              <div key={faq.question} className="rounded-xl border border-gray-200 bg-white p-6">
+              <div
+                key={faq.question}
+                className="rounded-xl border border-gray-200 bg-white p-6"
+              >
                 <h3 className="mb-3 flex items-start gap-2 text-base font-extrabold text-[#1A2E33]">
                   <Rocket className="mt-0.5 h-4 w-4 flex-shrink-0 text-[#E8622A]" />
                   {faq.question}

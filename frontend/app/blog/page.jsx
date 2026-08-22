@@ -4,6 +4,8 @@ import { JsonLd } from "@/components/JsonLd";
 import { breadcrumbSchema } from "@/lib/schema";
 import { API_URL } from "@/utils/api";
 
+export const revalidate = 3600;
+
 const blogPageSchema = {
   "@context": "https://schema.org",
   "@type": "Blog",
@@ -50,7 +52,7 @@ async function getInitialPosts() {
   try {
     const url = `${API_URL}/public/posts?page=1&limit=12`;
     const response = await fetch(url, {
-      cache: "no-store",
+      next: { revalidate: 3600 },
       headers: { Accept: "application/json" },
     });
 

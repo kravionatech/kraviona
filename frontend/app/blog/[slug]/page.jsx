@@ -25,11 +25,15 @@ import {
   normalizeStructuredData,
 } from "@/app/seoConfig.js";
 import { API_URL } from "@/utils/api";
-import { formatDate, getDate, getImageAlt, getImageUrl } from "@/utils/dataHelpers";
+import {
+  formatDate,
+  getDate,
+  getImageAlt,
+  getImageUrl,
+} from "@/utils/dataHelpers";
 import { getAuthorAvatar } from "@/lib/utils/imageUrl";
 
-export const revalidate = 0;
-export const dynamic = "force-dynamic";
+export const revalidate = 3600;
 
 const SERVICE_LINKS = {
   default: [
@@ -104,25 +108,49 @@ function getArticleSchemaType(blog) {
 
 function getAuthorProfile(blog) {
   const author = blog?.author || {};
-  const account = blog?.userID && typeof blog.userID === "object" ? blog.userID : {};
+  const account =
+    blog?.userID && typeof blog.userID === "object" ? blog.userID : {};
   const profile = account.profile || {};
-  const socialLinks = Array.isArray(profile.socialLinks) ? profile.socialLinks : [];
+  const socialLinks = Array.isArray(profile.socialLinks)
+    ? profile.socialLinks
+    : [];
   const socialUrl = (platform) =>
     socialLinks.find((link) =>
-      String(link?.name || "").toLowerCase().includes(platform),
+      String(link?.name || "")
+        .toLowerCase()
+        .includes(platform),
     )?.url || "";
 
   return {
     name: account.name || author.name || "Kraviona Team",
     username: account.username || author.username || "",
-    role: profile.jobTitle || author.jobTitle || author.role || author.title || "Author",
+    role:
+      profile.jobTitle ||
+      author.jobTitle ||
+      author.role ||
+      author.title ||
+      "Author",
     bio: profile.bio || author.bio || author.description || "",
     avatar: getAuthorAvatar(
-      account.avatar || author.avatar?.url || author.avatar || author.image?.url || author.image,
+      account.avatar ||
+        author.avatar?.url ||
+        author.avatar ||
+        author.image?.url ||
+        author.image,
     ),
     email: author.email || "",
-    linkedin: socialUrl("linkedin") || author.linkedin || author.linkedInUrl || author.linkedinUrl || "",
-    twitter: socialUrl("twitter") || socialUrl("x.com") || author.twitter || author.twitterUrl || "",
+    linkedin:
+      socialUrl("linkedin") ||
+      author.linkedin ||
+      author.linkedInUrl ||
+      author.linkedinUrl ||
+      "",
+    twitter:
+      socialUrl("twitter") ||
+      socialUrl("x.com") ||
+      author.twitter ||
+      author.twitterUrl ||
+      "",
   };
 }
 
@@ -153,7 +181,7 @@ function getRelevantServices(blog) {
 async function getBlog(slug) {
   try {
     const res = await fetch(`${API_URL}/post/${slug}`, {
-      cache: "no-store",
+      next: { revalidate: 3600 },
       headers: { Accept: "application/json" },
     });
 
@@ -174,7 +202,7 @@ async function getBlog(slug) {
 async function getRecommendedPosts() {
   try {
     const res = await fetch(`${API_URL}/public/posts?limit=24`, {
-      cache: "no-store",
+      next: { revalidate: 3600 },
       headers: { Accept: "application/json" },
     });
 
@@ -212,14 +240,15 @@ export async function generateMetadata({ params }) {
   const openGraphTitle = blog.ogTitle || seoTitle;
   const openGraphDescription = blog.ogDescription || description;
   const twitterTitle = blog.twitterTitle || openGraphTitle;
-  const twitterDescription =
-    blog.twitterDescription || openGraphDescription;
+  const twitterDescription = blog.twitterDescription || openGraphDescription;
 
   const blogCanonical = canonicalUrl(`/blog/${slug}`);
   const authorProfile = getAuthorProfile(blog);
   const featuredImageUrl = getImageUrl(blog);
   const publishedTime = getDate(blog.publishedAt || blog.createdAt);
-  const modifiedTime = getDate(blog.updatedAt || blog.publishedAt || blog.createdAt);
+  const modifiedTime = getDate(
+    blog.updatedAt || blog.publishedAt || blog.createdAt,
+  );
 
   return {
     title: seoTitle,
@@ -355,7 +384,8 @@ const BlogDetail = async ({ params }) => {
   const updatedSource = blog.updatedAt;
   const publishedDate = formatDate(publishedSource) || "Recently published";
   const updatedDate =
-    getDate(updatedSource) && getDate(updatedSource) !== getDate(publishedSource)
+    getDate(updatedSource) &&
+    getDate(updatedSource) !== getDate(publishedSource)
       ? formatDate(updatedSource)
       : null;
   const readingTime = blog.readingTimeMinutes
@@ -403,8 +433,13 @@ const BlogDetail = async ({ params }) => {
     .trim()
     .substring(0, 160);
   const articleText = plainText(blog.content || blog.excerpt || "");
-  const articleWords = articleText ? articleText.split(/\s+/).filter(Boolean) : [];
-  const calculatedReadingMinutes = Math.max(1, Math.ceil(articleWords.length / 200));
+  const articleWords = articleText
+    ? articleText.split(/\s+/).filter(Boolean)
+    : [];
+  const calculatedReadingMinutes = Math.max(
+    1,
+    Math.ceil(articleWords.length / 200),
+  );
   const supportingTopics = Array.isArray(blog.supportingTopicClusters)
     ? blog.supportingTopicClusters
     : blog.supportingTopicClusters
@@ -457,10 +492,7 @@ const BlogDetail = async ({ params }) => {
       .filter(Boolean)
       .map((name) => ({ "@type": "Thing", name })),
 
-    mentions: [
-      ...articleTags,
-      ...supportingTopics,
-    ]
+    mentions: [...articleTags, ...supportingTopics]
       .filter(Boolean)
       .slice(0, 8)
       .map((name) => ({ "@type": "Thing", name })),
@@ -525,22 +557,23 @@ const BlogDetail = async ({ params }) => {
         })
       : generatedArticleSchema;
 
-  const videoSchema = blog.videoEmbedded?.hasVideo && blog.videoEmbedded?.videoUrl
-    ? {
-        "@context": "https://schema.org",
-        "@type": "VideoObject",
-        name: blog.videoEmbedded.name || blog.title,
-        description: articleDescription,
-        thumbnailUrl: blog.videoEmbedded.thumbnailUrl
-          ? [absoluteImageUrl(blog.videoEmbedded.thumbnailUrl)]
-          : [articleImage],
-        uploadDate: getDate(publishedSource),
-        contentUrl: blog.videoEmbedded.videoUrl,
-        ...(blog.videoEmbedded.duration && {
-          duration: blog.videoEmbedded.duration,
-        }),
-      }
-    : null;
+  const videoSchema =
+    blog.videoEmbedded?.hasVideo && blog.videoEmbedded?.videoUrl
+      ? {
+          "@context": "https://schema.org",
+          "@type": "VideoObject",
+          name: blog.videoEmbedded.name || blog.title,
+          description: articleDescription,
+          thumbnailUrl: blog.videoEmbedded.thumbnailUrl
+            ? [absoluteImageUrl(blog.videoEmbedded.thumbnailUrl)]
+            : [articleImage],
+          uploadDate: getDate(publishedSource),
+          contentUrl: blog.videoEmbedded.videoUrl,
+          ...(blog.videoEmbedded.duration && {
+            duration: blog.videoEmbedded.duration,
+          }),
+        }
+      : null;
 
   const breadcrumbSchema = {
     "@context": "https://schema.org",
@@ -592,9 +625,7 @@ const BlogDetail = async ({ params }) => {
         }}
       />
       <JsonLd
-        data={[breadcrumbSchema, faqSchema, videoSchema].filter(
-          Boolean,
-        )}
+        data={[breadcrumbSchema, faqSchema, videoSchema].filter(Boolean)}
       />
 
       {/* ─── Article Header ───────────────────────────────────────────── */}
@@ -650,9 +681,21 @@ const BlogDetail = async ({ params }) => {
             </p>
 
             <div className="mb-9 flex flex-wrap gap-3 text-xs text-gray-300">
-              <MetaPill icon={<CalendarDays className="h-3.5 w-3.5" />} value={publishedDate} dark />
-              <MetaPill icon={<Clock className="h-3.5 w-3.5" />} value={readingTime} dark />
-              <MetaPill icon={<UserRound className="h-3.5 w-3.5" />} value={authorProfile.name} dark />
+              <MetaPill
+                icon={<CalendarDays className="h-3.5 w-3.5" />}
+                value={publishedDate}
+                dark
+              />
+              <MetaPill
+                icon={<Clock className="h-3.5 w-3.5" />}
+                value={readingTime}
+                dark
+              />
+              <MetaPill
+                icon={<UserRound className="h-3.5 w-3.5" />}
+                value={authorProfile.name}
+                dark
+              />
               {updatedDate ? (
                 <MetaPill
                   icon={<CalendarDays className="h-3.5 w-3.5" />}
@@ -673,13 +716,15 @@ const BlogDetail = async ({ params }) => {
                 />
               )}
             </div>
-
           </div>
         </div>
       </section>
 
       {/* ─── Main Content ─────────────────────────────────────────────── */}
-      <div id="article-content" className="bg-[#F3F6F6] px-4 pb-20 pt-6 sm:px-6 lg:px-8 lg:pt-0">
+      <div
+        id="article-content"
+        className="bg-[#F3F6F6] px-4 pb-20 pt-6 sm:px-6 lg:px-8 lg:pt-0"
+      >
         <div className="relative z-20 mx-auto grid max-w-7xl grid-cols-1 gap-8 lg:-mt-14 lg:grid-cols-[minmax(0,790px)_320px] lg:items-start lg:justify-center lg:gap-10">
           {/* LEFT CONTENT */}
           <div className="min-w-0 rounded-[1.75rem] border border-[#DCE5E6] bg-white p-5 shadow-[0_24px_70px_rgba(26,46,51,0.09)] sm:p-8 lg:p-10">
@@ -756,7 +801,8 @@ const BlogDetail = async ({ params }) => {
                   Talk to our delivery team
                 </h2>
                 <p className="mt-2 text-sm leading-relaxed text-gray-600">
-                  Get practical help applying these ideas to your website or product.
+                  Get practical help applying these ideas to your website or
+                  product.
                 </p>
                 <div className="mt-4 space-y-2">
                   {relevantServices.map((service) => (
@@ -827,8 +873,14 @@ const BlogDetail = async ({ params }) => {
                       <a
                         key={social.name}
                         href={social.href}
-                        target={social.href.startsWith("http") ? "_blank" : undefined}
-                        rel={social.href.startsWith("http") ? "noopener noreferrer" : undefined}
+                        target={
+                          social.href.startsWith("http") ? "_blank" : undefined
+                        }
+                        rel={
+                          social.href.startsWith("http")
+                            ? "noopener noreferrer"
+                            : undefined
+                        }
                         aria-label={`${authorProfile.name} on ${social.name}`}
                         className="flex h-10 w-10 items-center justify-center rounded-lg border border-gray-200 bg-[#F5F7F8] text-[#1A2E33] transition-colors hover:border-[#E8622A] hover:bg-[#E8622A] hover:text-white"
                       >
@@ -838,7 +890,6 @@ const BlogDetail = async ({ params }) => {
                   })}
                 </div>
               </div>
-
             </div>
           </aside>
         </div>
@@ -856,9 +907,7 @@ function MetaPill({ icon, value, dark = false }) {
           : "border border-gray-200 bg-white text-[#1A2E33]"
       }`}
     >
-      <span className={dark ? "text-[#F28C5E]" : "text-[#E8622A]"}>
-        {icon}
-      </span>
+      <span className={dark ? "text-[#F28C5E]" : "text-[#E8622A]"}>{icon}</span>
       {value}
     </span>
   );

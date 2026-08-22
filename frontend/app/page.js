@@ -11,6 +11,8 @@ import {
   defaultRobots,
 } from "./seoConfig.js";
 
+export const revalidate = 3600;
+
 // JSON-LD: FAQ Schema (GEO Optimisation)
 const faqSchema = {
   "@context": "https://schema.org",
@@ -258,7 +260,7 @@ export const metadata = {
 async function getLatestPosts() {
   try {
     const response = await fetch(`${API_URL}/public/posts?page=1&limit=3`, {
-      cache: "no-store",
+      next: { revalidate: 3600 },
       headers: { Accept: "application/json" },
     });
     if (!response.ok) return [];

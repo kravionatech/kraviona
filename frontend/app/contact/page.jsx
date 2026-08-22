@@ -36,6 +36,8 @@ const contactPageSchema = {
   },
 };
 
+export const dynamic = "force-static";
+
 export const metadata = {
   title: "Contact Kraviona | Web Development & Technical SEO",
   description:

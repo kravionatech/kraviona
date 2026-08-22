@@ -4,6 +4,8 @@ import NotFoundClient from "@/components/NotFound/NotFoundClient";
 import { breadcrumbSchema as buildBreadcrumbSchema } from "@/lib/schema";
 import { API_URL } from "@/utils/api";
 
+export const revalidate = 3600;
+
 export const metadata = {
   title: "404 - Page Not Found | Kraviona Tech Solutions",
   description:
@@ -20,7 +22,7 @@ export const metadata = {
 async function getSuggestedPosts() {
   try {
     const response = await fetch(`${API_URL}/public/posts?page=1&limit=3`, {
-      next: { revalidate: 300 },
+      next: { revalidate: 3600 },
       headers: { Accept: "application/json" },
     });
     if (!response.ok) return [];

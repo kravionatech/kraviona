@@ -13,6 +13,8 @@ const title = "Privacy Policy";
 const description =
   "Read Kraviona's bilingual Privacy Policy covering data collection, cookies, third-party services, retention, user rights, and privacy contact details.";
 
+export const dynamic = "force-static";
+
 export const metadata = {
   title: "Privacy Policy",
   description,

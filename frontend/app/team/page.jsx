@@ -14,8 +14,14 @@ import {
 
 import { JsonLd } from "@/components/JsonLd";
 import { breadcrumbSchema } from "@/lib/schema";
-import { absoluteImageUrl, buildMetadata, DEFAULT_OG_IMAGE } from "@/app/seoConfig.js";
+import {
+  absoluteImageUrl,
+  buildMetadata,
+  DEFAULT_OG_IMAGE,
+} from "@/app/seoConfig.js";
 import { API_URL } from "@/utils/api";
+
+export const revalidate = 3600;
 
 const fallbackMembers = [
   {
@@ -86,7 +92,7 @@ export const metadata = buildMetadata({
 async function getTeamMembers() {
   try {
     const response = await fetch(`${API_URL}/public/team`, {
-      next: { revalidate: 300 },
+      next: { revalidate: 3600 },
     });
 
     if (!response.ok) return fallbackMembers;
@@ -151,7 +157,9 @@ function teamSchema(members) {
 const TeamPage = async () => {
   const members = await getTeamMembers();
   const featured = members.find((member) => member.isFeatured) || members[0];
-  const departments = [...new Set(members.map((m) => m.department).filter(Boolean))];
+  const departments = [
+    ...new Set(members.map((m) => m.department).filter(Boolean)),
+  ];
 
   return (
     <div className="min-h-screen bg-white text-[#1A2E33]">

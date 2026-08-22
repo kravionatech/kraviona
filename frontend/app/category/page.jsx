@@ -8,6 +8,8 @@ const title = "Blog Categories and Topic Hubs | Kraviona Insights";
 const description =
   "Browse Kraviona blog categories for practical guides on MERN stack development, technical SEO, AI automation, UI/UX, cloud, and digital growth.";
 
+export const dynamic = "force-static";
+
 export const metadata = {
   title,
   description,

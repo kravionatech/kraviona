@@ -129,7 +129,7 @@ const getNewestIsoDate = (...values) => {
 async function fetchJson(path) {
   const response = await fetch(`${API_URL}${path}`, {
     headers: { Accept: "application/json" },
-    next: { revalidate: AI_CONTENT_REVALIDATE },
+    next: { revalidate: 3600 },
   });
 
   return response.ok ? response.json() : {};

@@ -3,6 +3,8 @@ import { JsonLd } from "@/components/JsonLd";
 import { breadcrumbSchema } from "@/lib/schema";
 import { defaultRobots } from "@/app/seoConfig.js";
 
+export const dynamic = "force-static";
+
 export const metadata = {
   title: "Pricing for Web Development & SEO Plans | Kraviona",
   description:
@@ -118,11 +120,31 @@ const pricingTiers = [
 ];
 
 const seoPricing = [
-  { service: "Technical SEO Audit", price: "₹8,000 - ₹15,000", delivery: "5-7 days" },
-  { service: "Monthly SEO Retainer", price: "₹12,000 - ₹25,000 / month", delivery: "Ongoing" },
-  { service: "Core Web Vitals Fix", price: "₹10,000 - ₹20,000", delivery: "1-2 weeks" },
-  { service: "Schema Markup Implementation", price: "₹5,000 - ₹8,000", delivery: "2-3 days" },
-  { service: "GEO / AI SEO Setup", price: "₹6,000 - ₹12,000", delivery: "3-5 days" },
+  {
+    service: "Technical SEO Audit",
+    price: "₹8,000 - ₹15,000",
+    delivery: "5-7 days",
+  },
+  {
+    service: "Monthly SEO Retainer",
+    price: "₹12,000 - ₹25,000 / month",
+    delivery: "Ongoing",
+  },
+  {
+    service: "Core Web Vitals Fix",
+    price: "₹10,000 - ₹20,000",
+    delivery: "1-2 weeks",
+  },
+  {
+    service: "Schema Markup Implementation",
+    price: "₹5,000 - ₹8,000",
+    delivery: "2-3 days",
+  },
+  {
+    service: "GEO / AI SEO Setup",
+    price: "₹6,000 - ₹12,000",
+    delivery: "3-5 days",
+  },
 ];
 
 const PRICING_URL = "https://kraviona.com/pricing";
@@ -190,8 +212,12 @@ const pricingOfferSchema = {
   name: "Kraviona starting-price web development plans",
   url: PRICING_URL,
   priceCurrency: "INR",
-  lowPrice: String(Math.min(...pricedTierOffers.map((offer) => Number(offer.price)))),
-  highPrice: String(Math.max(...pricedTierOffers.map((offer) => Number(offer.price)))),
+  lowPrice: String(
+    Math.min(...pricedTierOffers.map((offer) => Number(offer.price))),
+  ),
+  highPrice: String(
+    Math.max(...pricedTierOffers.map((offer) => Number(offer.price))),
+  ),
   offerCount: pricedTierOffers.length,
   availability: "https://schema.org/InStock",
   description:
@@ -244,21 +270,31 @@ const Pricing = () => {
                 </span>
               )}
               <div>
-                <h2 className={`text-2xl font-black ${tier.highlight ? "text-white" : "text-primary"}`}>
+                <h2
+                  className={`text-2xl font-black ${tier.highlight ? "text-white" : "text-primary"}`}
+                >
                   {tier.name}
                 </h2>
-                <p className={`mt-2 text-sm font-semibold ${tier.highlight ? "text-white/75" : "text-brand-muted"}`}>
+                <p
+                  className={`mt-2 text-sm font-semibold ${tier.highlight ? "text-white/75" : "text-brand-muted"}`}
+                >
                   {tier.tagline}
                 </p>
                 <div className="mt-6">
-                  <span className={`text-4xl font-black ${tier.highlight ? "text-white" : "text-accent-dark"}`}>
+                  <span
+                    className={`text-4xl font-black ${tier.highlight ? "text-white" : "text-accent-dark"}`}
+                  >
                     {tier.priceFrom}
                   </span>
-                  <span className={`ml-2 text-sm font-bold ${tier.highlight ? "text-white/75" : "text-brand-muted"}`}>
+                  <span
+                    className={`ml-2 text-sm font-bold ${tier.highlight ? "text-white/75" : "text-brand-muted"}`}
+                  >
                     {tier.priceSuffix}
                   </span>
                 </div>
-                <p className={`mt-3 text-sm font-bold ${tier.highlight ? "text-accent-hover" : "text-accent-dark"}`}>
+                <p
+                  className={`mt-3 text-sm font-bold ${tier.highlight ? "text-accent-hover" : "text-accent-dark"}`}
+                >
                   Timeline: {tier.timeline}
                 </p>
               </div>
@@ -269,7 +305,9 @@ const Pricing = () => {
                     key={feature}
                     className={`flex gap-3 text-sm leading-relaxed ${tier.highlight ? "text-white/85" : "text-brand-muted"}`}
                   >
-                    <span className={`mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full text-xs font-black ${tier.highlight ? "bg-white/15 text-accent-hover" : "bg-primary-tint text-primary"}`}>
+                    <span
+                      className={`mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full text-xs font-black ${tier.highlight ? "bg-white/15 text-accent-hover" : "bg-primary-tint text-primary"}`}
+                    >
                       ✓
                     </span>
                     {feature}

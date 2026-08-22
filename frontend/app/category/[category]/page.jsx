@@ -4,22 +4,26 @@ import { notFound } from "next/navigation";
 import { canonicalUrl, defaultRobots } from "@/app/seoConfig.js";
 import { API_URL } from "@/utils/api";
 
+export const revalidate = 3600;
+
 async function getCategoryData(slug) {
   try {
     const [categoryResponse, postsResponse] = await Promise.all([
       fetch(`${API_URL}/category/${encodeURIComponent(slug)}`, {
-        next: { revalidate: 300 },
+        next: { revalidate: 3600 },
         headers: { Accept: "application/json" },
       }),
       fetch(
         `${API_URL}/public/posts?category=${encodeURIComponent(slug)}&page=1&limit=12`,
         {
-          cache: "no-store",
+          next: { revalidate: 3600 },
           headers: { Accept: "application/json" },
         },
       ),
     ]);
-    const categoryJson = categoryResponse.ok ? await categoryResponse.json() : {};
+    const categoryJson = categoryResponse.ok
+      ? await categoryResponse.json()
+      : {};
     const postsJson = postsResponse.ok ? await postsResponse.json() : {};
     const returnedPosts = Array.isArray(postsJson?.data) ? postsJson.data : [];
     const categoryPosts = returnedPosts.filter((post) => {
@@ -52,7 +56,8 @@ export async function generateMetadata({ params }) {
     .replace(/-/g, " ")
     .replace(/\b\w/g, (l) => l.toUpperCase());
 
-  const title = categoryData?.metaTitle || `${formattedTitle} Articles and Guides`;
+  const title =
+    categoryData?.metaTitle || `${formattedTitle} Articles and Guides`;
   const description =
     categoryData?.metaDescription ||
     categoryData?.description ||

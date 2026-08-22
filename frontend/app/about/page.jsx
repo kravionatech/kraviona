@@ -35,6 +35,8 @@ const aboutPageSchema = {
   },
 };
 
+export const dynamic = "force-static";
+
 export const metadata = {
   title: "About Kraviona | Founder-Led Web Development Team",
   description:

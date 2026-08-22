@@ -4,11 +4,13 @@ import { notFound } from "next/navigation";
 
 import { API_URL } from "@/utils/api";
 
+export const revalidate = 3600;
+
 async function getProject(slug) {
   try {
     const response = await fetch(
       `${API_URL}/projects/${encodeURIComponent(slug)}`,
-      { next: { revalidate: 60 } },
+      { next: { revalidate: 3600 } },
     );
     if (!response.ok) return null;
     const payload = await response.json();
@@ -29,10 +31,7 @@ export default async function ProjectDetailsPage({ params }) {
   return (
     <main className="bg-[#f5f7f8] py-20">
       <article className="mx-auto max-w-5xl px-4 sm:px-6">
-        <Link
-          href="/case-studies"
-          className="text-sm font-bold text-[#e8622a]"
-        >
+        <Link href="/case-studies" className="text-sm font-bold text-[#e8622a]">
           ← All case studies
         </Link>
 
@@ -78,7 +77,10 @@ export default async function ProjectDetailsPage({ params }) {
           ]
             .filter(([, value]) => value)
             .map(([title, value]) => (
-              <section key={title} className="rounded-2xl bg-white p-7 shadow-sm">
+              <section
+                key={title}
+                className="rounded-2xl bg-white p-7 shadow-sm"
+              >
                 <h2 className="text-xl font-extrabold text-[#1a2e33]">
                   {title}
                 </h2>
@@ -89,7 +91,9 @@ export default async function ProjectDetailsPage({ params }) {
             ))}
 
           <section className="rounded-2xl bg-white p-7 shadow-sm">
-            <h2 className="text-xl font-extrabold text-[#1a2e33]">Technology</h2>
+            <h2 className="text-xl font-extrabold text-[#1a2e33]">
+              Technology
+            </h2>
             <div className="mt-4 flex flex-wrap gap-2">
               {(project.techStack || []).length ? (
                 project.techStack.map((item) => (
