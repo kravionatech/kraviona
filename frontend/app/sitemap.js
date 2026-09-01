@@ -4,6 +4,12 @@ import { SERVICE_LINKS } from "./services/serviceData.js";
 
 export const revalidate = 3600;
 
+const baseUrl = "https://kraviona.com";
+const EXCLUDED_SLUGS = [
+  "bGF0ZXN0LW",
+  "ai-news-august-2026",
+];
+
 const POSTS_FETCH_LIMIT = 100;
 const MAX_POST_PAGES = 20;
 const RECENT_POST_UPDATE_WINDOW_MS = 30 * 24 * 60 * 60 * 1000;
@@ -127,7 +133,9 @@ async function getPublishedPosts() {
     console.error("[SITEMAP_POSTS_ERROR]", error?.message);
   }
 
-  return posts.filter((post) => post?.slug && !post?.isNoIndex);
+  return posts.filter(
+    (post) => post?.slug && !post?.isNoIndex && !EXCLUDED_SLUGS.includes(post.slug),
+  );
 }
 
 async function getPublishedCategories() {
@@ -182,20 +190,22 @@ function buildCareerRoutes(careers) {
 }
 
 function buildBlogPostRoutes(posts) {
-  return posts.map((post) => {
-    const lastModified = getNewestIsoDate(
-      post.updatedAt,
-      post.publishedAt,
-      post.createdAt,
-    );
+  return posts
+    .filter((post) => !EXCLUDED_SLUGS.includes(post.slug))
+    .map((post) => {
+      const lastModified = getNewestIsoDate(
+        post.updatedAt,
+        post.publishedAt,
+        post.createdAt,
+      );
 
-    return createRoute({
-      path: `/blog/${post.slug}`,
-      changeFrequency: getBlogChangeFrequency(lastModified),
-      priority: 0.85,
-      lastModified,
+      return createRoute({
+        path: `/blog/${post.slug}`,
+        changeFrequency: getBlogChangeFrequency(lastModified),
+        priority: 0.85,
+        lastModified,
+      });
     });
-  });
 }
 
 function buildCategoryRoutes(posts, categories) {
@@ -282,5 +292,5 @@ export default async function sitemap() {
     ...buildCareerRoutes(careers),
     ...buildCategoryRoutes(posts, categories),
     ...buildBlogPostRoutes(posts),
-  ]);
+  ]).filter((entry) => entry.url.startsWith("https://kraviona.com"));
 }

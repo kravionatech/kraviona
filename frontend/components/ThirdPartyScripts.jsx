@@ -82,11 +82,42 @@ function loadGoogleNewsSwg() {
   });
 }
 
+function trackPageView() {
+  if (typeof window === "undefined") return;
+
+  window.dataLayer = window.dataLayer || [];
+  window.dataLayer.push({
+    event: "page_view",
+    page_location: window.location.href,
+    page_path: window.location.pathname,
+    send_page_view: true,
+  });
+}
+
 export default function ThirdPartyScripts() {
   useEffect(() => {
     // GA4 is configured inside GTM. Loading gtag.js here as well would fire the
     // same page view twice.
     loadGoogleTagManager();
+    trackPageView();
+
+    const onHistoryChange = () => trackPageView();
+    const originalPushState = window.history.pushState;
+    const originalReplaceState = window.history.replaceState;
+
+    window.history.pushState = function patchedPushState(...args) {
+      const result = originalPushState.apply(this, args);
+      onHistoryChange();
+      return result;
+    };
+
+    window.history.replaceState = function patchedReplaceState(...args) {
+      const result = originalReplaceState.apply(this, args);
+      onHistoryChange();
+      return result;
+    };
+
+    window.addEventListener("popstate", onHistoryChange);
 
     const loadNews = () => {
       // loadChatbase();
@@ -98,6 +129,9 @@ export default function ThirdPartyScripts() {
       window.removeEventListener("pointerdown", loadNews);
       window.removeEventListener("keydown", loadNews);
       window.removeEventListener("touchstart", loadNews);
+      window.removeEventListener("popstate", onHistoryChange);
+      window.history.pushState = originalPushState;
+      window.history.replaceState = originalReplaceState;
     };
 
     window.addEventListener("pointerdown", loadNews, {

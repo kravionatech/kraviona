@@ -80,6 +80,25 @@ const nextConfig = {
   async headers() {
     return [
       {
+        source: "/:path*",
+        headers: [
+          {
+            key: "X-Robots-Tag",
+            value: "index, follow",
+          },
+        ],
+      },
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "(?!kraviona\\.com).*\\.vercel\\.app" }],
+        headers: [
+          {
+            key: "X-Robots-Tag",
+            value: "noindex, nofollow",
+          },
+        ],
+      },
+      {
         source: "/((?!api|_next/static|_next/image|favicon.ico|blog/).*)",
         headers: [
           {
@@ -187,6 +206,38 @@ const nextConfig = {
 
   async redirects() {
     return [
+      // P1-A: Ghost Base64 slug — fix broken GA4 URL
+      {
+        source: "/blog/bGF0ZXN0LW",
+        destination: "/blog/latest-ai-news-august-2026",
+        permanent: true,
+      },
+      // P1-B: Stale Vercel deployment URLs — redirect to canonical domain
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "kraviona.vercel.app" }],
+        destination: "https://kraviona.com/:path*",
+        permanent: true,
+      },
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "kraviona-git-main.vercel.app" }],
+        destination: "https://kraviona.com/:path*",
+        permanent: true,
+      },
+      // P1-C: Any preview deployment URL pattern
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "(?!kraviona\\.com).*\\.vercel\\.app" }],
+        destination: "https://kraviona.com/:path*",
+        permanent: true,
+      },
+      // P1-D: Duplicate AI post slug (if exists) — add any confirmed duplicate slug here
+      {
+        source: "/blog/ai-news-august-2026",
+        destination: "/blog/latest-ai-news-august-2026",
+        permanent: true,
+      },
       {
         source: "/services/react-js-development",
         destination: "/services/react-development",
