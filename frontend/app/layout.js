@@ -5,11 +5,11 @@ import "@fontsource/poppins/600.css";
 import "@fontsource/poppins/700.css";
 import "@fontsource/poppins/800.css";
 
-import { Analytics } from "@vercel/analytics/next";
-import { SpeedInsights } from "@vercel/speed-insights/next";
+import { Suspense } from "react";
 import Script from "next/script";
 import Header from "@/components/Header/Header";
 import Footer from "@/components/Footer/Footer";
+import GAPageTracker from "@/components/GAPageTracker";
 import { JsonLd } from "@/components/JsonLd";
 import ThirdPartyScripts from "@/components/ThirdPartyScripts";
 import { WhatsAppFloat } from "@/components/WhatsAppFloat";
@@ -177,9 +177,27 @@ export default function RootLayout({ children }) {
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2639855770462648"
           crossOrigin="anonymous"
         />
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-WKDGR26N2Q"
+          strategy="afterInteractive"
+        />
+        <Script id="ga4-init" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-WKDGR26N2Q', {
+              page_path: window.location.pathname,
+              send_page_view: true
+            });
+          `}
+        </Script>
       </head>
 
       <body className="font-sans antialiased bg-surface">
+        <Suspense fallback={null}>
+          <GAPageTracker />
+        </Suspense>
         <a
           href="#main-content"
           className="sr-only fixed left-4 top-4 z-[100] rounded-lg bg-primary px-4 py-3 font-bold text-white focus:not-sr-only focus:outline-none focus:ring-4 focus:ring-accent/40"
@@ -211,8 +229,6 @@ export default function RootLayout({ children }) {
 
         <WhatsAppFloat />
         <ThirdPartyScripts />
-        <Analytics />
-        <SpeedInsights />
 
       </body>
     </html>

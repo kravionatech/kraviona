@@ -2,11 +2,6 @@ import { fileURLToPath } from "node:url";
 
 /** @type {import('next').NextConfig} */
 
-const rawDeploymentId =
-  process.env.VERCEL_URL || process.env.VERCEL_GIT_COMMIT_SHA || "";
-const deploymentId = rawDeploymentId
-  .replace(/[^a-zA-Z0-9_-]/g, "-")
-  .slice(0, 32);
 const scriptSources = [
   "'self'",
   "'unsafe-inline'",
@@ -38,8 +33,7 @@ const contentSecurityPolicy = [
 const nextConfig = {
   // This app is deployed independently from the repository root, which has
   // its own lockfile. Keep production file tracing scoped to the frontend.
-  outputFileTracingRoot: fileURLToPath(new URL("../", import.meta.url)),
-  ...(deploymentId ? { deploymentId } : {}),
+  outputFileTracingRoot: fileURLToPath(new URL("./", import.meta.url)),
   reactStrictMode: true,
   poweredByHeader: false,
   compress: true,
@@ -62,6 +56,7 @@ const nextConfig = {
     // images difficult to refresh after an update.
     minimumCacheTTL: 86400,
     dangerouslyAllowSVG: false,
+    unoptimized: false,
 
     remotePatterns: [
       // NOTE: Do NOT add source.unsplash.com here — it is the deprecated
@@ -85,16 +80,6 @@ const nextConfig = {
           {
             key: "X-Robots-Tag",
             value: "index, follow",
-          },
-        ],
-      },
-      {
-        source: "/:path*",
-        has: [{ type: "host", value: "(?!kraviona\\.com).*\\.vercel\\.app" }],
-        headers: [
-          {
-            key: "X-Robots-Tag",
-            value: "noindex, nofollow",
           },
         ],
       },
@@ -212,27 +197,7 @@ const nextConfig = {
         destination: "/blog/latest-ai-news-august-2026",
         permanent: true,
       },
-      // P1-B: Stale Vercel deployment URLs — redirect to canonical domain
-      {
-        source: "/:path*",
-        has: [{ type: "host", value: "kraviona.vercel.app" }],
-        destination: "https://kraviona.com/:path*",
-        permanent: true,
-      },
-      {
-        source: "/:path*",
-        has: [{ type: "host", value: "kraviona-git-main.vercel.app" }],
-        destination: "https://kraviona.com/:path*",
-        permanent: true,
-      },
-      // P1-C: Any preview deployment URL pattern
-      {
-        source: "/:path*",
-        has: [{ type: "host", value: "(?!kraviona\\.com).*\\.vercel\\.app" }],
-        destination: "https://kraviona.com/:path*",
-        permanent: true,
-      },
-      // P1-D: Duplicate AI post slug (if exists) — add any confirmed duplicate slug here
+      // P1-B: Duplicate AI post slug (if exists) — add any confirmed duplicate slug here
       {
         source: "/blog/ai-news-august-2026",
         destination: "/blog/latest-ai-news-august-2026",
