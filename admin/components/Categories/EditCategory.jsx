@@ -35,6 +35,7 @@ const EditCategory = ({ id, setEditPageOpen }) => {
   const [twitterTitle, setTwitterTitle] = useState("");
   const [twitterDescription, setTwitterDescription] = useState("");
   const [twitterImage, setTwitterImage] = useState("");
+  const [contentType, setContentType] = useState("all");
 
   // Fetch Existing Category Data
   useEffect(() => {
@@ -52,6 +53,7 @@ const EditCategory = ({ id, setEditPageOpen }) => {
           setDescription(data.description || "");
           setSlug(data.slug || "");
           setStatus(data.status || "published");
+          setContentType(data.contentType || "all");
           setMetaTitle(data.metaTitle || "");
           setMetaDescription(data.metaDescription || "");
           setMetaKeywords(data.metaKeywords || "");
@@ -88,7 +90,7 @@ const EditCategory = ({ id, setEditPageOpen }) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          name, description, slug, status, metaTitle, metaDescription,
+          name, description, slug, status, contentType, metaTitle, metaDescription,
           canonicalUrl, ogTitle, ogDescription, ogImage, twitterTitle,
           twitterImage, twitterDescription
         })
@@ -206,6 +208,15 @@ const EditCategory = ({ id, setEditPageOpen }) => {
                   <select name="status" value={status} onChange={(e) => setStatus(e.target.value)} className={inputBaseClasses}>
                     <option value="published">Published</option>
                     <option value="draft">Draft</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className={labelClasses}>Content Type</label>
+                  <select name="contentType" value={contentType} onChange={(e) => setContentType(e.target.value)} className={inputBaseClasses}>
+                    <option value="all">All Content (Blog & News)</option>
+                    <option value="blog">Blog Only</option>
+                    <option value="news">News Only</option>
                   </select>
                 </div>
               </div>

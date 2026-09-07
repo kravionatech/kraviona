@@ -652,6 +652,7 @@ export default function EwayBlogLayout({
       setArchiveLoading(true);
       try {
         const params = new URLSearchParams({
+          contentType: "blog",
           page: String(archivePage),
           limit: String(POSTS_FETCH_LIMIT),
         });

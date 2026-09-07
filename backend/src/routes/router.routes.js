@@ -21,6 +21,8 @@ import { getLoginHistory } from "../controllers/login-history/login-history.cont
 import { createService, deleteService, getPublicServiceBySlug, getServices, updateService } from "../controllers/services/services.controller.js";
 import { getPublicKey, subscribeToBlogPush, unsubscribeFromBlogPush } from "../controllers/notifications/blog-push.controller.js";
 import { createCareer, deleteCareer, getAdminCareers, getPublicCareerBySlug, getPublicCareers, updateCareer } from "../controllers/careers/careers.controller.js";
+import { getCodeInjection, getSetting, updateSetting } from "../controllers/settings/siteSettings.controller.js";
+import { createRedirect, deleteRedirect, getPublicRedirects, getRedirects, updateRedirect } from "../controllers/settings/redirects.controller.js";
 
 const Router  = express.Router();
 
@@ -151,3 +153,19 @@ Router.get('/leads',verifyToken,getAllLeads)
 Router.get('/leads/:id',verifyToken,getLeadById)
 Router.patch('/leads/:id',verifyToken,updateLead)
 Router.delete('/leads/:id',verifyToken,deleteLead)
+
+// ─── Site Settings ───────────────────────────────────────────────────────────
+// Public: code injection values read by the frontend layout
+Router.get('/public/settings/code-injection', getCodeInjection)
+// Admin: read/write any allowed setting key
+Router.get('/admin/settings/:key', verifyToken, getSetting)
+Router.put('/admin/settings/:key', verifyToken, updateSetting)
+
+// ─── Redirect Management ─────────────────────────────────────────────────────
+// Public: Next.js middleware reads active redirects
+Router.get('/public/redirects', getPublicRedirects)
+// Admin: full CRUD
+Router.get('/admin/redirects', verifyToken, getRedirects)
+Router.post('/admin/redirects', verifyToken, createRedirect)
+Router.put('/admin/redirects/:id', verifyToken, updateRedirect)
+Router.delete('/admin/redirects/:id', verifyToken, deleteRedirect)

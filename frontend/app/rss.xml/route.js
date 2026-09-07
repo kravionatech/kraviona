@@ -23,7 +23,8 @@ export async function GET() {
 
   const items = posts
     .map((post) => {
-      const url = canonicalUrl(`/blog/${post.slug}`);
+      const cat = post.category?.slug || (post.contentType === "news" ? "news" : "blog");
+      const url = canonicalUrl(`/${cat}/${post.slug}`);
       const title = escapeXml(post.title || "Kraviona Blog Article");
       const description = escapeXml(
         getExcerpt(post) ||

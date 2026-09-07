@@ -49,6 +49,7 @@ ${formatList(content.categories)}
 
 ${formatList(content.articles, true)}
 
+${Array.isArray(content.newsArticles) && content.newsArticles.length > 0 ? `## News Articles\n\n${formatList(content.newsArticles, true)}\n\n` : ""}
 ## AI Usage Notes
 
 - This file indexes public pages only.

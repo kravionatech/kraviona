@@ -230,6 +230,7 @@ const FEATURED = [
 
 const SIMPLE_MENUS = {
   Insights: [
+    { name: "Tech News", path: "/news" },
     { name: "All Articles", path: "/blog" },
     { name: "Case Studies", path: "/case-studies" },
     { name: "MERN Stack", path: "/category/mern-stack" },
@@ -248,6 +249,7 @@ const SIMPLE_MENUS = {
 const NAV_ITEMS = [
   { name: "Home", path: "/" },
   { name: "Services", path: "/services", mega: true },
+  { name: "News", path: "/news" },
   { name: "Insights", dropdown: SIMPLE_MENUS.Insights, path: "/blog" },
   { name: "Case Studies", path: "/case-studies" },
   { name: "Company", dropdown: SIMPLE_MENUS.Company, path: "/about" },

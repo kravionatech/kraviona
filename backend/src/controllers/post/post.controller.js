@@ -300,6 +300,7 @@ export const createPost = async (req, res) => {
       contentSourceType,
       isCommentEnabled,
       category,
+      contentType,
     } = req.body;
 
     // FIX: trimmed the required-fields list down to what's actually
@@ -373,8 +374,8 @@ export const createPost = async (req, res) => {
       ...(bannerImage?.url && { bannerImage }),
       gallery: Array.isArray(gallery) ? gallery : [],
       videoEmbedded,
-      metaTitle: metaTitle?.trim(), // falls back to the schema default (title) if omitted
-      metaDescription: metaDescription?.trim(), // falls back to the schema default (excerpt) if omitted
+      metaTitle: metaTitle?.trim(),
+      metaDescription: metaDescription?.trim(),
       keywords: normalizedKeywords,
       focusKeywords: normalizedFocusKeywords,
       semanticKeywords: normalizedSemanticKeywords,
@@ -385,9 +386,6 @@ export const createPost = async (req, res) => {
       structuredDataOverride,
       language,
       alternateLanguageVersions: Array.isArray(alternateLanguageVersions) ? alternateLanguageVersions : [],
-      // FIX: og/twitter fields now fall back to metaTitle/metaDescription/
-      // title/excerpt instead of being forced as five separate required
-      // inputs the client had to fill in by hand for every single post.
       ogTitle: (ogTitle || metaTitle || title).trim(),
       ogDescription: (ogDescription || metaDescription || excerpt).trim(),
       ogImage: ogImage?.trim() || featuredImage?.url,
@@ -402,13 +400,11 @@ export const createPost = async (req, res) => {
       status: publishing.status,
       scheduledAt: publishing.scheduledAt,
       contentSourceType,
+      contentType: ["blog", "news"].includes(contentType) ? contentType : "blog",
       isCommentEnabled: parseBoolean(isCommentEnabled, true),
       userID: existingUser._id,
       author: authorSnapshotFromAccount(existingUser),
       categoryID: matchedCategory._id,
-      // FIX: removed `status` from the embedded category snapshot — the
-      // Post schema's `category` sub-object only defines `name` and `slug`,
-      // so this was a dead write Mongoose was silently dropping.
       category: {
         name: matchedCategory.name,
         slug: matchedCategory.slug,
@@ -461,6 +457,13 @@ export const publicPosts = async (req, res) => {
       ? normalizeSlug(req.query.category)
       : null;
     const search = String(req.query.search || "").trim();
+    const contentTypeFilter = String(req.query.contentType || "").trim().toLowerCase();
+
+    // Filter by content type when explicitly requested. Omitting the param
+    // returns all posts — keeps existing sitemap / RSS / LLMs.txt callers working.
+    if (["blog", "news"].includes(contentTypeFilter)) {
+      appendPublicPostFilterClause(filter, { contentType: contentTypeFilter });
+    }
 
     if (search) {
       const searchRegex = { $regex: search, $options: "i" };
@@ -589,6 +592,8 @@ export const privatePosts = async (req, res) => {
     }
     if (indexability === "noindex") filter.isNoIndex = true;
     if (indexability === "indexed") filter.isNoIndex = { $ne: true };
+    const contentTypeFilter = String(req.query.contentType || "").trim().toLowerCase();
+    if (["blog", "news"].includes(contentTypeFilter)) filter.contentType = contentTypeFilter;
 
     const [totalPosts, published, draft, scheduled, archived, noIndex, indexed] =
       await Promise.all([
@@ -757,6 +762,7 @@ export const updatePost = async (req, res) => {
       reviewedBy,
       lastReviewedAt,
       nextReviewDueAt,
+      contentType,
     } = req.body;
 
     // Only re-slugify / re-check uniqueness if slug or title actually changed.
@@ -858,6 +864,9 @@ export const updatePost = async (req, res) => {
       post.scheduledAt = publishing.scheduledAt;
     }
     if (contentSourceType !== undefined) post.contentSourceType = contentSourceType;
+    if (contentType !== undefined && ["blog", "news"].includes(contentType)) {
+      post.contentType = contentType;
+    }
     if (isCommentEnabled !== undefined) {
       post.isCommentEnabled = parseBoolean(isCommentEnabled, post.isCommentEnabled);
     }

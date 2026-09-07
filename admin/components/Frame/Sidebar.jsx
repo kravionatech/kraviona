@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
+  ArrowLeftRight,
   BarChart3,
   BookOpen,
   FileText,
@@ -28,6 +29,7 @@ const primaryNavigation = [
   { href: "/blog/new", label: "Create Post", icon: PlusCircle },
   { href: "/media", label: "Media Library", icon: ImageIcon },
   { href: "/settings", label: "Settings", icon: Settings, superAdminOnly: true },
+  { href: "/settings/redirects", label: "Redirects", icon: ArrowLeftRight, superAdminOnly: true },
 ];
 
 const workspaceNavigation = [

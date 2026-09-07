@@ -50,7 +50,7 @@ const parsePosts = (json) =>
 
 async function getInitialPosts() {
   try {
-    const url = `${API_URL}/public/posts?page=1&limit=12`;
+    const url = `${API_URL}/public/posts?contentType=blog&page=1&limit=12`;
     const response = await fetch(url, {
       next: { revalidate: 3600 },
       headers: { Accept: "application/json" },

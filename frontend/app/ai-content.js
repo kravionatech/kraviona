@@ -33,6 +33,12 @@ const staticPages = [
       "Published public articles about MERN stack development, AI automation, SEO, and performance.",
   },
   {
+    title: "News",
+    url: canonicalUrl("/news"),
+    description:
+      "Latest tech news, AI developments, startup news, and industry announcements from Kraviona.",
+  },
+  {
     title: "Case Studies",
     url: canonicalUrl("/case-studies"),
     description:
@@ -240,17 +246,21 @@ export async function getAiPublicContent() {
       : "Kraviona service page.",
   }));
 
-  const articles = posts.map((post) => ({
-    title: cleanText(post.title),
-    url: canonicalUrl(`/blog/${post.slug}`),
-    description: cleanText(post.excerpt),
-    category: cleanText(post.category?.name || post.category?.slug || ""),
-    lastModified: getNewestIsoDate(
-      post.updatedAt,
-      post.publishedAt,
-      post.createdAt,
-    ),
-  }));
+  const articles = posts.map((post) => {
+    const cat = post.category?.slug || (post.contentType === "news" ? "news" : "blog");
+    return {
+      title: cleanText(post.title),
+      url: canonicalUrl(`/${cat}/${post.slug}`),
+      description: cleanText(post.excerpt),
+      category: cleanText(post.category?.name || post.category?.slug || ""),
+      contentType: post.contentType || "blog",
+      lastModified: getNewestIsoDate(
+        post.updatedAt,
+        post.publishedAt,
+        post.createdAt,
+      ),
+    };
+  });
 
   return {
     site: {
@@ -264,7 +274,8 @@ export async function getAiPublicContent() {
     staticPages,
     services: uniqueByUrl(services),
     categories: buildCategories(posts, categories),
-    articles: uniqueByUrl(articles),
+    articles: uniqueByUrl(articles.filter((a) => a.contentType !== "news")),
+    newsArticles: uniqueByUrl(articles.filter((a) => a.contentType === "news")),
     generatedAt: new Date().toISOString(),
   };
 }

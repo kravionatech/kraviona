@@ -3,12 +3,11 @@ import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 import { motion } from "framer-motion";
-import { Mail, PhoneCall } from "lucide-react"; // Make sure lucide-react is installed
+import { Mail, PhoneCall, ChevronRight } from "lucide-react";
 
 const ContactBanner = () => {
   return (
-    // Height matched with Services Banner (40vh-50vh) for consistency across inner pages
-    <section className="relative w-full h-[40vh] md:h-[60vh] flex flex-col justify-center bg-[#1A2E33] overflow-hidden font-sans">
+    <section className="relative w-full min-h-[40vh] md:min-h-[60vh] flex flex-col justify-center bg-[#1A2E33] overflow-hidden font-sans py-16 md:py-0">
       {/* --- Background Image & Deep Brand Dark Overlay --- */}
       <div className="absolute inset-0 w-full h-full z-0">
         <Image
@@ -20,7 +19,6 @@ const ContactBanner = () => {
           fetchPriority="high"
           sizes="100vw"
         />
-        {/* Kraviona Dark Teal Gradient */}
         <div className="absolute inset-0 bg-gradient-to-r from-[#2A4A52] via-[#2A4A52]/90 to-[#2A4A52]/60"></div>
       </div>
 
@@ -31,39 +29,32 @@ const ContactBanner = () => {
         <div className="absolute right-[0%] top-1/2 -translate-y-1/2 w-[40vh] h-[40vh] rounded-full border-[1px] border-white/5"></div>
       </div>
 
-      {/* --- Banner Content (Left Aligned for Inner Pages) --- */}
-      <div className="relative z-10 w-full max-w-7xl mx-auto px-6 md:px-12 mt-10 md:mt-0">
+      {/* --- Banner Content --- */}
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-6 md:px-12">
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
         >
-          {/* Main Headline */}
           <h1 className="text-5xl md:text-6xl font-extrabold text-white mb-4 tracking-tight drop-shadow-lg">
             Start a Project
           </h1>
 
-          {/* Breadcrumbs (Home » Contact Us) */}
-          <div className="flex items-center gap-2 text-sm md:text-base font-medium text-gray-300 mb-8">
+          <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-sm md:text-base font-medium text-gray-300 mb-8">
             <Link
               href="/"
-              className="hover:text-[#F28C5E] transition-colors duration-300"
+              className="hover:text-[#F28C5E] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F28C5E] rounded transition-colors duration-300"
             >
               Home
             </Link>
+            <ChevronRight className="w-4 h-4 text-[#E8622A]" aria-hidden="true" />
+            <span className="text-[#F28C5E]" aria-current="page">Start a Project</span>
+          </nav>
 
-            {/* Kraviona Terracotta Divider */}
-            <span className="text-[#E8622A] font-bold mx-1">»</span>
-
-            <span className="text-[#F28C5E]">Start a Project</span>
-          </div>
-
-          {/* --- Direct Contact Info Pills --- */}
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-            {/* Email Pill */}
-            <a
+            
               href="mailto:kravionatech@gmail.com"
-              className="group flex items-center gap-3 px-5 py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-[#F28C5E]/50 rounded-full transition-all duration-300 backdrop-blur-sm"
+              className="group flex items-center gap-3 px-5 py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-[#F28C5E]/50 rounded-full transition-all duration-300 backdrop-blur-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F28C5E]"
             >
               <div className="bg-[#F28C5E]/10 p-1.5 rounded-full group-hover:bg-[#F28C5E]/20 transition-colors">
                 <Mail className="w-4 h-4 text-[#F28C5E]" />
@@ -73,10 +64,9 @@ const ContactBanner = () => {
               </span>
             </a>
 
-            {/* Phone Pill */}
-            <a
+            
               href="tel:+919608553167"
-              className="group flex items-center gap-3 px-5 py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-[#E8622A]/50 rounded-full transition-all duration-300 backdrop-blur-sm"
+              className="group flex items-center gap-3 px-5 py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-[#E8622A]/50 rounded-full transition-all duration-300 backdrop-blur-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E8622A]"
             >
               <div className="bg-[#E8622A]/10 p-1.5 rounded-full group-hover:bg-[#E8622A]/20 transition-colors">
                 <PhoneCall className="w-4 h-4 text-[#E8622A]" />

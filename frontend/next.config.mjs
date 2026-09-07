@@ -5,17 +5,14 @@ import { fileURLToPath } from "node:url";
 const scriptSources = [
   "'self'",
   "'unsafe-inline'",
-  // Next's development tooling uses eval. Do not ship that permission in the
-  // production CSP.
   ...(process.env.NODE_ENV !== "production" ? ["'unsafe-eval'"] : []),
   "https://www.googletagmanager.com",
   "https://www.google-analytics.com",
   "https://www.chatbase.co",
   "https://news.google.com",
-  // AdSense uses changing serving domains. Google supports a permissive
-  // HTTPS source policy when a per-request nonce policy is not in use.
   "https:",
 ].join(" ");
+
 const contentSecurityPolicy = [
   "default-src 'self'",
   "base-uri 'self'",
@@ -24,15 +21,13 @@ const contentSecurityPolicy = [
   "form-action 'self' https://calendly.com https://wa.me",
   "img-src 'self' data: blob: https:",
   "font-src 'self' data: https://fonts.gstatic.com",
-  "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+  "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://news.google.com",
   `script-src ${scriptSources}`,
   "connect-src 'self' https:",
   "frame-src 'self' https:",
 ].join("; ");
 
 const nextConfig = {
-  // This app is deployed independently from the repository root, which has
-  // its own lockfile. Keep production file tracing scoped to the frontend.
   outputFileTracingRoot: fileURLToPath(new URL("./", import.meta.url)),
   reactStrictMode: true,
   poweredByHeader: false,
@@ -52,16 +47,16 @@ const nextConfig = {
     formats: ["image/avif", "image/webp"],
     deviceSizes: [375, 640, 750, 828, 1080, 1200, 1920],
     imageSizes: [16, 32, 48, 64, 80, 96, 128, 256, 384],
-    // Keep the optimizer cache useful without making unversioned remote
-    // images difficult to refresh after an update.
     minimumCacheTTL: 86400,
     dangerouslyAllowSVG: false,
-    unoptimized: false,
-
+    unoptimized: true,
+    localPatterns: [
+      {
+        pathname: "/**",
+        search: "",
+      },
+    ],
     remotePatterns: [
-      // NOTE: Do NOT add source.unsplash.com here — it is the deprecated
-      // Unsplash Source API that returns 400 errors. Use images.unsplash.com
-      // (the direct CDN) instead, or better yet, serve images locally.
       { protocol: "https", hostname: "res.cloudinary.com" },
       { protocol: "https", hostname: "images.pexels.com" },
       { protocol: "https", hostname: "img.freepik.com" },
@@ -95,8 +90,6 @@ const nextConfig = {
           { key: "X-Robots-Tag", value: "index, follow" },
         ],
       },
-      // CMS-backed pages must not wait for the general HTML cache to expire.
-      // Keep these entries after the general rule so their header wins.
       {
         source: "/",
         headers: [
@@ -149,9 +142,6 @@ const nextConfig = {
           },
         ],
       },
-      // API and framework responses are not landing pages. Keep crawl-control
-      // headers off public HTML pages, where App Router metadata emits the
-      // page-specific robots directive and canonical URL.
       {
         source: "/api/:path*",
         headers: [
@@ -191,13 +181,11 @@ const nextConfig = {
 
   async redirects() {
     return [
-      // P1-A: Ghost Base64 slug — fix broken GA4 URL
       {
         source: "/blog/bGF0ZXN0LW",
         destination: "/blog/latest-ai-news-august-2026",
         permanent: true,
       },
-      // P1-B: Duplicate AI post slug (if exists) — add any confirmed duplicate slug here
       {
         source: "/blog/ai-news-august-2026",
         destination: "/blog/latest-ai-news-august-2026",

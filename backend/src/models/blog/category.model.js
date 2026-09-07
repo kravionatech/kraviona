@@ -45,6 +45,16 @@ const categorySchema = new mongoose.Schema(
       },
     },
 
+    // Determines whether this category is used for blog posts, news articles,
+    // or both. Defaults to "blog" so all existing categories are preserved
+    // without any migration script.
+    contentType: {
+      type:    String,
+      enum:    ["blog", "news", "all"],
+      default: "blog",
+      index:   true,
+    },
+
     userID: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",

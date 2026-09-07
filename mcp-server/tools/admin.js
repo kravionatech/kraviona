@@ -11,6 +11,7 @@ import { Project } from "../../backend/src/models/portfolio/project.model.js";
 import { Service } from "../../backend/src/models/services/service.model.js";
 import { TeamMemberModel } from "../../backend/src/models/team/team.model.js";
 import { Auth } from "../../backend/src/models/auth/auth.models.js";
+import { RedirectModel } from "../../backend/src/models/settings/redirect.model.js";
 import { config } from "../config.js";
 import { connectDB, getDBStatus, pingDB } from "../db.js";
 import { getResource, resourceNames, resources } from "../catalog.js";
@@ -186,6 +187,29 @@ const baseTools = [
       additionalProperties: false,
     },
     annotations: annotations({ title: "Add lead activity" }),
+  },
+  {
+    name: "validate_redirect",
+    description:
+      "Validate a proposed 301/302 redirect rule against redirect loops, chains, duplicates, and URL syntax before applying it",
+    inputSchema: {
+      type: "object",
+      properties: {
+        source: {
+          type: "string",
+          minLength: 1,
+          description: "Source URL path (e.g. /blog/old-slug)",
+        },
+        destination: {
+          type: "string",
+          minLength: 1,
+          description: "Destination URL path or absolute URL (e.g. /seo/old-slug)",
+        },
+      },
+      required: ["source", "destination"],
+      additionalProperties: false,
+    },
+    annotations: annotations({ title: "Validate redirect rule", readOnly: true }),
   },
 ];
 
@@ -395,6 +419,54 @@ export const handle = async (toolName, args, context) => {
       return successResult(
         { success: true, ...(await addLeadActivity(args, actor)) },
         "Lead activity added",
+      );
+    }
+    if (toolName === "validate_redirect") {
+      const source = String(args.source || "").trim();
+      const destination = String(args.destination || "").trim();
+      const issues = [];
+
+      if (!source.startsWith("/")) {
+        issues.push("Source path must start with '/'");
+      }
+      if (source === destination) {
+        issues.push("Direct redirect loop: Source and destination are identical");
+      }
+
+      const existingSource = await RedirectModel.findOne({ source });
+      if (existingSource) {
+        issues.push(
+          `Duplicate: An active redirect already exists for source '${source}' -> '${existingSource.destination}'`
+        );
+      }
+
+      const chained = await RedirectModel.findOne({ source: destination });
+      if (chained) {
+        issues.push(
+          `Redirect chain detected: Destination '${destination}' is already redirected to '${chained.destination}'`
+        );
+      }
+
+      const reverse = await RedirectModel.findOne({ source: destination, destination: source });
+      if (reverse) {
+        issues.push(
+          `Circular loop: '${destination}' currently redirects back to '${source}'`
+        );
+      }
+
+      const isValid = issues.length === 0;
+      return successResult(
+        {
+          success: true,
+          isValid,
+          source,
+          destination,
+          issues,
+          recommendation: isValid
+            ? "Redirect rule is safe to create."
+            : `Resolve issues before creating: ${issues.join("; ")}`,
+        },
+        `Redirect validation: ${isValid ? "PASS" : "FAIL"}`
       );
     }
 

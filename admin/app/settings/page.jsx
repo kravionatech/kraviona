@@ -2,13 +2,13 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { Activity, BarChart3, Bell, CheckCircle2, Database, ExternalLink, LayoutPanelTop, MonitorCog, RefreshCw, Settings, ShieldCheck, UserCog } from "lucide-react";
+import { Activity, ArrowLeftRight, BarChart3, Bell, CheckCircle2, Database, ExternalLink, LayoutPanelTop, MonitorCog, RefreshCw, Settings, ShieldCheck, UserCog } from "lucide-react";
 import Frame from "@/components/Frame/Frame";
 import { API_BASE_URL, apiRequest, formatDate } from "@/components/api";
 import { ContentLoader } from "@/components/AsyncState";
 
 const DEFAULT_PREFS = { compactTables: false, emailAlerts: true, securityAlerts: true, dashboardAutoRefresh: true };
-const QUICK_LINKS = [{ label: "Dashboard", href: "/dashboard", icon: BarChart3 }, { label: "Comments", href: "/comments", icon: Bell }, { label: "Content Decay", href: "/content-decay", icon: Activity }, { label: "Media Library", href: "/media", icon: Database }];
+const QUICK_LINKS = [{ label: "Redirects", href: "/settings/redirects", icon: ArrowLeftRight }, { label: "Dashboard", href: "/dashboard", icon: BarChart3 }, { label: "Comments", href: "/comments", icon: Bell }, { label: "Content Decay", href: "/content-decay", icon: Activity }, { label: "Media Library", href: "/media", icon: Database }];
 
 function StatusPill({ status }) { const online = status === "online"; return <span className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-bold capitalize ${online ? "border-emerald-200 bg-emerald-50 text-emerald-700" : status === "checking" ? "border-[#0f5960]/20 bg-[#e7f1f0] text-[#0f5960]" : "border-rose-200 bg-rose-50 text-rose-700"}`}><i className={`h-2 w-2 rounded-full ${online ? "bg-emerald-500" : status === "checking" ? "animate-pulse bg-[#0f5960]" : "bg-rose-500"}`}/>{status}</span>; }
 function StatCard({ label, value, caption, icon: Icon, color = "teal" }) { const tones = { teal: "bg-[#0f5960]/10 text-[#0f5960]", orange: "bg-[#d85e3d]/10 text-[#d85e3d]", gold: "bg-[#f7c56d]/25 text-[#8a5b09]", blue: "bg-[#5c9baa]/15 text-[#276370]" }; return <article className="rounded-2xl border border-[#0f5960]/12 bg-white p-5 shadow-sm"><div className="flex items-start justify-between gap-3"><div><p className="text-[10px] font-black uppercase tracking-[0.14em] text-[#5d7679]">{label}</p><p className="mt-2 truncate text-xl font-black text-[#123f46]">{value}</p></div><span className={`rounded-xl p-2.5 ${tones[color]}`}><Icon size={18}/></span></div><p className="mt-3 text-xs text-slate-500">{caption}</p></article>; }

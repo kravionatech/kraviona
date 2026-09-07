@@ -35,6 +35,7 @@ export default function CreateCategory() {
   const [twitterTitle, setTwitterTitle] = useState("");
   const [twitterDescription, setTwitterDescription] = useState("");
   const [twitterImage, setTwitterImage] = useState("");
+  const [contentType, setContentType] = useState("all");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -52,6 +53,7 @@ export default function CreateCategory() {
           description,
           slug,
           status,
+          contentType,
           metaTitle,
           metaDescription,
           canonicalUrl,
@@ -201,6 +203,20 @@ export default function CreateCategory() {
             >
               <option value="published">Published</option>
               <option value="draft">Draft</option>
+            </select>
+          </div>
+
+          <div>
+            <label className={labelClasses}>Content Type</label>
+            <select
+              name="contentType"
+              value={contentType}
+              onChange={(e) => setContentType(e.target.value)}
+              className={inputBaseClasses}
+            >
+              <option value="all">All Content (Blog & News)</option>
+              <option value="blog">Blog Only</option>
+              <option value="news">News Only</option>
             </select>
           </div>
         </div>

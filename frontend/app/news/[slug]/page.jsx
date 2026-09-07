@@ -17,7 +17,7 @@ async function getPost(slug) {
     const data = await response.json();
     return data.data;
   } catch (error) {
-    console.error("[LEGACY_BLOG_SLUG_FETCH_ERROR]", error?.message);
+    console.error("[LEGACY_NEWS_SLUG_FETCH_ERROR]", error?.message);
     return null;
   }
 }
@@ -28,7 +28,7 @@ export async function generateMetadata({ params }) {
 
   if (!post) {
     return {
-      title: "Article Not Found | Kraviona",
+      title: "News Not Found | Kraviona",
       robots: { index: false, follow: false },
     };
   }
@@ -45,7 +45,7 @@ export async function generateMetadata({ params }) {
   };
 }
 
-export default async function LegacyBlogSlugPage({ params }) {
+export default async function LegacyNewsSlugPage({ params }) {
   const { slug } = await params;
   const post = await getPost(slug);
 
@@ -54,6 +54,6 @@ export default async function LegacyBlogSlugPage({ params }) {
   const cat = post.category?.slug || (post.contentType === "news" ? "news" : "blog");
   const targetSlug = post.slug || slug;
 
-  // HTTP 301 Permanent Redirect to new /{category}/{slug} structure
+  // HTTP 301 Permanent Redirect to new /{newscategory}/{slug} structure
   permanentRedirect(`/${cat}/${targetSlug}`);
 }

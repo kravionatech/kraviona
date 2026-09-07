@@ -32,6 +32,7 @@ const COMMANDS = [
   { href: "/login-history", label: "Login history", hint: "Review account sign-ins" },
   { href: "/account", label: "My account", hint: "Your profile details" },
   { href: "/settings", label: "Settings", hint: "Admin configuration", superAdminOnly: true },
+  { href: "/settings/redirects", label: "Redirects", hint: "URL 301/302 redirects", superAdminOnly: true },
 ];
 
 function pageName(pathname) {

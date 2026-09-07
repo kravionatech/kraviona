@@ -12,7 +12,7 @@ export const createCategory = async (req, res) => {
     if (!isExist) return res.status(404).json({ message: "User not found", success: false });
 
     const {
-      name, description, slug, status,
+      name, description, slug, status, contentType,
       metaTitle, metaDescription, metaKeywords, canonicalUrl,
       ogTitle, ogDescription, ogImage,
       twitterTitle, twitterDescription, twitterImage
@@ -30,8 +30,9 @@ export const createCategory = async (req, res) => {
     const category = new CategoryModel({
       name: name.toLowerCase().trim(),
       description: description.trim(),
-      slug:slugify(slug.toLowerCase().trim(), { lower: true, strict: true }),
+      slug: slugify(slug.toLowerCase().trim(), { lower: true, strict: true }),
       status: status || "published",
+      contentType: ["blog", "news", "all"].includes(contentType) ? contentType : "blog",
       metaTitle: metaTitle || "",
       metaDescription: metaDescription || "",
       metaKeywords: metaKeywords || [],
@@ -59,10 +60,17 @@ export const createCategory = async (req, res) => {
   }
 };
 
-// Public — published only
+// Public — published only, with optional contentType filter.
+// Omitting contentType returns all categories (backward compatible for sitemap/LLMs.txt).
 export const getCategories = async (req, res) => {
   try {
-    const categories = await CategoryModel.find({ status: "published" })
+    const query = { status: "published" };
+    const contentTypeFilter = String(req.query.contentType || "").trim().toLowerCase();
+    if (["blog", "news"].includes(contentTypeFilter)) {
+      // "all" categories are visible to both content types
+      query.contentType = { $in: [contentTypeFilter, "all"] };
+    }
+    const categories = await CategoryModel.find(query)
       .select("-__v")
       .sort({ createdAt: -1 })
       .lean();
@@ -123,7 +131,6 @@ export const getAllCategories = async (req, res) => {
         totalPages: Math.ceil(total / perPage),
       },
     });
-
   } catch (error) {
     return res.status(500).json({ message: error.message, success: false });
   }
@@ -166,7 +173,7 @@ export const updateCategory = async (req, res) => {
     }
 
     const {
-      name, description, slug, status,
+      name, description, slug, status, contentType,
       metaTitle, metaDescription, metaKeywords, canonicalUrl,
       ogTitle, ogDescription, ogImage,
       twitterTitle, twitterDescription, twitterImage
@@ -194,6 +201,7 @@ export const updateCategory = async (req, res) => {
       ...(description !== undefined && { description: String(description).trim() }),
       ...(normalizedSlug !== undefined && { slug: normalizedSlug }),
       ...(status !== undefined && { status }),
+      ...(contentType !== undefined && ["blog", "news", "all"].includes(contentType) && { contentType }),
       ...(metaTitle !== undefined && { metaTitle }),
       ...(metaDescription !== undefined && { metaDescription }),
       ...(metaKeywords !== undefined && { metaKeywords }),

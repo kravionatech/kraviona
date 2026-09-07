@@ -78,7 +78,8 @@ function MetaRow({ publishedDate, readingTime, light = false }) {
 const PostCard = ({ post, variant = "default", className = "" }) => {
   if (!post?.slug) return null;
 
-  const href = `/blog/${post.slug}`;
+  const catSlug = post?.category?.slug || (post?.contentType === "news" ? "news" : "blog");
+  const href = `/${catSlug}/${post.slug}`;
   const title = post.title || "Untitled Article";
   const excerpt = getExcerpt(post);
   const { categoryName, publishedDate, readingTime } = getPostMeta(post);

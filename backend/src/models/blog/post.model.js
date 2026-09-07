@@ -325,6 +325,17 @@ const postSchema = new Schema(
     // ----------------------------------------------------------
     // 10. STATUS & PROVENANCE
     // ----------------------------------------------------------
+
+    // Distinguishes blog articles from news items. Defaults to "blog" so
+    // every existing record retains its original content type without a
+    // migration script.
+    contentType: {
+      type:    String,
+      enum:    ["blog", "news"],
+      default: "blog",
+      index:   true,
+    },
+
     status: {
       type:    String,
       enum:    ["published", "draft", "archived", "scheduled"],
@@ -365,6 +376,7 @@ const postSchema = new Schema(
 // ============================================================
 postSchema.index({ status: 1, publishedAt: -1 });                        // listing feeds
 postSchema.index({ status: 1, scheduledAt: 1 });                         // scheduled publish
+postSchema.index({ contentType: 1, status: 1, publishedAt: -1 });        // news / blog feeds
 postSchema.index({ categoryID: 1, status: 1, publishedAt: -1 });         // category pages
 postSchema.index({ primaryTopicCluster: 1, status: 1 });                 // topical cluster pages
 postSchema.index({ tags: 1 });
@@ -458,9 +470,10 @@ postSchema.pre("save", function (next) {
 // VIRTUALS
 // ============================================================
 
-// Convenience: full public URL
+// Convenience: full public URL — /{category}/{slug} for both blog and news
 postSchema.virtual("url").get(function () {
-  return `/blog/${this.slug}`;
+  const cat = this.category?.slug || (this.contentType === "news" ? "news" : "blog");
+  return `/${cat}/${this.slug}`;
 });
 
 // ============================================================

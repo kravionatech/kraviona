@@ -14,6 +14,7 @@ import { BlogPushSubscription } from "../backend/src/models/notifications/blog-p
 import { Project } from "../backend/src/models/portfolio/project.model.js";
 import { Service } from "../backend/src/models/services/service.model.js";
 import { TeamMemberModel } from "../backend/src/models/team/team.model.js";
+import { RedirectModel } from "../backend/src/models/settings/redirect.model.js";
 
 const CRUD = ["list", "get", "create", "update", "delete"];
 const READ_ONLY = ["list", "get"];
@@ -120,12 +121,13 @@ const definitions = [
     filterFields: [
       "status",
       "categoryID",
+      "contentType",
       "language",
       "contentSourceType",
       "isNoIndex",
     ],
     projection:
-      "title slug excerpt quickAnswer tags wordCount readingTimeMinutes author category categoryID featuredImage status publishedAt scheduledAt metaTitle metaDescription schemaType isNoIndex language contentSourceType userID createdAt updatedAt",
+      "title slug excerpt quickAnswer tags wordCount readingTimeMinutes author category categoryID featuredImage status publishedAt scheduledAt metaTitle metaDescription schemaType contentType isNoIndex language contentSourceType userID createdAt updatedAt",
     serverManagedPaths: ["userID", "wordCount", "readingTimeMinutes", "previousSlugs"],
     immutablePaths: ["slug", "createdAt", "publishedAt"],
     prepareCreate: (payload, actor) => ({
@@ -136,6 +138,51 @@ const definitions = [
       },
     }),
     syncCategoryCount: true,
+  },
+  {
+    name: "redirects",
+    singular: "redirect",
+    model: RedirectModel,
+    capabilities: CRUD,
+    searchFields: ["source", "destination"],
+    filterFields: ["type", "active"],
+    projection: "source destination type active createdAt updatedAt",
+    prepareCreate: (payload) => {
+      const source = String(payload.source || "").trim();
+      const destination = String(payload.destination || "").trim();
+      if (!source || !destination) {
+        throw new Error("Both 'source' and 'destination' are required");
+      }
+      if (!source.startsWith("/")) {
+        throw new Error("Source must start with '/' (e.g. /blog/old-slug)");
+      }
+      if (source === destination) {
+        throw new Error("Source and destination cannot be identical (causes infinite loop)");
+      }
+      return {
+        ...payload,
+        source,
+        destination,
+        type: ["301", "302"].includes(String(payload.type)) ? String(payload.type) : "301",
+        active: payload.active !== undefined ? Boolean(payload.active) : true,
+      };
+    },
+    prepareUpdate: (payload) => {
+      const updates = { ...payload };
+      if (updates.source !== undefined) {
+        updates.source = String(updates.source).trim();
+        if (!updates.source.startsWith("/")) {
+          throw new Error("Source must start with '/'");
+        }
+      }
+      if (updates.destination !== undefined) {
+        updates.destination = String(updates.destination).trim();
+      }
+      if (updates.source && updates.destination && updates.source === updates.destination) {
+        throw new Error("Source and destination cannot be identical (causes infinite loop)");
+      }
+      return updates;
+    },
   },
   {
     name: "comments",

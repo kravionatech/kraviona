@@ -461,6 +461,9 @@ const BlogDetailsTab = ({ data, setData, errors, slugManuallyEditedRef }) => {
     setData((p) => ({ ...p, slug: generateSlug(p.title) }));
   };
 
+  const selectedCat = categories.find((c) => c.name === data.category || c.slug === data.category);
+  const categoryPrefix = selectedCat?.slug || (data.contentType === "news" ? "news" : "category");
+
   return (
     <div className="space-y-10">
       {/* ── Core ── */}
@@ -473,6 +476,86 @@ const BlogDetailsTab = ({ data, setData, errors, slugManuallyEditedRef }) => {
         </SectionHeading>
 
         <div className="space-y-5">
+          {/* Content Type Selector */}
+          <div className="rounded-xl border border-gray-200 bg-gray-50/60 p-4">
+            <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2.5">
+              Publishing System (Content Type)
+            </label>
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                type="button"
+                onClick={() =>
+                  setData((p) => ({
+                    ...p,
+                    contentType: "blog",
+                    schemaType: p.schemaType === "NewsArticle" ? "BlogPosting" : p.schemaType,
+                  }))
+                }
+                className={cx(
+                  "flex items-center gap-3 rounded-lg border p-3 text-left transition-all",
+                  (data.contentType || "blog") === "blog"
+                    ? "border-blue-500 bg-blue-50/70 text-blue-900 shadow-sm ring-1 ring-blue-500"
+                    : "border-gray-200 bg-white text-gray-700 hover:bg-gray-50",
+                )}
+              >
+                <div
+                  className={cx(
+                    "h-4 w-4 rounded-full border-2 flex items-center justify-center shrink-0",
+                    (data.contentType || "blog") === "blog"
+                      ? "border-blue-600"
+                      : "border-gray-300",
+                  )}
+                >
+                  {(data.contentType || "blog") === "blog" && (
+                    <div className="h-2 w-2 rounded-full bg-blue-600" />
+                  )}
+                </div>
+                <div>
+                  <div className="text-sm font-bold">Standard Blog Post</div>
+                  <div className="text-xs text-gray-500 mt-0.5">
+                    Routed to /{categoryPrefix}/{data.slug || "slug"}
+                  </div>
+                </div>
+              </button>
+
+              <button
+                type="button"
+                onClick={() =>
+                  setData((p) => ({
+                    ...p,
+                    contentType: "news",
+                    schemaType: "NewsArticle",
+                  }))
+                }
+                className={cx(
+                  "flex items-center gap-3 rounded-lg border p-3 text-left transition-all",
+                  data.contentType === "news"
+                    ? "border-amber-600 bg-amber-50/70 text-amber-950 shadow-sm ring-1 ring-amber-600"
+                    : "border-gray-200 bg-white text-gray-700 hover:bg-gray-50",
+                )}
+              >
+                <div
+                  className={cx(
+                    "h-4 w-4 rounded-full border-2 flex items-center justify-center shrink-0",
+                    data.contentType === "news"
+                      ? "border-amber-600"
+                      : "border-gray-300",
+                  )}
+                >
+                  {data.contentType === "news" && (
+                    <div className="h-2 w-2 rounded-full bg-amber-600" />
+                  )}
+                </div>
+                <div>
+                  <div className="text-sm font-bold">Tech / Industry News</div>
+                  <div className="text-xs text-gray-500 mt-0.5">
+                    Routed to /{categoryPrefix}/{data.slug || "slug"} (NewsArticle)
+                  </div>
+                </div>
+              </button>
+            </div>
+          </div>
+
           {/* Title */}
           <Field
             label="Title"
@@ -507,7 +590,7 @@ const BlogDetailsTab = ({ data, setData, errors, slugManuallyEditedRef }) => {
               )}
             >
               <span className="flex items-center px-3 bg-gray-50 border-r border-gray-200 text-xs text-gray-400 font-medium whitespace-nowrap">
-                /blog/
+                /{categoryPrefix}/
               </span>
               <input
                 type="text"
@@ -1412,6 +1495,7 @@ const INITIAL = {
   isCommentEnabled: true,
   isAccessibleForFree: true,
   contentSourceType: "Human",
+  contentType: "blog",
   status: "draft",
   scheduledAt: "",
   schemaType: "BlogPosting",
@@ -1497,6 +1581,7 @@ const normalizePostForForm = (post) => ({
   isCommentEnabled: post.isCommentEnabled ?? true,
   isAccessibleForFree: post.isAccessibleForFree ?? true,
   contentSourceType: post.contentSourceType || "Human",
+  contentType: post.contentType || "blog",
   status: post.status || "draft",
   scheduledAt: toDateTimeLocalValue(post.scheduledAt),
   schemaType: post.schemaType || "BlogPosting",
@@ -1654,6 +1739,7 @@ const buildPayload = (data, status) => ({
     scheduledAt: new Date(data.scheduledAt).toISOString(),
   }),
   contentSourceType: data.contentSourceType,
+  contentType: data.contentType || "blog",
   isCommentEnabled: data.isCommentEnabled,
   category: data.category,
 });

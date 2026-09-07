@@ -29,6 +29,7 @@ const canonicalStaticRoutes = [
   { path: "/services", changeFrequency: "weekly", priority: 0.95 },
   { path: "/solutions", changeFrequency: "monthly", priority: 0.9 },
   { path: "/blog", changeFrequency: "daily", priority: 0.85 },
+  { path: "/news", changeFrequency: "hourly", priority: 0.9 },
   { path: "/case-studies", changeFrequency: "monthly", priority: 0.86 },
   { path: "/careers", changeFrequency: "weekly", priority: 0.86 },
   { path: "/pricing", changeFrequency: "monthly", priority: 0.9 },
@@ -113,16 +114,16 @@ async function fetchJson(path) {
   return response.ok ? response.json() : {};
 }
 
-async function getPublishedPosts() {
+async function getPublishedPosts(contentType) {
   const posts = [];
   let page = 1;
   let hasNextPage = true;
 
   try {
     while (hasNextPage && page <= MAX_POST_PAGES) {
-      const json = await fetchJson(
-        `/public/posts?page=${page}&limit=${POSTS_FETCH_LIMIT}`,
-      );
+      const params = new URLSearchParams({ page: String(page), limit: String(POSTS_FETCH_LIMIT) });
+      if (contentType) params.set("contentType", contentType);
+      const json = await fetchJson(`/public/posts?${params.toString()}`);
 
       posts.push(...parseCollection(json));
 
@@ -130,7 +131,7 @@ async function getPublishedPosts() {
       page += 1;
     }
   } catch (error) {
-    console.error("[SITEMAP_POSTS_ERROR]", error?.message);
+    console.error(`[SITEMAP_POSTS_ERROR:${contentType || 'all'}]`, error?.message);
   }
 
   return posts.filter(
@@ -191,6 +192,26 @@ function buildCareerRoutes(careers) {
 
 function buildBlogPostRoutes(posts) {
   return posts
+    .filter((post) => !EXCLUDED_SLUGS.includes(post.slug) && post.contentType !== "news")
+    .map((post) => {
+      const lastModified = getNewestIsoDate(
+        post.updatedAt,
+        post.publishedAt,
+        post.createdAt,
+      );
+
+      const cat = post.category?.slug || "blog";
+      return createRoute({
+        path: `/${cat}/${post.slug}`,
+        changeFrequency: getBlogChangeFrequency(lastModified),
+        priority: 0.85,
+        lastModified,
+      });
+    });
+}
+
+function buildNewsPostRoutes(posts) {
+  return posts
     .filter((post) => !EXCLUDED_SLUGS.includes(post.slug))
     .map((post) => {
       const lastModified = getNewestIsoDate(
@@ -199,10 +220,11 @@ function buildBlogPostRoutes(posts) {
         post.createdAt,
       );
 
+      const cat = post.category?.slug || "news";
       return createRoute({
-        path: `/blog/${post.slug}`,
-        changeFrequency: getBlogChangeFrequency(lastModified),
-        priority: 0.85,
+        path: `/${cat}/${post.slug}`,
+        changeFrequency: "hourly",
+        priority: 0.9,
         lastModified,
       });
     });
@@ -279,8 +301,10 @@ function mergeRoutes(routes) {
 }
 
 export default async function sitemap() {
-  const [posts, categories, services, careers] = await Promise.all([
-    getPublishedPosts(),
+  const [blogPosts, newsPosts, allPosts, categories, services, careers] = await Promise.all([
+    getPublishedPosts("blog"),
+    getPublishedPosts("news"),
+    getPublishedPosts(),   // no filter — used for categories (backward compat)
     getPublishedCategories(),
     getPublishedServices(),
     getPublishedCareers(),
@@ -290,7 +314,8 @@ export default async function sitemap() {
     ...staticRoutes,
     ...buildServiceRoutes(services),
     ...buildCareerRoutes(careers),
-    ...buildCategoryRoutes(posts, categories),
-    ...buildBlogPostRoutes(posts),
+    ...buildCategoryRoutes(allPosts, categories),
+    ...buildBlogPostRoutes(blogPosts),
+    ...buildNewsPostRoutes(newsPosts),
   ]).filter((entry) => entry.url.startsWith("https://kraviona.com"));
 }
