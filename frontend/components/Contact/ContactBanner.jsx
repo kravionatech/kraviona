@@ -52,7 +52,7 @@ const ContactBanner = () => {
           </nav>
 
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-            
+            <a
               href="mailto:kravionatech@gmail.com"
               className="group flex items-center gap-3 px-5 py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-[#F28C5E]/50 rounded-full transition-all duration-300 backdrop-blur-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F28C5E]"
             >
@@ -64,7 +64,7 @@ const ContactBanner = () => {
               </span>
             </a>
 
-            
+            <a
               href="tel:+919608553167"
               className="group flex items-center gap-3 px-5 py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-[#E8622A]/50 rounded-full transition-all duration-300 backdrop-blur-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E8622A]"
             >
