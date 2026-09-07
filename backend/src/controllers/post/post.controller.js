@@ -614,6 +614,22 @@ export const privatePosts = async (req, res) => {
       ];
     }
 
+    const category = req.query.category ? normalizeSlug(req.query.category) : null;
+    if (category && category !== "all") {
+      const matchedCategory = await CategoryModel.findOne({
+        $or: [{ slug: category }, { name: category }],
+      }).select("_id");
+
+      if (matchedCategory) {
+        filter.$or = [
+          { categoryID: matchedCategory._id },
+          { "category.slug": category },
+        ];
+      } else {
+        filter["category.slug"] = category;
+      }
+    }
+
     const [totalPosts, published, draft, scheduled, archived, noIndex, indexed] =
       await Promise.all([
         PostModel.countDocuments(filter),
@@ -631,7 +647,7 @@ export const privatePosts = async (req, res) => {
     const posts = await PostModel.find(filter)
         // FIX: same `reaction` -> `reactions` typo as publicPosts.
         .select(
-          "title slug excerpt author category reactions views featuredImage contentSourceType commentCount createdAt updatedAt publishedAt scheduledAt status isNoIndex"
+          "title slug excerpt author category categoryID contentType reactions views featuredImage contentSourceType commentCount createdAt updatedAt publishedAt scheduledAt status isNoIndex"
         )
         .sort({ createdAt: -1 })
         .skip(skip)

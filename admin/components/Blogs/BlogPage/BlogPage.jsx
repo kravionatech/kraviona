@@ -60,6 +60,9 @@ const BlogPage = () => {
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("all");
   const [indexability, setIndexability] = useState("all");
+  const [categories, setCategories] = useState([]);
+  const [categoryFilter, setCategoryFilter] = useState("all");
+  const [contentTypeFilter, setContentTypeFilter] = useState("all");
   const [page, setPage] = useState(1);
   const [pagination, setPagination] = useState({
     totalPosts: 0,
@@ -73,6 +76,24 @@ const BlogPage = () => {
       archived: 0,
     },
   });
+
+  useEffect(() => {
+    let isMounted = true;
+    const loadCategories = async () => {
+      try {
+        const res = await apiRequest("/categories");
+        if (isMounted && Array.isArray(res?.data)) {
+          setCategories(res.data);
+        }
+      } catch (err) {
+        console.error("Failed to load categories:", err);
+      }
+    };
+    loadCategories();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const fetchPosts = useCallback(async (signal) => {
     const timeoutController = new AbortController();
@@ -92,6 +113,8 @@ const BlogPage = () => {
       if (search.trim()) params.set("search", search.trim());
       if (status !== "all") params.set("status", status);
       if (indexability !== "all") params.set("indexability", indexability);
+      if (categoryFilter !== "all") params.set("category", categoryFilter);
+      if (contentTypeFilter !== "all") params.set("contentType", contentTypeFilter);
 
       const data = await apiRequest(
         `/private/posts?${params.toString()}`,
@@ -123,7 +146,7 @@ const BlogPage = () => {
       clearTimeout(timeout);
       if (!signal?.aborted) setLoading(false);
     }
-  }, [indexability, page, search, status]);
+  }, [categoryFilter, contentTypeFilter, indexability, page, search, status]);
 
   const handleDeletePost = async (id) => {
     if (!window.confirm("Delete this post? This action cannot be undone.")) return;
@@ -188,9 +211,9 @@ const BlogPage = () => {
             {[0, 1, 2, 3, 4, 5].map((row) => (
               <div
                 key={row}
-                className="grid grid-cols-[50px_2fr_1fr_100px_120px] gap-5 bg-white px-6 py-5"
+                className="grid grid-cols-[50px_2fr_1fr_1fr_100px_120px] gap-5 bg-white px-6 py-5"
               >
-                {[0, 1, 2, 3, 4].map((cell) => (
+                {[0, 1, 2, 3, 4, 5].map((cell) => (
                   <div
                     key={cell}
                     className="h-4 animate-pulse rounded bg-slate-100"
@@ -320,6 +343,29 @@ const BlogPage = () => {
             ))}
           </div>
           <select
+            aria-label="Filter posts by category"
+            value={categoryFilter}
+            onChange={(event) => { setPage(1); setCategoryFilter(event.target.value); }}
+            className="h-9 w-full rounded-lg border border-gray-200 bg-white px-3 text-xs font-semibold text-gray-700 outline-none focus:border-orange-400 md:w-auto"
+          >
+            <option value="all">All Categories</option>
+            {categories.map((cat) => (
+              <option key={cat._id || cat.slug} value={cat.slug || cat.name}>
+                {cat.name}
+              </option>
+            ))}
+          </select>
+          <select
+            aria-label="Filter posts by content type"
+            value={contentTypeFilter}
+            onChange={(event) => { setPage(1); setContentTypeFilter(event.target.value); }}
+            className="h-9 w-full rounded-lg border border-gray-200 bg-white px-3 text-xs font-semibold text-gray-700 outline-none focus:border-orange-400 md:w-auto"
+          >
+            <option value="all">All Types (Blog & News)</option>
+            <option value="blog">Blog Posts</option>
+            <option value="news">News Articles</option>
+          </select>
+          <select
             aria-label="Filter posts by search index status"
             value={indexability}
             onChange={(event) => { setPage(1); setIndexability(event.target.value); }}
@@ -344,6 +390,7 @@ const BlogPage = () => {
               <tr className="bg-[#1A2B3C] text-white text-xs font-semibold uppercase tracking-wider">
                 <th className="px-6 py-4">Thumbnail</th>
                 <th className="px-6 py-4">Title</th>
+                <th className="px-6 py-4">Category</th>
                 <th className="px-6 py-4">Author</th>
                 <th className="px-6 py-4">Status</th>
                 <th className="px-6 py-4">Date</th>
@@ -370,16 +417,44 @@ const BlogPage = () => {
                         {post.title || "Untitled"}
                       </span>
                       {post.slug && (
-                        <span className="text-xs text-gray-400 font-mono">
-                          /{post.slug}
+                        <span className="text-xs text-gray-400 font-mono block truncate max-w-xs">
+                          /{post.category?.slug ? `${post.category.slug}/` : ""}{post.slug}
                         </span>
                       )}
-                      <span className={`mt-1.5 inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide ${post.isNoIndex ? "bg-rose-50 text-rose-700" : "bg-emerald-50 text-emerald-700"}`}>
-                        {post.isNoIndex && <EyeOff size={11} />}
-                        {post.isNoIndex ? "No index" : "Indexed"}
-                      </span>
+                      <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
+                        <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide ${post.isNoIndex ? "bg-rose-50 text-rose-700" : "bg-emerald-50 text-emerald-700"}`}>
+                          {post.isNoIndex && <EyeOff size={11} />}
+                          {post.isNoIndex ? "No index" : "Indexed"}
+                        </span>
+                        {post.contentType && (
+                          <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider ${
+                            post.contentType === "news"
+                              ? "bg-purple-50 text-purple-700 border border-purple-200"
+                              : "bg-blue-50 text-blue-700 border border-blue-200"
+                          }`}>
+                            {post.contentType}
+                          </span>
+                        )}
+                        {post.category?.name && (
+                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-gray-100 text-gray-700">
+                            {post.category.name}
+                          </span>
+                        )}
+                      </div>
                       {post.excerpt && (
                         <span className="mt-1 block max-w-xs truncate text-xs text-gray-500">{post.excerpt}</span>
+                      )}
+                    </td>
+
+                    <td className="px-6 py-4">
+                      {post.category?.name ? (
+                        <div className="flex flex-col gap-1 items-start">
+                          <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-orange-50 text-[#E8622A] border border-orange-200/70">
+                            {post.category.name}
+                          </span>
+                        </div>
+                      ) : (
+                        <span className="text-xs text-gray-400 italic">Uncategorized</span>
                       )}
                     </td>
 
