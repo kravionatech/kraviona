@@ -66,9 +66,15 @@ export const getCategories = async (req, res) => {
   try {
     const query = { status: "published" };
     const contentTypeFilter = String(req.query.contentType || "").trim().toLowerCase();
-    if (["blog", "news"].includes(contentTypeFilter)) {
-      // "all" categories are visible to both content types
-      query.contentType = { $in: [contentTypeFilter, "all"] };
+    if (contentTypeFilter === "news") {
+      query.contentType = { $in: ["news", "all"] };
+    } else if (contentTypeFilter === "blog") {
+      query.$or = [
+        { contentType: { $in: ["blog", "all"] } },
+        { contentType: { $exists: false } },
+        { contentType: null },
+        { contentType: "" },
+      ];
     }
     const categories = await CategoryModel.find(query)
       .select("-__v")

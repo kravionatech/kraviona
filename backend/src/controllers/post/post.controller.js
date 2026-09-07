@@ -461,8 +461,18 @@ export const publicPosts = async (req, res) => {
 
     // Filter by content type when explicitly requested. Omitting the param
     // returns all posts — keeps existing sitemap / RSS / LLMs.txt callers working.
-    if (["blog", "news"].includes(contentTypeFilter)) {
-      appendPublicPostFilterClause(filter, { contentType: contentTypeFilter });
+    // Legacy posts without an explicit contentType field are treated as "blog".
+    if (contentTypeFilter === "news") {
+      appendPublicPostFilterClause(filter, { contentType: "news" });
+    } else if (contentTypeFilter === "blog") {
+      appendPublicPostFilterClause(filter, {
+        $or: [
+          { contentType: "blog" },
+          { contentType: { $exists: false } },
+          { contentType: null },
+          { contentType: "" },
+        ],
+      });
     }
 
     if (search) {
@@ -593,7 +603,16 @@ export const privatePosts = async (req, res) => {
     if (indexability === "noindex") filter.isNoIndex = true;
     if (indexability === "indexed") filter.isNoIndex = { $ne: true };
     const contentTypeFilter = String(req.query.contentType || "").trim().toLowerCase();
-    if (["blog", "news"].includes(contentTypeFilter)) filter.contentType = contentTypeFilter;
+    if (contentTypeFilter === "news") {
+      filter.contentType = "news";
+    } else if (contentTypeFilter === "blog") {
+      filter.$or = [
+        { contentType: "blog" },
+        { contentType: { $exists: false } },
+        { contentType: null },
+        { contentType: "" },
+      ];
+    }
 
     const [totalPosts, published, draft, scheduled, archived, noIndex, indexed] =
       await Promise.all([
