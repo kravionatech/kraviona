@@ -44,7 +44,52 @@ const isSessionQueryParameter = (key) => {
   );
 };
 
-export function proxy(request) {
+let cachedRedirects = null;
+let lastFetchedAt = 0;
+const CACHE_TTL_MS = 60 * 1000;
+
+const API_BASE = (
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/v1"
+).replace(/\/+$/, "");
+
+async function getActiveRedirects() {
+  const now = Date.now();
+  if (cachedRedirects && now - lastFetchedAt < CACHE_TTL_MS) {
+    return cachedRedirects;
+  }
+
+  try {
+    const res = await fetch(`${API_BASE}/public/redirects`, {
+      next: { revalidate: 60 },
+      headers: { Accept: "application/json" },
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      if (Array.isArray(data?.data)) {
+        const map = new Map();
+        for (const item of data.data) {
+          if (item?.source && item?.destination && item.source !== item.destination) {
+            const cleanSource = item.source.trim().toLowerCase();
+            map.set(cleanSource, {
+              destination: item.destination.trim(),
+              type: item.type === "302" ? 302 : 301,
+            });
+          }
+        }
+        cachedRedirects = map;
+        lastFetchedAt = now;
+        return cachedRedirects;
+      }
+    }
+  } catch {
+    // If backend is unreachable, proceed gracefully
+  }
+
+  return cachedRedirects || new Map();
+}
+
+export async function proxy(request) {
   const url = request.nextUrl;
   const pathname = url.pathname;
 
@@ -86,6 +131,22 @@ export function proxy(request) {
     }
 
     return NextResponse.redirect(url, 308);
+  }
+
+  // ── Database-driven dynamic 301/302 redirects ──────────────────────────────
+  const cleanPath = pathname.toLowerCase().replace(/\/+$/, "") || "/";
+  if (cleanPath !== "/") {
+    const redirectsMap = await getActiveRedirects();
+    if (redirectsMap.has(cleanPath)) {
+      const rule = redirectsMap.get(cleanPath);
+      if (rule.destination.toLowerCase() !== cleanPath) {
+        const targetUrl = rule.destination.startsWith("http://") || rule.destination.startsWith("https://")
+          ? rule.destination
+          : new URL(rule.destination, request.url).toString();
+
+        return NextResponse.redirect(targetUrl, rule.type);
+      }
+    }
   }
 
   return NextResponse.next();
