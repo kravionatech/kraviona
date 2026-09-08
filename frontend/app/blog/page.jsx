@@ -17,7 +17,7 @@ const blogPageSchema = {
   publisher: {
     "@type": "Organization",
     name: "Kraviona Tech Solutions",
-    logo: { "@type": "ImageObject", url: "https://kraviona.com/logo.png" },
+    logo: { "@type": "ImageObject", url: "https://kraviona.com/full-logo.webp" },
   },
   isPartOf: { "@id": "https://kraviona.com/#website" },
   breadcrumb: {

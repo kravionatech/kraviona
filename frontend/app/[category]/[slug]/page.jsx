@@ -368,9 +368,9 @@ export default async function PostDetailPage({ params }) {
         url: "https://kraviona.com",
         logo: {
           "@type": "ImageObject",
-          url: "https://kraviona.com/logo.png",
-          width: 200,
-          height: 60,
+          url: "https://kraviona.com/full-logo.webp",
+          width: 659,
+          height: 226,
         },
       },
       author: {
@@ -657,9 +657,9 @@ export default async function PostDetailPage({ params }) {
       url: "https://kraviona.com",
       logo: {
         "@type": "ImageObject",
-        url: "https://kraviona.com/logo.png",
-        width: 200,
-        height: 60,
+        url: "https://kraviona.com/full-logo.webp",
+        width: 659,
+        height: 226,
       },
     },
     author: {

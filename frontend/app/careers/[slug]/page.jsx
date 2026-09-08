@@ -56,7 +56,7 @@ function buildJobSchema(career) {
       "@type": "Organization",
       name: "Kraviona Tech Solutions",
       sameAs: "https://kraviona.com",
-      logo: "https://kraviona.com/logo.png",
+      logo: "https://kraviona.com/full-logo.webp",
     },
     url: canonicalUrl(`/careers/${career.slug}`),
   };

@@ -249,7 +249,7 @@ const structuredData = [
     name: SITE_NAME,
     url: SITE_URL,
     email: "contact@kraviona.com",
-    logo: `${SITE_URL}/logo.png`,
+    logo: `${SITE_URL}/full-logo.webp`,
   },
 ];
 

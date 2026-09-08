@@ -10,8 +10,8 @@ export const organizationSchema = {
   logo: {
     "@type": "ImageObject",
     url: "https://kraviona.com/full-logo.webp",
-    width: 384,
-    height: 144,
+    width: 659,
+    height: 226,
   },
   image: "https://kraviona.com/opengraph-image",
   description:
