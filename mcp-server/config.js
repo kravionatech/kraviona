@@ -5,10 +5,10 @@ import path from "path";
 const directory = path.dirname(fileURLToPath(import.meta.url));
 const hostProvidedPort = process.env.PORT;
 
-// The MCP must use the same database as the backend. Values explicitly
-// supplied by the host win, then backend/.env, then optional MCP-only values.
+// The MCP must use the same database as the backend. Values in
+// mcp-server/.env override backend/.env (e.g. PORT 5001 vs 5000).
 dotenv.config({ path: path.join(directory, "../backend/.env"), quiet: true });
-dotenv.config({ path: path.join(directory, ".env"), quiet: true });
+dotenv.config({ path: path.join(directory, ".env"), override: true, quiet: true });
 
 const booleanFromEnv = (name, fallback) => {
   const value = process.env[name];
@@ -48,7 +48,7 @@ export const config = Object.freeze({
     process.env.MCP_TRANSPORT ||
     (hostProvidedPort ? "streamable-http" : "stdio")
   ).toLowerCase(),
-  port: integerFromEnv("PORT", 5001, 1, 65_535),
+  port: integerFromEnv("MCP_PORT", integerFromEnv("PORT", 5001, 1, 65_535), 1, 65_535),
   apiKey: (process.env.MCP_API_KEY || "").trim(),
   readOnly: booleanFromEnv("MCP_READ_ONLY", false),
   allowDeletes: booleanFromEnv("MCP_ALLOW_DELETES", false),
