@@ -17,6 +17,7 @@ import {
   Settings,
   Tag,
   BriefcaseBusiness,
+  Bot,
   History,
   UserRound,
   Users,
@@ -35,6 +36,7 @@ const primaryNavigation = [
 const workspaceNavigation = [
   { href: "/leads", label: "Leads", icon: Inbox, superAdminOnly: true },
   { href: "/messages", label: "Messages", icon: MessageSquare, superAdminOnly: true },
+  { href: "/chatbot-logs", label: "AI Chatbot Logs", icon: Bot },
   { href: "/newsletters", label: "Audience", icon: Mail, superAdminOnly: true },
   { href: "/category", label: "Categories", icon: Tag, superAdminOnly: true },
   { href: "/comments", label: "Moderation", icon: BookOpen, superAdminOnly: true },

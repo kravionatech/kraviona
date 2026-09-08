@@ -23,10 +23,12 @@ import { getPublicKey, subscribeToBlogPush, unsubscribeFromBlogPush } from "../c
 import { createCareer, deleteCareer, getAdminCareers, getPublicCareerBySlug, getPublicCareers, updateCareer } from "../controllers/careers/careers.controller.js";
 import { getCodeInjection, getSetting, updateSetting } from "../controllers/settings/siteSettings.controller.js";
 import { createRedirect, deleteRedirect, getPublicRedirects, getRedirects, updateRedirect } from "../controllers/settings/redirects.controller.js";
+import { chatbotSecurityMiddleware } from "../middleware/chatbot.security.js";
+import { chatWithAssistant, getChatbotHealth, getSuggestions, syncChatbotIndex, getAdminChatLogs, deleteAdminChatLog } from "../controllers/chatbot/chatbot.controller.js";
 
 const Router  = express.Router();
 
-export  default Router;
+export default Router;
 
 // Auth Routing
 Router.post('/create-account',createAccount)
@@ -122,6 +124,11 @@ Router.delete('/push/blog/unsubscribe', unsubscribeFromBlogPush)
 // route above. Lives under /private/post/:id (by id, for the editor UI),
 // so it never collides with the public /post/:slug route — they sit under
 // completely different path prefixes, not just different param names.
+
+// FIX: new route — mirrors the /private/posts naming used for the list
+// route above. Lives under /private/post/:id (by id, for the editor UI),
+// so it never collides with the public /post/:slug route — they sit under
+// completely different path prefixes, not just different param names.
 Router.get('/private/post/:id', verifyToken, privateViewPost)
 
 
@@ -169,3 +176,12 @@ Router.get('/admin/redirects', verifyToken, getRedirects)
 Router.post('/admin/redirects', verifyToken, createRedirect)
 Router.put('/admin/redirects/:id', verifyToken, updateRedirect)
 Router.delete('/admin/redirects/:id', verifyToken, deleteRedirect)
+
+// ─── Public AI Chatbot (Zero Super-Admin Auth, Strictly Public Data) ───────────
+Router.post('/chatbot/chat', chatbotSecurityMiddleware, chatWithAssistant);
+Router.get('/chatbot/suggestions', getSuggestions);
+Router.get('/chatbot/health', getChatbotHealth);
+Router.post('/chatbot/sync', verifyToken, syncChatbotIndex);
+Router.get('/admin/chatbot/logs', verifyToken, getAdminChatLogs);
+Router.delete('/admin/chatbot/logs/:id', verifyToken, deleteAdminChatLog);
+

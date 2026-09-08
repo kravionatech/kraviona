@@ -5,6 +5,7 @@ import slugify from "slugify";
 import { recordActivity } from "../../utils/activityLogger.js";
 import { notifyBlogSubscribers } from "../../services/blog-push.service.js";
 import { parseBoolean } from "../../utils/requestValues.js";
+import { invalidateChatbotIndex } from "../../services/chatbot/chatbot.service.js";
 
 // ==========================================
 // CONSTANTS
@@ -427,6 +428,7 @@ export const createPost = async (req, res) => {
 
     if (post.status === "published") {
       queueBlogNotification(post);
+      invalidateChatbotIndex();
     }
 
     return res.status(201).json({
@@ -699,6 +701,9 @@ export const deletePost = async (req, res) => {
     }
 
     await post.deleteOne();
+    if (post.status === "published") {
+      invalidateChatbotIndex();
+    }
     await recordActivity(req, {
       userID: user.id,
       module: "blog",
@@ -940,6 +945,10 @@ export const updatePost = async (req, res) => {
 
     if (!wasPublished && post.status === "published") {
       queueBlogNotification(post);
+    }
+
+    if (wasPublished || post.status === "published") {
+      invalidateChatbotIndex();
     }
 
     return res.status(200).json({

@@ -13,6 +13,14 @@ const scriptSources = [
   "https:",
 ].join(" ");
 
+const connectSources = [
+  "'self'",
+  "https:",
+  ...(process.env.NODE_ENV !== "production"
+    ? ["http://localhost:5000", "http://127.0.0.1:5000", "http://localhost:3000"]
+    : []),
+].join(" ");
+
 const contentSecurityPolicy = [
   "default-src 'self'",
   "base-uri 'self'",
@@ -23,7 +31,7 @@ const contentSecurityPolicy = [
   "font-src 'self' data: https://fonts.gstatic.com",
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://news.google.com",
   `script-src ${scriptSources}`,
-  "connect-src 'self' https:",
+  `connect-src ${connectSources}`,
   "frame-src 'self' https:",
 ].join("; ");
 
