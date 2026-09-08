@@ -126,21 +126,24 @@ export const createHttpApp = (serviceSession = null) => {
     // Also allowed if running in multi-client session token mode
   }
 
-  const allowedHosts = config.oauth.enabled
-    ? [
-        ...new Set(
-          [
-            new URL(config.oauth.publicUrl).hostname,
-            process.env.VERCEL_URL,
-            process.env.VERCEL_BRANCH_URL,
-            process.env.VERCEL_PROJECT_PRODUCTION_URL,
-            "127.0.0.1",
-            "localhost",
-            "[::1]",
-          ].filter(Boolean),
-        ),
-      ]
-    : undefined;
+  const allowedHosts = [
+    ...new Set(
+      [
+        config.oauth.enabled ? new URL(config.oauth.publicUrl).hostname : null,
+        "mcp.kraviona.com",
+        "api.kraviona.com",
+        "admin.kraviona.com",
+        "kraviona.com",
+        "www.kraviona.com",
+        process.env.VERCEL_URL,
+        process.env.VERCEL_BRANCH_URL,
+        process.env.VERCEL_PROJECT_PRODUCTION_URL,
+        "127.0.0.1",
+        "localhost",
+        "[::1]",
+      ].filter(Boolean),
+    ),
+  ];
   const app = createMcpExpressApp({ host: "0.0.0.0", allowedHosts });
 
   if (config.oauth.enabled) {
