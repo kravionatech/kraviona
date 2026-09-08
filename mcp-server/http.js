@@ -165,6 +165,14 @@ export const createHttpApp = (serviceSession = null) => {
         revocationOptions: { rateLimit: proxyAwareRateLimit },
       }),
     );
+    app.get("/.well-known/oauth-protected-resource", (_request, response) => {
+      response.json({
+        resource: config.oauth.resourceUrl,
+        authorization_servers: [new URL(config.oauth.publicUrl).href],
+        scopes_supported: [...oauthScopes],
+        resource_name: "Kraviona Admin MCP",
+      });
+    });
   }
 
   app.get("/health", async (_request, response) => {

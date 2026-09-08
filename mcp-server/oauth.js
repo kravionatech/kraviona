@@ -91,8 +91,22 @@ const assertScopes = (scopes = []) => {
   return [...new Set(requested)];
 };
 
-const redirectAllowed = (uri) =>
-  config.oauth.redirectUris.includes(normalizeUrl(uri));
+const redirectAllowed = (uri) => {
+  const norm = normalizeUrl(uri);
+  if (config.oauth.redirectUris.includes(norm)) return true;
+  try {
+    const parsed = new URL(norm);
+    if (
+      parsed.hostname === "claude.ai" ||
+      parsed.hostname.endsWith(".claude.ai") ||
+      parsed.hostname === "claude.com" ||
+      parsed.hostname.endsWith(".claude.com")
+    ) {
+      return true;
+    }
+  } catch {}
+  return false;
+};
 
 class MongoOAuthClientsStore {
   async getClient(clientId) {
