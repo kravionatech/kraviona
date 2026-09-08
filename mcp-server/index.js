@@ -4,11 +4,14 @@ import vercelHandler from "./api/index.js";
 
 export default vercelHandler;
 
+const isVercel = Boolean(process.env.VERCEL);
 const isDirectExecution =
   process.argv[1] &&
-  path.resolve(process.argv[1]) === path.resolve(fileURLToPath(import.meta.url));
+  (path.resolve(process.argv[1]) === path.resolve(fileURLToPath(import.meta.url)) ||
+    process.argv[1].includes("pm2") ||
+    process.argv[1].includes("index.js"));
 
-if (isDirectExecution) {
+if (!isVercel || isDirectExecution) {
   try {
     const { startLocalServer } = await import("./local.js");
     await startLocalServer();
