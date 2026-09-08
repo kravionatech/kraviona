@@ -28,7 +28,7 @@ async function main() {
         path: "/mcp",
         method: "POST",
         headers: {
-          Host: "mcp.kraviona.com",
+          Host: "api.kraviona.com",
           "Content-Type": "application/json",
           Accept: "application/json, text/event-stream",
           Authorization: "Bearer " + token,
