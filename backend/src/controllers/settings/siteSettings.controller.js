@@ -7,6 +7,8 @@ const ALLOWED_KEYS = [
   "footerCode",   // HTML/script injected right before </body>
   "robotsOverride", // Full custom robots.txt content
   "llmsOverride",   // Full custom LLMs.txt content
+  "seoSettings",    // Global SEO metadata defaults
+  "sitemapSettings",// Sitemap custom inclusions/exclusions
 ];
 
 // ─── GET /public/settings/code-injection ────────────────────────────────────

@@ -58,9 +58,8 @@ export const safeActor = (admin) => ({
   role: admin.role,
 });
 
-export const createAdminSession = async ({ identifier, password }) => {
-  const admin = await authenticateAdminCredentials({ identifier, password });
-
+export const issueSessionToken = async (admin) => {
+  assertEligibleAdmin(admin);
   const token = randomBytes(48).toString("base64url");
   const now = new Date();
   const expiresAt = new Date(
@@ -76,13 +75,20 @@ export const createAdminSession = async ({ identifier, password }) => {
     expiresAt,
   });
 
+  return { token, actor: safeActor(admin), expiresAt };
+};
+
+export const createAdminSession = async ({ identifier, password }) => {
+  const admin = await authenticateAdminCredentials({ identifier, password });
+  const { token, actor, expiresAt } = await issueSessionToken(admin);
+
   await writeFile(config.sessionFile, `${token}\n`, {
     encoding: "utf8",
     mode: 0o600,
   });
   await chmod(config.sessionFile, 0o600).catch(() => {});
 
-  return { actor: safeActor(admin), expiresAt };
+  return { actor, expiresAt };
 };
 
 export const authenticateAdminCredentials = async ({
@@ -135,6 +141,35 @@ export const authenticateAdminSession = async () => {
     "name email username role isActive isVerified",
   );
   assertEligibleAdmin(admin);
+
+  await collection.updateOne(
+    { _id: session._id },
+    { $set: { lastUsedAt: new Date() } },
+  );
+
+  return {
+    actor: safeActor(admin),
+    sessionId: session._id.toString(),
+    expiresAt: session.expiresAt,
+  };
+};
+
+export const authenticateSessionToken = async (token) => {
+  if (!token) return null;
+  const collection = await sessionCollection();
+  const session = await collection.findOne({
+    tokenHash: hashToken(token),
+    expiresAt: { $gt: new Date() },
+    revokedAt: { $exists: false },
+  });
+  if (!session) return null;
+
+  const admin = await Auth.findById(session.adminId).select(
+    "name email username role isActive isVerified",
+  );
+  if (!admin || !admin.isActive || !admin.isVerified || !config.allowedRoles.has(admin.role)) {
+    return null;
+  }
 
   await collection.updateOne(
     { _id: session._id },

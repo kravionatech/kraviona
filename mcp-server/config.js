@@ -48,7 +48,7 @@ export const config = Object.freeze({
     process.env.MCP_TRANSPORT ||
     (hostProvidedPort ? "streamable-http" : "stdio")
   ).toLowerCase(),
-  port: integerFromEnv("PORT", 3000, 1, 65_535),
+  port: integerFromEnv("PORT", 5001, 1, 65_535),
   apiKey: (process.env.MCP_API_KEY || "").trim(),
   readOnly: booleanFromEnv("MCP_READ_ONLY", false),
   allowDeletes: booleanFromEnv("MCP_ALLOW_DELETES", false),

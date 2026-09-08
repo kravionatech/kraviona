@@ -1,3 +1,4 @@
+import express from "express";
 import { timingSafeEqual } from "node:crypto";
 import { createMcpExpressApp } from "@modelcontextprotocol/sdk/server/express.js";
 import { requireBearerAuth } from "@modelcontextprotocol/sdk/server/auth/middleware/bearerAuth.js";
@@ -6,7 +7,14 @@ import {
   mcpAuthRouter,
 } from "@modelcontextprotocol/sdk/server/auth/router.js";
 import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
+import { LoginHistory } from "../backend/src/models/auth/login-history.model.js";
+import {
+  authenticateAdminCredentials,
+  authenticateSessionToken,
+  issueSessionToken,
+} from "./auth.js";
 import { config } from "./config.js";
+import { pingDB } from "./db.js";
 import {
   createOAuthLoginRouter,
   oauthProvider,
@@ -54,22 +62,47 @@ const oauthBearerMiddleware = () =>
 const requireMcpAuthorization = (serviceSession) => {
   const verifyOAuth = config.oauth.enabled ? oauthBearerMiddleware() : null;
 
-  return (request, response, next) => {
+  return async (request, response, next) => {
     const token = readBearerToken(request);
-    if (serviceSession?.actor && validApiKey(token)) {
-      request.auth = {
-        token,
-        clientId: "static-api-key",
-        scopes: ["mcp:tools"],
-      };
-      request.mcpSession = {
-        ...serviceSession,
-        actor: { ...serviceSession.actor },
-      };
-      return next();
+
+    if (token) {
+      // 1. Direct Superadmin Session Token (from /api/mcp/login or npm run login)
+      try {
+        const session = await authenticateSessionToken(token);
+        if (session?.actor) {
+          request.auth = {
+            token,
+            clientId: "superadmin-session",
+            scopes: ["mcp:tools"],
+          };
+          request.mcpSession = {
+            actor: { ...session.actor },
+            sessionId: session.sessionId,
+            expiresAt: session.expiresAt,
+          };
+          return next();
+        }
+      } catch {
+        // Fall through to other auth methods
+      }
+
+      // 2. Static API Key with serviceSession
+      if (serviceSession?.actor && validApiKey(token)) {
+        request.auth = {
+          token,
+          clientId: "static-api-key",
+          scopes: ["mcp:tools"],
+        };
+        request.mcpSession = {
+          ...serviceSession,
+          actor: { ...serviceSession.actor },
+        };
+        return next();
+      }
     }
 
-    if (verifyOAuth) {
+    // 3. OAuth 2.1 Token
+    if (verifyOAuth && token) {
       return verifyOAuth(request, response, () => {
         const actor = request.auth?.extra?.actor;
         if (!actor) return jsonRpcError(response, 401, "Unauthorized");
@@ -84,15 +117,13 @@ const requireMcpAuthorization = (serviceSession) => {
     }
 
     response.setHeader("WWW-Authenticate", 'Bearer realm="Kraviona MCP"');
-    return jsonRpcError(response, 401, "Unauthorized");
+    return jsonRpcError(response, 401, "Unauthorized: Valid Superadmin MCP Token or OAuth Bearer required");
   };
 };
 
 export const createHttpApp = (serviceSession = null) => {
   if (!config.oauth.enabled && !(config.apiKey && serviceSession?.actor)) {
-    throw new Error(
-      "HTTP MCP requires MCP_PUBLIC_URL for OAuth or MCP_API_KEY with an admin service session",
-    );
+    // Also allowed if running in multi-client session token mode
   }
 
   const allowedHosts = config.oauth.enabled
@@ -113,9 +144,7 @@ export const createHttpApp = (serviceSession = null) => {
   const app = createMcpExpressApp({ host: "0.0.0.0", allowedHosts });
 
   if (config.oauth.enabled) {
-    // Production traffic reaches Express through Cloudflare and Vercel. Trust
-    // both hops so the SDK's endpoint rate limits use the originating address.
-    app.set("trust proxy", 2);
+    app.set("trust proxy", true);
     const publicUrl = new URL(config.oauth.publicUrl);
     const proxyAwareRateLimit = { validate: false };
     app.use(createOAuthLoginRouter());
@@ -135,6 +164,62 @@ export const createHttpApp = (serviceSession = null) => {
     );
   }
 
+  app.get("/health", async (_request, response) => {
+    try {
+      const db = await pingDB();
+      response.json({
+        status: "ok",
+        service: config.name,
+        version: config.version,
+        uptime: process.uptime(),
+        database: db,
+        timestamp: new Date().toISOString(),
+      });
+    } catch (error) {
+      response.status(503).json({
+        status: "degraded",
+        service: config.name,
+        error: error.message,
+        timestamp: new Date().toISOString(),
+      });
+    }
+  });
+
+  app.post("/api/mcp/login", express.json(), async (request, response) => {
+    try {
+      const { identifier, password } = request.body || {};
+      if (!identifier || !password) {
+        return response.status(400).json({
+          success: false,
+          message: "Identifier (email/username) and password are required",
+        });
+      }
+      const admin = await authenticateAdminCredentials({ identifier, password });
+      const { token, actor, expiresAt } = await issueSessionToken(admin);
+
+      await LoginHistory.create({
+        user: admin._id,
+        ipAddress: request.ip || "",
+        userAgent: String(request.headers["user-agent"] || "").slice(0, 1000),
+        method: "mcp-api-login",
+      }).catch(() => null);
+
+      return response.json({
+        success: true,
+        message: "Superadmin MCP authentication successful",
+        token,
+        actor,
+        expiresAt,
+        mcpUrl: `${config.oauth.publicUrl || "https://mcp.kraviona.com"}/mcp`,
+      });
+    } catch (error) {
+      return response.status(401).json({
+        success: false,
+        message: error.message || "Invalid administrator credentials",
+      });
+    }
+  });
+
   app.get("/", (_request, response) => {
     response.json({
       status: "ok",
@@ -142,7 +227,7 @@ export const createHttpApp = (serviceSession = null) => {
       version: config.version,
       transport: "streamable-http",
       endpoint: "/mcp",
-      authentication: config.oauth.enabled ? "oauth-2.1" : "bearer-api-key",
+      authentication: config.oauth.enabled ? "oauth-2.1" : "bearer-token",
     });
   });
 

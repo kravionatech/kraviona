@@ -9,6 +9,7 @@
     "dev": "node --watch index.js",
     "postinstall": "npm ci --prefix ../backend --omit=dev",
     "login": "node scripts/login.js",
+    "token": "node scripts/login-token.js",
     "logout": "node scripts/logout.js",
     "whoami": "node scripts/whoami.js",
     "check": "node scripts/check.js && node scripts/check-oauth.js && node scripts/check-vercel-entry.js",
