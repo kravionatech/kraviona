@@ -9,16 +9,9 @@ async function main() {
 
   const { token } = await issueSessionToken(admin);
 
-  // Test call to local nginx proxying to MCP
-  const res = await fetch("http://127.0.0.1/mcp", {
-    method: "POST",
-    headers: {
-      Host: "mcp.kraviona.com",
-      "Content-Type": "application/json",
-      Accept: "application/json, text/event-stream",
-      Authorization: "Bearer " + token,
-    },
-    body: JSON.stringify({
+  // Test call to local nginx proxying to MCP using node:http to preserve Host header
+  import("node:http").then(({ request }) => {
+    const postData = JSON.stringify({
       jsonrpc: "2.0",
       id: 1,
       method: "tools/call",
@@ -26,12 +19,41 @@ async function main() {
         name: "kraviona_health_check",
         arguments: {},
       },
-    }),
-  });
+    });
 
-  console.log("Status code:", res.status);
-  const text = await res.text();
-  console.log("Response body:", text);
+    const req = request(
+      {
+        hostname: "127.0.0.1",
+        port: 80,
+        path: "/mcp",
+        method: "POST",
+        headers: {
+          Host: "mcp.kraviona.com",
+          "Content-Type": "application/json",
+          Accept: "application/json, text/event-stream",
+          Authorization: "Bearer " + token,
+          "Content-Length": Buffer.byteLength(postData),
+        },
+      },
+      (res) => {
+        console.log("Status code:", res.statusCode);
+        let data = "";
+        res.on("data", (chunk) => (data += chunk));
+        res.on("end", () => {
+          console.log("Response body:", data);
+          process.exit(0);
+        });
+      },
+    );
+
+    req.on("error", (e) => {
+      console.error("Request error:", e);
+      process.exit(1);
+    });
+
+    req.write(postData);
+    req.end();
+  });
 }
 
 main().catch(console.error);
