@@ -13,7 +13,7 @@ async function main() {
   const res = await fetch("http://127.0.0.1/mcp", {
     method: "POST",
     headers: {
-      Host: "api.kraviona.com",
+      Host: "mcp.kraviona.com",
       "Content-Type": "application/json",
       Accept: "application/json, text/event-stream",
       Authorization: "Bearer " + token,
