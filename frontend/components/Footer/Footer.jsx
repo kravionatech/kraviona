@@ -19,7 +19,9 @@ const NAV = {
   company: [
     { name: "About Us", path: "/about" },
     { name: "Careers", path: "/careers" },
+    { name: "Case Studies", path: "/case-studies" },
     { name: "Blog", path: "/blog" },
+    { name: "News", path: "/news" },
     { name: "Portfolio", path: "/gallery" },
     { name: "Pricing", path: "/pricing" },
     { name: "Contact", path: "/contact" },

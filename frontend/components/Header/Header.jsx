@@ -14,9 +14,11 @@ import {
   Database,
   Grid3X3,
   Layers3,
+  Layout,
   Menu,
   MessageSquare,
   PackageCheck,
+  Palette,
   Phone,
   SearchCheck,
   ServerCog,
@@ -55,6 +57,18 @@ const SERVICE_CATEGORIES = [
         path: "/services/nodejs-development",
         desc: "Scalable APIs & backend systems",
         Icon: ServerCog,
+      },
+      {
+        name: "Web App Development",
+        path: "/services/web-app-development",
+        desc: "Custom web applications & portals",
+        Icon: Layout,
+      },
+      {
+        name: "UI/UX Design",
+        path: "/services/ui-ux-design",
+        desc: "Wireframes, UI systems & UX design",
+        Icon: Palette,
       },
     ],
   },
@@ -229,13 +243,12 @@ const FEATURED = [
 ];
 
 const SIMPLE_MENUS = {
-  Insights: [
-    { name: "Tech News", path: "/news" },
+  Blog: [
     { name: "All Articles", path: "/blog" },
-    { name: "Case Studies", path: "/case-studies" },
     { name: "MERN Stack", path: "/category/mern-stack" },
     { name: "Technical SEO", path: "/category/technical-seo" },
     { name: "Web Performance", path: "/category/web-performance" },
+    { name: "AI & Automation", path: "/category/ai-and-automation" },
   ],
   Company: [
     { name: "About Us", path: "/about" },
@@ -249,9 +262,9 @@ const SIMPLE_MENUS = {
 const NAV_ITEMS = [
   { name: "Home", path: "/" },
   { name: "Services", path: "/services", mega: true },
-  { name: "News", path: "/news" },
-  { name: "Insights", dropdown: SIMPLE_MENUS.Insights, path: "/blog" },
   { name: "Case Studies", path: "/case-studies" },
+  { name: "Blog", dropdown: SIMPLE_MENUS.Blog, path: "/blog" },
+  { name: "News", path: "/news" },
   { name: "Company", dropdown: SIMPLE_MENUS.Company, path: "/about" },
   { name: "Contact", path: "/contact" },
 ];
@@ -912,16 +925,24 @@ export default function Header() {
               ))}
             </MobileAccordion>
 
-            {/* Insights accordion */}
+            <MobileLink
+              href="/case-studies"
+              active={pathname.startsWith("/case-studies")}
+              onClick={closeMobile}
+            >
+              Case Studies
+            </MobileLink>
+
+            {/* Blog accordion */}
             <MobileAccordion
-              label="Insights"
-              open={mobileAcc === "insights"}
+              label="Blog"
+              open={mobileAcc === "blog"}
               onToggle={() => {
                 router.prefetch("/blog");
-                setMobileAcc(mobileAcc === "insights" ? null : "insights")
+                setMobileAcc(mobileAcc === "blog" ? null : "blog");
               }}
             >
-              {SIMPLE_MENUS.Insights.map((s) => (
+              {SIMPLE_MENUS.Blog.map((s) => (
                 <Link
                   key={s.name}
                   href={s.path}
@@ -934,11 +955,11 @@ export default function Header() {
             </MobileAccordion>
 
             <MobileLink
-              href="/case-studies"
-              active={pathname.startsWith("/case-studies")}
+              href="/news"
+              active={pathname.startsWith("/news")}
               onClick={closeMobile}
             >
-              Case Studies
+              News
             </MobileLink>
 
             {/* Company accordion */}
