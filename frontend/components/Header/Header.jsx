@@ -475,27 +475,17 @@ export default function Header() {
         <Link
           href="/"
           aria-label="Kraviona – Homepage"
-          className="flex flex-shrink-0 items-center gap-3 group"
+          className="flex flex-shrink-0 items-center group"
         >
-          <span className="flex h-11 w-11 items-center justify-center rounded-xl border border-[#0f5960]/15 bg-gradient-to-br from-white via-[#f8fbfa] to-[#d8e8e6] p-1 shadow-md shadow-[#0f5960]/10">
-            <Image
-              src="/logo.png"
-              alt="Kraviona Tech Solutions logo"
-              width={44}
-              height={40}
-              priority
-              sizes="44px"
-              className="h-full w-full object-contain transition-transform duration-200 group-hover:scale-105"
-            />
-          </span>
-          <span className="min-w-0">
-            <span className="block text-[15px] font-extrabold leading-none text-[#1A2E33]">
-              Kraviona
-            </span>
-            <span className="mt-1 block text-[10px] font-semibold uppercase tracking-[0.18em] text-[#2A4A52]">
-              Tech Solutions
-            </span>
-          </span>
+          <Image
+            src="/full-logo.webp"
+            alt="Kraviona – vision innovative development"
+            width={170}
+            height={58}
+            priority
+            sizes="170px"
+            className="h-11 w-auto object-contain transition-transform duration-200 group-hover:scale-105"
+          />
         </Link>
 
         {/* Nav */}
@@ -776,27 +766,17 @@ export default function Header() {
           href="/"
           onClick={closeMobile}
           aria-label="Kraviona – Homepage"
-          className="flex items-center gap-2.5"
+          className="flex items-center"
         >
-          <span className="flex h-11 w-11 items-center justify-center rounded-xl border border-[#0f5960]/15 bg-gradient-to-br from-white via-[#f8fbfa] to-[#d8e8e6] p-1 shadow-md shadow-[#0f5960]/10">
-            <Image
-              src="/logo.png"
-              alt="Kraviona Tech Solutions logo"
-              width={36}
-              height={33}
-              priority
-              sizes="36px"
-              className="h-full w-full object-contain"
-            />
-          </span>
-          <span>
-            <span className="block text-sm font-extrabold leading-none text-[#1A2E33]">
-              Kraviona
-            </span>
-            <span className="mt-1 block text-[9px] font-semibold uppercase tracking-[0.16em] text-[#2A4A52]">
-              Tech Solutions
-            </span>
-          </span>
+          <Image
+            src="/full-logo.webp"
+            alt="Kraviona – vision innovative development"
+            width={140}
+            height={48}
+            priority
+            sizes="140px"
+            className="h-9 w-auto object-contain"
+          />
         </Link>
 
         <button
@@ -834,26 +814,20 @@ export default function Header() {
       >
         {/* Drawer header */}
         <div className="flex h-[70px] items-center justify-between border-b border-white/15 bg-primary px-5">
-          <div className="flex items-center gap-2.5">
-            <span className="flex h-11 w-11 items-center justify-center rounded-xl border border-white/80 bg-gradient-to-br from-white via-[#f8fbfa] to-[#d8e8e6] p-1 shadow-lg shadow-black/15">
-              <Image
-                src="/logo.png"
-                alt="Kraviona Tech Solutions logo"
-                width={36}
-                height={33}
-                sizes="36px"
-                className="h-full w-full object-contain"
-              />
-            </span>
-            <span>
-              <span className="block text-sm font-extrabold leading-none text-white">
-                Kraviona
-              </span>
-              <span className="mt-1 block text-[9px] font-semibold uppercase tracking-[0.16em] text-white/70">
-                Menu
-              </span>
-            </span>
-          </div>
+          <Link
+            href="/"
+            onClick={closeMobile}
+            className="flex items-center rounded-xl bg-white/95 px-3 py-1.5 shadow-md"
+          >
+            <Image
+              src="/full-logo.webp"
+              alt="Kraviona – vision innovative development"
+              width={140}
+              height={48}
+              sizes="140px"
+              className="h-8 w-auto object-contain"
+            />
+          </Link>
           <button
             type="button"
             onClick={closeMobile}

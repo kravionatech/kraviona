@@ -110,11 +110,10 @@ export default function AuthPage() {
       <div className="relative z-10 grid w-full max-w-5xl overflow-hidden rounded-[2rem] border border-white/10 bg-[#213b42]/85 shadow-2xl shadow-[#1a2e33]/50 backdrop-blur-xl lg:grid-cols-[1.05fr_0.95fr]">
         <section className="hidden min-h-[620px] flex-col justify-between border-r border-white/[0.08] bg-gradient-to-br from-[#2a4a52] via-[#20383e] to-[#1a2e33] p-10 lg:flex">
           <div>
-            <div className="flex items-center gap-3">
-              <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-white/80 bg-gradient-to-br from-white via-[#f8fbfa] to-[#d8e8e6] p-2 shadow-xl shadow-black/20">
-                <img src="/brand-logo.png" alt="Kraviona Tech Solutions logo" className="h-full w-full object-contain" />
+            <div className="flex items-center">
+              <span className="flex items-center rounded-2xl border border-white/80 bg-white px-4 py-2 shadow-xl">
+                <img src="/full-logo.webp" alt="Kraviona – vision innovative development" className="h-10 w-auto object-contain" />
               </span>
-              <span className="text-sm font-black tracking-[0.22em] text-white">KRAVIONA TECH SOLUTIONS</span>
             </div>
             <div className="mt-24 max-w-sm">
               <span className="inline-flex items-center gap-2 rounded-full border border-[#f28c5e]/25 bg-[#f28c5e]/10 px-3 py-1.5 text-xs font-semibold text-[#ffd8c8]"><ShieldCheck size={14} /> Secure workspace</span>
@@ -127,11 +126,10 @@ export default function AuthPage() {
 
         <section className="p-7 sm:p-10 lg:p-12">
           <div className="mb-9">
-            <div className="flex items-center gap-3 lg:hidden">
-              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-white/80 bg-gradient-to-br from-white via-[#f8fbfa] to-[#d8e8e6] p-1.5 shadow-lg shadow-black/15">
-                <img src="/brand-logo.png" alt="Kraviona Tech Solutions logo" className="h-full w-full object-contain" />
+            <div className="flex items-center lg:hidden">
+              <span className="flex items-center rounded-xl border border-white/80 bg-white px-3 py-1.5 shadow-lg">
+                <img src="/full-logo.webp" alt="Kraviona – vision innovative development" className="h-8 w-auto object-contain" />
               </span>
-              <span className="text-sm font-black tracking-[0.18em] text-white">KRAVIONA TECH SOLUTIONS</span>
             </div>
             <p className="mt-7 text-xs font-bold uppercase tracking-[0.18em] text-[#f28c5e] lg:mt-0">Admin portal</p>
             <h2 className="mt-3 text-3xl font-black tracking-tight text-white">Welcome back</h2>

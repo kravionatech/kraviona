@@ -144,27 +144,17 @@ export default function NotFoundClient({ suggestedPosts = [] }) {
               <Link
                 href="/"
                 aria-label="Kraviona home"
-                className="mb-8 inline-flex items-center gap-3 group"
+                className="mb-8 inline-flex items-center rounded-2xl border border-white/20 bg-white/95 px-4 py-2.5 shadow-xl shadow-black/20 backdrop-blur-md transition-transform hover:scale-[1.02]"
               >
-                <span className="flex h-14 w-14 items-center justify-center rounded-2xl border border-white/80 bg-gradient-to-br from-white via-[#f8fbfa] to-[#d8e8e6] p-1.5 shadow-xl shadow-black/20 transition-transform group-hover:scale-105">
-                  <Image
-                    src="/logo.png"
-                    alt="Kraviona Tech Solutions logo"
-                    width={48}
-                    height={44}
-                    priority
-                    sizes="48px"
-                    className="h-full w-full object-contain"
-                  />
-                </span>
-                <span>
-                  <span className="block text-xl font-black leading-none text-white">
-                    Kraviona
-                  </span>
-                  <span className="mt-1 block text-[10px] font-black uppercase tracking-[0.2em] text-[#F28C5E]">
-                    Tech Solutions
-                  </span>
-                </span>
+                <Image
+                  src="/full-logo.webp"
+                  alt="Kraviona – vision innovative development"
+                  width={190}
+                  height={65}
+                  priority
+                  sizes="190px"
+                  className="h-11 w-auto object-contain"
+                />
               </Link>
 
               <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-[#E8622A]/30 bg-[#E8622A]/10 px-4 py-2 text-xs font-black uppercase tracking-[0.18em] text-[#F28C5E]">

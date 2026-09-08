@@ -93,13 +93,8 @@ export default function Sidebar({ onLogout, isOpen, onClose, currentUser }) {
         }`}
       >
         <div className="flex items-center justify-between px-6 py-6">
-          <Link href="/dashboard" onClick={onClose} className="flex items-center gap-3">
-            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-white/80 bg-gradient-to-br from-white via-[#f8fbfa] to-[#d8e8e6] p-1.5 shadow-lg shadow-black/15">
-              <img src="/brand-logo.png" alt="Kraviona Tech Solutions logo" className="h-full w-full object-contain" />
-            </span>
-            <span><span className="block text-lg font-bold text-white">KRAVIONA</span>
-            <span className="text-sm text-[#f7c56d]">Tech Solutions · Admin</span>
-            </span>
+          <Link href="/dashboard" onClick={onClose} className="flex items-center rounded-xl bg-white/95 px-3 py-2 shadow-md">
+            <img src="/full-logo.webp" alt="Kraviona – vision innovative development" className="h-8 w-auto object-contain" />
           </Link>
           <button
             type="button"

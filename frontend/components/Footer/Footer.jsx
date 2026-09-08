@@ -130,26 +130,16 @@ export default function Footer() {
             <Link
               href="/"
               aria-label="Kraviona homepage"
-              className="mb-5 inline-flex items-center gap-3"
+              className="mb-6 inline-flex items-center rounded-2xl border border-white/20 bg-white/95 px-4 py-2.5 shadow-xl shadow-black/20 backdrop-blur-md transition-transform hover:scale-[1.02]"
             >
-              <span className="flex h-16 w-16 items-center justify-center rounded-2xl border border-white/80 bg-gradient-to-br from-white via-[#f8fbfa] to-[#d8e8e6] p-1.5 shadow-xl shadow-black/20">
-                <Image
-                  src="/logo.png"
-                  alt="Kraviona Tech Solutions logo"
-                  width={64}
-                  height={64}
-                  sizes="64px"
-                  className="h-full w-full object-contain"
-                />
-              </span>
-              <span>
-                <span className="block text-xl font-black leading-none text-white">
-                  Kraviona
-                </span>
-                <span className="mt-1.5 block text-[10px] font-black uppercase tracking-[0.2em] text-accent-hover">
-                  Tech Solutions
-                </span>
-              </span>
+              <Image
+                src="/full-logo.webp"
+                alt="Kraviona – vision innovative development"
+                width={190}
+                height={65}
+                sizes="190px"
+                className="h-11 w-auto object-contain"
+              />
             </Link>
             <p className="max-w-sm text-sm leading-relaxed text-primary-light">
               Founder-led web development, backend engineering, technical SEO,
