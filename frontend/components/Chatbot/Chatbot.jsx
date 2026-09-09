@@ -3,7 +3,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import {
-  MessageSquare,
   X,
   Send,
   Trash2,
@@ -11,27 +10,20 @@ import {
   Bot,
   User,
   Sparkles,
-  AlertCircle,
-  RefreshCw,
   ChevronDown,
   Maximize2,
   Minimize2,
   CheckCircle2,
 } from "lucide-react";
 import { API_URL } from "@/utils/api";
+import { getFallbackChatResponse } from "./fallbackKnowledge";
 
 const INITIAL_MESSAGE = {
   id: "welcome-msg",
   sender: "bot",
   text: `Hello! 👋 I'm Kraviona's AI Assistant.
 
-I can help you with:
-• **Web Engineering**: High-performance Next.js, React & MERN stack builds
-• **Technical SEO**: Core Web Vitals, speed architecture & search growth
-• **AI Workflows**: Custom automation systems & intelligent API integrations
-• **Portfolio & Insights**: Client case studies and published technical articles
-
-How can I assist you today?`,
+Ask me about our **Web Development**, **Technical SEO**, **Pricing**, or **Case Studies**. How can I assist you today?`,
   sources: [],
   timestamp: "Just now",
 };
@@ -44,13 +36,12 @@ export default function Chatbot() {
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [suggestions, setSuggestions] = useState([
-    "What services does Kraviona offer?",
+    "What services do you offer?",
     "How can I contact the team?",
-    "Tell me about MERN stack & SEO",
+    "What are your pricing plans?",
     "Where is Kraviona located?",
   ]);
   const [hasUnread, setHasUnread] = useState(true);
-  const [networkError, setNetworkError] = useState(false);
 
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
@@ -82,7 +73,7 @@ export default function Chatbot() {
           }
         }
       } catch {
-        // Fallback default suggestions
+        // Retain default verified suggestions
       }
     }
     if (mounted) loadSuggestions();
@@ -92,7 +83,6 @@ export default function Chatbot() {
     const query = String(textToSend || inputValue).trim();
     if (!query || isLoading) return;
 
-    setNetworkError(false);
     const userMsg = {
       id: `user-${Date.now()}`,
       sender: "user",
@@ -115,37 +105,38 @@ export default function Chatbot() {
 
       const data = await response.json();
 
-      if (response.ok && data.success) {
+      if (response.ok && data.success && data.data?.reply) {
         const botMsg = {
           id: `bot-${Date.now()}`,
           sender: "bot",
-          text: data.data?.reply || "I'm here to help with information from our website.",
+          text: data.data.reply,
           sources: data.data?.sources || [],
           timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
         };
         setMessages((prev) => [...prev, botMsg]);
       } else {
-        const errorMsg = {
+        // Seamless fallback to client knowledge engine
+        const fallback = getFallbackChatResponse(query);
+        const botMsg = {
           id: `bot-${Date.now()}`,
           sender: "bot",
-          text: data.message || "Sorry, I couldn't complete that request. Please try again.",
-          sources: [],
-          isError: true,
+          text: fallback.reply,
+          sources: fallback.sources || [],
           timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
         };
-        setMessages((prev) => [...prev, errorMsg]);
+        setMessages((prev) => [...prev, botMsg]);
       }
     } catch {
-      setNetworkError(true);
-      const networkFailMsg = {
+      // Offline / network failure resilience
+      const fallback = getFallbackChatResponse(query);
+      const botMsg = {
         id: `bot-${Date.now()}`,
         sender: "bot",
-        text: "Could not connect to the assistant service. Please check your internet connection.",
-        sources: [],
-        isError: true,
+        text: fallback.reply,
+        sources: fallback.sources || [],
         timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
       };
-      setMessages((prev) => [...prev, networkFailMsg]);
+      setMessages((prev) => [...prev, botMsg]);
     } finally {
       setIsLoading(false);
     }
@@ -153,7 +144,6 @@ export default function Chatbot() {
 
   const handleClearChat = () => {
     setMessages([INITIAL_MESSAGE]);
-    setNetworkError(false);
   };
 
   const handleKeyDown = (e) => {
@@ -163,41 +153,59 @@ export default function Chatbot() {
     }
   };
 
-  // Basic markdown link and bold text parser
+  // Formatted markdown link, bold, and header parser
   const renderFormattedText = (content) => {
     if (!content) return null;
     const lines = content.split("\n");
 
     return lines.map((line, lineIdx) => {
+      // Clean header hashtags if present
+      const isHeader = /^#{1,6}\s+/.test(line);
+      const cleanLine = line.replace(/^#{1,6}\s+/, "");
+
       const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
       const parts = [];
       let lastIndex = 0;
       let match;
 
-      while ((match = linkRegex.exec(line)) !== null) {
+      while ((match = linkRegex.exec(cleanLine)) !== null) {
         if (match.index > lastIndex) {
-          parts.push(line.substring(lastIndex, match.index));
+          parts.push(cleanLine.substring(lastIndex, match.index));
         }
 
         const linkText = match[1];
         const linkUrl = match[2];
+        const isInternal = linkUrl.startsWith("/") && !linkUrl.startsWith("//");
 
         parts.push(
-          <Link
-            key={`link-${lineIdx}-${match.index}`}
-            href={linkUrl}
-            className="inline-flex items-center gap-1 font-semibold text-[#0f5960] hover:text-[#d85e3d] underline decoration-[#0f5960]/30 hover:decoration-[#d85e3d] transition-colors"
-          >
-            {linkText}
-            <ExternalLink className="w-3 h-3 inline" />
-          </Link>
+          isInternal ? (
+            <Link
+              key={`link-${lineIdx}-${match.index}`}
+              href={linkUrl}
+              className="inline-flex items-center gap-0.5 font-semibold text-[#0f5960] hover:text-[#d85e3d] underline decoration-[#0f5960]/30 hover:decoration-[#d85e3d] transition-colors"
+            >
+              {linkText}
+              <ExternalLink className="w-2.5 h-2.5 inline" />
+            </Link>
+          ) : (
+            <a
+              key={`link-${lineIdx}-${match.index}`}
+              href={linkUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-0.5 font-semibold text-[#0f5960] hover:text-[#d85e3d] underline decoration-[#0f5960]/30 hover:decoration-[#d85e3d] transition-colors"
+            >
+              {linkText}
+              <ExternalLink className="w-2.5 h-2.5 inline" />
+            </a>
+          )
         );
 
         lastIndex = match.index + match[0].length;
       }
 
-      if (lastIndex < line.length) {
-        parts.push(line.substring(lastIndex));
+      if (lastIndex < cleanLine.length) {
+        parts.push(cleanLine.substring(lastIndex));
       }
 
       const formattedParts = parts.map((part, partIdx) => {
@@ -227,8 +235,15 @@ export default function Chatbot() {
         return <React.Fragment key={`p-${partIdx}`}>{subParts}</React.Fragment>;
       });
 
+      if (!line.trim()) {
+        return <div key={`empty-${lineIdx}`} className="h-1" />;
+      }
+
       return (
-        <p key={`line-${lineIdx}`} className={lineIdx > 0 ? "mt-1.5" : ""}>
+        <p
+          key={`line-${lineIdx}`}
+          className={`${lineIdx > 0 ? "mt-1" : ""} ${isHeader ? "font-semibold text-slate-900 text-[11.5px] sm:text-xs" : ""}`}
+        >
           {formattedParts}
         </p>
       );
@@ -244,10 +259,10 @@ export default function Chatbot() {
         {!isOpen && hasUnread && (
           <div
             onClick={() => setIsOpen(true)}
-            className="hidden sm:flex items-center gap-2 mr-3 px-4 py-2 rounded-full bg-white/95 backdrop-blur-md border border-teal-900/15 shadow-xl text-xs font-semibold text-[#0f5960] cursor-pointer hover:bg-white hover:scale-105 transition-all animate-bounce"
+            className="hidden sm:flex items-center gap-1.5 mr-2.5 px-3 py-1.5 rounded-full bg-white/95 backdrop-blur-md border border-teal-900/15 shadow-lg text-[11px] font-medium text-[#0f5960] cursor-pointer hover:bg-white hover:scale-105 transition-all animate-bounce"
             style={{ animationDuration: "3s" }}
           >
-            <Sparkles className="w-3.5 h-3.5 text-[#d85e3d]" />
+            <Sparkles className="w-3 h-3 text-[#d85e3d]" />
             <span>Chat with Kraviona AI</span>
           </div>
         )}
@@ -255,20 +270,20 @@ export default function Chatbot() {
         <button
           onClick={() => setIsOpen(!isOpen)}
           aria-label={isOpen ? "Close AI Assistant" : "Open AI Assistant"}
-          className={`flex h-14 w-14 items-center justify-center rounded-full shadow-2xl transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-teal-500/30 active:scale-95 ${
+          className={`flex h-11 w-11 sm:h-12 sm:w-12 items-center justify-center rounded-full shadow-xl transition-all duration-300 focus:outline-none focus:ring-3 focus:ring-teal-500/30 active:scale-95 ${
             isOpen
               ? "bg-[#0d4248] text-white rotate-90"
               : "bg-[#0f5960] hover:bg-[#0a454b] text-white hover:scale-105"
           }`}
         >
           {isOpen ? (
-            <X className="w-6 h-6 transition-transform" />
+            <X className="w-4 h-4 transition-transform" />
           ) : (
             <div className="relative flex items-center justify-center">
-              <Bot className="w-7 h-7" />
-              <span className="absolute -top-1 -right-1 flex h-3 w-3">
+              <Bot className="w-5 h-5" />
+              <span className="absolute -top-1 -right-1 flex h-2.5 w-2.5">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#d85e3d] opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-3 w-3 bg-[#d85e3d]"></span>
+                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#d85e3d]"></span>
               </span>
             </div>
           )}
@@ -280,106 +295,106 @@ export default function Chatbot() {
         <div
           className={`fixed z-50 flex flex-col bg-white shadow-2xl border border-teal-900/15 overflow-hidden transition-all duration-300 animate-in fade-in slide-in-from-bottom-5 ${
             isExpanded
-              ? "inset-4 sm:inset-auto sm:bottom-24 sm:right-6 sm:w-[680px] sm:max-w-[calc(100vw-3rem)] sm:h-[750px] sm:max-h-[calc(100vh-8rem)] rounded-3xl"
-              : "inset-x-2 bottom-2 top-20 sm:top-auto sm:bottom-24 sm:right-6 sm:inset-x-auto sm:w-[440px] sm:max-w-[calc(100vw-3rem)] sm:h-[620px] sm:max-h-[calc(100vh-8rem)] rounded-3xl"
+              ? "inset-3 sm:inset-auto sm:bottom-20 sm:right-6 sm:w-[480px] sm:max-w-[calc(100vw-2.5rem)] sm:h-[560px] sm:max-h-[calc(100vh-6.5rem)] rounded-2xl"
+              : "inset-x-3 bottom-3 top-20 sm:top-auto sm:bottom-20 sm:right-6 sm:inset-x-auto sm:w-[340px] sm:max-w-[calc(100vw-2.5rem)] sm:h-[470px] sm:max-h-[calc(100vh-6.5rem)] rounded-2xl"
           }`}
           role="dialog"
           aria-modal="true"
           aria-label="Kraviona AI Assistant"
         >
           {/* Header */}
-          <div className="flex items-center justify-between px-5 py-4 bg-gradient-to-r from-[#0f5960] via-[#0d4248] to-[#0a454b] text-white select-none">
-            <div className="flex items-center gap-3">
-              <div className="relative flex h-10 w-10 items-center justify-center rounded-2xl bg-white/10 border border-white/20 text-white shadow-inner">
-                <Bot className="w-5 h-5" />
-                <span className="absolute bottom-0 right-0 h-3 w-3 rounded-full bg-emerald-400 ring-2 ring-[#0f5960]"></span>
+          <div className="flex items-center justify-between px-3.5 py-2.5 bg-gradient-to-r from-[#0f5960] via-[#0d4248] to-[#0a454b] text-white select-none">
+            <div className="flex items-center gap-2">
+              <div className="relative flex h-7 w-7 items-center justify-center rounded-lg bg-white/10 border border-white/20 text-white shadow-inner">
+                <Bot className="w-3.5 h-3.5" />
+                <span className="absolute -bottom-0.5 -right-0.5 h-2 w-2 rounded-full bg-emerald-400 ring-1.5 ring-[#0f5960]"></span>
               </div>
               <div>
-                <div className="flex items-center gap-2">
-                  <h3 className="text-sm font-bold tracking-tight text-white">Kraviona AI</h3>
-                  <span className="text-[10px] font-semibold uppercase tracking-wider bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 px-1.5 py-0.5 rounded-full">
+                <div className="flex items-center gap-1.5">
+                  <h3 className="text-xs font-semibold tracking-tight text-white">Kraviona AI</h3>
+                  <span className="text-[8.5px] font-medium uppercase tracking-wider bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 px-1 py-0.2 rounded-full">
                     Online
                   </span>
                 </div>
-                <p className="text-[11px] text-teal-100/70">Verified Website Intelligence</p>
+                <p className="text-[9.5px] text-teal-100/75 leading-none">Verified Assistant</p>
               </div>
             </div>
 
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-center gap-0.5">
               <button
                 onClick={() => setIsExpanded(!isExpanded)}
                 title={isExpanded ? "Collapse view" : "Expand view"}
-                className="hidden sm:inline-flex p-2 rounded-xl text-teal-100 hover:text-white hover:bg-white/10 transition-colors"
+                className="hidden sm:inline-flex p-1.5 rounded-lg text-teal-100 hover:text-white hover:bg-white/10 transition-colors"
                 aria-label="Toggle window size"
               >
-                {isExpanded ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
+                {isExpanded ? <Minimize2 className="w-3.5 h-3.5" /> : <Maximize2 className="w-3.5 h-3.5" />}
               </button>
               <button
                 onClick={handleClearChat}
                 title="Reset conversation"
-                className="p-2 rounded-xl text-teal-100 hover:text-white hover:bg-white/10 transition-colors"
+                className="p-1.5 rounded-lg text-teal-100 hover:text-white hover:bg-white/10 transition-colors"
                 aria-label="Clear chat"
               >
-                <Trash2 className="w-4 h-4" />
+                <Trash2 className="w-3.5 h-3.5" />
               </button>
               <button
                 onClick={() => setIsOpen(false)}
                 title="Minimize window"
-                className="p-2 rounded-xl text-teal-100 hover:text-white hover:bg-white/10 transition-colors"
+                className="p-1.5 rounded-lg text-teal-100 hover:text-white hover:bg-white/10 transition-colors"
                 aria-label="Minimize window"
               >
-                <ChevronDown className="w-5 h-5" />
+                <ChevronDown className="w-4 h-4" />
               </button>
             </div>
           </div>
 
           {/* Messages Feed */}
-          <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-4 bg-[#f8fafb]">
+          <div className="flex-1 overflow-y-auto p-3 sm:p-3.5 space-y-2.5 bg-[#f8fafb]">
             {messages.map((msg) => (
               <div
                 key={msg.id}
-                className={`flex gap-3 ${msg.sender === "user" ? "justify-end" : "justify-start"}`}
+                className={`flex gap-2 ${msg.sender === "user" ? "justify-end" : "justify-start"}`}
               >
                 {msg.sender === "bot" && (
-                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-white border border-slate-200 text-[#0f5960] shadow-sm">
-                    <Bot className="w-4 h-4" />
+                  <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-white border border-slate-200 text-[#0f5960] shadow-2xs">
+                    <Bot className="w-3 h-3" />
                   </div>
                 )}
 
                 <div
-                  className={`max-w-[85%] rounded-2xl px-4 py-3 text-xs leading-relaxed ${
+                  className={`max-w-[86%] rounded-xl px-3 py-2 text-[11px] sm:text-[11.5px] leading-snug ${
                     msg.sender === "user"
-                      ? "bg-[#0f5960] text-white rounded-br-none shadow-md"
+                      ? "bg-[#0f5960] text-white rounded-br-none shadow-xs"
                       : msg.isError
-                      ? "bg-red-50 text-red-700 border border-red-200 rounded-bl-none shadow-sm"
-                      : "bg-white text-slate-800 border border-slate-200/90 rounded-bl-none shadow-sm"
+                      ? "bg-red-50 text-red-700 border border-red-200 rounded-bl-none shadow-xs"
+                      : "bg-white text-slate-800 border border-slate-200/90 rounded-bl-none shadow-xs"
                   }`}
                 >
-                  <div className="break-words space-y-1">
+                  <div className="break-words space-y-0.5">
                     {msg.sender === "user" ? msg.text : renderFormattedText(msg.text)}
                   </div>
 
                   {/* Verified Sources Cited */}
                   {msg.sources && msg.sources.length > 0 && (
-                    <div className="mt-3 pt-2.5 border-t border-slate-100 flex flex-wrap gap-1.5">
-                      <span className="text-[10px] text-slate-400 w-full font-semibold uppercase tracking-wider flex items-center gap-1">
-                        <CheckCircle2 className="w-3 h-3 text-[#0f5960]" /> Verified Pages
+                    <div className="mt-2 pt-1.5 border-t border-slate-100 flex flex-wrap gap-1">
+                      <span className="text-[8.5px] text-slate-400 w-full font-medium uppercase tracking-wider flex items-center gap-1">
+                        <CheckCircle2 className="w-2.5 h-2.5 text-[#0f5960]" /> Verified Pages
                       </span>
                       {msg.sources.map((src, idx) => (
                         <Link
                           key={`src-${idx}`}
                           href={src.url}
-                          className="inline-flex items-center gap-1 text-[11px] font-medium bg-slate-50 hover:bg-[#0f5960]/10 text-[#0f5960] border border-slate-200 hover:border-teal-300 px-2.5 py-1 rounded-lg transition-all"
+                          className="inline-flex items-center gap-1 text-[9.5px] font-medium bg-slate-50 hover:bg-[#0f5960]/10 text-[#0f5960] border border-slate-200 hover:border-teal-300 px-2 py-0.5 rounded-md transition-all"
                         >
                           <span>{src.title}</span>
-                          <ExternalLink className="w-2.5 h-2.5 text-slate-400" />
+                          <ExternalLink className="w-2 h-2 text-slate-400" />
                         </Link>
                       ))}
                     </div>
                   )}
 
                   <div
-                    className={`mt-1.5 text-[9px] text-right font-medium ${
+                    className={`mt-1 text-[8px] text-right font-medium ${
                       msg.sender === "user" ? "text-teal-200/70" : "text-slate-400"
                     }`}
                   >
@@ -388,8 +403,8 @@ export default function Chatbot() {
                 </div>
 
                 {msg.sender === "user" && (
-                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-[#0f5960] text-white shadow-sm">
-                    <User className="w-4 h-4" />
+                  <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-[#0f5960] text-white shadow-2xs">
+                    <User className="w-3 h-3" />
                   </div>
                 )}
               </div>
@@ -397,40 +412,24 @@ export default function Chatbot() {
 
             {/* Live Typing & Generation State */}
             {isLoading && (
-              <div className="flex gap-3 justify-start items-center">
-                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-white border border-slate-200 text-[#0f5960] shadow-sm">
-                  <Bot className="w-4 h-4" />
+              <div className="flex gap-2 justify-start items-center">
+                <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-white border border-slate-200 text-[#0f5960] shadow-2xs">
+                  <Bot className="w-3 h-3" />
                 </div>
-                <div className="bg-white border border-slate-200/90 rounded-2xl rounded-bl-none px-4 py-3 shadow-sm flex items-center gap-2">
-                  <span className="h-2 w-2 rounded-full bg-[#0f5960] animate-bounce"></span>
+                <div className="bg-white border border-slate-200/90 rounded-xl rounded-bl-none px-3 py-2 shadow-xs flex items-center gap-1.5">
+                  <span className="h-1.5 w-1.5 rounded-full bg-[#0f5960] animate-bounce"></span>
                   <span
-                    className="h-2 w-2 rounded-full bg-[#0f5960] animate-bounce"
+                    className="h-1.5 w-1.5 rounded-full bg-[#0f5960] animate-bounce"
                     style={{ animationDelay: "150ms" }}
                   ></span>
                   <span
-                    className="h-2 w-2 rounded-full bg-[#0f5960] animate-bounce"
+                    className="h-1.5 w-1.5 rounded-full bg-[#0f5960] animate-bounce"
                     style={{ animationDelay: "300ms" }}
                   ></span>
-                  <span className="text-[11px] text-slate-500 font-medium ml-1">
-                    Analyzing public content...
+                  <span className="text-[10px] text-slate-500 font-medium ml-1">
+                    Analyzing...
                   </span>
                 </div>
-              </div>
-            )}
-
-            {/* Connection Error Message */}
-            {networkError && (
-              <div className="p-3 bg-amber-50 border border-amber-200 rounded-2xl flex items-center justify-between text-xs text-amber-900">
-                <div className="flex items-center gap-2">
-                  <AlertCircle className="w-4 h-4 text-amber-600 shrink-0" />
-                  <span>Connection issue. Please retry.</span>
-                </div>
-                <button
-                  onClick={() => handleSendMessage()}
-                  className="inline-flex items-center gap-1 font-semibold text-amber-950 underline hover:text-amber-800"
-                >
-                  <RefreshCw className="w-3 h-3" /> Retry
-                </button>
               </div>
             )}
 
@@ -439,12 +438,12 @@ export default function Chatbot() {
 
           {/* Quick Suggestions Pills */}
           {messages.length <= 2 && (
-            <div className="p-3 bg-white border-t border-slate-100 overflow-x-auto no-scrollbar flex gap-2">
+            <div className="px-3 py-1.5 bg-white border-t border-slate-100 overflow-x-auto no-scrollbar flex gap-1.5">
               {suggestions.slice(0, 4).map((sug, idx) => (
                 <button
                   key={idx}
                   onClick={() => handleSendMessage(sug)}
-                  className="whitespace-nowrap text-[11px] text-slate-700 bg-slate-100 hover:bg-[#0f5960]/10 hover:text-[#0f5960] hover:border-teal-300 px-3 py-1.5 rounded-full transition-all border border-slate-200/80 font-medium shadow-2xs"
+                  className="whitespace-nowrap text-[10px] text-slate-700 bg-slate-100 hover:bg-[#0f5960]/10 hover:text-[#0f5960] hover:border-teal-300 px-2.5 py-1 rounded-full transition-all border border-slate-200/80 font-medium shadow-2xs"
                 >
                   {sug}
                 </button>
@@ -453,7 +452,7 @@ export default function Chatbot() {
           )}
 
           {/* User Input Bar */}
-          <div className="p-3.5 bg-white border-t border-slate-200/90">
+          <div className="p-2.5 bg-white border-t border-slate-200/90">
             <div className="relative flex items-center">
               <input
                 ref={inputRef}
@@ -461,22 +460,22 @@ export default function Chatbot() {
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder="Ask about web dev, SEO, case studies..."
+                placeholder="Ask about web dev, SEO, pricing..."
                 maxLength={500}
                 disabled={isLoading}
-                className="w-full pl-4 pr-12 py-3 text-xs text-slate-900 placeholder:text-slate-400 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#0f5960]/30 focus:border-[#0f5960] transition-all disabled:opacity-60"
+                className="w-full pl-3 pr-8 py-1.5 text-[11px] sm:text-xs text-slate-900 placeholder:text-slate-400 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0f5960]/30 focus:border-[#0f5960] transition-all disabled:opacity-60"
               />
               <button
                 onClick={() => handleSendMessage()}
                 disabled={!inputValue.trim() || isLoading}
                 aria-label="Send query"
-                className="absolute right-2 p-2 rounded-xl bg-[#0f5960] hover:bg-[#0a454b] text-white disabled:opacity-25 disabled:hover:bg-[#0f5960] transition-all shadow-sm"
+                className="absolute right-1.5 p-1.5 rounded-lg bg-[#0f5960] hover:bg-[#0a454b] text-white disabled:opacity-25 disabled:hover:bg-[#0f5960] transition-all shadow-xs"
               >
-                <Send className="w-3.5 h-3.5" />
+                <Send className="w-3 h-3" />
               </button>
             </div>
-            <div className="flex items-center justify-between mt-1.5 px-1 text-[10px] text-slate-400 font-medium">
-              <span>Powered by Kraviona Verified Knowledge Base</span>
+            <div className="flex items-center justify-between mt-1 px-1 text-[8.5px] text-slate-400 font-medium">
+              <span>Verified Kraviona AI</span>
               {inputValue.length > 350 && <span>{inputValue.length}/500</span>}
             </div>
           </div>
