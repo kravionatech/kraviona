@@ -541,318 +541,124 @@ export default function Header() {
                       />
                     </button>
 
-                    {/* ── Mega panel ── */}
+                    {/* ── Mega panel (Fixed & Centered on Viewport, Zero Clipping, Zero Scrollbar) ── */}
                     <div
                       id="desktop-services-panel"
-                      className={`absolute top-[calc(100%+14px)] left-1/2 z-50 w-[min(1240px,calc(100vw-32px))] -translate-x-1/2
-                      transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]
-                      ${megaOpen ? "opacity-100 translate-y-0 pointer-events-auto" : "opacity-0 -translate-y-3 pointer-events-none"}`}
+                      className={`fixed top-[74px] left-1/2 z-50 w-[min(1120px,calc(100vw-48px))] -translate-x-1/2
+                      transition-all duration-250 ease-[cubic-bezier(0.4,0,0.2,1)]
+                      ${megaOpen ? "opacity-100 translate-y-0 pointer-events-auto" : "opacity-0 -translate-y-2 pointer-events-none"}`}
                       aria-hidden={!megaOpen}
                       aria-labelledby="desktop-services-trigger"
                       inert={!megaOpen}
                     >
-                      <div className="max-h-[calc(100vh-100px)] overflow-y-auto rounded-[14px] border border-[#E8E4DE] bg-[#FEFCF9] shadow-[0_24px_70px_rgba(26,56,64,0.12)]">
-                        {/* ── Top bar ── */}
-                        <div className="flex items-center justify-between border-b border-[#E8E4DE] bg-[#F7F5F1] px-6 py-3.5">
-                          <div className="flex items-center gap-3">
-                            <span className="flex h-8 w-8 items-center justify-center rounded-[6px] bg-white text-[#2D6E7A] shadow-xs border border-[#E8E4DE]">
-                              <Grid3X3 size={16} strokeWidth={2.2} />
+                      <div className="rounded-[14px] border border-[#E8E4DE] bg-[#FEFCF9] shadow-[0_24px_60px_rgba(26,56,64,0.12)] overflow-hidden">
+                        {/* ── Top Bar ── */}
+                        <div className="flex items-center justify-between border-b border-[#E8E4DE] bg-[#F7F5F1] px-6 py-3">
+                          <div className="flex items-center gap-2.5">
+                            <span className="flex h-7 w-7 items-center justify-center rounded-[6px] bg-white text-[#2D6E7A] shadow-xs border border-[#E8E4DE]">
+                              <Grid3X3 size={15} strokeWidth={2.2} />
                             </span>
-                            <div className="flex items-center gap-2.5">
-                              <span className="text-[13.5px] font-bold text-[#1A3840]">
-                                Services &amp; Capabilities
-                              </span>
-                              <span className="rounded-full bg-[#EAF3F5] border border-[#2D6E7A]/20 px-2 py-0.5 text-[10px] font-bold text-[#2D6E7A]">
-                                {TOTAL_SERVICES} services
-                              </span>
-                            </div>
+                            <span className="text-[13px] font-bold text-[#1A3840]">
+                              Capabilities &amp; Engineering Pillars
+                            </span>
+                            <span className="rounded-full bg-[#EAF3F5] border border-[#2D6E7A]/20 px-2 py-0.5 text-[10px] font-bold text-[#2D6E7A]">
+                              {TOTAL_SERVICES} services
+                            </span>
                           </div>
                           <Link
                             href="/services"
                             onClick={closeMenus}
-                            className="group/all flex items-center gap-1.5 text-[12.5px] font-bold text-[#2D6E7A] hover:text-[#C85A3C] transition-colors"
+                            className="group/all flex items-center gap-1.5 text-[12px] font-bold text-[#2D6E7A] hover:text-[#C85A3C] transition-colors"
                           >
-                            Explore all services <ArrowRight size={13} strokeWidth={2.2} className="transition-transform group-hover/all:translate-x-1" />
+                            Explore All Services <ArrowRight size={13} strokeWidth={2.2} className="transition-transform group-hover/all:translate-x-1" />
                           </Link>
                         </div>
 
-                        <div className="grid grid-cols-[1fr_280px]">
-                          {/* ── Spacious 3-column service grid (No text truncation) ── */}
-                          <div className="grid grid-cols-3 gap-6 p-6">
-                            {/* Column 1: Web Development (6 services) */}
-                            <div className="space-y-1">
-                              <div className="flex items-center justify-between pb-2 mb-2 border-b border-[#E8E4DE]">
-                                <Link
-                                  href={SERVICE_CATEGORIES[0].hubHref || "/services"}
-                                  onClick={closeMenus}
-                                  className="group/cat flex items-center gap-1.5 text-[11px] font-black uppercase tracking-[0.14em] text-[#2D6E7A] hover:text-[#C85A3C] transition-colors"
-                                >
-                                  <span>{SERVICE_CATEGORIES[0].label}</span>
-                                  <ArrowRight size={11} className="transition-transform group-hover/cat:translate-x-0.5" />
-                                </Link>
-                                <span className="text-[10px] font-bold text-[#5A7A82] bg-[#EAF3F5] px-1.5 py-0.5 rounded">
-                                  {SERVICE_CATEGORIES[0].services.length}
-                                </span>
-                              </div>
-                              {SERVICE_CATEGORIES[0].services.map((svc) => {
-                                const ServiceIcon = svc.Icon;
-                                return (
+                        {/* ── 5 Balanced Category Columns (Neat & Clean, Identical Height) ── */}
+                        <div className="grid grid-cols-5 divide-x divide-[#E8E4DE]/70 p-5 bg-[#FEFCF9]">
+                          {SERVICE_CATEGORIES.map((cat, catIdx) => {
+                            // Display top 4 primary services per category for perfect visual balance
+                            const displayServices = cat.services.slice(0, 4);
+
+                            return (
+                              <div key={cat.label} className="px-3 first:pl-1 last:pr-1 flex flex-col justify-between">
+                                <div>
+                                  {/* Category Title Link */}
                                   <Link
-                                    key={svc.name}
-                                    href={svc.path}
+                                    href={cat.hubHref || "/services"}
                                     onClick={closeMenus}
-                                    className="group/item flex items-start gap-2.5 rounded-[8px] p-2 transition-all duration-150 hover:bg-[#EAF3F5]"
+                                    className="group/cat flex items-center justify-between pb-2 mb-2.5 border-b border-[#E8E4DE]/80"
                                   >
-                                    <span className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-[6px] border border-[#E8E4DE] bg-white text-[#2D6E7A] transition-colors group-hover/item:border-[#2D6E7A]/40 group-hover/item:bg-[#2D6E7A] group-hover/item:text-white mt-0.5">
-                                      <ServiceIcon size={14} strokeWidth={2.1} />
+                                    <span className="text-[11.5px] font-bold uppercase tracking-[0.12em] text-[#1A3840] group-hover/cat:text-[#2D6E7A] transition-colors">
+                                      {cat.label}
                                     </span>
-                                    <div className="min-w-0 flex-1">
-                                      <span className="block text-[12.5px] font-bold leading-snug text-[#1A3840] transition-colors group-hover/item:text-[#2D6E7A]">
-                                        {svc.name}
-                                      </span>
-                                      <span className="block text-[11px] leading-tight text-[#5A7A82]">
-                                        {svc.desc}
-                                      </span>
-                                    </div>
+                                    <ArrowRight size={11} className="opacity-0 -translate-x-1 group-hover/cat:opacity-100 group-hover/cat:translate-x-0 transition-all text-[#2D6E7A]" />
                                   </Link>
-                                );
-                              })}
-                            </div>
 
-                            {/* Column 2: Backend (4) & Performance & AI (4) */}
-                            <div className="space-y-5">
-                              <div>
-                                <div className="flex items-center justify-between pb-2 mb-2 border-b border-[#E8E4DE]">
-                                  <Link
-                                    href={SERVICE_CATEGORIES[1].hubHref || "/services"}
-                                    onClick={closeMenus}
-                                    className="group/cat flex items-center gap-1.5 text-[11px] font-black uppercase tracking-[0.14em] text-[#2D6E7A] hover:text-[#C85A3C] transition-colors"
-                                  >
-                                    <span>{SERVICE_CATEGORIES[1].label}</span>
-                                    <ArrowRight size={11} className="transition-transform group-hover/cat:translate-x-0.5" />
-                                  </Link>
-                                  <span className="text-[10px] font-bold text-[#5A7A82] bg-[#EAF3F5] px-1.5 py-0.5 rounded">
-                                    {SERVICE_CATEGORIES[1].services.length}
-                                  </span>
+                                  {/* Services list */}
+                                  <ul className="space-y-1">
+                                    {displayServices.map((svc) => {
+                                      const ServiceIcon = svc.Icon;
+                                      return (
+                                        <li key={svc.name}>
+                                          <Link
+                                            href={svc.path}
+                                            onClick={closeMenus}
+                                            className="group/item flex items-center gap-2 rounded-[6px] px-2 py-1.5 transition-all duration-150 hover:bg-[#EAF3F5]"
+                                          >
+                                            <span className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-[5px] bg-[#EAF3F5] text-[#2D6E7A] transition-colors group-hover/item:bg-[#2D6E7A] group-hover/item:text-white">
+                                              <ServiceIcon size={13} strokeWidth={2.1} />
+                                            </span>
+                                            <span className="min-w-0 flex-1">
+                                              <span className="block text-[12px] font-semibold leading-tight text-[#1A3840] transition-colors group-hover/item:text-[#2D6E7A] truncate">
+                                                {svc.name}
+                                              </span>
+                                            </span>
+                                          </Link>
+                                        </li>
+                                      );
+                                    })}
+                                  </ul>
                                 </div>
-                                <div className="space-y-1">
-                                  {SERVICE_CATEGORIES[1].services.map((svc) => {
-                                    const ServiceIcon = svc.Icon;
-                                    return (
-                                      <Link
-                                        key={svc.name}
-                                        href={svc.path}
-                                        onClick={closeMenus}
-                                        className="group/item flex items-start gap-2.5 rounded-[8px] p-2 transition-all duration-150 hover:bg-[#EAF3F5]"
-                                      >
-                                        <span className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-[6px] border border-[#E8E4DE] bg-white text-[#2D6E7A] transition-colors group-hover/item:border-[#2D6E7A]/40 group-hover/item:bg-[#2D6E7A] group-hover/item:text-white mt-0.5">
-                                          <ServiceIcon size={14} strokeWidth={2.1} />
-                                        </span>
-                                        <div className="min-w-0 flex-1">
-                                          <span className="block text-[12.5px] font-bold leading-snug text-[#1A3840] transition-colors group-hover/item:text-[#2D6E7A]">
-                                            {svc.name}
-                                          </span>
-                                          <span className="block text-[11px] leading-tight text-[#5A7A82]">
-                                            {svc.desc}
-                                          </span>
-                                        </div>
-                                      </Link>
-                                    );
-                                  })}
+
+                                {/* Category Hub Link at bottom */}
+                                <div className="pt-2.5 mt-2 border-t border-[#E8E4DE]/60">
+                                  <Link
+                                    href={cat.hubHref || "/services"}
+                                    onClick={closeMenus}
+                                    className="inline-flex items-center gap-1 text-[11px] font-bold text-[#2D6E7A] hover:text-[#C85A3C] transition-colors"
+                                  >
+                                    All {cat.services.length} services →
+                                  </Link>
                                 </div>
                               </div>
+                            );
+                          })}
+                        </div>
 
-                              <div>
-                                <div className="flex items-center justify-between pb-2 mb-2 border-b border-[#E8E4DE]">
-                                  <Link
-                                    href={SERVICE_CATEGORIES[2].hubHref || "/services"}
-                                    onClick={closeMenus}
-                                    className="group/cat flex items-center gap-1.5 text-[11px] font-black uppercase tracking-[0.14em] text-[#2D6E7A] hover:text-[#C85A3C] transition-colors"
-                                  >
-                                    <span>{SERVICE_CATEGORIES[2].label}</span>
-                                    <ArrowRight size={11} className="transition-transform group-hover/cat:translate-x-0.5" />
-                                  </Link>
-                                  <span className="text-[10px] font-bold text-[#5A7A82] bg-[#EAF3F5] px-1.5 py-0.5 rounded">
-                                    {SERVICE_CATEGORIES[2].services.length}
-                                  </span>
-                                </div>
-                                <div className="space-y-1">
-                                  {SERVICE_CATEGORIES[2].services.map((svc) => {
-                                    const ServiceIcon = svc.Icon;
-                                    return (
-                                      <Link
-                                        key={svc.name}
-                                        href={svc.path}
-                                        onClick={closeMenus}
-                                        className="group/item flex items-start gap-2.5 rounded-[8px] p-2 transition-all duration-150 hover:bg-[#EAF3F5]"
-                                      >
-                                        <span className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-[6px] border border-[#E8E4DE] bg-white text-[#2D6E7A] transition-colors group-hover/item:border-[#2D6E7A]/40 group-hover/item:bg-[#2D6E7A] group-hover/item:text-white mt-0.5">
-                                          <ServiceIcon size={14} strokeWidth={2.1} />
-                                        </span>
-                                        <div className="min-w-0 flex-1">
-                                          <span className="block text-[12.5px] font-bold leading-snug text-[#1A3840] transition-colors group-hover/item:text-[#2D6E7A]">
-                                            {svc.name}
-                                          </span>
-                                          <span className="block text-[11px] leading-tight text-[#5A7A82]">
-                                            {svc.desc}
-                                          </span>
-                                        </div>
-                                      </Link>
-                                    );
-                                  })}
-                                </div>
-                              </div>
-                            </div>
-
-                            {/* Column 3: Branding (4) & Marketplace (6) */}
-                            <div className="space-y-5">
-                              <div>
-                                <div className="flex items-center justify-between pb-2 mb-2 border-b border-[#E8E4DE]">
-                                  <Link
-                                    href={SERVICE_CATEGORIES[3].hubHref || "/services"}
-                                    onClick={closeMenus}
-                                    className="group/cat flex items-center gap-1.5 text-[11px] font-black uppercase tracking-[0.14em] text-[#2D6E7A] hover:text-[#C85A3C] transition-colors"
-                                  >
-                                    <span>{SERVICE_CATEGORIES[3].label}</span>
-                                    <ArrowRight size={11} className="transition-transform group-hover/cat:translate-x-0.5" />
-                                  </Link>
-                                  <span className="text-[10px] font-bold text-[#5A7A82] bg-[#EAF3F5] px-1.5 py-0.5 rounded">
-                                    {SERVICE_CATEGORIES[3].services.length}
-                                  </span>
-                                </div>
-                                <div className="space-y-1">
-                                  {SERVICE_CATEGORIES[3].services.map((svc) => {
-                                    const ServiceIcon = svc.Icon;
-                                    return (
-                                      <Link
-                                        key={svc.name}
-                                        href={svc.path}
-                                        onClick={closeMenus}
-                                        className="group/item flex items-start gap-2.5 rounded-[8px] p-2 transition-all duration-150 hover:bg-[#EAF3F5]"
-                                      >
-                                        <span className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-[6px] border border-[#E8E4DE] bg-white text-[#2D6E7A] transition-colors group-hover/item:border-[#2D6E7A]/40 group-hover/item:bg-[#2D6E7A] group-hover/item:text-white mt-0.5">
-                                          <ServiceIcon size={14} strokeWidth={2.1} />
-                                        </span>
-                                        <div className="min-w-0 flex-1">
-                                          <span className="block text-[12.5px] font-bold leading-snug text-[#1A3840] transition-colors group-hover/item:text-[#2D6E7A]">
-                                            {svc.name}
-                                          </span>
-                                          <span className="block text-[11px] leading-tight text-[#5A7A82]">
-                                            {svc.desc}
-                                          </span>
-                                        </div>
-                                      </Link>
-                                    );
-                                  })}
-                                </div>
-                              </div>
-
-                              <div>
-                                <div className="flex items-center justify-between pb-2 mb-2 border-b border-[#E8E4DE]">
-                                  <Link
-                                    href={SERVICE_CATEGORIES[4].hubHref || "/services"}
-                                    onClick={closeMenus}
-                                    className="group/cat flex items-center gap-1.5 text-[11px] font-black uppercase tracking-[0.14em] text-[#2D6E7A] hover:text-[#C85A3C] transition-colors"
-                                  >
-                                    <span>{SERVICE_CATEGORIES[4].label}</span>
-                                    <ArrowRight size={11} className="transition-transform group-hover/cat:translate-x-0.5" />
-                                  </Link>
-                                  <span className="text-[10px] font-bold text-[#5A7A82] bg-[#EAF3F5] px-1.5 py-0.5 rounded">
-                                    {SERVICE_CATEGORIES[4].services.length}
-                                  </span>
-                                </div>
-                                <div className="space-y-1">
-                                  {SERVICE_CATEGORIES[4].services.map((svc) => {
-                                    const ServiceIcon = svc.Icon;
-                                    return (
-                                      <Link
-                                        key={svc.name}
-                                        href={svc.path}
-                                        onClick={closeMenus}
-                                        className="group/item flex items-start gap-2.5 rounded-[8px] p-2 transition-all duration-150 hover:bg-[#EAF3F5]"
-                                      >
-                                        <span className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-[6px] border border-[#E8E4DE] bg-white text-[#2D6E7A] transition-colors group-hover/item:border-[#2D6E7A]/40 group-hover/item:bg-[#2D6E7A] group-hover/item:text-white mt-0.5">
-                                          <ServiceIcon size={14} strokeWidth={2.1} />
-                                        </span>
-                                        <div className="min-w-0 flex-1">
-                                          <span className="block text-[12.5px] font-bold leading-snug text-[#1A3840] transition-colors group-hover/item:text-[#2D6E7A]">
-                                            {svc.name}
-                                          </span>
-                                          <span className="block text-[11px] leading-tight text-[#5A7A82]">
-                                            {svc.desc}
-                                          </span>
-                                        </div>
-                                      </Link>
-                                    );
-                                  })}
-                                </div>
-                              </div>
-                            </div>
+                        {/* ── Bottom Agency Strip & Quick CTAs ── */}
+                        <div className="flex items-center justify-between border-t border-[#E8E4DE] bg-[#F7F5F1] px-6 py-2.5">
+                          <div className="flex items-center gap-2.5">
+                            <span className="h-2 w-2 rounded-full bg-[#2D6E7A] animate-pulse" />
+                            <p className="text-[11.5px] text-[#5A7A82]">
+                              Founder-led engineering &amp; technical SEO planned from day one.
+                            </p>
                           </div>
-
-                          {/* ── Right sidebar: Featured Solutions + CTAs ── */}
-                          <div className="flex flex-col border-l border-[#E8E4DE] bg-[#F7F5F1] p-5 justify-between">
-                            <div>
-                              <div className="flex items-center justify-between pb-2 mb-3 border-b border-[#E8E4DE]">
-                                <span className="text-[10.5px] font-black uppercase tracking-[0.14em] text-[#C85A3C]">
-                                  Featured Solutions
-                                </span>
-                                <span className="text-[10px] font-bold text-[#5A7A82]">
-                                  Recommended
-                                </span>
-                              </div>
-
-                              <ul className="space-y-2">
-                                {FEATURED.map((f) => {
-                                  const FeaturedIcon = f.Icon;
-                                  return (
-                                    <li key={f.name}>
-                                      <Link
-                                        href={f.path}
-                                        onClick={closeMenus}
-                                        className="group/feat flex items-start gap-2.5 rounded-[8px] border border-[#E8E4DE] bg-[#FEFCF9] p-2.5 transition-all duration-200 hover:border-[#2D6E7A]/40 hover:shadow-xs"
-                                      >
-                                        <span className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-[6px] bg-[#EAF3F5] text-[#2D6E7A] group-hover/feat:bg-[#2D6E7A] group-hover/feat:text-white transition-colors mt-0.5">
-                                          <FeaturedIcon size={14} strokeWidth={2.1} />
-                                        </span>
-                                        <div className="min-w-0 flex-1">
-                                          <div className="flex items-center justify-between gap-1 mb-0.5">
-                                            <span className="block text-[12px] font-bold text-[#1A3840] group-hover/feat:text-[#2D6E7A] transition-colors">
-                                              {f.name}
-                                            </span>
-                                            <span className={`flex-shrink-0 rounded-[4px] px-1.5 py-0.5 text-[8.5px] font-bold uppercase tracking-wider ${f.badgeColor}`}>
-                                              {f.badge}
-                                            </span>
-                                          </div>
-                                          <p className="text-[10.5px] text-[#5A7A82] leading-tight">
-                                            {f.desc}
-                                          </p>
-                                        </div>
-                                      </Link>
-                                    </li>
-                                  );
-                                })}
-                              </ul>
-                            </div>
-
-                            {/* Divider & CTAs */}
-                            <div className="border-t border-[#E8E4DE] pt-4 mt-5 space-y-2">
-                              <Link
-                                href="/contact"
-                                onClick={closeMenus}
-                                className="flex w-full items-center justify-center gap-1.5 rounded-[6px] bg-[#C85A3C] hover:bg-[#B04D31] py-2.5 text-[12.5px] font-bold text-white shadow-sm transition-all duration-200"
-                              >
-                                Start a Project
-                                <ArrowRight size={13} strokeWidth={2.2} />
-                              </Link>
-                              <Link
-                                href="/pricing"
-                                onClick={closeMenus}
-                                className="flex w-full items-center justify-center gap-1.5 rounded-[6px] border border-[#2D6E7A] py-2 text-[12px] font-semibold text-[#2D6E7A] hover:bg-[#EAF3F5] transition-colors duration-200"
-                              >
-                                View Transparent Pricing
-                              </Link>
-                            </div>
+                          <div className="flex items-center gap-3">
+                            <Link
+                              href="/pricing"
+                              onClick={closeMenus}
+                              className="text-[12px] font-semibold text-[#5A7A82] hover:text-[#2D6E7A] transition-colors"
+                            >
+                              Pricing Plans
+                            </Link>
+                            <Link
+                              href="/contact"
+                              onClick={closeMenus}
+                              className="inline-flex items-center gap-1.5 rounded-[6px] bg-[#C85A3C] hover:bg-[#B04D31] px-3.5 py-1.5 text-[12px] font-bold text-white shadow-xs transition-all"
+                            >
+                              Start a Project <ArrowRight size={12} strokeWidth={2.2} />
+                            </Link>
                           </div>
                         </div>
                       </div>
