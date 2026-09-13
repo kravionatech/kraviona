@@ -471,8 +471,8 @@ export default function Header() {
           px-8 xl:px-12 transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]
           ${
             scrolled
-              ? "h-[66px] border-gray-200/90 bg-white/96 backdrop-blur-xl shadow-[0_10px_30px_rgba(42,74,82,0.08)]"
-              : "h-[78px] border-white/70 bg-white/90 backdrop-blur-xl shadow-[0_1px_0_rgba(42,74,82,0.05)]"
+              ? "h-[66px] border-[#245862] bg-[#2D6E7A]/98 backdrop-blur-xl shadow-[0_10px_30px_rgba(26,56,64,0.2)]"
+              : "h-[78px] border-white/10 bg-[#2D6E7A] shadow-[0_1px_0_rgba(255,255,255,0.08)]"
           }`}
         role="banner"
       >
@@ -483,7 +483,7 @@ export default function Header() {
           className="flex flex-shrink-0 items-center group"
         >
           <Image
-            src="/full-logo.webp"
+            src="/full-logo-light.webp"
             alt="Kraviona – vision innovative development"
             width={170}
             height={58}
@@ -522,14 +522,14 @@ export default function Header() {
                       aria-expanded={megaOpen}
                       aria-controls="desktop-services-panel"
                       aria-current={active ? "page" : undefined}
-                      className={`group flex items-center gap-1.5 rounded-md border-b-2 border-transparent px-3.5 py-2 text-[13.5px] font-semibold transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40
-                      ${active ? "border-accent text-accent-dark" : "text-primary hover:bg-primary-tint hover:text-accent-dark"}`}
+                      className={`group flex items-center gap-1.5 rounded-[6px] border-b-2 px-3.5 py-2 text-[13.5px] font-medium transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40
+                      ${active ? "border-[#D4A550] text-[#D4A550]" : "border-transparent text-white/80 hover:text-white hover:bg-white/10"}`}
                     >
                       Services
                       <ChevronDown
                         size={15}
                         strokeWidth={2.2}
-                        className={`transition-transform duration-300 ${megaOpen ? "rotate-180 text-accent-dark" : "text-primary-light group-hover:text-accent-dark"}`}
+                        className={`transition-transform duration-300 ${megaOpen ? "rotate-180 text-white" : active ? "text-[#D4A550]" : "text-white/70 group-hover:text-white"}`}
                       />
                     </button>
 
@@ -543,7 +543,7 @@ export default function Header() {
                       aria-labelledby="desktop-services-trigger"
                       inert={!megaOpen}
                     >
-                      <div className="max-h-[calc(100vh-112px)] overflow-y-auto rounded-lg border border-gray-200 bg-white shadow-[0_24px_70px_rgba(42,74,82,0.14)]">
+                      <div className="max-h-[calc(100vh-112px)] overflow-y-auto rounded-[12px] border border-[#E8E4DE] bg-[#FEFCF9] shadow-[0_24px_70px_rgba(26,56,64,0.14)]">
                         {/* ── Top bar ── */}
                         <div className="flex items-center justify-between border-b border-gray-200 bg-[#F5F7F8] px-5 py-4">
                           <div className="flex items-center gap-2.5">
@@ -653,11 +653,11 @@ export default function Header() {
                             </ul>
 
                             {/* Divider */}
-                            <div className="border-t border-gray-200/70 pt-3 mt-auto space-y-2">
+                            <div className="border-t border-[#E8E4DE] pt-3 mt-auto space-y-2">
                               <Link
                                 href="/contact"
                                 onClick={closeMenus}
-                                className="flex w-full items-center justify-center gap-1.5 rounded-md bg-accent-dark py-2.5 text-[12px] font-bold text-white shadow-sm transition-all duration-200 hover:brightness-90"
+                                className="flex w-full items-center justify-center gap-1.5 rounded-[6px] bg-[#C85A3C] hover:bg-[#B04D31] py-2.5 text-[12px] font-bold text-white shadow-sm transition-all duration-200"
                               >
                                 Start a Project
                                 <ArrowRight size={13} strokeWidth={2.2} />
@@ -665,7 +665,7 @@ export default function Header() {
                               <Link
                                 href="/pricing"
                                 onClick={closeMenus}
-                                className="flex w-full items-center justify-center gap-1.5 rounded-md border border-gray-200 py-2 text-[11.5px] font-semibold text-gray-600 transition-colors duration-200 hover:bg-gray-100 hover:text-gray-900"
+                                className="flex w-full items-center justify-center gap-1.5 rounded-[6px] border border-[#2D6E7A] py-2 text-[11.5px] font-semibold text-[#2D6E7A] transition-colors duration-200 hover:bg-[#EAF3F5]"
                               >
                                 View Pricing
                               </Link>
@@ -696,14 +696,14 @@ export default function Header() {
                       aria-expanded={openDropdown === idx}
                       aria-controls={`desktop-${item.name.toLowerCase()}-panel`}
                       aria-current={active ? "page" : undefined}
-                      className={`group flex items-center gap-1.5 rounded-md border-b-2 border-transparent px-3.5 py-2 text-[13.5px] font-semibold transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40
-                      ${active ? "border-accent text-accent-dark" : "text-primary hover:bg-primary-tint hover:text-accent-dark"}`}
+                      className={`group flex items-center gap-1.5 rounded-[6px] border-b-2 px-3.5 py-2 text-[13.5px] font-medium transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40
+                      ${active ? "border-[#D4A550] text-[#D4A550]" : "border-transparent text-white/80 hover:text-white hover:bg-white/10"}`}
                     >
                       {item.name}
                       <ChevronDown
                         size={15}
                         strokeWidth={2.2}
-                        className={`transition-transform duration-300 ${openDropdown === idx ? "rotate-180 text-accent-dark" : "text-primary-light group-hover:text-accent-dark"}`}
+                        className={`transition-transform duration-300 ${openDropdown === idx ? "rotate-180 text-white" : active ? "text-[#D4A550]" : "text-white/70 group-hover:text-white"}`}
                       />
                     </button>
 
@@ -716,13 +716,13 @@ export default function Header() {
                       aria-labelledby={`desktop-${item.name.toLowerCase()}-trigger`}
                       inert={openDropdown !== idx}
                     >
-                      <div className="rounded-lg border border-gray-200 bg-white p-1.5 shadow-[0_16px_46px_rgba(42,74,82,0.12)]">
+                      <div className="rounded-[12px] border border-[#E8E4DE] bg-[#FEFCF9] p-1.5 shadow-[0_16px_46px_rgba(26,56,64,0.12)]">
                         {item.dropdown.map((sub) => (
                           <Link
                             key={sub.name}
                             href={sub.path}
                             onClick={closeMenus}
-                            className="block rounded-md px-3.5 py-2.5 text-[13px] font-medium text-gray-600 transition-colors duration-150 hover:bg-gray-50 hover:text-gray-900"
+                            className="block rounded-[6px] px-3.5 py-2.5 text-[13px] font-medium text-[#1A3840] transition-colors duration-150 hover:bg-[#EAF3F5] hover:text-[#2D6E7A]"
                           >
                             {sub.name}
                           </Link>
@@ -739,8 +739,8 @@ export default function Header() {
                     href={item.path}
                     onClick={closeMenus}
                     aria-current={active ? "page" : undefined}
-                    className={`flex items-center rounded-md border-b-2 border-transparent px-3.5 py-2 text-[13.5px] font-semibold transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40
-                      ${active ? "border-accent text-accent-dark" : "text-primary hover:bg-primary-tint hover:text-accent-dark"}`}
+                    className={`flex items-center rounded-[6px] border-b-2 px-3.5 py-2 text-[13.5px] font-medium transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40
+                      ${active ? "border-[#D4A550] text-[#D4A550]" : "border-transparent text-white/80 hover:text-white hover:bg-white/10"}`}
                   >
                     {item.name}
                   </Link>
@@ -753,7 +753,7 @@ export default function Header() {
         {/* Desktop CTA */}
         <Link
           href="/contact"
-          className="flex items-center gap-2 rounded-md bg-accent-dark px-5 py-2.5 text-[13px] font-bold text-white shadow-brand-sm transition-all duration-200 hover:brightness-90 whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40"
+          className="flex items-center gap-2 rounded-[6px] bg-[#C85A3C] hover:bg-[#B04D31] px-5 py-2.5 text-[13px] font-bold text-white shadow-brand-sm transition-all duration-200 whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
           aria-label="Start a project"
         >
           Start Project
@@ -766,8 +766,8 @@ export default function Header() {
         className={`lg:hidden fixed top-0 left-0 w-full z-50 flex items-center justify-between px-4 transition-all duration-300
           ${
             scrolled
-              ? "h-[60px] border-b border-gray-200 bg-white/96 backdrop-blur-xl shadow-[0_8px_24px_rgba(42,74,82,0.08)]"
-              : "h-[66px] border-b border-gray-100 bg-white/94 backdrop-blur-lg"
+              ? "h-[60px] border-b border-[#245862] bg-[#2D6E7A]/98 backdrop-blur-xl shadow-[0_8px_24px_rgba(26,56,64,0.16)]"
+              : "h-[66px] border-b border-white/10 bg-[#2D6E7A]"
           }`}
         role="banner"
       >
@@ -778,7 +778,7 @@ export default function Header() {
           className="flex items-center"
         >
           <Image
-            src="/full-logo.webp"
+            src="/full-logo-light.webp"
             alt="Kraviona – vision innovative development"
             width={140}
             height={48}
@@ -791,7 +791,7 @@ export default function Header() {
         <button
           type="button"
           onClick={() => setMobileOpen(true)}
-          className="flex h-11 w-11 items-center justify-center rounded-md bg-primary text-white shadow-brand-sm transition-colors hover:bg-primary-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40"
+          className="flex h-11 w-11 items-center justify-center rounded-[6px] bg-white/10 text-white transition-colors hover:bg-white/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
           aria-label="Open navigation"
           aria-expanded={mobileOpen}
           aria-controls="mobile-nav"
@@ -804,7 +804,7 @@ export default function Header() {
       <div
         onClick={closeMobile}
         aria-hidden="true"
-        className={`fixed inset-0 bg-dark/30 backdrop-blur-[2px] z-[60] lg:hidden transition-opacity duration-300 ${mobileOpen ? "opacity-100" : "opacity-0 pointer-events-none"}`}
+        className={`fixed inset-0 bg-[#1A3840]/40 backdrop-blur-[2px] z-[60] lg:hidden transition-opacity duration-300 ${mobileOpen ? "opacity-100" : "opacity-0 pointer-events-none"}`}
       />
 
       {/* ─────────────── MOBILE DRAWER ───────────────────────────────── */}
@@ -816,20 +816,20 @@ export default function Header() {
         aria-label="Navigation"
         aria-hidden={!mobileOpen}
         inert={!mobileOpen}
-        className={`fixed top-0 right-0 h-full w-[88%] max-w-[370px] bg-primary text-white z-[70] lg:hidden flex flex-col
-          shadow-[-16px_0_48px_rgba(42,74,82,0.14)]
+        className={`fixed top-0 right-0 h-full w-[88%] max-w-[370px] bg-[#1A3840] text-white z-[70] lg:hidden flex flex-col
+          shadow-[-16px_0_48px_rgba(26,56,64,0.3)]
           transition-transform duration-350 ease-[cubic-bezier(0.4,0,0.2,1)]
           ${mobileOpen ? "translate-x-0" : "translate-x-full"}`}
       >
         {/* Drawer header */}
-        <div className="flex h-[70px] items-center justify-between border-b border-white/15 bg-primary px-5">
+        <div className="flex h-[70px] items-center justify-between border-b border-white/15 bg-[#2D6E7A] px-5">
           <Link
             href="/"
             onClick={closeMobile}
-            className="flex items-center rounded-xl bg-white/95 px-3 py-1.5 shadow-md"
+            className="flex items-center"
           >
             <Image
-              src="/full-logo.webp"
+              src="/full-logo-light.webp"
               alt="Kraviona – vision innovative development"
               width={140}
               height={48}
@@ -840,7 +840,7 @@ export default function Header() {
           <button
             type="button"
             onClick={closeMobile}
-            className="flex h-11 w-11 items-center justify-center rounded-md text-white/80 transition-colors hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
+            className="flex h-11 w-11 items-center justify-center rounded-[6px] text-white/80 transition-colors hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50"
             aria-label="Close navigation"
           >
             <X size={20} strokeWidth={2.1} />
@@ -981,14 +981,14 @@ export default function Header() {
           <Link
             href="/contact"
             onClick={closeMobile}
-            className="flex w-full items-center justify-center gap-2 rounded-md bg-accent-dark py-3.5 text-[13.5px] font-bold text-white shadow-sm transition-all hover:brightness-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 focus-visible:ring-offset-2 focus-visible:ring-offset-primary"
+            className="flex w-full items-center justify-center gap-2 rounded-[6px] bg-[#C85A3C] hover:bg-[#B04D31] py-3.5 text-[13.5px] font-bold text-white shadow-sm transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50"
           >
             Start Project <ArrowRight size={15} strokeWidth={2.2} />
           </Link>
           <a
             href="tel:+919608553167"
             onClick={closeMobile}
-            className="flex w-full items-center justify-center gap-2 rounded-md border border-white/25 py-3 text-[13.5px] font-semibold text-white/85 transition-colors hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
+            className="flex w-full items-center justify-center gap-2 rounded-[6px] border border-white/25 py-3 text-[13.5px] font-semibold text-white/85 transition-colors hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50"
           >
             <Phone size={16} strokeWidth={2.1} />
             +91 96085 53167
@@ -1006,8 +1006,8 @@ function MobileLink({ href, active, onClick, children }) {
       <Link
         href={href}
         onClick={onClick}
-        className={`block rounded-md px-4 py-3 text-[14.5px] font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50
-          ${active ? "bg-white/10 text-white" : "text-white/80 hover:bg-white/10 hover:text-white"}`}
+        className={`block rounded-[6px] px-4 py-3 text-[14.5px] font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50
+          ${active ? "bg-white/10 text-[#D4A550]" : "text-white/80 hover:bg-white/10 hover:text-white"}`}
       >
         {children}
       </Link>

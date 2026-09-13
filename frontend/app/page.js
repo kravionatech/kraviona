@@ -299,34 +299,34 @@ const Home = async () => {
       <HeroSection />
 
       {/* ── SEO Content Block ── */}
-      <section className="py-20 bg-[#F5F7F8]" aria-label="About our services">
+      <section className="py-20 bg-[#FEFCF9]" aria-label="About our services">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-start">
             <div>
               <div className="flex items-center gap-3 mb-5">
-                <span className="w-10 h-[2px] bg-[#E8622A]" />
-                <span className="text-[#E8622A] font-bold uppercase tracking-[0.18em] text-xs">
+                <span className="w-10 h-[2px] bg-[#C85A3C]" />
+                <span className="text-[#C85A3C] font-bold uppercase tracking-[0.18em] text-xs">
                   Who We Are
                 </span>
               </div>
-              <h2 className="text-3xl md:text-4xl font-extrabold text-[#1A2E33] leading-tight mb-5">
+              <h2 className="font-heading text-3xl md:text-4xl font-bold text-[#1A3840] leading-tight mb-5">
                 A Practical{" "}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#E8622A] to-[#B84A1A]">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#2D6E7A] to-[#C85A3C]">
                   Build and Growth Partner
                 </span>
               </h2>
-              <p className="text-gray-600 leading-relaxed mb-5 text-base md:text-lg">
+              <p className="text-[#5A7A82] leading-relaxed mb-5 text-base md:text-lg">
                 Kraviona Tech Solutions is a Delhi-based{" "}
-                <strong>MERN Stack development company</strong> and{" "}
-                <strong>Technical SEO company</strong> serving businesses across
+                <strong className="text-[#1A3840]">MERN Stack development company</strong> and{" "}
+                <strong className="text-[#1A3840]">Technical SEO company</strong> serving businesses across
                 India and beyond. We build fast websites, reliable web
                 applications, clean backend systems, and SEO-ready foundations
                 that help your business earn attention and convert it.
               </p>
-              <p className="text-gray-600 leading-relaxed mb-6 text-base md:text-lg">
-                From <strong>React.js frontends</strong> and{" "}
-                <strong>Node.js APIs</strong> to{" "}
-                <strong>Core Web Vitals optimisation</strong>, structured data,
+              <p className="text-[#5A7A82] leading-relaxed mb-6 text-base md:text-lg">
+                From <strong className="text-[#1A3840]">React.js frontends</strong> and{" "}
+                <strong className="text-[#1A3840]">Node.js APIs</strong> to{" "}
+                <strong className="text-[#1A3840]">Core Web Vitals optimisation</strong>, structured data,
                 admin panels, and search-friendly architecture, we handle the
                 technical layers that make a digital product useful after
                 launch.
@@ -340,12 +340,12 @@ const Home = async () => {
                 ].map((stat) => (
                   <div
                     key={stat.label}
-                    className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm text-center"
+                    className="bg-[#FEFCF9] border border-[#E8E4DE] rounded-[12px] p-4 shadow-sm text-center"
                   >
-                    <p className="text-2xl font-black text-[#E8622A]">
+                    <p className="text-2xl font-black text-[#C85A3C]">
                       {stat.value}
                     </p>
-                    <p className="text-xs text-gray-500 font-semibold uppercase tracking-wide mt-1">
+                    <p className="text-xs text-[#5A7A82] font-semibold uppercase tracking-wide mt-1">
                       {stat.label}
                     </p>
                   </div>
@@ -353,10 +353,10 @@ const Home = async () => {
               </div>
               <section className="mb-8" aria-label="Client testimonials">
                 <div className="mb-5">
-                  <span className="text-[#E8622A] font-bold uppercase tracking-[0.18em] text-xs">
+                  <span className="text-[#C85A3C] font-bold uppercase tracking-[0.18em] text-xs">
                     Client Results
                   </span>
-                  <h3 className="mt-2 text-2xl font-extrabold text-[#1A2E33]">
+                  <h3 className="font-heading mt-2 text-2xl font-bold text-[#1A3840]">
                     Built for founders and growth teams
                   </h3>
                 </div>
@@ -364,23 +364,23 @@ const Home = async () => {
                   {testimonials.map((testimonial) => (
                     <article
                       key={testimonial.name}
-                      className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm"
+                      className="rounded-[12px] border border-[#E8E4DE] bg-[#FEFCF9] p-5 shadow-sm"
                     >
-                      <div className="mb-3 text-sm tracking-[0.15em] text-[#F28C5E]">
+                      <div className="mb-3 text-sm tracking-[0.15em] text-[#D4A550]">
                         {"★".repeat(testimonial.rating)}
                       </div>
-                      <p className="text-sm leading-relaxed text-gray-600">
+                      <p className="text-sm leading-relaxed text-[#5A7A82]">
                         “{testimonial.text}”
                       </p>
                       <div className="mt-4 flex items-center gap-3">
-                        <span className="flex h-10 w-10 items-center justify-center rounded-full bg-[#FEF0E9] text-sm font-black text-[#B84A1A]">
+                        <span className="flex h-10 w-10 items-center justify-center rounded-full bg-[#EAF3F5] text-sm font-black text-[#2D6E7A]">
                           {testimonial.initials}
                         </span>
                         <div>
-                          <p className="font-bold text-[#1A2E33]">
+                          <p className="font-bold text-[#1A3840]">
                             {testimonial.name}
                           </p>
-                          <p className="text-xs font-semibold text-gray-500">
+                          <p className="text-xs font-semibold text-[#5A7A82]">
                             {testimonial.role}, {testimonial.company}
                           </p>
                         </div>
@@ -391,7 +391,7 @@ const Home = async () => {
               </section>
               <Link
                 href="/about"
-                className="inline-flex items-center gap-2 px-7 py-3 bg-[#E8622A] text-white font-bold rounded-xl hover:bg-[#B84A1A] transition-all duration-300 text-sm shadow-brand-sm"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-[#C85A3C] text-white font-bold rounded-[6px] hover:bg-[#B04D31] transition-all duration-300 text-sm shadow-sm"
               >
                 Learn About Kraviona
                 <svg
@@ -412,8 +412,8 @@ const Home = async () => {
 
             <div className="space-y-6">
               <div className="flex items-center gap-3 mb-5">
-                <span className="w-10 h-[2px] bg-[#E8622A]" />
-                <span className="text-[#E8622A] font-bold uppercase tracking-[0.18em] text-xs">
+                <span className="w-10 h-[2px] bg-[#2D6E7A]" />
+                <span className="text-[#2D6E7A] font-bold uppercase tracking-[0.18em] text-xs">
                   Core Services
                 </span>
               </div>
@@ -447,18 +447,18 @@ const Home = async () => {
                 <Link
                   key={i}
                   href={service.href}
-                  className="group flex gap-4 p-5 bg-white border border-gray-200 rounded-2xl hover:border-[#E8622A]/40 hover:shadow-[0_4px_20px_rgba(232,98,42,0.08)] transition-all duration-300"
+                  className="group flex gap-4 p-5 bg-[#FEFCF9] border border-[#E8E4DE] rounded-[12px] hover:border-[#2D6E7A]/40 hover:shadow-[0_4px_20px_rgba(45,110,122,0.08)] transition-all duration-300"
                 >
-                  <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-[#FEF0E9] flex items-center justify-center mt-0.5">
-                    <span className="text-[#B84A1A] font-black text-sm">
+                  <div className="flex-shrink-0 w-10 h-10 rounded-[8px] bg-[#EAF3F5] flex items-center justify-center mt-0.5">
+                    <span className="text-[#2D6E7A] font-bold text-sm">
                       0{i + 1}
                     </span>
                   </div>
                   <div>
-                    <h3 className="font-bold text-[#1A2E33] mb-1 group-hover:text-[#E8622A] transition-colors">
+                    <h3 className="font-heading font-bold text-[#1A3840] mb-1 group-hover:text-[#C85A3C] transition-colors">
                       {service.title}
                     </h3>
-                    <p className="text-gray-500 text-sm leading-relaxed">
+                    <p className="text-[#5A7A82] text-sm leading-relaxed">
                       {service.desc}
                     </p>
                   </div>
@@ -466,7 +466,7 @@ const Home = async () => {
               ))}
               <Link
                 href="/services"
-                className="inline-flex items-center gap-2 text-[#2A4A52] font-bold hover:text-[#E8622A] transition-colors text-sm"
+                className="inline-flex items-center gap-2 text-[#2D6E7A] font-bold hover:text-[#C85A3C] transition-colors text-sm"
               >
                 View All Services →
               </Link>

@@ -56,11 +56,11 @@ function PostImage({ post, className = "", sizes }) {
 }
 
 function MetaRow({ publishedDate, readingTime, light = false }) {
-  const textClass = light ? "text-white/80" : "text-gray-500";
-  const iconClass = light ? "text-[#F28C5E]" : "text-[#E8622A]";
+  const textClass = light ? "text-white/80" : "text-[#5A7A82]";
+  const iconClass = light ? "text-[#D4A550]" : "text-[#2D6E7A]";
 
   return (
-    <div className={`flex flex-wrap items-center gap-x-4 gap-y-2 text-xs font-bold ${textClass}`}>
+    <div className={`flex flex-wrap items-center gap-x-4 gap-y-2 text-xs font-medium ${textClass}`}>
       {publishedDate && (
         <span className="inline-flex items-center gap-1.5">
           <CalendarDays className={`h-3.5 w-3.5 ${iconClass}`} />
@@ -88,18 +88,18 @@ const PostCard = ({ post, variant = "default", className = "" }) => {
     return (
       <Link
         href={href}
-        className={`group grid grid-cols-[88px_minmax(0,1fr)] gap-4 rounded-lg border border-gray-100 bg-white p-3 transition-all duration-300 hover:border-[#E8622A]/40 hover:shadow-sm ${className}`}
+        className={`group grid grid-cols-[88px_minmax(0,1fr)] gap-4 rounded-[12px] border border-[#E8E4DE] bg-[#FEFCF9] p-3 transition-all duration-300 hover:border-[#2D6E7A]/40 hover:shadow-sm ${className}`}
       >
         <PostImage
           post={post}
-          className="h-24 rounded-md"
+          className="h-24 rounded-[8px]"
           sizes="88px"
         />
         <div className="min-w-0 py-1">
-          <p className="mb-2 truncate text-[10px] font-black uppercase tracking-widest text-[#E8622A]">
+          <p className="mb-2 truncate text-[10px] font-bold uppercase tracking-wider text-[#2D6E7A]">
             {categoryName}
           </p>
-          <h3 className="line-clamp-2 text-sm font-black leading-snug text-[#1A2E33] transition-colors group-hover:text-[#E8622A]">
+          <h3 className="font-heading line-clamp-2 text-sm font-semibold leading-snug text-[#1A3840] transition-colors group-hover:text-[#C85A3C]">
             {title}
           </h3>
           <div className="mt-2">
@@ -114,7 +114,7 @@ const PostCard = ({ post, variant = "default", className = "" }) => {
     return (
       <Link
         href={href}
-        className={`group grid overflow-hidden rounded-lg border border-gray-100 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-[#E8622A]/35 hover:shadow-[0_18px_40px_rgba(42,74,82,0.10)] md:grid-cols-[44%_1fr] ${className}`}
+        className={`group grid overflow-hidden rounded-[12px] border border-[#E8E4DE] bg-[#FEFCF9] shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-[#2D6E7A]/35 hover:shadow-[0_18px_40px_rgba(45,110,122,0.10)] md:grid-cols-[44%_1fr] ${className}`}
       >
         <PostImage
           post={post}
@@ -122,20 +122,20 @@ const PostCard = ({ post, variant = "default", className = "" }) => {
           sizes="(max-width: 768px) 100vw, 44vw"
         />
         <div className="flex flex-col p-7">
-          <p className="mb-4 w-fit rounded-md bg-[#E8622A]/10 px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-[#E8622A]">
+          <p className="mb-4 w-fit rounded-[20px] bg-[#EAF3F5] px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-[#2D6E7A]">
             {categoryName}
           </p>
-          <h3 className="mb-4 text-2xl font-black leading-tight text-[#1A2E33] transition-colors group-hover:text-[#E8622A]">
+          <h3 className="font-heading mb-4 text-2xl font-bold leading-tight text-[#1A3840] transition-colors group-hover:text-[#C85A3C]">
             {title}
           </h3>
           {excerpt && (
-            <p className="mb-6 line-clamp-3 text-sm leading-6 text-gray-600">
+            <p className="mb-6 line-clamp-3 text-sm leading-6 text-[#5A7A82]">
               {excerpt}
             </p>
           )}
-          <div className="mt-auto flex flex-wrap items-center justify-between gap-4 border-t border-gray-100 pt-5">
+          <div className="mt-auto flex flex-wrap items-center justify-between gap-4 border-t border-[#E8E4DE] pt-5">
             <MetaRow publishedDate={publishedDate} readingTime={readingTime} />
-            <span className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-widest text-[#1A2E33] transition-colors group-hover:text-[#E8622A]">
+            <span className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#C85A3C] transition-colors group-hover:text-[#B04D31]">
               Read
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
             </span>
@@ -147,7 +147,7 @@ const PostCard = ({ post, variant = "default", className = "" }) => {
 
   return (
     <article
-      className={`group flex h-full flex-col overflow-hidden rounded-lg border border-gray-100 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-[#E8622A]/35 hover:shadow-[0_18px_40px_rgba(42,74,82,0.10)] ${className}`}
+      className={`group flex h-full flex-col overflow-hidden rounded-[12px] border border-[#E8E4DE] bg-[#FEFCF9] shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-[#2D6E7A]/35 hover:shadow-[0_18px_40px_rgba(45,110,122,0.10)] ${className}`}
     >
       <Link href={href} className="block">
         <PostImage
@@ -159,30 +159,30 @@ const PostCard = ({ post, variant = "default", className = "" }) => {
 
       <div className="flex flex-1 flex-col p-5">
         <div className="mb-4 flex items-center justify-between gap-3">
-          <p className="min-w-0 truncate text-[10px] font-black uppercase tracking-widest text-[#E8622A]">
+          <span className="min-w-0 truncate px-2.5 py-0.5 rounded-[20px] bg-[#EAF3F5] text-[10px] font-bold uppercase tracking-wider text-[#2D6E7A]">
             {categoryName}
-          </p>
-          <span className="flex-shrink-0 text-xs font-bold text-gray-400">
+          </span>
+          <span className="flex-shrink-0 text-xs font-medium text-[#5A7A82]">
             {readingTime}
           </span>
         </div>
 
         <Link href={href}>
-          <h3 className="line-clamp-2 text-xl font-black leading-snug text-[#1A2E33] transition-colors group-hover:text-[#E8622A]">
+          <h3 className="font-heading line-clamp-2 text-lg font-bold leading-snug text-[#1A3840] transition-colors group-hover:text-[#C85A3C]">
             {title}
           </h3>
         </Link>
 
         {excerpt && (
-          <p className="mt-3 line-clamp-2 flex-1 text-sm leading-6 text-gray-600">
+          <p className="mt-3 line-clamp-2 flex-1 text-sm leading-6 text-[#5A7A82]">
             {excerpt}
           </p>
         )}
 
-        <div className="mt-5 flex items-center justify-between gap-4 border-t border-gray-100 pt-4">
+        <div className="mt-5 flex items-center justify-between gap-4 border-t border-[#E8E4DE] pt-4">
           {publishedDate ? (
-            <span className="inline-flex items-center gap-1.5 text-xs font-bold text-gray-500">
-              <CalendarDays className="h-3.5 w-3.5 text-[#E8622A]" />
+            <span className="inline-flex items-center gap-1.5 text-xs font-medium text-[#5A7A82]">
+              <CalendarDays className="h-3.5 w-3.5 text-[#2D6E7A]" />
               {publishedDate}
             </span>
           ) : (
@@ -190,7 +190,7 @@ const PostCard = ({ post, variant = "default", className = "" }) => {
           )}
           <Link
             href={href}
-            className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-widest text-[#1A2E33] transition-colors group-hover:text-[#E8622A]"
+            className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#C85A3C] transition-colors group-hover:text-[#B04D31]"
           >
             Read
             <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />

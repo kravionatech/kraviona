@@ -121,23 +121,23 @@ const techCategories = [
 
 const accentClasses = {
   coral: {
-    badge: "bg-[#FEF0E9] text-[#B84A1A] border-[#FEF0E9]",
-    hover: "group-hover:bg-[#FEF0E9]",
+    badge: "bg-[#EAF3F5] text-[#2D6E7A] border-[#E8E4DE]",
+    hover: "hover:bg-[#FEFCF9]",
   },
   teal: {
-    badge: "bg-[#E8F2F4] text-[#2A4A52] border-[#D6E0E2]",
-    hover: "group-hover:bg-[#E8F2F4]",
+    badge: "bg-[#EAF3F5] text-[#2D6E7A] border-[#E8E4DE]",
+    hover: "hover:bg-[#FEFCF9]",
   },
   ink: {
-    badge: "bg-[#E8F2F4] text-[#1A2E33] border-[#D6E0E2]",
-    hover: "group-hover:bg-[#E8F2F4]",
+    badge: "bg-[#EAF3F5] text-[#2D6E7A] border-[#E8E4DE]",
+    hover: "hover:bg-[#FEFCF9]",
   },
 };
 
 const TechStack = () => {
   return (
     <section
-      className="py-20 md:py-28 bg-[#F5F7F8] relative overflow-hidden"
+      className="py-20 md:py-28 bg-[#F7F5F1] relative overflow-hidden"
       aria-labelledby="techstack-heading"
     >
       {/* Background blobs */}
@@ -145,8 +145,7 @@ const TechStack = () => {
         className="absolute inset-0 z-0 pointer-events-none"
         aria-hidden="true"
       >
-        <div className="absolute top-0 right-0 w-[36rem] h-[36rem] bg-[#D6E0E2]/45 blur-[110px] rounded-full" />
-        <div className="absolute bottom-0 left-0 w-[28rem] h-[28rem] bg-[#FEF0E9]/55 blur-[110px] rounded-full" />
+        <div className="absolute top-0 right-0 w-[36rem] h-[36rem] bg-[#EAF3F5]/60 blur-[110px] rounded-full" />
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -156,10 +155,10 @@ const TechStack = () => {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-gray-200 shadow-sm mb-5"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-[20px] bg-[#FEFCF9] border border-[#E8E4DE] shadow-sm mb-5"
           >
-            <Zap className="w-4 h-4 text-[#E8622A]" aria-hidden="true" />
-            <span className="text-gray-600 font-bold tracking-widest text-xs uppercase">
+            <Zap className="w-4 h-4 text-[#2D6E7A]" aria-hidden="true" />
+            <span className="text-[#2D6E7A] font-semibold tracking-widest text-xs uppercase">
               Our Tech Arsenal
             </span>
           </motion.div>
@@ -170,14 +169,14 @@ const TechStack = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.25rem] font-extrabold text-gray-900 tracking-tight mb-4"
+            className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.25rem] font-bold text-[#1A3840] tracking-tight mb-4"
           >
             Powered By{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#E8622A] to-[#F28C5E]">
+            <span className="text-[#2D6E7A]">
               Modern Tech
             </span>
           </motion.h2>
-          <p className="text-gray-700 text-base md:text-lg leading-relaxed max-w-xl mx-auto">
+          <p className="text-[#5A7A82] text-base md:text-lg leading-relaxed max-w-xl mx-auto">
             Production-grade tools and frameworks we use to ship fast,
             SEO-ready, and scalable digital products.
           </p>
@@ -194,20 +193,20 @@ const TechStack = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.08, ease: "easeOut" }}
-                className={`group relative bg-white border border-gray-200 rounded-2xl p-6 md:p-8 overflow-hidden hover:border-gray-300 hover:shadow-lg transition-all duration-400 ${category.colSpan}`}
+                className={`group relative bg-[#FEFCF9] border border-[#E8E4DE] rounded-[12px] p-6 md:p-8 overflow-hidden hover:shadow-brand-md transition-all duration-300 ${category.colSpan}`}
               >
                 {/* Category label pill */}
                 <span
-                  className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest border mb-4 ${accent.badge}`}
+                  className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-[20px] text-[10px] font-semibold uppercase tracking-widest border mb-4 ${accent.badge}`}
                 >
                   {category.icon}
                   {category.label}
                 </span>
 
-                <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-2">
+                <h3 className="text-lg md:text-xl font-bold text-[#1A3840] mb-2">
                   {category.title}
                 </h3>
-                <p className="text-gray-700 text-sm leading-relaxed mb-7">
+                <p className="text-[#5A7A82] text-sm leading-relaxed mb-7">
                   {category.description}
                 </p>
 
@@ -216,7 +215,7 @@ const TechStack = () => {
                   {category.techs.map((tech, techIndex) => (
                     <div
                       key={`${tech.name}-${techIndex}`}
-                      className={`group/tech flex flex-col items-center justify-center p-3.5 bg-gray-50 hover:bg-white border border-gray-200 hover:border-gray-300 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-md cursor-default ${accent.hover}`}
+                      className={`group/tech flex flex-col items-center justify-center p-3.5 bg-[#EAF3F5]/50 hover:bg-[#FEFCF9] border border-[#E8E4DE] rounded-[8px] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-sm cursor-default`}
                     >
                       <div className="w-9 h-9 mb-2.5 flex items-center justify-center">
                         <Image
@@ -229,7 +228,7 @@ const TechStack = () => {
                           unoptimized
                         />
                       </div>
-                      <span className="text-[11px] font-semibold text-gray-600 text-center leading-tight">
+                      <span className="text-[11px] font-semibold text-[#1A3840] text-center leading-tight">
                         {tech.name}
                       </span>
                     </div>

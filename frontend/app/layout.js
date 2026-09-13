@@ -1,9 +1,19 @@
 import "./globals.css";
-import "@fontsource/poppins/400.css";
-import "@fontsource/poppins/500.css";
-import "@fontsource/poppins/600.css";
-import "@fontsource/poppins/700.css";
-import "@fontsource/poppins/800.css";
+import { Plus_Jakarta_Sans, Inter } from "next/font/google";
+
+const plusJakartaSans = Plus_Jakarta_Sans({
+  subsets: ["latin"],
+  weight: ["600", "700", "800"],
+  variable: "--font-heading",
+  display: "swap",
+});
+
+const inter = Inter({
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  variable: "--font-body",
+  display: "swap",
+});
 
 import { Suspense } from "react";
 import Script from "next/script";
@@ -155,7 +165,11 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" dir="ltr">
+    <html
+      lang="en"
+      dir="ltr"
+      className={`${plusJakartaSans.variable} ${inter.variable}`}
+    >
       <head>
         <link rel="preconnect" href="https://api.kraviona.com" crossOrigin="" />
         <link rel="dns-prefetch" href="https://api.kraviona.com" />
@@ -195,7 +209,7 @@ export default function RootLayout({ children }) {
         </Script>
       </head>
 
-      <body className="font-sans antialiased bg-surface">
+      <body className="font-sans antialiased bg-[#F7F5F1] text-[#5A7A82]">
         <Suspense fallback={null}>
           <GAPageTracker />
         </Suspense>

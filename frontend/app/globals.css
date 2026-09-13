@@ -7,116 +7,129 @@
  * `shadow-card` directly from the same tokens used by plain CSS.
  */
 @theme {
-  --color-primary: #0f5960;
-  --color-primary-hover: #0a454b;
-  --color-primary-light: #4d8588;
-  --color-primary-tint: #e7f1f0;
-  --color-accent: #d85e3d;
-  --color-accent-hover: #ee774d;
-  --color-accent-tint: #fff0e9;
-  --color-accent-dark: #b94b31;
-  --color-surface: #f5f7f8;
-  --color-surface-2: #eaeff0;
-  --color-dark: #0d4248;
-  --color-dark-hover: #243e45;
-  --color-brand-text: #1a2e33;
-  --color-brand-muted: #5c7a82;
-  --color-success: #22805a;
-  --color-warning: #d97706;
-  --color-error: #dc2626;
-  --color-info: #5c9baa;
-  --shadow-brand-sm: 0 1px 3px rgba(42, 74, 82, 0.08);
-  --shadow-brand-md: 0 4px 12px rgba(42, 74, 82, 0.12);
-  --shadow-brand-lg: 0 8px 24px rgba(42, 74, 82, 0.16);
-  --shadow-card: 0 2px 8px rgba(42, 74, 82, 0.1);
+  --color-primary: #2D6E7A;
+  --color-primary-hover: #245862;
+  --color-primary-light: #5A7A82;
+  --color-primary-tint: #EAF3F5;
+  --color-accent: #C85A3C;
+  --color-accent-hover: #B04D31;
+  --color-accent-tint: #FFF2ED;
+  --color-accent-dark: #C85A3C;
+  --color-gold: #D4A550;
+  --color-gold-hover: #BA8E3E;
+  --color-surface: #F7F5F1;
+  --color-surface-2: #FEFCF9;
+  --color-dark: #1A3840;
+  --color-dark-hover: #12282E;
+  --color-brand-text: #1A3840;
+  --color-brand-muted: #5A7A82;
+  --color-off-white: #F7F5F1;
+  --color-pure-white: #FEFCF9;
+  --color-teal-wash: #EAF3F5;
+  --color-muted-teal: #5A7A82;
+  --color-light-border: #E8E4DE;
+  --color-deep-ocean: #1A3840;
+  --color-success: #22805A;
+  --color-warning: #D4A550;
+  --color-error: #DC2626;
+  --color-info: #2D6E7A;
+  --shadow-brand-sm: 0 1px 3px rgba(26, 56, 64, 0.08);
+  --shadow-brand-md: 0 4px 12px rgba(26, 56, 64, 0.1);
+  --shadow-brand-lg: 0 8px 24px rgba(26, 56, 64, 0.14);
+  --shadow-card: 0 2px 8px rgba(26, 56, 64, 0.06);
   /* Hero is now light — teal tint to white, with primary/accent used only as accent colours */
-  --background-image-hero-gradient: linear-gradient(135deg, #e8f2f4 0%, #f5f7f8 60%, #fff0e9 100%);
-  --background-image-cta-gradient: linear-gradient(135deg, #e8622a 0%, #f28c5e 100%);
+  --background-image-hero-gradient: linear-gradient(135deg, #F7F5F1 0%, #EAF3F5 60%, #F7F5F1 100%);
+  --background-image-cta-gradient: linear-gradient(135deg, #C85A3C 0%, #B04D31 100%);
   /* Semantic surface roles */
-  --hero-bg: #f5f7f8;
-  --hero-text: var(--color-dark);
-  --hero-text-muted: var(--color-text-muted);
-  --section-alt-bg: #e8f2f4;
-  --card-bg: #ffffff;
-  --card-border: rgba(42, 74, 82, 0.12);
+  --hero-bg: #F7F5F1;
+  --hero-text: #1A3840;
+  --hero-text-muted: #5A7A82;
+  --section-alt-bg: #FEFCF9;
+  --card-bg: #FEFCF9;
+  --card-border: #E8E4DE;
 }
 
 @layer base {
   :root {
-    /* Kraviona brand palette */
-    --color-primary: #0f5960;
-    --color-primary-hover: #0a454b;
-    --color-primary-light: #4d8588;
-    --color-primary-tint: #e7f1f0;
-    --color-accent: #d85e3d;
-    --color-accent-hover: #ee774d;
-    --color-accent-tint: #fff0e9;
-    --color-accent-dark: #b94b31;
-    --color-surface: #f5f7f8;
-    --color-surface-2: #eaeff0;
-    --color-dark: #0d4248;
-    --color-dark-hover: #243e45;
-    --color-white: #ffffff;
-    --color-text-body: #1a2e33;
-    --color-text-muted: #5c7a82;
-    --color-text-light: #8fa8b0;
-    --color-border: rgba(42, 74, 82, 0.15);
-    --color-border-strong: rgba(42, 74, 82, 0.3);
+    /* Kraviona exact brand palette */
+    --color-primary: #2D6E7A;
+    --color-primary-hover: #245862;
+    --color-primary-light: #5A7A82;
+    --color-primary-tint: #EAF3F5;
+    --color-accent: #C85A3C;
+    --color-accent-hover: #B04D31;
+    --color-accent-tint: #FFF2ED;
+    --color-accent-dark: #C85A3C;
+    --color-gold: #D4A550;
+    --color-surface: #F7F5F1;
+    --color-surface-2: #FEFCF9;
+    --color-dark: #1A3840;
+    --color-dark-hover: #12282E;
+    --color-white: #FEFCF9;
+    --color-text-body: #5A7A82;
+    --color-text-muted: #5A7A82;
+    --color-text-light: #8FA8B0;
+    --color-border: #E8E4DE;
+    --color-border-strong: #2D6E7A;
 
     /* Semantic roles */
-    --color-success: #22805a;
-    --color-warning: #d97706;
-    --color-error: #dc2626;
-    --color-info: #5c9baa;
+    --color-success: #22805A;
+    --color-warning: #D4A550;
+    --color-error: #DC2626;
+    --color-info: #2D6E7A;
 
     /* Brand-aware elevation */
-    --shadow-sm: 0 1px 3px rgba(42, 74, 82, 0.08);
-    --shadow-md: 0 4px 12px rgba(42, 74, 82, 0.12);
-    --shadow-lg: 0 8px 24px rgba(42, 74, 82, 0.16);
-    --shadow-card: 0 2px 8px rgba(42, 74, 82, 0.1);
+    --shadow-sm: 0 1px 3px rgba(26, 56, 64, 0.08);
+    --shadow-md: 0 4px 12px rgba(26, 56, 64, 0.1);
+    --shadow-lg: 0 8px 24px rgba(26, 56, 64, 0.14);
+    --shadow-card: 0 2px 8px rgba(26, 56, 64, 0.06);
 
-    /* Keep the loaded site font as a reliable fallback for the brand stack. */
-    --font-poppins: "Poppins";
-    --font-heading: Inter, var(--font-poppins), system-ui, sans-serif;
-    --font-body: Inter, var(--font-poppins), system-ui, sans-serif;
-    --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+    /* Typography stack */
+    --font-heading: var(--font-heading, "Plus Jakarta Sans"), system-ui, sans-serif;
+    --font-body: var(--font-body, "Inter"), system-ui, sans-serif;
 
     /* Compatibility aliases used by older page modules. */
-    --brand-ink: #0d4248;
-    --primary-teal: #0f5960;
-    --primary-teal-dark: #0a454b;
-    --primary-teal-light: #4d8588;
-    --accent-coral: #d85e3d;
-    --accent-coral-deep: #b94b31;
-    --accent-coral-hover: #ee774d;
-    --accent-peach: #f3bd67;
-    --surface: #f5f7f8;
-    --surface-teal: #e8f2f4;
-    --surface-coral: #fef0e9;
-    --surface-sand: #fff6eb;
-    --border: #d6e0e2;
-    --text: #1a2e33;
-    --text-muted: #5c7a82;
-    --text-subtle: #8fa8b0;
-    --bg-dark: #1a2e33;
-    --bg-light: #f5f7f8;
+    --brand-ink: #1A3840;
+    --primary-teal: #2D6E7A;
+    --primary-teal-dark: #245862;
+    --primary-teal-light: #5A7A82;
+    --accent-coral: #C85A3C;
+    --accent-coral-deep: #B04D31;
+    --accent-coral-hover: #B04D31;
+    --accent-peach: #D4A550;
+    --surface: #F7F5F1;
+    --surface-teal: #EAF3F5;
+    --surface-coral: #FFF2ED;
+    --surface-sand: #F7F5F1;
+    --border: #E8E4DE;
+    --text: #1A3840;
+    --text-muted: #5A7A82;
+    --text-subtle: #8FA8B0;
+    --bg-dark: #1A3840;
+    --bg-light: #F7F5F1;
   }
 
-[data-theme="dark"] {
-  --color-primary: #5c9baa;
-  --color-accent: #f28c5e;
-  --color-surface: #1a2e33;
-  --color-dark: #f5f7f8;
-  --color-white: #ffffff;
-    --color-text-body: #e8f2f4;
-    --color-text-muted: #8fa8b0;
-    --color-border: rgba(92, 155, 170, 0.2);
+  [data-theme="dark"] {
+    --color-primary: #5A7A82;
+    --color-accent: #C85A3C;
+    --color-surface: #1A3840;
+    --color-dark: #F7F5F1;
+    --color-white: #FEFCF9;
+    --color-text-body: #EAF3F5;
+    --color-text-muted: #8FA8B0;
+    --color-border: rgba(45, 110, 122, 0.2);
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+    color: #1A3840;
   }
 }
+
 body {
   font-family: var(--font-body);
-  background: var(--color-surface);
-  color: var(--color-text-body);
+  background: #F7F5F1;
+  color: #5A7A82;
   font-size: 16px;
 }
 

@@ -66,16 +66,16 @@ const LatestBlog = ({ initialPosts = [] }) => {
 
   return (
     <section
-      className="py-20 md:py-28 bg-[#F5F7F8] relative overflow-hidden"
+      className="py-20 md:py-28 bg-[#FEFCF9] relative overflow-hidden"
       aria-labelledby="blog-heading"
     >
-      {/* Background decorative blobs */}
+      {/* Background subtle decorative blobs */}
       <div
         className="absolute inset-0 overflow-hidden pointer-events-none z-0"
         aria-hidden="true"
       >
-        <div className="absolute top-[-8%] right-[-4%] w-[36rem] h-[36rem] bg-[#F28C5E]/12 rounded-full blur-[110px]" />
-        <div className="absolute bottom-[-8%] left-[-4%] w-[30rem] h-[30rem] bg-[#2A4A52]/8 rounded-full blur-[110px]" />
+        <div className="absolute top-[-8%] right-[-4%] w-[36rem] h-[36rem] bg-[#EAF3F5] rounded-full blur-[110px]" />
+        <div className="absolute bottom-[-8%] left-[-4%] w-[30rem] h-[30rem] bg-[#C85A3C]/5 rounded-full blur-[110px]" />
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -88,26 +88,26 @@ const LatestBlog = ({ initialPosts = [] }) => {
           className="flex flex-col md:flex-row md:items-end justify-between mb-12 md:mb-16 gap-8"
         >
           <div className="max-w-2xl">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#E8622A]/8 border border-[#E8622A]/18 mb-5">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-[20px] bg-[#EAF3F5] border border-[#2D6E7A]/20 mb-5">
               <PenTool
-                className="w-3.5 h-3.5 text-[#E8622A]"
+                className="w-3.5 h-3.5 text-[#2D6E7A]"
                 aria-hidden="true"
               />
-              <span className="text-[#E8622A] font-bold tracking-widest text-[11px] uppercase">
+              <span className="text-[#2D6E7A] font-bold tracking-widest text-[11px] uppercase">
                 Our Insights
               </span>
             </div>
 
             <h2
               id="blog-heading"
-              className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.25rem] font-extrabold text-[#1A2E33] tracking-tight mb-4 leading-[1.1]"
+              className="font-heading text-3xl sm:text-4xl md:text-5xl lg:text-[3.25rem] font-bold text-[#1A3840] tracking-tight mb-4 leading-[1.1]"
             >
               Tech &amp;{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#2A4A52] to-[#E8622A]">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#2D6E7A] to-[#C85A3C]">
                 Resources
               </span>
             </h2>
-            <p className="text-gray-500 text-base md:text-lg leading-relaxed">
+            <p className="text-[#5A7A82] text-base md:text-lg leading-relaxed">
               Stay ahead with our latest insights on MERN Stack, Technical SEO,
               and modern web performance.
             </p>
@@ -116,7 +116,7 @@ const LatestBlog = ({ initialPosts = [] }) => {
           <div className="flex-shrink-0">
             <Link
               href="/blog"
-              className="group flex items-center justify-center gap-2.5 px-7 py-3.5 bg-[#2A4A52] text-white rounded-full font-semibold shadow-sm hover:shadow-[0_4px_20px_rgba(42,74,82,0.35)] hover:bg-[#3D6B77] hover:-translate-y-0.5 transition-all duration-300 text-sm"
+              className="group flex items-center justify-center gap-2.5 px-6 py-3 bg-[#C85A3C] hover:bg-[#B04D31] text-white rounded-[6px] font-semibold shadow-sm hover:shadow-[0_4px_16px_rgba(200,90,60,0.3)] transition-all duration-300 text-sm"
               aria-label="View all blog posts"
             >
               View All Posts
