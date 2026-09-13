@@ -505,6 +505,138 @@ export const SERVICE_LINKS = Object.entries(SERVICE_PAGES).map(
   }),
 );
 
+// ── Service Category Hub Pages ────────────────────────────────────────────────
+// Each entry maps a hub slug to its SEO + content metadata.
+// These are rendered by /services/[category]/page.jsx when the category
+// param matches one of these keys instead of an individual service slug.
+
+export const SERVICE_CATEGORY_HUBS = {
+  "web-development": {
+    categoryLabel: "Web Development",
+    slug: "web-development",
+    h1: "Web Development Services — Fast, SEO-Ready Websites & Apps",
+    metaTitle: "Web Development Services in Delhi NCR | Kraviona",
+    metaDescription:
+      "Kraviona builds high-performance websites and web apps using Next.js, React, Node.js, and MERN stack — SEO-ready, mobile-first, and built for long-term scale.",
+    intro: [
+      "Every Kraviona web project starts with one question: what does the business actually need the product to do? Whether that's acquiring leads, running a user portal, powering a marketplace, or replacing a legacy interface, the technical decisions follow from the goal — not the other way around.",
+      "Our web development stack centres on Next.js, React, Node.js, and MongoDB. These aren't fashionable choices — they're practical ones. They give us server-side rendering for SEO, fast client navigation for usability, a clean API layer for integrations, and a scalable database that grows with the product without requiring schema migrations every quarter.",
+      "Every project ships with responsive layouts, Core Web Vitals–compliant performance, semantic HTML for accessibility and search, and clear handover documentation so your team isn't dependent on us forever. Post-launch support is available, but the goal is always to deliver something your team can confidently own.",
+    ],
+    serviceKeys: [
+      "mern-stack-development",
+      "full-stack-development",
+      "react-development",
+      "nodejs-development",
+      "web-app-development",
+      "ui-ux-design",
+    ],
+  },
+  "backend-architecture": {
+    categoryLabel: "Backend & Architecture",
+    slug: "backend-architecture",
+    h1: "Backend Development & Architecture Services — APIs, Databases & Scalable Systems",
+    metaTitle: "Backend Development & Architecture Services | Kraviona",
+    metaDescription:
+      "Custom backend systems, REST and GraphQL APIs, database architecture, and SaaS platforms built for reliability, security, and clean maintainability.",
+    intro: [
+      "A good frontend experience lives or dies by the backend behind it. Kraviona's backend work covers the complete server-side stack — RESTful and GraphQL APIs, authentication and authorisation flows, database schema design, third-party integrations, and the deployment and monitoring configuration that keeps everything stable in production.",
+      "We design for maintainability. That means clear folder structure, consistent naming conventions, typed interfaces where the language supports them, documented endpoints, and error handling that produces useful logs rather than silent failures. A system that's easy to understand six months later is worth more than one that's elegant today and impenetrable next quarter.",
+      "Whether you're building a new SaaS product from scratch, scaling an API that's showing strain under load, or migrating a legacy monolith toward a more modular architecture, Kraviona can handle the discovery, planning, and implementation — and hand it over with enough documentation that your internal team can take it further.",
+    ],
+    serviceKeys: [
+      "backend-development",
+      "api-development",
+      "database-architecture",
+      "saas-development",
+    ],
+  },
+  "performance-ai": {
+    categoryLabel: "Performance & AI",
+    slug: "performance-ai",
+    h1: "Performance Optimisation & AI Services — Speed, SEO & Intelligent Automation",
+    metaTitle: "Web Performance & AI Automation Services | Kraviona",
+    metaDescription:
+      "Technical SEO, Core Web Vitals optimisation, LLM integrations, and AI workflow automation for businesses that want measurable speed and search improvements.",
+    intro: [
+      "Site speed and search visibility are not separate disciplines. A page that loads in four seconds on mobile loses both users and rankings simultaneously. Kraviona's performance work addresses both at once: Core Web Vitals improvements (Largest Contentful Paint, Cumulative Layout Shift, Interaction to Next Paint), image and asset optimisation, bundle analysis and code-splitting, caching strategy, and the technical SEO fixes — canonical tags, structured data, crawl architecture, indexation — that turn speed improvements into ranking improvements.",
+      "The AI side of this category covers a different kind of efficiency: reducing the manual, repetitive work that keeps teams from doing higher-value things. We build custom LLM integrations, AI chat assistants trained on your product content, document automation pipelines, and internal tools that slot into the workflows you already have instead of demanding a full process change.",
+      "Every project in this category comes with before-and-after measurement. Lighthouse scores, Google Search Console impressions, crawl coverage, automation time savings — we document the starting point and the result so you can see exactly what changed and decide what to improve next.",
+    ],
+    serviceKeys: [
+      "technical-seo",
+      "web-performance-optimization",
+      "ai-automation",
+      "ai-chatbot-development",
+    ],
+  },
+  "branding-marketing": {
+    categoryLabel: "Branding & Marketing",
+    slug: "branding-marketing",
+    h1: "Branding & Digital Marketing Services — Positioning, Campaigns & Measurable Growth",
+    metaTitle: "Branding & Digital Marketing Services | Kraviona",
+    metaDescription:
+      "Brand identity, digital marketing strategy, social media, email campaigns, and conversion-focused campaigns that turn attention into qualified leads and customers.",
+    intro: [
+      "A brand is not a logo — it's the consistent impression a business leaves across every touchpoint. Kraviona's branding and marketing work starts with understanding what makes a business worth choosing over its competitors, then builds the visual identity, messaging, and channel strategy that communicates that clearly and consistently.",
+      "On the marketing side, our focus is on systems rather than one-off campaigns. A well-built email nurture sequence keeps working after setup. A properly structured Google Ads account improves with every cycle. An SEO content plan compounds over months. We prefer to build marketing infrastructure that gets more efficient over time rather than delivering campaigns that require full rebuilds for every promotion.",
+      "Reporting is built into every engagement. We track the metrics that actually connect to business outcomes — leads generated, cost per acquisition, email open and click rates, organic traffic growth, conversion events — not vanity numbers that look good in a presentation but don't connect to revenue.",
+    ],
+    serviceKeys: [
+      "digital-marketing",
+      "social-media-marketing",
+      "email-marketing",
+      "brand-identity",
+    ],
+  },
+  "marketplace-seller": {
+    categoryLabel: "Marketplace & Seller",
+    slug: "marketplace-seller",
+    h1: "Marketplace & Seller Services — Account Management, Cataloging & Seller Growth",
+    metaTitle: "Marketplace Seller Services — Account Management & Growth | Kraviona",
+    metaDescription:
+      "End-to-end marketplace support for online sellers: account management, cataloging, advertising, accounting, and practical seller training for sustainable growth.",
+    intro: [
+      "Selling on a marketplace platform — Amazon, Flipkart, Meesho, or any other — involves a level of operational complexity that most sellers underestimate until they're inside it. Catalog errors surface months after listing. Account health metrics shift without warning. Advertising spend goes up while return on ad spend quietly drops. Kraviona's marketplace services are built to catch and fix these problems before they compound.",
+      "Our work spans the full seller operation: initial account setup and health checks, product catalog creation and optimisation (titles, bullet points, images, A+ content, variations), advertising campaign structure and bid management, order and inventory process reviews, and the bookkeeping and reconciliation that gives sellers a clear picture of actual profitability after fees and returns.",
+      "We also run practical training sessions for seller teams and operations staff — not generic workshops, but focused walkthroughs of the specific platform, catalog, and reporting tools your team uses daily. The goal is always to build capability inside your operation, not to create a dependency on external management.",
+    ],
+    serviceKeys: [
+      "ecommerce-development-marketing",
+      "account-management",
+      "cataloging",
+      "accounting",
+      "advertising",
+      "seller-training",
+    ],
+  },
+};
+
+// Returns sibling services in the same category as the given service slug.
+// Used for "Related Services" cross-links at the bottom of service pages.
+export function getRelatedServicesInCategory(currentSlug, limit = 4) {
+  const currentService = SERVICE_PAGES[currentSlug];
+  if (!currentService) return [];
+
+  const currentCategory = currentService.category;
+  return Object.entries(SERVICE_PAGES)
+    .filter(([slug, svc]) => svc.category === currentCategory && slug !== currentSlug)
+    .slice(0, limit)
+    .map(([slug, svc]) => ({
+      name: svc.name,
+      href: `/services/${slug}`,
+      description: svc.description,
+    }));
+}
+
+// Returns the hub slug for a given category label (e.g. "Web Development" → "web-development")
+export function getCategoryHubSlug(categoryLabel) {
+  return Object.values(SERVICE_CATEGORY_HUBS).find(
+    (hub) => hub.categoryLabel === categoryLabel,
+  )?.slug || null;
+}
+
+
 // Dynamic service pages share the same FAQ component and JSON-LD. Keep the
 // source here so visible answers and structured data cannot diverge. Each
 // answer is intentionally substantive enough to be useful in the page rather

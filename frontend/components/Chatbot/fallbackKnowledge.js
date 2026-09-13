@@ -197,15 +197,16 @@ export const getFallbackChatResponse = (query = "") => {
     };
   }
 
-  // General Fallback
+  // General Fallback — honest about uncertainty, surfaces direct contact options
   return {
     reply: hinglish
-      ? `Main Kraviona ki **Web Development**, **Technical SEO**, **Pricing**, ya **Contact** details ke baare mein aapki madad kar sakta hoon.\n\nAap humari team se direct sampark kar sakte hain: [Contact Page](/contact) ya WhatsApp [+91 96085 53167](tel:+919608553167).`
-      : `I can help you with details on:\n• Our Next.js & MERN web development services ([View Services](/services))\n• Technical SEO & site speed optimization\n• Project pricing and past client results ([Case Studies](/case-studies))\n• Reaching our engineering team directly ([Contact Us](/contact))\n\nFeel free to ask any question!`,
+      ? `Main is question ka bilkul sahi jawab dene mein confident nahi hoon. 🙏\n\nSabse accha hoga agar aap Kraviona team se **directly** sampark karein:\n• **WhatsApp**: [+91 96085 53167](https://wa.me/919608553167)\n• **Email**: [kravionatech@gmail.com](mailto:kravionatech@gmail.com)\n• **Contact Form**: [Yahan click karein](/contact)\n\nMain in topics par zarur madad kar sakta hoon:\n• Web Development (Next.js, MERN, React)\n• Technical SEO & Core Web Vitals\n• AI Automation & Chatbots\n• Pricing & Project Estimates`
+      : `I'm not confident I have the right answer for that specific question — I don't want to guess and waste your time. 🙏\n\nThe fastest way to get an accurate answer is to reach the team directly:\n• **WhatsApp**: [+91 96085 53167](https://wa.me/919608553167)\n• **Email**: [kravionatech@gmail.com](mailto:kravionatech@gmail.com)\n• **Contact Form**: [Fill it out here](/contact)\n\nI can reliably help with:\n• Web development services (Next.js, MERN, React)\n• Technical SEO & site performance\n• AI automation & chatbot development\n• Pricing estimates & project timelines`,
     sources: [
+      { title: "Contact Us", url: "/contact", category: "Contact" },
       { title: "Services", url: "/services", category: "Services" },
-      { title: "Contact", url: "/contact", category: "Contact" },
     ],
     type: "fallback",
   };
 };
+

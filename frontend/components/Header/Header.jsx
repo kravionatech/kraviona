@@ -33,6 +33,7 @@ const SERVICE_CATEGORIES = [
   {
     label: "Web Development",
     color: "text-primary",
+    hubHref: "/services/web-development",
     services: [
       {
         name: "MERN Stack Development",
@@ -75,6 +76,7 @@ const SERVICE_CATEGORIES = [
   {
     label: "Backend & Architecture",
     color: "text-primary-hover",
+    hubHref: "/services/backend-architecture",
     services: [
       {
         name: "Backend Development",
@@ -105,6 +107,7 @@ const SERVICE_CATEGORIES = [
   {
     label: "Performance & AI",
     color: "text-primary-light",
+    hubHref: "/services/performance-ai",
     services: [
       {
         name: "Technical SEO",
@@ -135,6 +138,7 @@ const SERVICE_CATEGORIES = [
   {
     label: "Branding & Marketing",
     color: "text-accent-dark",
+    hubHref: "/services/branding-marketing",
     services: [
       {
         name: "Digital Marketing",
@@ -165,6 +169,7 @@ const SERVICE_CATEGORIES = [
   {
     label: "Marketplace & Seller",
     color: "text-accent-dark",
+    hubHref: "/services/marketplace-seller",
     services: [
       {
         name: "E-Commerce Dev & Marketing",
@@ -571,11 +576,15 @@ export default function Header() {
                           <div className="grid grid-cols-5 divide-x divide-gray-100/80">
                             {SERVICE_CATEGORIES.map((cat) => (
                               <div key={cat.label} className="p-4">
-                                {/* Category label */}
+                                {/* Category label — links to hub page */}
                                 <div className="flex items-center gap-1.5 mb-2.5">
-                                  <span className={`text-[9px] font-extrabold uppercase tracking-[0.15em] ${cat.color}`}>
+                                  <Link
+                                    href={cat.hubHref || "/services"}
+                                    onClick={closeMenus}
+                                    className={`text-[9px] font-extrabold uppercase tracking-[0.15em] hover:underline transition-colors ${cat.color}`}
+                                  >
                                     {cat.label}
-                                  </span>
+                                  </Link>
                                 </div>
                                 <ul className="space-y-1">
                                   {cat.services.map((svc) => {

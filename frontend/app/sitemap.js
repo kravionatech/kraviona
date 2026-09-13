@@ -27,6 +27,12 @@ const frequencyRank = {
 const canonicalStaticRoutes = [
   { path: "/", changeFrequency: "weekly", priority: 1.0 },
   { path: "/services", changeFrequency: "weekly", priority: 0.95 },
+  // Service category hub pages
+  { path: "/services/web-development", changeFrequency: "monthly", priority: 0.92 },
+  { path: "/services/backend-architecture", changeFrequency: "monthly", priority: 0.92 },
+  { path: "/services/performance-ai", changeFrequency: "monthly", priority: 0.92 },
+  { path: "/services/branding-marketing", changeFrequency: "monthly", priority: 0.92 },
+  { path: "/services/marketplace-seller", changeFrequency: "monthly", priority: 0.92 },
   { path: "/solutions", changeFrequency: "monthly", priority: 0.9 },
   { path: "/blog", changeFrequency: "daily", priority: 0.85 },
   { path: "/news", changeFrequency: "hourly", priority: 0.9 },

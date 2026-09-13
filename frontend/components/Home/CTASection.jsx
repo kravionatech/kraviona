@@ -8,7 +8,7 @@ import { Calendar, CheckCircle, ArrowRight } from "lucide-react";
 const CTASection = () => {
   return (
     <section
-      className="relative py-24 lg:py-32 bg-gradient-to-b from-[#2A4A52] to-[#1A2E33] overflow-hidden border-t border-white/5"
+      className="relative py-24 lg:py-32 bg-gradient-to-b from-primary to-dark overflow-hidden border-t border-primary/20"
       aria-labelledby="cta-heading"
     >
       {/* Animated Background Rings */}

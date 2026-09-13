@@ -34,6 +34,8 @@ import {
   SERVICE_EXPERT,
   SERVICE_LINKS,
   SERVICE_PAGES,
+  SERVICE_CATEGORY_HUBS,
+  getRelatedServicesInCategory,
 } from "../serviceData.js";
 import { API_URL } from "@/utils/api";
 
@@ -230,9 +232,12 @@ const STATIC_SERVICE_SLUGS = new Set([
 ]);
 
 export function generateStaticParams() {
-  return Object.keys(SERVICE_PAGES)
+  const serviceParams = Object.keys(SERVICE_PAGES)
     .filter((category) => !STATIC_SERVICE_SLUGS.has(category))
     .map((category) => ({ category }));
+  // Also include the 5 category hub slugs
+  const hubParams = Object.keys(SERVICE_CATEGORY_HUBS).map((slug) => ({ category: slug }));
+  return [...serviceParams, ...hubParams];
 }
 
 // Every service slug comes from the local service catalogue. Treat any other
@@ -242,6 +247,34 @@ export const dynamicParams = true;
 export async function generateMetadata({ params }) {
   const { category } = await params;
   const slug = category?.toLowerCase()?.trim();
+
+  // ── Hub page metadata ──
+  const hub = SERVICE_CATEGORY_HUBS[slug];
+  if (hub) {
+    const pageUrl = canonicalUrl(`/services/${slug}`);
+    return {
+      title: hub.metaTitle,
+      description: hub.metaDescription,
+      alternates: { canonical: pageUrl },
+      openGraph: {
+        title: hub.metaTitle,
+        description: hub.metaDescription,
+        url: pageUrl,
+        type: "website",
+        locale: "en_IN",
+        images: [{ url: "/og-web-development.jpg", width: 1200, height: 630 }],
+      },
+      twitter: {
+        card: "summary_large_image",
+        site: "@KravionaTech",
+        title: hub.metaTitle,
+        description: hub.metaDescription,
+      },
+      robots: defaultRobots,
+    };
+  }
+
+  // ── Individual service metadata (existing logic) ──
   const service = await getService(slug);
 
   if (!service) {
@@ -303,6 +336,148 @@ export async function generateMetadata({ params }) {
 export default async function ServicesDetails({ params }) {
   const { category } = await params;
   const slug = category?.toLowerCase()?.trim();
+
+  // ── Category Hub Page ──────────────────────────────────────────────────────
+  const hub = SERVICE_CATEGORY_HUBS[slug];
+  if (hub) {
+    const pageUrl = canonicalUrl(`/services/${slug}`);
+
+    // Gather all child service cards for this hub
+    const childServices = hub.serviceKeys
+      .map((key) => ({
+        slug: key,
+        ...SERVICE_PAGES[key],
+      }))
+      .filter(Boolean);
+
+    const hubBreadcrumbSchema = {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Home", item: "https://kraviona.com" },
+        { "@type": "ListItem", position: 2, name: "Services", item: "https://kraviona.com/services" },
+        { "@type": "ListItem", position: 3, name: hub.categoryLabel, item: `https://kraviona.com/services/${slug}` },
+      ],
+    };
+
+    return (
+      <>
+        <JsonLd data={hubBreadcrumbSchema} />
+
+        {/* Hub Hero */}
+        <section className="bg-gradient-to-br from-surface via-white to-primary-tint pt-28 pb-16 px-4 sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-5xl">
+            {/* Breadcrumb */}
+            <nav aria-label="Breadcrumb" className="mb-6 flex flex-wrap items-center gap-2 text-xs font-semibold text-brand-muted">
+              <Link href="/" className="hover:text-primary">Home</Link>
+              <span>/</span>
+              <Link href="/services" className="hover:text-primary">Services</Link>
+              <span>/</span>
+              <span className="text-dark">{hub.categoryLabel}</span>
+            </nav>
+
+            <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-primary-tint px-3 py-1">
+              <span className="text-[11px] font-bold uppercase tracking-widest text-primary">
+                {hub.categoryLabel}
+              </span>
+            </div>
+
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-dark leading-tight mb-6">
+              {hub.h1}
+            </h1>
+
+            <div className="space-y-4 max-w-3xl">
+              {hub.intro.map((para, i) => (
+                <p key={i} className="text-base sm:text-lg text-brand-muted leading-relaxed">
+                  {para}
+                </p>
+              ))}
+            </div>
+
+            <div className="mt-8 flex flex-wrap gap-3">
+              <Link
+                href="/contact"
+                className="inline-flex items-center gap-2 rounded-xl bg-accent-dark px-6 py-3 text-sm font-bold text-white shadow-brand-sm hover:brightness-90 transition-all"
+              >
+                Discuss Your Project <ArrowUpRight className="h-4 w-4" />
+              </Link>
+              <Link
+                href="/services"
+                className="inline-flex items-center gap-2 rounded-xl border-2 border-primary px-6 py-3 text-sm font-bold text-primary hover:bg-primary hover:text-white transition-all"
+              >
+                All Services
+              </Link>
+            </div>
+          </div>
+        </section>
+
+        {/* Service Card Grid */}
+        <section className="py-16 px-4 sm:px-6 lg:px-8 bg-white">
+          <div className="mx-auto max-w-6xl">
+            <h2 className="text-xl font-black text-dark mb-2">
+              {hub.categoryLabel} Services
+            </h2>
+            <p className="text-sm text-brand-muted mb-10">
+              {childServices.length} specialised services in this category
+            </p>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {childServices.map((svc) => (
+                <Link
+                  key={svc.slug}
+                  href={`/services/${svc.slug}`}
+                  className="group flex flex-col rounded-2xl border border-gray-200 bg-surface p-6 transition-all duration-200 hover:border-primary/40 hover:shadow-brand-md"
+                >
+                  <h3 className="text-base font-black text-dark group-hover:text-primary transition-colors mb-2">
+                    {svc.name}
+                  </h3>
+                  <p className="text-sm text-brand-muted leading-relaxed flex-1">
+                    {svc.description}
+                  </p>
+                  <div className="mt-4 flex flex-wrap gap-1.5">
+                    {(svc.outcomes || []).slice(0, 3).map((outcome, i) => (
+                      <span
+                        key={i}
+                        className="inline-block text-[10px] font-semibold bg-primary-tint text-primary rounded-full px-2 py-0.5"
+                      >
+                        {outcome}
+                      </span>
+                    ))}
+                  </div>
+                  <span className="mt-5 inline-flex items-center gap-1 text-xs font-bold text-primary group-hover:text-accent-dark transition-colors">
+                    Learn more <ArrowUpRight className="h-3 w-3" />
+                  </span>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* CTA Strip */}
+        <section className="py-14 px-4 sm:px-6 lg:px-8 bg-primary">
+          <div className="mx-auto max-w-4xl text-center">
+            <p className="text-xs font-black uppercase tracking-widest text-white/70 mb-3">
+              Ready to start?
+            </p>
+            <h2 className="text-2xl sm:text-3xl font-black text-white mb-4">
+              Talk to us about your {hub.categoryLabel} project
+            </h2>
+            <p className="text-base text-white/80 mb-8 max-w-xl mx-auto">
+              Founder-led delivery, clear scope, practical execution. No unnecessary handoffs.
+            </p>
+            <Link
+              href="/contact"
+              className="inline-flex items-center gap-2 rounded-xl bg-accent-dark px-7 py-3.5 text-sm font-bold text-white shadow-brand-md hover:brightness-90 transition-all"
+            >
+              Get a Free Consultation <ArrowUpRight className="h-4 w-4" />
+            </Link>
+          </div>
+        </section>
+      </>
+    );
+  }
+
+  // ── Individual Service Page (existing logic below unchanged) ──────────────
   const [service, serviceLinks] = await Promise.all([
     getService(slug),
     getServiceLinks(),

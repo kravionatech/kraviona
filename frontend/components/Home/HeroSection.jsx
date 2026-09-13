@@ -21,17 +21,18 @@ const HeroSection = () => {
           priority
           fetchPriority="high"
           sizes="100vw"
-          className="object-cover opacity-35"
+          className="object-cover opacity-10"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-primary/98 via-dark/90 to-dark/55" />
-        <div className="absolute inset-x-0 bottom-0 h-36 bg-gradient-to-t from-dark to-transparent" />
+        {/* Light overlay: subtle teal tint at left, fades to transparent */}
+        <div className="absolute inset-0 bg-gradient-to-r from-primary-tint/70 via-surface/40 to-transparent" />
+        <div className="absolute inset-x-0 bottom-0 h-36 bg-gradient-to-t from-surface to-transparent" />
       </div>
 
       <div className="relative z-10 mx-auto flex w-full max-w-7xl flex-grow flex-col justify-center px-6 pb-16 pt-32 md:px-12 lg:pb-24 lg:pt-28">
         <div className="max-w-3xl">
           <div className="mb-5 flex items-center gap-3 md:mb-7 md:gap-4">
             <div className="h-[2px] w-8 bg-accent shadow-[0_0_10px_rgba(232,98,42,0.45)] md:w-12" />
-            <span className="text-xs font-bold uppercase tracking-[0.18em] text-accent-hover md:text-sm">
+            <span className="text-xs font-bold uppercase tracking-[0.18em] text-accent md:text-sm">
               Kraviona Tech Solutions
             </span>
           </div>
@@ -40,7 +41,7 @@ const HeroSection = () => {
             {trustBadges.map((badge) => (
               <span
                 key={badge.label}
-                className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-[11px] font-semibold tracking-wide text-white/80 backdrop-blur-sm"
+                className="inline-flex items-center gap-1.5 rounded-full border border-primary/15 bg-white/70 px-3 py-1.5 text-[11px] font-semibold tracking-wide text-primary backdrop-blur-sm shadow-sm"
               >
                 <span aria-hidden="true">{badge.icon}</span>
                 {badge.label}
@@ -50,18 +51,18 @@ const HeroSection = () => {
 
           <h1
             id="home-hero-heading"
-            className="mb-5 text-4xl font-extrabold leading-[1.08] tracking-tight text-white sm:text-5xl md:mb-7 md:text-6xl lg:text-[4.5rem]"
+            className="mb-5 text-4xl font-extrabold leading-[1.08] tracking-tight text-dark sm:text-5xl md:mb-7 md:text-6xl lg:text-[4.5rem]"
           >
-            Fast Websites & Web Apps
+            Fast Websites &amp; Web Apps
             <br />
             <span className="bg-gradient-to-r from-accent-hover via-accent to-accent-dark bg-clip-text text-transparent">
               Built to Rank
             </span>
             <br />
-            <span className="text-white/90">and Convert</span>
+            <span className="text-dark/85">and Convert</span>
           </h1>
 
-          <p className="mb-9 max-w-2xl border-l-2 border-accent/60 pl-4 text-base leading-relaxed text-white/80 md:mb-11 md:text-lg lg:text-xl">
+          <p className="mb-9 max-w-2xl border-l-2 border-accent/60 pl-4 text-base leading-relaxed text-brand-muted md:mb-11 md:text-lg lg:text-xl">
             Kraviona builds MERN stack products, Next.js websites, backend
             systems, and technical SEO foundations for brands that need speed,
             search visibility, and clean execution.
@@ -93,7 +94,7 @@ const HeroSection = () => {
 
             <Link
               href="/services"
-              className="inline-flex w-full items-center justify-center rounded-xl border-2 border-white bg-white/5 px-7 py-4 text-sm font-bold text-white backdrop-blur-sm transition-all duration-300 hover:bg-white hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-hover sm:w-auto md:px-9 md:py-4.5 md:text-base"
+              className="inline-flex w-full items-center justify-center rounded-xl border-2 border-primary bg-white/60 px-7 py-4 text-sm font-bold text-primary backdrop-blur-sm transition-all duration-300 hover:bg-primary hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-hover sm:w-auto md:px-9 md:py-4.5 md:text-base"
             >
               See What We Build
             </Link>
@@ -102,9 +103,9 @@ const HeroSection = () => {
       </div>
 
       <div className="relative z-20 mt-auto flex w-full flex-col items-stretch justify-between lg:flex-row lg:items-end">
-        <div className="hidden w-full items-center gap-5 border-t-2 border-primary-light bg-dark/90 px-7 py-5 text-white shadow-2xl backdrop-blur-md sm:flex lg:w-auto lg:rounded-tr-2xl lg:border-r-2 md:px-9">
+        <div className="hidden w-full items-center gap-5 border-t-2 border-primary/20 bg-white/90 px-7 py-5 shadow-sm backdrop-blur-md sm:flex lg:w-auto lg:rounded-tr-2xl lg:border-r-2 md:px-9">
           <div
-            className="rounded-full bg-accent/15 p-3 text-accent-hover"
+            className="rounded-full bg-accent/10 p-3 text-accent"
             aria-hidden="true"
           >
             <svg
@@ -122,12 +123,12 @@ const HeroSection = () => {
             </svg>
           </div>
           <div>
-            <p className="mb-0.5 text-[10px] uppercase tracking-widest text-gray-400 md:text-xs">
+            <p className="mb-0.5 text-[10px] uppercase tracking-widest text-brand-muted md:text-xs">
               Direct Consultation
             </p>
             <a
               href="tel:+919608553167"
-              className="text-base font-bold text-white transition-colors hover:text-accent-hover md:text-lg"
+              className="text-base font-bold text-dark transition-colors hover:text-accent md:text-lg"
             >
               +91 96085 53167
             </a>
@@ -156,9 +157,9 @@ const HeroSection = () => {
             </p>
           </div>
 
-          <div className="flex flex-1 cursor-default flex-col justify-center border-t border-white/10 bg-dark/95 p-6 text-white backdrop-blur-md sm:border-l sm:border-t-0 md:p-8 lg:w-[260px] lg:border-l-0 lg:border-t">
+          <div className="flex flex-1 cursor-default flex-col justify-center border-t border-primary/10 bg-white/90 p-6 text-dark backdrop-blur-md sm:border-l sm:border-t-0 md:p-8 lg:w-[260px] lg:border-l-0 lg:border-t">
             <svg
-              className="mb-3 h-7 w-7 text-accent-hover"
+              className="mb-3 h-7 w-7 text-accent"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -172,7 +173,7 @@ const HeroSection = () => {
               />
             </svg>
             <p className="mb-1 text-3xl font-black md:text-4xl">SEO</p>
-            <p className="text-[10px] font-semibold uppercase tracking-widest text-gray-400 md:text-xs">
+            <p className="text-[10px] font-semibold uppercase tracking-widest text-brand-muted md:text-xs">
               Technical Growth
             </p>
           </div>

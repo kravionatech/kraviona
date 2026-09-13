@@ -254,8 +254,8 @@ export default function Chatbot() {
 
   return (
     <>
-      {/* Floating Action Button Dock */}
-      <div className="fixed bottom-6 right-6 z-50 flex items-center select-none">
+      {/* Floating Action Button Dock — sits above the WhatsApp FAB on mobile */}
+      <div className="fixed bottom-[88px] sm:bottom-6 right-6 z-50 flex items-center select-none">
         {!isOpen && hasUnread && (
           <div
             onClick={() => setIsOpen(true)}

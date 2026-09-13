@@ -30,11 +30,11 @@ const stats = [
 
 const WhyChooseUs = () => {
   return (
-    <section className="py-24 bg-gradient-to-b from-[#1A2E33] to-[#2A4A52] font-sans relative overflow-hidden">
-      {/* Cinematic Background Glows */}
+    <section className="py-24 bg-surface font-sans relative overflow-hidden">
+      {/* Subtle light background texture */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-        <div className="absolute top-[10%] -left-[10%] w-[500px] h-[500px] bg-[#2A4A52]/20 rounded-full blur-[120px] mix-blend-screen" />
-        <div className="absolute bottom-[10%] right-[0%] w-[400px] h-[400px] bg-[#E8622A]/10 rounded-full blur-[100px] mix-blend-screen" />
+        <div className="absolute top-[10%] -left-[10%] w-[500px] h-[500px] bg-primary-tint/40 rounded-full blur-[140px]" />
+        <div className="absolute bottom-[10%] right-[0%] w-[400px] h-[400px] bg-accent/5 rounded-full blur-[120px]" />
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -57,8 +57,8 @@ const WhyChooseUs = () => {
                 sizes="(max-width: 768px) 100vw, 50vw"
                 className="object-cover opacity-50 mix-blend-luminosity transform hover:scale-105 transition-transform duration-1000"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#2A4A52] via-[#2A4A52]/40 to-transparent"></div>
-              <div className="absolute inset-0 bg-gradient-to-r from-[#2A4A52]/20 to-transparent mix-blend-overlay"></div>
+              <div className="absolute inset-0 bg-gradient-to-t from-primary-tint/60 via-primary-tint/20 to-transparent"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-primary-tint/10 to-transparent"></div>
             </motion.div>
 
             {/* Decorative Offset Outline Box */}
@@ -82,7 +82,7 @@ const WhyChooseUs = () => {
                 repeatType: "reverse",
                 ease: "easeInOut",
               }}
-              className="absolute -right-2 md:-right-6 top-16 bg-white/[0.03] backdrop-blur-xl p-6 rounded-3xl shadow-[0_20px_40px_rgb(42,74,82,0.2)] z-20 border border-white/10 max-w-[220px]"
+              className="absolute -right-2 md:-right-6 top-16 bg-white backdrop-blur-xl p-6 rounded-3xl shadow-brand-md z-20 border border-primary/10 max-w-[220px]"
             >
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 rounded-full bg-[#E8622A]/20 border border-[#E8622A]/30 flex items-center justify-center shrink-0 shadow-inner">
@@ -101,10 +101,10 @@ const WhyChooseUs = () => {
                   </svg>
                 </div>
                 <div>
-                  <p className="text-2xl font-black text-white">
+                  <p className="text-2xl font-black text-dark">
                     {stats[0].value}
                   </p>
-                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                  <p className="text-[10px] font-bold text-brand-muted uppercase tracking-widest">
                     {stats[0].label}
                   </p>
                 </div>
@@ -124,7 +124,7 @@ const WhyChooseUs = () => {
                 ease: "easeInOut",
                 delay: 1,
               }}
-              className="absolute -left-4 md:-left-8 bottom-16 bg-white/[0.03] backdrop-blur-xl p-6 rounded-3xl shadow-[0_20px_40px_rgb(42,74,82,0.2)] z-20 border border-white/10 max-w-[240px]"
+              className="absolute -left-4 md:-left-8 bottom-16 bg-white backdrop-blur-xl p-6 rounded-3xl shadow-brand-md z-20 border border-primary/10 max-w-[240px]"
             >
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 rounded-full bg-[#2A4A52]/40 border border-[#2A4A52]/50 flex items-center justify-center shrink-0 shadow-inner">
@@ -143,10 +143,10 @@ const WhyChooseUs = () => {
                   </svg>
                 </div>
                 <div>
-                  <p className="text-2xl font-black text-white">
+                  <p className="text-2xl font-black text-dark">
                     {stats[1].value}
                   </p>
-                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                  <p className="text-[10px] font-bold text-brand-muted uppercase tracking-widest">
                     {stats[1].label}
                   </p>
                 </div>
@@ -169,14 +169,14 @@ const WhyChooseUs = () => {
                 </span>
               </div>
 
-              <h2 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white tracking-tight mb-6 leading-[1.15]">
+              <h2 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-dark tracking-tight mb-6 leading-[1.15]">
                 We Build Systems That{" "}
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#F28C5E] to-[#E8622A] drop-shadow-md">
                   Keep Working
                 </span>
               </h2>
 
-              <p className="text-lg md:text-xl text-gray-400 font-light mb-10 leading-relaxed">
+              <p className="text-lg md:text-xl text-brand-muted font-light mb-10 leading-relaxed">
                 Kraviona is built for businesses that want more than a pretty
                 launch. We combine product thinking, clean engineering, and
                 technical SEO so your website or application has a stronger
@@ -196,7 +196,7 @@ const WhyChooseUs = () => {
                   className="flex gap-5 group"
                 >
                   <div className="flex-shrink-0 mt-1">
-                    <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center group-hover:bg-[#E8622A] group-hover:border-[#E8622A] transition-all duration-300 shadow-sm">
+                    <div className="w-10 h-10 rounded-xl bg-primary-tint border border-primary/15 flex items-center justify-center group-hover:bg-[#E8622A] group-hover:border-[#E8622A] transition-all duration-300 shadow-sm">
                       <svg
                         className="w-5 h-5 text-[#F28C5E] group-hover:text-white transition-colors duration-300"
                         fill="none"
@@ -213,10 +213,10 @@ const WhyChooseUs = () => {
                     </div>
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold text-white mb-2 group-hover:text-[#F28C5E] transition-colors duration-300">
+                    <h3 className="text-xl font-bold text-dark mb-2 group-hover:text-[#F28C5E] transition-colors duration-300">
                       {feature.title}
                     </h3>
-                    <p className="text-gray-400 font-light text-sm md:text-base leading-relaxed">
+                    <p className="text-brand-muted font-light text-sm md:text-base leading-relaxed">
                       {feature.description}
                     </p>
                   </div>
@@ -230,7 +230,7 @@ const WhyChooseUs = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.4 }}
-              className="flex flex-col sm:flex-row items-start sm:items-center gap-6 sm:gap-8 pt-4 border-t border-white/10"
+              className="flex flex-col sm:flex-row items-start sm:items-center gap-6 sm:gap-8 pt-4 border-t border-primary/10"
             >
               <Link
                 href="/about"
@@ -253,7 +253,7 @@ const WhyChooseUs = () => {
               </Link>
 
               <div className="flex items-center gap-4 group cursor-pointer">
-                <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center border border-white/10 group-hover:border-[#F28C5E] transition-colors duration-300">
+                <div className="w-12 h-12 rounded-full bg-primary-tint flex items-center justify-center border border-primary/15 group-hover:border-[#F28C5E] transition-colors duration-300">
                   <svg
                     className="w-5 h-5 text-[#F28C5E]"
                     fill="none"
@@ -274,7 +274,7 @@ const WhyChooseUs = () => {
                   </p>
                   <a
                     href="tel:+919608553167"
-                    className="text-white font-bold hover:text-[#E8622A] transition-colors text-lg tracking-wide"
+                    className="text-dark font-bold hover:text-[#E8622A] transition-colors text-lg tracking-wide"
                   >
                     +91 96085 53167
                   </a>

@@ -670,19 +670,19 @@ export default async function PostDetailPage({ params }) {
     },
   };
 
+  // Breadcrumb matches the actual URL: /{category}/{slug} (no /blog/ segment)
   const blogBreadcrumbs = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
       { "@type": "ListItem", position: 1, name: "Home", item: "https://kraviona.com" },
-      { "@type": "ListItem", position: 2, name: "Blog", item: "https://kraviona.com/blog" },
       {
         "@type": "ListItem",
-        position: 3,
+        position: 2,
         name: post.category?.name || "Category",
         item: `https://kraviona.com/category/${canonicalCategory}`,
       },
-      { "@type": "ListItem", position: 4, name: post.title, item: postCanonical },
+      { "@type": "ListItem", position: 3, name: post.title, item: postCanonical },
     ],
   };
 
@@ -721,7 +721,7 @@ export default async function PostDetailPage({ params }) {
           )}
 
           <div className="relative z-10 mx-auto max-w-5xl">
-            {/* Breadcrumb row */}
+            {/* Breadcrumb row — matches actual URL: /{category}/{slug} */}
             <nav
               aria-label="Breadcrumb"
               className="mb-6 flex flex-wrap items-center gap-2 text-xs font-semibold text-white/70"
@@ -730,13 +730,9 @@ export default async function PostDetailPage({ params }) {
                 Home
               </Link>
               <span>/</span>
-              <Link href="/blog" className="hover:text-white">
-                Blog
-              </Link>
-              <span>/</span>
               <Link
                 href={`/category/${canonicalCategory}`}
-                className="hover:text-white"
+                className="hover:text-white capitalize"
               >
                 {post.category?.name || "Category"}
               </Link>

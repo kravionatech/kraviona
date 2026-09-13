@@ -199,6 +199,18 @@ const nextConfig = {
         destination: "/blog/latest-ai-news-august-2026",
         permanent: true,
       },
+      // Duplicate near-identical slug pair under /next-gen-web-development/
+      // The "guide-for-developer" (singular) is the weaker URL; consolidate into "guide-for-developers"
+      {
+        source: "/next-gen-web-development/complete-guide-for-developer",
+        destination: "/next-gen-web-development/complete-guide-for-developers",
+        permanent: true,
+      },
+      {
+        source: "/next-gen-web-development/a-complete-guide-for-developer",
+        destination: "/next-gen-web-development/a-complete-guide-for-developers",
+        permanent: true,
+      },
       {
         source: "/services/react-js-development",
         destination: "/services/react-development",
@@ -219,11 +231,9 @@ const nextConfig = {
         destination: "/services/:path*",
         permanent: true,
       },
-      {
-        source: "/services/web-development",
-        destination: "/services/web-app-development",
-        permanent: true,
-      },
+      // NOTE: /services/web-development is now a real category hub page.
+      // The old redirect to /services/web-app-development has been removed.
+      // If you need to add it back, remove the hub page first.
       {
         source: "/contact-us",
         destination: "/contact",
