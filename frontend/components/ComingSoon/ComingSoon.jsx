@@ -9,26 +9,26 @@ const ComingSoon = ({
   expectedDate,
 }) => (
   // FIX: Compact size, perfectly centered, accounting for header height (pt-20)
-  <div className="relative min-h-screen w-full flex flex-col items-center justify-center bg-[#2A4A52] overflow-hidden pt-20 pb-10">
+  <div className="relative min-h-screen w-full flex flex-col items-center justify-center bg-hero-gradient overflow-hidden pt-20 pb-10">
     {/* Background Patterns */}
     <div
-      className="absolute inset-0 z-0 opacity-10"
+      className="absolute inset-0 z-0 opacity-5"
       style={{
-        backgroundImage: "radial-gradient(#F28C5E 1px, transparent 1px)",
+        backgroundImage: "radial-gradient(#0f5960 1px, transparent 1px)",
         backgroundSize: "30px 30px",
       }}
     ></div>
 
-    {/* Decorative Glows (Scaled down) */}
-    <div className="absolute top-0 right-0 w-72 h-72 bg-[#2A4A52]/20 rounded-full blur-[80px]"></div>
-    <div className="absolute bottom-0 left-0 w-72 h-72 bg-[#E8622A]/10 rounded-full blur-[80px]"></div>
+    {/* Decorative Glows */}
+    <div className="absolute top-0 right-0 w-72 h-72 bg-primary/8 rounded-full blur-[80px]"></div>
+    <div className="absolute bottom-0 left-0 w-72 h-72 bg-accent/8 rounded-full blur-[80px]"></div>
 
     <div className="relative z-10 flex flex-col items-center text-center px-4 max-w-3xl">
-      {/* Animated Icon (Smaller) */}
+      {/* Animated Icon */}
       <div className="mb-6">
-        <div className="w-16 h-16 bg-[#2A4A52]/20 rounded-2xl flex items-center justify-center border border-[#F28C5E]/10 backdrop-blur-lg animate-[slow-bounce_4s_infinite_ease-in-out]">
+        <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center border border-gray-200 shadow-brand-sm backdrop-blur-lg animate-[slow-bounce_4s_infinite_ease-in-out]">
           <svg
-            className="w-8 h-8 text-[#F28C5E]"
+            className="w-8 h-8 text-[#E8622A]"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -45,45 +45,45 @@ const ComingSoon = ({
 
       {/* Brand/Page Label */}
       <div className="flex items-center gap-3 mb-4">
-        <span className="w-6 h-[1px] bg-[#2A4A52]"></span>
-        <h2 className="text-[#F28C5E] font-bold tracking-[0.3em] uppercase text-[10px]">
+        <span className="w-6 h-[2px] bg-[#E8622A]"></span>
+        <h2 className="text-[#E8622A] font-bold tracking-[0.3em] uppercase text-[10px]">
           {pageName} Lab
         </h2>
-        <span className="w-6 h-[1px] bg-[#2A4A52]"></span>
+        <span className="w-6 h-[2px] bg-[#E8622A]"></span>
       </div>
 
-      {/* Main Heading (Scaled down) */}
-      <h1 className="text-4xl md:text-5xl font-black text-white mb-4 leading-tight tracking-tight">
+      {/* Main Heading */}
+      <h1 className="text-4xl md:text-5xl font-black text-dark mb-4 leading-tight tracking-tight">
         Launching <span className="text-[#E8622A]">Soon...</span>
       </h1>
 
-      {/* Description (Smaller text, tighter max-width) */}
-      <p className="text-base md:text-lg text-gray-400 mb-8 font-medium leading-relaxed max-w-xl">
+      {/* Description */}
+      <p className="text-base md:text-lg text-brand-muted mb-8 font-medium leading-relaxed max-w-xl">
         {description}
       </p>
 
-      {/* Launch Date Indicator (More compact) */}
+      {/* Launch Date Indicator */}
       {expectedDate && (
-        <div className="mb-8 py-2 px-6 bg-[#2A4A52]/10 border border-[#2A4A52]/30 rounded-full backdrop-blur-sm">
-          <p className="text-[#F28C5E] text-xs font-bold tracking-wide">
+        <div className="mb-8 py-2 px-6 bg-white border border-gray-200 rounded-full shadow-brand-sm">
+          <p className="text-[#E8622A] text-xs font-bold tracking-wide">
             PROJECTED LAUNCH:{" "}
-            <span className="text-white ml-2 uppercase">{expectedDate}</span>
+            <span className="text-dark ml-2 uppercase font-extrabold">{expectedDate}</span>
           </p>
         </div>
       )}
 
-      {/* Lead Capture Form (Smaller padding/text) */}
-      <div className="w-full max-w-md backdrop-blur-2xl bg-white/5 border border-white/10 p-1.5 rounded-xl flex flex-col sm:flex-row items-center gap-2 shadow-inner mb-8">
+      {/* Lead Capture Form */}
+      <div className="w-full max-w-md bg-white border border-gray-200 p-1.5 rounded-2xl flex flex-col sm:flex-row items-center gap-2 shadow-brand-sm mb-8">
         <input
           type="email"
           aria-label="Work email address"
           placeholder="Work email address"
-          className="w-full sm:flex-1 bg-transparent border-none outline-none px-4 py-2 text-white placeholder:text-gray-500 text-sm font-medium"
+          className="w-full sm:flex-1 bg-transparent border-none outline-none px-4 py-2 text-dark placeholder:text-gray-400 text-sm font-medium"
         />
         <button
           type="button"
           aria-label="Notify me when this page launches"
-          className="w-full sm:w-auto bg-[#E8622A] hover:bg-[#2A4A52] text-white px-6 py-2.5 rounded-lg font-bold text-xs transition-all duration-300 shadow-lg active:scale-95 uppercase tracking-wider"
+          className="w-full sm:w-auto bg-[#E8622A] hover:bg-[#B84A1A] text-white px-6 py-2.5 rounded-xl font-bold text-xs transition-all duration-300 shadow-brand-sm active:scale-95 uppercase tracking-wider"
         >
           Notify Me
         </button>

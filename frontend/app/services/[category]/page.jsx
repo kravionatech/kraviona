@@ -552,39 +552,39 @@ export default async function ServicesDetails({ params }) {
         )}
       />
 
-      <section className="relative overflow-hidden bg-[#1A2E33] pt-32 pb-24">
-        <div className="absolute inset-0 opacity-[0.08] bg-[radial-gradient(#F28C5E_1px,transparent_1px)] [background-size:28px_28px]" />
+      <section className="relative overflow-hidden bg-hero-gradient pt-32 pb-24 border-b border-gray-200/80">
+        <div className="absolute inset-0 opacity-[0.04] bg-[radial-gradient(#0f5960_1px,transparent_1px)] [background-size:28px_28px]" />
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl">
-            <p className="mb-5 text-xs font-black uppercase tracking-[0.22em] text-[#F28C5E]">
+            <p className="mb-5 text-xs font-black uppercase tracking-[0.22em] text-[#E8622A]">
               {service.hero.eyebrow}
             </p>
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-white leading-tight mb-6">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-dark leading-tight mb-6">
               {service.hero.title}{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#F28C5E] to-[#E8622A]">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#E8622A] to-[#F28C5E]">
                 {service.hero.highlight}
               </span>
             </h1>
-            <p className="text-gray-300 text-lg md:text-xl max-w-3xl leading-relaxed mb-10">
+            <p className="text-brand-muted text-lg md:text-xl max-w-3xl leading-relaxed mb-10">
               {service.hero.description}
             </p>
             <div className="flex flex-col sm:flex-row gap-3">
               <Link
                 href={service.cta.href}
-                className="inline-flex items-center justify-center px-7 py-4 bg-[#E8622A] text-white font-bold rounded-xl hover:bg-[#B84A1A] transition-colors"
+                className="inline-flex items-center justify-center px-7 py-4 bg-[#E8622A] text-white font-bold rounded-xl hover:bg-[#B84A1A] shadow-brand-sm transition-all"
               >
                 {service.cta.label}
               </Link>
               <a
                 href={expert.phoneHref}
-                className="inline-flex items-center justify-center px-7 py-4 border border-white/20 text-white font-bold rounded-xl hover:bg-white/10 transition-colors"
+                className="inline-flex items-center justify-center px-7 py-4 border border-primary/25 bg-white/90 text-primary font-bold rounded-xl hover:bg-primary hover:text-white shadow-brand-sm transition-all"
               >
                 <Phone className="mr-2 h-4 w-4" />
                 Call {expert.phone}
               </a>
               <a
                 href={expert.whatsapp}
-                className="inline-flex items-center justify-center px-7 py-4 border border-white/20 text-white font-bold rounded-xl hover:bg-white/10 transition-colors"
+                className="inline-flex items-center justify-center px-7 py-4 border border-primary/25 bg-white/90 text-primary font-bold rounded-xl hover:bg-primary hover:text-white shadow-brand-sm transition-all"
                 target="_blank"
                 rel="noreferrer"
               >

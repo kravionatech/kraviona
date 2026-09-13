@@ -30,10 +30,10 @@ const itemVariants = {
 
 const CoreValues = () => {
   return (
-    <section className="py-24 bg-[#1A2E33] font-sans relative">
+    <section className="py-24 bg-surface font-sans relative border-t border-gray-200/80">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-black text-white tracking-tight">
+          <h2 className="text-3xl md:text-4xl font-black text-dark tracking-tight">
             Our Core <span className="text-[#E8622A]">Values</span>
           </h2>
         </div>
@@ -49,15 +49,15 @@ const CoreValues = () => {
             <motion.div
               key={idx}
               variants={itemVariants}
-              className="bg-white/5 backdrop-blur-sm border border-white/10 p-10 rounded-[32px] hover:bg-white/10 transition-colors duration-300"
+              className="bg-white border border-gray-200 p-10 rounded-[32px] shadow-sm hover:border-primary/40 hover:shadow-brand-md transition-all duration-300"
             >
-              <div className="w-12 h-12 rounded-full bg-[#E8622A]/20 flex items-center justify-center mb-6">
+              <div className="w-12 h-12 rounded-full bg-accent-tint flex items-center justify-center mb-6">
                 <div className="w-4 h-4 rounded-full bg-[#E8622A]"></div>
               </div>
-              <h3 className="text-xl font-bold text-white mb-4">
+              <h3 className="text-xl font-bold text-dark mb-4">
                 {value.title}
               </h3>
-              <p className="text-[#8FA8B0] text-sm leading-relaxed">
+              <p className="text-brand-muted text-sm leading-relaxed">
                 {value.desc}
               </p>
             </motion.div>

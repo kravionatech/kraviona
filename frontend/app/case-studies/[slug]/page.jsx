@@ -35,25 +35,25 @@ export default async function ProjectDetailsPage({ params }) {
           ← All case studies
         </Link>
 
-        <div className="mt-6 overflow-hidden rounded-3xl bg-[#1a2e33] shadow-xl">
-          <div className="relative h-80 w-full">
+        <div className="mt-6 overflow-hidden rounded-3xl bg-white border border-gray-200 shadow-brand-md">
+          <div className="relative h-80 w-full bg-surface-teal">
             <Image
               src={projectImage}
               alt={project.imageAlt || project.title}
               fill
               priority
               sizes="(max-width: 1024px) 100vw, 1024px"
-              className="object-cover opacity-70"
+              className="object-cover"
             />
           </div>
           <div className="p-8 sm:p-12">
-            <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#f28c5e]">
+            <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#E8622A]">
               {project.category}
             </p>
-            <h1 className="mt-3 text-4xl font-extrabold text-white">
+            <h1 className="mt-3 text-4xl font-extrabold text-[#1a2e33]">
               {project.title}
             </h1>
-            <p className="mt-5 max-w-3xl text-lg leading-relaxed text-slate-200">
+            <p className="mt-5 max-w-3xl text-lg leading-relaxed text-brand-muted">
               {project.description}
             </p>
             {project.projectUrl && (

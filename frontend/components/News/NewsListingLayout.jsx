@@ -238,7 +238,7 @@ export default function NewsListingLayout({ initialPosts = [], initialPagination
             <p className="text-gray-500 mb-4">{error}</p>
             <button
               onClick={() => loadPosts()}
-              className="inline-flex items-center gap-2 bg-[#1a2e35] text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-[#2a4a52] transition-colors"
+              className="inline-flex items-center gap-2 bg-[#E8622A] text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-[#B84A1A] transition-all shadow-brand-sm"
             >
               <RefreshCw size={14} />
               Try again
@@ -289,7 +289,7 @@ export default function NewsListingLayout({ initialPosts = [], initialPagination
                 <button
                   onClick={() => loadPosts({ loadMore: true })}
                   disabled={loadingMore}
-                  className="inline-flex items-center gap-2 bg-[#1a2e35] text-white px-7 py-3 rounded-xl text-sm font-bold hover:bg-[#2a4a52] disabled:opacity-60 transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5"
+                  className="inline-flex items-center gap-2 bg-[#E8622A] text-white px-7 py-3 rounded-xl text-sm font-bold hover:bg-[#B84A1A] disabled:opacity-60 transition-all shadow-brand-sm hover:shadow-brand-md hover:-translate-y-0.5"
                 >
                   {loadingMore ? (
                     <><Loader2 size={15} className="animate-spin" /> Loading…</>

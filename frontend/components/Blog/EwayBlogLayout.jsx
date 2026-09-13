@@ -154,24 +154,24 @@ function BlogHero({ latestPost, categories, articleCount }) {
 
   return (
     <section
-      className="relative overflow-hidden bg-[#1A2E33] pt-[66px] text-white lg:pt-[78px]"
+      className="relative overflow-hidden bg-hero-gradient pt-[66px] text-dark lg:pt-[78px] border-b border-gray-200/80"
       aria-labelledby="blog-hero-heading"
     >
       <div
-        className="pointer-events-none absolute inset-0 opacity-[0.055]"
+        className="pointer-events-none absolute inset-0 opacity-[0.035]"
         aria-hidden="true"
         style={{
           backgroundImage:
-            "linear-gradient(rgba(255,255,255,.7) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.7) 1px, transparent 1px)",
+            "linear-gradient(rgba(15,89,96,.5) 1px, transparent 1px), linear-gradient(90deg, rgba(15,89,96,.5) 1px, transparent 1px)",
           backgroundSize: "52px 52px",
         }}
       />
       <div
-        className="pointer-events-none absolute -right-40 -top-48 h-[540px] w-[540px] rounded-full bg-[#2A4A52]/45 blur-[120px]"
+        className="pointer-events-none absolute -right-40 -top-48 h-[540px] w-[540px] rounded-full bg-primary/10 blur-[120px]"
         aria-hidden="true"
       />
       <div
-        className="pointer-events-none absolute -bottom-52 left-[28%] h-[420px] w-[420px] rounded-full bg-[#E8622A]/15 blur-[110px]"
+        className="pointer-events-none absolute -bottom-52 left-[28%] h-[420px] w-[420px] rounded-full bg-accent/10 blur-[110px]"
         aria-hidden="true"
       />
 
@@ -179,20 +179,20 @@ function BlogHero({ latestPost, categories, articleCount }) {
         <div>
           <div className="mb-6 flex items-center gap-3">
             <span className="h-px w-9 bg-[#E8622A]" aria-hidden="true" />
-            <p className="text-[11px] font-black uppercase tracking-[0.25em] text-[#F28C5E]">
+            <p className="text-[11px] font-black uppercase tracking-[0.25em] text-[#E8622A]">
               The Kraviona Journal
             </p>
           </div>
 
           <h1
             id="blog-hero-heading"
-            className="max-w-3xl text-4xl font-black leading-[1.04] tracking-[-0.04em] sm:text-5xl lg:text-[4rem]"
+            className="max-w-3xl text-4xl font-black leading-[1.04] tracking-[-0.04em] sm:text-5xl lg:text-[4rem] text-dark"
           >
             Ideas for building
-            <span className="block text-[#F28C5E]">better digital products.</span>
+            <span className="block text-transparent bg-clip-text bg-gradient-to-r from-[#E8622A] to-[#F28C5E]">better digital products.</span>
           </h1>
 
-          <p className="mt-6 max-w-xl text-base leading-7 text-white/68 sm:text-lg sm:leading-8">
+          <p className="mt-6 max-w-xl text-base leading-7 text-brand-muted sm:text-lg sm:leading-8">
             Practical thinking on engineering, design, SEO, and AI—written by
             the people doing the work.
           </p>
@@ -200,38 +200,38 @@ function BlogHero({ latestPost, categories, articleCount }) {
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <a
               href="#all-posts"
-              className="group inline-flex h-12 items-center justify-center gap-2 rounded-md bg-[#E8622A] px-6 text-sm font-black text-white shadow-[0_12px_28px_rgba(232,98,42,0.2)] transition-all hover:-translate-y-0.5 hover:bg-[#B84A1A] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F28C5E] focus-visible:ring-offset-2 focus-visible:ring-offset-[#1A2E33]"
+              className="group inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-[#E8622A] px-6 text-sm font-black text-white shadow-brand-sm transition-all hover:-translate-y-0.5 hover:bg-[#B84A1A] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F28C5E]"
             >
               Explore all articles
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
             </a>
             <a
               href="#blog-topics"
-              className="inline-flex h-12 items-center justify-center rounded-md border border-white/16 bg-white/[0.055] px-6 text-sm font-bold text-white backdrop-blur-sm transition-colors hover:border-white/30 hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
+              className="inline-flex h-12 items-center justify-center rounded-xl border border-primary/25 bg-white/90 px-6 text-sm font-bold text-primary shadow-brand-sm transition-all hover:bg-primary hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
             >
               Browse by topic
             </a>
           </div>
 
-          <div className="mt-9 flex flex-wrap items-center gap-x-7 gap-y-4 border-t border-white/12 pt-6">
+          <div className="mt-9 flex flex-wrap items-center gap-x-7 gap-y-4 border-t border-gray-200/80 pt-6">
             <div>
-              <p className="text-2xl font-black text-white">{articleCount}</p>
-              <p className="mt-0.5 text-[10px] font-bold uppercase tracking-[0.18em] text-white/45">
+              <p className="text-2xl font-black text-dark">{articleCount}</p>
+              <p className="mt-0.5 text-[10px] font-bold uppercase tracking-[0.18em] text-brand-muted">
                 Published articles
               </p>
             </div>
-            <span className="hidden h-9 w-px bg-white/12 sm:block" aria-hidden="true" />
+            <span className="hidden h-9 w-px bg-gray-200 sm:block" aria-hidden="true" />
             <div>
-              <p className="text-2xl font-black text-white">
+              <p className="text-2xl font-black text-dark">
                 {categories.length || DEFAULT_CATEGORIES.length}
               </p>
-              <p className="mt-0.5 text-[10px] font-bold uppercase tracking-[0.18em] text-white/45">
+              <p className="mt-0.5 text-[10px] font-bold uppercase tracking-[0.18em] text-brand-muted">
                 Expert topics
               </p>
             </div>
-            <span className="hidden h-9 w-px bg-white/12 sm:block" aria-hidden="true" />
-            <div className="flex items-center gap-2 text-xs font-bold text-white/62">
-              <BookOpenText className="h-4 w-4 text-[#F28C5E]" />
+            <span className="hidden h-9 w-px bg-gray-200 sm:block" aria-hidden="true" />
+            <div className="flex items-center gap-2 text-xs font-bold text-primary">
+              <BookOpenText className="h-4 w-4 text-[#E8622A]" />
               Practical, no-fluff insights
             </div>
           </div>
@@ -239,13 +239,13 @@ function BlogHero({ latestPost, categories, articleCount }) {
 
         <div className="relative mx-auto w-full max-w-xl lg:mx-0">
           <div
-            className="absolute -inset-4 translate-x-3 translate-y-3 rounded-xl border border-white/8 bg-white/[0.025]"
+            className="absolute -inset-4 translate-x-3 translate-y-3 rounded-2xl border border-gray-200 bg-white/40"
             aria-hidden="true"
           />
           {latestPost?.slug ? (
             <Link
               href={`/blog/${latestPost.slug}`}
-              className="group relative block overflow-hidden rounded-xl border border-white/14 bg-[#1A2E33] shadow-[0_28px_70px_rgba(42,74,82,0.28)]"
+              className="group relative block overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-brand-md"
             >
               <PostImage
                 post={latestPost}
@@ -253,13 +253,13 @@ function BlogHero({ latestPost, categories, articleCount }) {
                 sizes="(max-width: 1024px) 92vw, 42vw"
                 priority
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#1A2E33] via-[#1A2E33]/28 to-transparent" />
-              <div className="absolute inset-x-0 bottom-0 p-5 sm:p-7">
+              <div className="absolute inset-0 bg-gradient-to-t from-dark/90 via-dark/35 to-transparent" />
+              <div className="absolute inset-x-0 bottom-0 p-5 sm:p-7 text-white">
                 <div className="mb-3 flex items-center justify-between gap-3">
-                  <span className="rounded-full border border-white/15 bg-[#1A2E33]/75 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.18em] text-[#F28C5E] backdrop-blur-md">
+                  <span className="rounded-full border border-white/25 bg-dark/70 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.18em] text-[#F28C5E] backdrop-blur-md">
                     Latest · {getCategoryName(latestPost)}
                   </span>
-                  <span className="rounded-full bg-white/12 p-2.5 text-white backdrop-blur-md transition-colors group-hover:bg-[#E8622A]">
+                  <span className="rounded-full bg-white/20 p-2.5 text-white backdrop-blur-md transition-colors group-hover:bg-[#E8622A]">
                     <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
                   </span>
                 </div>
@@ -272,12 +272,12 @@ function BlogHero({ latestPost, categories, articleCount }) {
               </div>
             </Link>
           ) : (
-            <div className="relative flex aspect-[16/10] items-center justify-center overflow-hidden rounded-xl border border-white/14 bg-[linear-gradient(135deg,#2A4A52,#1A2E33)] p-8 shadow-[0_28px_70px_rgba(42,74,82,0.28)]">
-              <div className="absolute left-8 top-8 h-16 w-16 rounded-full bg-[#E8622A]/20 blur-xl" />
+            <div className="relative flex aspect-[16/10] items-center justify-center overflow-hidden rounded-2xl border border-gray-200 bg-surface-teal p-8 shadow-brand-md">
+              <div className="absolute left-8 top-8 h-16 w-16 rounded-full bg-accent/15 blur-xl" />
               <div className="relative text-center">
-                <BookOpenText className="mx-auto h-10 w-10 text-[#F28C5E]" />
-                <p className="mt-4 text-xl font-black">Fresh thinking is on the way.</p>
-                <p className="mt-2 text-sm text-white/55">
+                <BookOpenText className="mx-auto h-10 w-10 text-[#E8622A]" />
+                <p className="mt-4 text-xl font-black text-dark">Fresh thinking is on the way.</p>
+                <p className="mt-2 text-sm text-brand-muted">
                   Explore practical notes from the Kraviona team.
                 </p>
               </div>
@@ -290,12 +290,12 @@ function BlogHero({ latestPost, categories, articleCount }) {
         </div>
       </div>
 
-      <div id="blog-topics" className="relative border-t border-white/10 bg-dark/10">
+      <div id="blog-topics" className="relative border-t border-gray-200/80 bg-white/70 backdrop-blur-sm">
         <div className="mx-auto flex max-w-7xl items-center gap-4 px-4 py-4 sm:px-6 lg:px-8">
-          <span className="hidden shrink-0 text-[10px] font-black uppercase tracking-[0.2em] text-white/40 sm:block">
+          <span className="hidden shrink-0 text-[10px] font-black uppercase tracking-[0.2em] text-brand-muted sm:block">
             Explore topics
           </span>
-          <span className="hidden h-5 w-px shrink-0 bg-white/12 sm:block" aria-hidden="true" />
+          <span className="hidden h-5 w-px shrink-0 bg-gray-200 sm:block" aria-hidden="true" />
           <nav className="flex min-w-0 flex-1 gap-2 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {topicLinks.map((category) => (
               <Link
@@ -305,7 +305,7 @@ function BlogHero({ latestPost, categories, articleCount }) {
                     ? `/category/${category.slug}`
                     : `/category/${encodeURIComponent(category.name.toLowerCase())}`
                 }
-                className="shrink-0 rounded-full border border-white/10 bg-white/[0.045] px-4 py-2 text-[11px] font-bold text-white/72 transition-all hover:border-[#F28C5E]/50 hover:bg-[#F28C5E]/10 hover:text-[#F28C5E]"
+                className="shrink-0 rounded-full border border-gray-200 bg-white px-4 py-2 text-[11px] font-bold text-dark transition-all hover:border-[#E8622A]/50 hover:bg-accent-tint hover:text-[#E8622A] shadow-brand-sm"
               >
                 {category.name}
               </Link>
@@ -503,20 +503,20 @@ function CategorySection({ category, posts }) {
 
 function PromoPanel() {
   return (
-    <div className="bg-[#1A2E33] p-6 text-white">
-      <p className="text-[10px] font-black uppercase tracking-[0.24em] text-[#F28C5E]">
+    <div className="rounded-xl border border-gray-200 bg-surface-teal p-6 text-dark shadow-brand-sm">
+      <p className="text-[10px] font-black uppercase tracking-[0.24em] text-[#E8622A]">
         Kraviona Guide
       </p>
-      <h2 className="mt-4 text-2xl font-black leading-tight">
+      <h2 className="mt-4 text-2xl font-black leading-tight text-dark">
         Turn technical ideas into a cleaner product roadmap.
       </h2>
-      <p className="mt-4 text-sm leading-6 text-white/72">
+      <p className="mt-4 text-sm leading-6 text-brand-muted">
         Read practical notes from our team on product engineering, SEO,
         interfaces, and AI workflow design.
       </p>
       <Link
         href="/contact"
-        className="mt-6 inline-flex items-center gap-2 rounded-md bg-[#E8622A] px-5 py-3 text-sm font-bold text-white transition-colors hover:bg-[#B84A1A]"
+        className="mt-6 inline-flex items-center gap-2 rounded-xl bg-[#E8622A] px-5 py-3 text-sm font-bold text-white transition-colors hover:bg-[#B84A1A] shadow-brand-sm"
       >
         Talk to us
         <ArrowRight className="h-4 w-4" />

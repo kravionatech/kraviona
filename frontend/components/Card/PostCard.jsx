@@ -37,7 +37,7 @@ function PostImage({ post, className = "", sizes }) {
   const imageUrl = getImageUrl(post);
 
   return (
-    <div className={`relative overflow-hidden bg-[#2A4A52] ${className}`}>
+    <div className={`relative overflow-hidden bg-surface-2 ${className}`}>
       {imageUrl ? (
         <Image
           src={imageUrl}
@@ -47,8 +47,8 @@ function PostImage({ post, className = "", sizes }) {
           className="object-cover transition-transform duration-500 group-hover:scale-105"
         />
       ) : (
-        <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-[#2A4A52] to-[#2A4A52]">
-          <span className="text-3xl font-black text-white/20">K</span>
+        <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-surface to-surface-2">
+          <span className="text-3xl font-black text-primary/20">K</span>
         </div>
       )}
     </div>

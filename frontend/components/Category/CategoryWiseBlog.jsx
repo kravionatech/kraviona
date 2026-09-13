@@ -192,7 +192,7 @@ const CategoryWiseBlog = ({
             </p>
             <Link
               href="#blogs"
-              className="inline-block px-8 py-4 bg-[#1A2E33] text-white rounded-full font-black text-xs uppercase tracking-[0.2em] hover:bg-[#E8622A] transition-colors duration-300"
+              className="inline-block px-8 py-4 bg-[#E8622A] text-white rounded-xl font-bold text-xs uppercase tracking-[0.2em] hover:bg-[#B84A1A] transition-all shadow-brand-sm"
             >
               Back to All Articles
             </Link>
@@ -211,7 +211,7 @@ const CategoryWiseBlog = ({
                 type="button"
                 disabled={!pagination.hasPreviousPage || isLoading}
                 onClick={() => setPage((current) => Math.max(1, current - 1))}
-                className="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-bold text-[#2A4A52] transition hover:border-[#2A4A52] disabled:cursor-not-allowed disabled:opacity-40"
+                className="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-bold text-dark transition hover:border-primary hover:text-primary disabled:cursor-not-allowed disabled:opacity-40"
               >
                 Previous
               </button>
@@ -219,7 +219,7 @@ const CategoryWiseBlog = ({
                 type="button"
                 disabled={!pagination.hasNextPage || isLoading}
                 onClick={() => setPage((current) => current + 1)}
-                className="rounded-lg bg-[#2A4A52] px-4 py-2 text-sm font-bold text-white transition hover:bg-[#2A4A52] disabled:cursor-not-allowed disabled:opacity-40"
+                className="rounded-lg bg-[#E8622A] px-4 py-2 text-sm font-bold text-white transition hover:bg-[#B84A1A] shadow-brand-sm disabled:cursor-not-allowed disabled:opacity-40"
               >
                 Next
               </button>

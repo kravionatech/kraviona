@@ -191,14 +191,14 @@ const TeamPage = async () => {
             <div className="mt-8 flex flex-wrap gap-3">
               <Link
                 href="/contact"
-                className="inline-flex h-11 items-center gap-2 rounded-lg bg-[#1A2E33] px-5 text-sm font-bold text-white transition-colors hover:bg-[#3D6B77]"
+                className="inline-flex h-11 items-center gap-2 rounded-xl bg-[#E8622A] px-5 text-sm font-bold text-white transition-all hover:bg-[#B84A1A] shadow-brand-sm"
               >
                 Work with the team
                 <ArrowUpRight className="h-4 w-4" />
               </Link>
               <Link
                 href="/services"
-                className="inline-flex h-11 items-center gap-2 rounded-lg border border-[#1A2E33]/15 bg-white px-5 text-sm font-bold text-[#1A2E33] transition-colors hover:border-[#E8622A] hover:text-[#E8622A]"
+                className="inline-flex h-11 items-center gap-2 rounded-xl border border-primary/25 bg-white px-5 text-sm font-bold text-primary transition-all hover:border-primary hover:bg-primary-tint"
               >
                 Explore services
               </Link>
@@ -376,19 +376,19 @@ const TeamPage = async () => {
         </div>
       </section>
 
-      <section className="bg-[#1A2E33]">
+      <section className="bg-surface-teal border-t border-gray-200/80">
         <div className="mx-auto flex max-w-7xl flex-col gap-6 px-6 py-14 md:flex-row md:items-center md:justify-between lg:px-8">
           <div>
-            <p className="text-xs font-bold uppercase tracking-[0.28em] text-[#F28C5E]">
+            <p className="text-xs font-bold uppercase tracking-[0.28em] text-[#E8622A]">
               Start A Project
             </p>
-            <h2 className="mt-3 max-w-2xl text-3xl font-black tracking-tight text-white">
+            <h2 className="mt-3 max-w-2xl text-3xl font-black tracking-tight text-dark">
               Bring Kraviona into your next website, app, or SEO rebuild.
             </h2>
           </div>
           <Link
             href="/contact"
-            className="inline-flex h-12 w-fit items-center gap-2 rounded-lg bg-white px-6 text-sm font-black text-[#1A2E33] transition-colors hover:bg-[#F28C5E] hover:text-white"
+            className="inline-flex h-12 w-fit items-center gap-2 rounded-xl bg-[#E8622A] px-6 text-sm font-black text-white transition-all hover:bg-[#B84A1A] shadow-brand-sm"
           >
             Contact Kraviona
             <ArrowUpRight className="h-4 w-4" />

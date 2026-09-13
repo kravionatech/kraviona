@@ -8,7 +8,7 @@ import { Calendar, CheckCircle, ArrowRight } from "lucide-react";
 const CTASection = () => {
   return (
     <section
-      className="relative py-24 lg:py-32 bg-gradient-to-b from-primary to-dark overflow-hidden border-t border-primary/20"
+      className="relative py-24 lg:py-32 bg-surface overflow-hidden border-t border-gray-200/80"
       aria-labelledby="cta-heading"
     >
       {/* Animated Background Rings */}
@@ -19,16 +19,16 @@ const CTASection = () => {
         <motion.div
           animate={{ rotate: 360 }}
           transition={{ duration: 70, repeat: Infinity, ease: "linear" }}
-          className="absolute -top-[55%] -right-[18%] w-[1100px] h-[1100px] rounded-full border border-white/[0.04]"
+          className="absolute -top-[55%] -right-[18%] w-[1100px] h-[1100px] rounded-full border border-primary/5"
         />
         <motion.div
           animate={{ rotate: -360 }}
           transition={{ duration: 55, repeat: Infinity, ease: "linear" }}
-          className="absolute -bottom-[45%] -left-[8%] w-[750px] h-[750px] rounded-full border border-[#F28C5E]/8"
+          className="absolute -bottom-[45%] -left-[8%] w-[750px] h-[750px] rounded-full border border-accent/8"
         />
         {/* Glow */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[65%] h-[65%] bg-[#2A4A52] blur-[140px] opacity-25 rounded-full" />
-        <div className="absolute top-[18%] right-[8%] w-[38%] h-[38%] bg-[#E8622A] blur-[110px] opacity-8 rounded-full" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[65%] h-[65%] bg-primary/5 blur-[140px] rounded-full" />
+        <div className="absolute top-[18%] right-[8%] w-[38%] h-[38%] bg-accent/6 blur-[110px] rounded-full" />
       </div>
 
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
@@ -39,12 +39,12 @@ const CTASection = () => {
           transition={{ duration: 0.7, ease: "easeOut" }}
         >
           {/* Live availability badge */}
-          <div className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-white/[0.06] border border-white/10 backdrop-blur-md mb-8 shadow-sm">
+          <div className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-white border border-gray-200 shadow-brand-sm mb-8">
             <span className="flex h-2.5 w-2.5 relative" aria-hidden="true">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#F28C5E] opacity-75" />
-              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#F28C5E]" />
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#E8622A] opacity-75" />
+              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#E8622A]" />
             </span>
-            <span className="text-white/90 text-xs font-bold tracking-[0.15em] uppercase">
+            <span className="text-dark text-xs font-bold tracking-[0.15em] uppercase">
               Available for New Projects
             </span>
           </div>
@@ -52,22 +52,22 @@ const CTASection = () => {
           {/* Heading */}
           <h2
             id="cta-heading"
-            className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-white tracking-tight mb-6 leading-[1.12]"
+            className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-dark tracking-tight mb-6 leading-[1.12]"
           >
             Ready to Build Something <br className="hidden md:block" />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#F28C5E] to-[#E8622A]">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#E8622A] to-[#F28C5E]">
               Faster and Cleaner?
             </span>
           </h2>
 
           {/* Subtext */}
-          <p className="text-base md:text-xl text-gray-300 mb-5 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-base md:text-xl text-brand-muted mb-5 max-w-2xl mx-auto leading-relaxed">
             Let&apos;s plan the next version of your website, app, backend, or
             SEO foundation with a clear scope and practical delivery path.
           </p>
 
           {/* Calendly placeholder */}
-          <p className="text-[#F28C5E]/70 text-sm mb-10 font-medium">
+          <p className="text-[#E8622A] text-sm mb-10 font-semibold">
             Book directly in our calendar. No back-and-forth, no delay.
           </p>
 
@@ -76,7 +76,7 @@ const CTASection = () => {
             <Link
               href="/contact"
               id="cta-primary-btn"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-9 py-4 bg-[#E8622A] text-white rounded-xl font-bold text-base hover:bg-[#B84A1A] transition-all duration-300 shadow-[0_4px_24px_rgba(232,98,42,0.35)] hover:shadow-[0_8px_32px_rgba(232,98,42,0.52)] group hover:-translate-y-0.5"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-9 py-4 bg-[#E8622A] text-white rounded-xl font-bold text-base hover:bg-[#B84A1A] transition-all duration-300 shadow-brand-md hover:shadow-brand-lg group hover:-translate-y-0.5"
               aria-label="Book a free SEO audit and consultation"
             >
               <Calendar className="w-5 h-5" aria-hidden="true" />
@@ -89,7 +89,7 @@ const CTASection = () => {
 
             <Link
               href="/services"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-9 py-4 bg-transparent text-white border-2 border-white/18 rounded-xl font-bold text-base hover:border-[#F28C5E]/60 hover:bg-white/5 transition-all duration-300"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-9 py-4 bg-white text-primary border-2 border-primary/25 rounded-xl font-bold text-base hover:bg-primary hover:text-white shadow-brand-sm transition-all duration-300"
               aria-label="Get a free SEO audit for your website"
             >
               Request SEO Audit
@@ -97,7 +97,7 @@ const CTASection = () => {
           </div>
 
           {/* Trust indicators */}
-          <div className="mt-12 pt-8 border-t border-white/8 flex flex-wrap items-center justify-center gap-4 md:gap-8 text-gray-400 text-sm font-medium">
+          <div className="mt-12 pt-8 border-t border-gray-200 flex flex-wrap items-center justify-center gap-4 md:gap-8 text-brand-muted text-sm font-medium">
             {[
               "Free 30-Min Consultation",
               "Customised IT Solutions",
@@ -105,7 +105,7 @@ const CTASection = () => {
             ].map((item) => (
               <div key={item} className="flex items-center gap-2">
                 <CheckCircle
-                  className="w-4 h-4 text-[#F28C5E]"
+                  className="w-4 h-4 text-[#E8622A]"
                   aria-hidden="true"
                 />
                 <span>{item}</span>

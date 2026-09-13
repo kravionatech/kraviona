@@ -391,7 +391,7 @@ const Home = async () => {
               </section>
               <Link
                 href="/about"
-                className="inline-flex items-center gap-2 px-7 py-3 bg-[#1A2E33] text-white font-bold rounded-xl hover:bg-[#E8622A] transition-all duration-300 text-sm"
+                className="inline-flex items-center gap-2 px-7 py-3 bg-[#E8622A] text-white font-bold rounded-xl hover:bg-[#B84A1A] transition-all duration-300 text-sm shadow-brand-sm"
               >
                 Learn About Kraviona
                 <svg

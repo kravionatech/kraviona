@@ -35,12 +35,12 @@ const reasons = [
   },
   {
     id: "communication",
-    icon: <Users className="w-6 h-6 text-white" />,
+    icon: <Users className="w-6 h-6 text-primary" />,
     title: "Direct Engineering Access",
     description:
       "No corporate red tape or lost translations through account managers. You talk directly to the hardcore engineers building your product for rapid, accurate execution.",
-    borderHover: "hover:border-white/50",
-    glowColor: "bg-white",
+    borderHover: "hover:border-primary/50",
+    glowColor: "bg-primary",
   },
 ];
 
@@ -63,16 +63,16 @@ const itemVariants = {
 
 const WhyChooseUs = () => {
   return (
-    <section className="py-24 bg-[#1A2E33] font-sans relative overflow-hidden border-t border-white/5">
+    <section className="py-24 bg-surface font-sans relative overflow-hidden border-t border-gray-200/80">
       {/* Background Decor */}
       <div className="absolute inset-0 z-0 pointer-events-none flex justify-center items-center">
-        <div className="absolute w-[40rem] h-[40rem] bg-[#2A4A52] opacity-[0.08] blur-[150px] rounded-full mix-blend-screen"></div>
-        {/* Subtle dot grid for tech vibe */}
+        <div className="absolute w-[40rem] h-[40rem] bg-primary/5 blur-[150px] rounded-full"></div>
+        {/* Subtle dot grid */}
         <div
           className="absolute inset-0 opacity-[0.03]"
           style={{
             backgroundImage:
-              "radial-gradient(#ffffff 1.5px, transparent 1.5px)",
+              "radial-gradient(#0f5960 1.5px, transparent 1.5px)",
             backgroundSize: "32px 32px",
           }}
         ></div>
@@ -98,10 +98,10 @@ const WhyChooseUs = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-[1.1] mb-6"
+            className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-dark tracking-tight leading-[1.1] mb-6"
           >
             We Engineer Results, <br className="hidden md:block" />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#F28C5E] to-[#E8622A]">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#E8622A] to-[#F28C5E]">
               Not Just Websites.
             </span>
           </motion.h2>
@@ -111,7 +111,7 @@ const WhyChooseUs = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}
-            className="text-lg text-gray-400 font-light leading-relaxed"
+            className="text-lg text-brand-muted leading-relaxed"
           >
             In a market flooded with mediocre templates, we stand out by writing
             clean code and building architectures that actually scale your
@@ -131,7 +131,7 @@ const WhyChooseUs = () => {
             <motion.div
               key={reason.id}
               variants={itemVariants}
-              className={`group relative p-8 md:p-10 bg-white/[0.02] backdrop-blur-lg border border-white/5 rounded-[2rem] transition-all duration-500 hover:-translate-y-1 hover:bg-white/[0.04] ${reason.borderHover} overflow-hidden`}
+              className={`group relative p-8 md:p-10 bg-white border border-gray-200 rounded-[2rem] shadow-sm transition-all duration-500 hover:-translate-y-1 hover:shadow-brand-md ${reason.borderHover} overflow-hidden`}
             >
               {/* Top Accent Line that animates on hover */}
               <div
@@ -140,16 +140,16 @@ const WhyChooseUs = () => {
 
               <div className="flex flex-col md:flex-row gap-6 items-start">
                 {/* Icon Box */}
-                <div className="flex-shrink-0 w-14 h-14 rounded-2xl bg-white/5 flex items-center justify-center border border-white/10 group-hover:scale-110 transition-transform duration-500">
+                <div className="flex-shrink-0 w-14 h-14 rounded-2xl bg-surface flex items-center justify-center border border-gray-200 group-hover:scale-110 transition-transform duration-500">
                   {reason.icon}
                 </div>
 
                 {/* Text Content */}
                 <div>
-                  <h3 className="text-2xl font-bold text-white mb-3 tracking-wide">
+                  <h3 className="text-2xl font-bold text-dark mb-3 tracking-wide">
                     {reason.title}
                   </h3>
-                  <p className="text-gray-400 leading-relaxed font-light text-sm md:text-base group-hover:text-gray-300 transition-colors duration-300">
+                  <p className="text-brand-muted leading-relaxed text-sm md:text-base transition-colors duration-300">
                     {reason.description}
                   </p>
                 </div>
@@ -157,7 +157,7 @@ const WhyChooseUs = () => {
 
               {/* Faint Background Glow on Hover */}
               <div
-                className={`absolute inset-0 opacity-0 group-hover:opacity-10 ${reason.glowColor} blur-[100px] transition-opacity duration-500 pointer-events-none`}
+                className={`absolute inset-0 opacity-0 group-hover:opacity-5 ${reason.glowColor} blur-[100px] transition-opacity duration-500 pointer-events-none`}
               ></div>
             </motion.div>
           ))}

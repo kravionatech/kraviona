@@ -26,17 +26,17 @@ const GalleryPage = ({ initialProjects = [] }) => {
   return (
     <div className="min-h-screen bg-[#F5F7F8] pb-24">
       {/* Banner Section */}
-      <div className="bg-[#1A2E33] text-white py-20 px-4 text-center relative overflow-hidden">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-[#2A4A52] rounded-full blur-[120px] opacity-40 pointer-events-none"></div>
+      <div className="bg-hero-gradient text-dark py-20 px-4 text-center relative overflow-hidden border-b border-gray-200/80">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-primary/8 rounded-full blur-[120px] pointer-events-none"></div>
 
         <div className="relative z-10 max-w-3xl mx-auto">
           <span className="text-[#E8622A] font-bold tracking-[0.2em] text-[10px] uppercase mb-4 block">
             Our Work
           </span>
-          <h1 className="text-4xl md:text-5xl font-black mb-6 tracking-tight">
+          <h1 className="text-4xl md:text-5xl font-black mb-6 tracking-tight text-dark">
             Portfolio &amp; <span className="text-[#E8622A]">Projects</span>
           </h1>
-          <p className="text-gray-300 text-sm md:text-base leading-relaxed max-w-xl mx-auto">
+          <p className="text-brand-muted text-sm md:text-base leading-relaxed max-w-xl mx-auto">
             Explore our curated collection of high-performance web applications,
             custom software, and innovative digital products.
           </p>
@@ -46,22 +46,22 @@ const GalleryPage = ({ initialProjects = [] }) => {
       {/* Projects Grid */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-16">
         {projects.length === 0 ? (
-          <div className="text-center py-24 bg-white rounded-3xl border border-gray-100 shadow-sm">
-            <div className="w-16 h-16 rounded-full bg-[#F5F7F8] flex items-center justify-center mx-auto mb-6">
-              <span className="text-3xl font-black text-[#2A4A52] opacity-30">
+          <div className="text-center py-24 bg-white rounded-3xl border border-gray-200 shadow-sm">
+            <div className="w-16 h-16 rounded-full bg-surface flex items-center justify-center mx-auto mb-6">
+              <span className="text-3xl font-black text-primary opacity-30">
                 K
               </span>
             </div>
-            <h3 className="text-2xl font-bold text-[#1A2E33] mb-3">
+            <h3 className="text-2xl font-bold text-dark mb-3">
               Portfolio Coming Soon
             </h3>
-            <p className="text-gray-500 mb-8 max-w-sm mx-auto">
+            <p className="text-brand-muted mb-8 max-w-sm mx-auto text-sm">
               We&apos;re curating our best projects to showcase here. In the
               meantime, get in touch to discuss your project.
             </p>
             <Link
               href="/contact"
-              className="inline-block px-8 py-4 bg-[#1A2E33] text-white rounded-full font-black text-xs uppercase tracking-[0.2em] hover:bg-[#E8622A] transition-colors duration-300"
+              className="inline-block px-8 py-4 bg-[#E8622A] text-white rounded-xl font-bold text-xs uppercase tracking-[0.2em] hover:bg-[#B84A1A] transition-all shadow-brand-sm"
             >
               Start a Project
             </Link>
