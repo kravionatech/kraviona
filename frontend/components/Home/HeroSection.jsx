@@ -13,7 +13,7 @@ const HeroSection = () => {
       className="relative flex min-h-[100svh] w-full flex-col bg-[#F7F5F1]"
       aria-labelledby="home-hero-heading"
     >
-      <div className="pointer-events-none absolute inset-0 z-0 h-full w-full">
+      <div className="pointer-events-none absolute inset-0 z-0 h-full w-full overflow-hidden">
         <Image
           src="/images/office/home-hero.webp"
           alt="Next.js web development team at Kraviona Tech Solutions Delhi NCR"
@@ -21,11 +21,11 @@ const HeroSection = () => {
           priority
           fetchPriority="high"
           sizes="100vw"
-          className="object-cover opacity-10"
+          className="object-cover object-right md:object-center opacity-55"
         />
-        {/* Light overlay: subtle teal wash at left, fades to transparent */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#EAF3F5]/80 via-[#F7F5F1]/50 to-transparent" />
-        <div className="absolute inset-x-0 bottom-0 h-36 bg-gradient-to-t from-[#F7F5F1] to-transparent" />
+        {/* Clean overlay: solid off-white on the left for maximum text contrast, transitioning to transparent on the right so office background image is vibrant and clear */}
+        <div className="absolute inset-0 bg-gradient-to-r from-[#F7F5F1] via-[#F7F5F1]/80 to-[#F7F5F1]/20" />
+        <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-[#F7F5F1] to-transparent" />
       </div>
 
       <div className="relative z-10 mx-auto flex w-full max-w-7xl flex-grow flex-col justify-center px-6 pb-16 pt-32 md:px-12 lg:pb-24 lg:pt-28">

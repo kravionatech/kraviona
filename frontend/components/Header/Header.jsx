@@ -480,16 +480,16 @@ export default function Header() {
         <Link
           href="/"
           aria-label="Kraviona – Homepage"
-          className="flex flex-shrink-0 items-center group"
+          className="flex flex-shrink-0 items-center group bg-white px-3.5 py-1.5 rounded-[8px] shadow-sm hover:shadow transition-all duration-200"
         >
           <Image
-            src="/full-logo-light.webp"
+            src="/full-logo.webp"
             alt="Kraviona – vision innovative development"
-            width={170}
-            height={58}
+            width={145}
+            height={46}
             priority
-            sizes="170px"
-            className="h-11 w-auto object-contain transition-transform duration-200 group-hover:scale-105"
+            sizes="145px"
+            className="h-8.5 w-auto object-contain transition-transform duration-200 group-hover:scale-105"
           />
         </Link>
 
@@ -775,16 +775,16 @@ export default function Header() {
           href="/"
           onClick={closeMobile}
           aria-label="Kraviona – Homepage"
-          className="flex items-center"
+          className="flex items-center bg-white px-2.5 py-1 rounded-[6px] shadow-sm"
         >
           <Image
-            src="/full-logo-light.webp"
+            src="/full-logo.webp"
             alt="Kraviona – vision innovative development"
-            width={140}
-            height={48}
+            width={125}
+            height={40}
             priority
-            sizes="140px"
-            className="h-9 w-auto object-contain"
+            sizes="125px"
+            className="h-7 w-auto object-contain"
           />
         </Link>
 
@@ -826,15 +826,15 @@ export default function Header() {
           <Link
             href="/"
             onClick={closeMobile}
-            className="flex items-center"
+            className="flex items-center bg-white px-2.5 py-1 rounded-[6px]"
           >
             <Image
-              src="/full-logo-light.webp"
+              src="/full-logo.webp"
               alt="Kraviona – vision innovative development"
-              width={140}
-              height={48}
-              sizes="140px"
-              className="h-8 w-auto object-contain"
+              width={125}
+              height={40}
+              sizes="125px"
+              className="h-7 w-auto object-contain"
             />
           </Link>
           <button
