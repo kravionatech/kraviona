@@ -10,7 +10,6 @@
     "seo:check-orphans": "node scripts/check-orphans.js"
   },
   "dependencies": {
-    "@fontsource/poppins": "^5.2.7",
     "framer-motion": "^12.36.0",
     "html-react-parser": "^6.1.5",
     "lucide-react": "^0.577.0",

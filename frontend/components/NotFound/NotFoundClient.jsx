@@ -166,7 +166,7 @@ export default function NotFoundClient({ suggestedPosts = [] }) {
                 This page moved, but your project doesn’t have to stop.
               </h1>
 
-              <p className="mt-5 max-w-2xl text-base leading-relaxed text-[#8FA8B0] md:text-lg">
+              <p className="mt-5 max-w-2xl text-base leading-relaxed text-[#6B8E96] md:text-lg">
                 The link you followed may be outdated, mistyped, or updated during a site optimization.
                 Use the search box or popular links below to jump straight to what you were looking for.
               </p>
@@ -176,7 +176,7 @@ export default function NotFoundClient({ suggestedPosts = [] }) {
                 onSubmit={handleSearchSubmit}
                 className="mt-8 flex max-w-xl items-center rounded-2xl border border-white/15 bg-white/10 p-2 backdrop-blur-md transition-focus focus-within:border-[#F28C5E]"
               >
-                <Search className="ml-3 h-5 w-5 text-[#8FA8B0] flex-shrink-0" />
+                <Search className="ml-3 h-5 w-5 text-[#6B8E96] flex-shrink-0" />
                 <input
                   type="text"
                   value={searchQuery}
@@ -219,7 +219,7 @@ export default function NotFoundClient({ suggestedPosts = [] }) {
               <h2 className="mt-3 text-2xl font-black text-white">
                 Talk to the Kraviona Team
               </h2>
-              <p className="mt-2 text-sm leading-relaxed text-[#8FA8B0]">
+              <p className="mt-2 text-sm leading-relaxed text-[#6B8E96]">
                 If you followed a broken link from an article or external directory, let us know and we’ll send you the exact resource.
               </p>
               <div className="mt-6 space-y-3">
@@ -237,7 +237,7 @@ export default function NotFoundClient({ suggestedPosts = [] }) {
                         <Icon className="h-4 w-4" />
                       </span>
                       <span>
-                        <span className="block text-[10px] font-black uppercase tracking-[0.18em] text-[#8FA8B0]">
+                        <span className="block text-[10px] font-black uppercase tracking-[0.18em] text-[#6B8E96]">
                           {item.name}
                         </span>
                         <span className="block text-sm font-bold text-white">

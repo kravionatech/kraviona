@@ -321,7 +321,7 @@ const TeamPage = async () => {
                       {member.designation}
                     </p>
                     {member.department && (
-                      <p className="mt-1 text-xs font-semibold uppercase tracking-wider text-[#8FA8B0]">
+                      <p className="mt-1 text-xs font-semibold uppercase tracking-wider text-[#6B8E96]">
                         {member.department}
                       </p>
                     )}

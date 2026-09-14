@@ -5,14 +5,14 @@ const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
   weight: ["600", "700", "800"],
   variable: "--font-heading",
-  display: "swap",
+  display: "optional",
 });
 
 const inter = Inter({
   subsets: ["latin"],
   weight: ["400", "500", "600"],
   variable: "--font-body",
-  display: "swap",
+  display: "optional",
 });
 
 import { Suspense } from "react";
@@ -188,25 +188,10 @@ export default function RootLayout({ children }) {
         <Script
           id="google-adsense"
           async
-          strategy="beforeInteractive"
+          strategy="afterInteractive"
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2639855770462648"
           crossOrigin="anonymous"
         />
-        <Script
-          src="https://www.googletagmanager.com/gtag/js?id=G-WKDGR26N2Q"
-          strategy="afterInteractive"
-        />
-        <Script id="ga4-init" strategy="afterInteractive">
-          {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'G-WKDGR26N2Q', {
-              page_path: window.location.pathname,
-              send_page_view: true
-            });
-          `}
-        </Script>
       </head>
 
       <body className="font-sans antialiased bg-[#F7F5F1] text-[#5A7A82]">

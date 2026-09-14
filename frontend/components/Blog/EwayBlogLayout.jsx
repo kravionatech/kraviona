@@ -378,7 +378,7 @@ function PopularList({ posts }) {
               <span className="line-clamp-2 text-sm font-black leading-snug text-[#1A2E33] transition-colors group-hover:text-[#E8622A]">
                 {post.title || "Untitled Article"}
               </span>
-              <span className="mt-2 block text-xs font-semibold text-[#8FA8B0]">
+              <span className="mt-2 block text-xs font-semibold text-[#6B8E96]">
                 {getPostDate(post, "long")}
               </span>
             </span>
@@ -406,7 +406,7 @@ function ArticleCard({ post, compact = false }) {
           <h3 className="line-clamp-2 text-sm font-black leading-snug text-[#1A2E33] transition-colors group-hover:text-[#E8622A]">
             {post.title || "Untitled Article"}
           </h3>
-          <p className="mt-2 text-xs font-semibold text-[#8FA8B0]">
+          <p className="mt-2 text-xs font-semibold text-[#6B8E96]">
             {getPostDate(post, "numeric")}
           </p>
         </div>

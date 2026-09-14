@@ -36,7 +36,7 @@ export default function LegalDocumentPage({
         </div>
 
         <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <nav aria-label="Breadcrumb" className="mb-8 text-sm text-[#8FA8B0]">
+          <nav aria-label="Breadcrumb" className="mb-8 text-sm text-[#6B8E96]">
             <ol className="flex flex-wrap items-center gap-2">
               <li>
                 <Link
@@ -63,7 +63,7 @@ export default function LegalDocumentPage({
                 {hindiTitle}
               </span>
             </h1>
-            <p className="mt-6 max-w-3xl text-base leading-8 text-[#8FA8B0] md:text-lg">
+            <p className="mt-6 max-w-3xl text-base leading-8 text-[#6B8E96] md:text-lg">
               {description}
             </p>
           </div>
@@ -91,15 +91,15 @@ export default function LegalDocumentPage({
 
           <dl className="mt-10 grid gap-4 text-sm sm:grid-cols-3">
             <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-5">
-              <dt className="text-[#8FA8B0]">Effective Date</dt>
+              <dt className="text-[#6B8E96]">Effective Date</dt>
               <dd className="mt-1 font-bold text-white">June 1, 2025</dd>
             </div>
             <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-5">
-              <dt className="text-[#8FA8B0]">Last Updated</dt>
+              <dt className="text-[#6B8E96]">Last Updated</dt>
               <dd className="mt-1 font-bold text-white">June 1, 2025</dd>
             </div>
             <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-5">
-              <dt className="text-[#8FA8B0]">Canonical</dt>
+              <dt className="text-[#6B8E96]">Canonical</dt>
               <dd className="mt-1 break-all font-bold text-white">
                 {canonical}
               </dd>
@@ -114,7 +114,7 @@ export default function LegalDocumentPage({
             <p className="mb-4 text-[11px] font-black uppercase tracking-[0.24em] text-[#E8622A]">
               Internal Navigation
             </p>
-            <ol className="space-y-2 text-sm text-[#8FA8B0]">
+            <ol className="space-y-2 text-sm text-[#6B8E96]">
               {sections.map((section, idx) => (
                 <li key={`${section.id}-${idx}`}>
                   <a
@@ -165,7 +165,7 @@ export default function LegalDocumentPage({
                         className="rounded-xl border border-white/10 bg-white/[0.04] p-4"
                       >
                         <h3 className="font-bold text-white">{item.label}</h3>
-                        <p className="mt-1 text-sm leading-6 text-[#8FA8B0]">
+                        <p className="mt-1 text-sm leading-6 text-[#6B8E96]">
                           {item.text}
                         </p>
                       </li>
