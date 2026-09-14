@@ -78,17 +78,22 @@ const PUBLIC_INFRASTRUCTURE_PATHS = [
   "/favicon.ico",
   "/robots.txt",
   "/sitemap.xml",
+  "/images/",
+  "/full-logo.webp",
+  "/full-logo-light.webp",
+  "/full-logo.png",
+  "/logo.png",
+  "/icon.png",
+  "/amar.jpeg",
+  "/site.webmanifest",
 ];
-const SENSITIVE_PATH_PATTERN =
-  /(?:^|\/)(?:\.env|\.git|\.svn|\.hg|wp-admin|wp-login\.php|xmlrpc\.php|phpmyadmin|adminer(?:\.php)?|server-status|actuator|vendor\/phpunit|cgi-bin|config(?:\.json|\.ya?ml|\.php)?|backup(?:\.zip|\.sql)?|database(?:\.sql|\.sqlite)?)(?:\/|$)/i;
-const ATTACK_PAYLOAD_PATTERN =
-  /(?:\.\.\/|\.\.\\|%2e%2e(?:%2f|%5c)|<script\b|%3cscript\b|\bunion(?:\s|%20)+select\b|\bsleep\s*\(|\bbenchmark\s*\(|\/etc\/passwd|%2fetc%2fpasswd|\$\{jndi:|php:\/\/|file:\/\/)/i;
 
-const containsAny = (value, signatures) =>
-  signatures.some((signature) => value.includes(signature));
+const STATIC_ASSET_REGEX =
+  /\.(?:svg|png|jpg|jpeg|gif|webp|avif|ico|pdf|txt|xml|webmanifest|woff2?|ttf|eot)$/i;
 
 export const isInfrastructurePath = (pathname) =>
-  PUBLIC_INFRASTRUCTURE_PATHS.some((path) => pathname.startsWith(path));
+  PUBLIC_INFRASTRUCTURE_PATHS.some((path) => pathname.startsWith(path)) ||
+  STATIC_ASSET_REGEX.test(pathname);
 
 export function classifyPublicRequest({
   pathname,
