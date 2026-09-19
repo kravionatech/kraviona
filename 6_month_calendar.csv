@@ -1,0 +1,40 @@
+kraviona.com — 6-Month SEO Content Calendar  |  Oct 2026 → Mar 2027  |  Target: 4 posts/month = 24 posts,,,,,,,,,,
+Month,Week,Publish Date,Post Title,Target Keyword,Vol (Global),Cluster,Intent,Priority,Action Type,Assigned To
+Oct 2026,W1,Oct 5,Fix 301 Redirects for 7 x 404 URLs,[Technical Fix],—,Technical,Fix,P0,Redirect Fix,Amar
+Oct 2026,W1,Oct 6,Submit Disavow File (80+ PBN Backlinks),[Technical Fix],—,Technical,Fix,P0,Disavow,Kraviona
+Oct 2026,W1,Oct 7,Remove noindex from 3 blog/ old URLs,[Technical Fix],—,Technical,Fix,P0,Meta Tag Fix,Amar
+Oct 2026,W1,Oct 8,Fix Title Tags (Strip | Kraviona Tech Solutions from 75+ posts),[Technical Fix],—,Technical,Fix,P0,Bulk Title Edit,Kraviona/Amar
+Oct 2026,W2,Oct 12,What is Web Performance Optimization? Complete Guide 2026,web performance optimization techniques,"2,900",Web Performance,Informational,High,New Post,Sonali
+Oct 2026,W2,Oct 14,How to Score 100 on Google Lighthouse: Step-by-Step 2026,how to score 100 on lighthouse,"2,400",Web Performance,Informational,High,New Post,Amar
+Oct 2026,W3,Oct 20,What is Express.js? Complete Beginner Guide with Examples,what is express.js,"3,600",React/Node,Informational,High,New Post,Amar
+Oct 2026,W4,Oct 28,React.js vs Vue.js: Which Framework to Choose in 2026?,react.js vs vue.js,"4,400",React/Node,Informational,High,New Post,Sonali
+Nov 2026,W1,Nov 4,What is Full Stack Development? A Complete 2026 Guide,what is full stack development,"8,100",Tech Stack,Informational,High,New Post,Sonali
+Nov 2026,W1,Nov 6,Canonical Tag Implementation: MERN Stack Pillar Page Merge,[Technical Fix],—,Technical,Fix,P0,Canonical + Merge,Kraviona/Amar
+Nov 2026,W2,Nov 11,How Does Node.js Work? Architecture Explained Simply,how does node.js work,"5,400",React/Node,Informational,High,New Post,Amar
+Nov 2026,W2,Nov 13,MongoDB vs PostgreSQL: Which Database in 2026?,mongodb vs postgresql,"4,400",Database,Informational,High,New Post,Sonali
+Nov 2026,W3,Nov 18,What is UI/UX Design? A Practical Guide for Businesses,what is ui ux design,"6,600",UI/UX,Informational,High,New Post,Sonali
+Nov 2026,W4,Nov 25,How to Improve Website Speed: 15 Proven Techniques 2026,how to improve website speed,"8,100",Web Performance,Informational,High,New Post,Amar
+Dec 2026,W1,Dec 2,What is SaaS Development? Complete 2026 Guide for Businesses,what is saas development,"3,600",Tech Stack,Informational,High,New Post,Sonali
+Dec 2026,W2,Dec 9,What is Digital Marketing? Strategy Guide for Indian Businesses,what is digital marketing,"18,100",Ecommerce/DM,Informational,High,New Post,Kraviona
+Dec 2026,W2,Dec 11,Technical SEO Checklist 2026: 50-Point Audit for Any Website,technical seo checklist,"6,600",Technical SEO,Informational,High,New Post,Amar
+Dec 2026,W3,Dec 17,How to Build an AI Chatbot in 2026: Step-by-Step Guide,how to build ai chatbot,"3,600",AI & Automation,Informational,High,New Post,Kraviona
+Dec 2026,W4,Dec 23,Difference Between UI and UX: What Every Business Should Know,difference between ui and ux,"5,400",UI/UX,Informational,High,New Post,Sonali
+Dec 2026,W4,Dec 26,Meta Description Rewrite Sprint (Top 20 Pages for CTR),[Technical Fix],—,Technical,Fix,P1,Bulk Meta Edit,Kraviona
+Jan 2027,W1,Jan 6,How to Fix LCP Issues in Next.js & React: Complete Guide,how to fix lcp issues,"1,900",Technical SEO,Informational,High,New Post,Amar
+Jan 2027,W1,Jan 8,"Guest Post Outreach: 10 DR40+ Targets (Dev.to, CSS-Tricks, Smashing Magazine)",[Link Building],—,Backlinks,Outreach,P1,Guest Post Plan,Kraviona
+Jan 2027,W2,Jan 13,What is Schema Markup? Structured Data Guide for SEO 2027,what is schema markup,"2,900",Technical SEO,Informational,Medium,New Post,Sonali
+Jan 2027,W2,Jan 15,How to Sell on Amazon India: Complete Seller Guide 2027,how to sell on amazon india,"8,100",Ecommerce,Informational,High,New Post,Kraviona
+Jan 2027,W3,Jan 20,REST API vs GraphQL: Which Should You Choose in 2027?,rest api vs graphql,"2,900",Database/Backend,Informational,Medium,New Post,Amar
+Jan 2027,W4,Jan 27,Web Development Company Delhi: How to Choose the Right One,web development company delhi,"2,900",Local/Branded,Local,High,New Post,Kraviona
+Feb 2027,W1,Feb 3,"React Hooks Explained: useState, useEffect & Beyond 2027",react hooks explained,"2,900",React/Node,Informational,Medium,New Post,Amar
+Feb 2027,W1,Feb 5,"On-Page Optimization Sprint: Update Top 10 Posts (H2s, Schema, Internal Links)",[Optimization],—,Technical,Optimization,P1,Page Refresh,Kraviona/Amar
+Feb 2027,W2,Feb 10,How to Catalogue Products on Amazon India: Seller Guide 2027,how to catalogue products on amazon,"1,900",Brand/Seller,Informational,Medium,New Post,Kraviona
+Feb 2027,W2,Feb 12,What is Crawl Budget? Why It Matters for Large Sites,what is crawl budget seo,880,Technical SEO,Informational,Medium,New Post,Amar
+Feb 2027,W3,Feb 17,"Image Optimization for the Web: Formats, Lazy Loading & CDN 2027",image optimization for web,"2,400",Web Performance,Informational,Medium,New Post,Sonali
+Feb 2027,W4,Feb 24,Digital Marketing Strategies for Indian Startups in 2027,digital marketing strategies for startups,"2,900",Ecommerce/DM,Informational,Medium,New Post,Kraviona
+Mar 2027,W1,Mar 3,What is Technical SEO vs On-Page SEO? Clear Comparison,technical seo vs on page seo,"2,400",Technical SEO,Informational,Medium,New Post,Amar
+Mar 2027,W1,Mar 5,Internal Link Audit: Fix Broken Anchors from AI News Posts,[Technical Fix],—,Technical,Fix,P1,Internal Link Fix,Kraviona/Amar
+Mar 2027,W2,Mar 10,How to Reduce Time to First Byte (TTFB): Node.js & Next.js Guide,how to reduce time to first byte,"1,600",Web Performance,Informational,Medium,New Post,Amar
+Mar 2027,W2,Mar 12,Social Media Marketing for Small Businesses India 2027,social media marketing tips for small businesses,"2,400",Ecommerce/DM,Informational,Medium,New Post,Sonali
+Mar 2027,W3,Mar 17,6-Month SEO Review + Keyword Rank Refresh (Tracker Update),[Review],—,Strategy,Review,P1,Monthly Review,Kraviona
+Mar 2027,W4,Mar 24,What is Brand Identity Design? Why Your Business Needs It,what is brand identity design,"2,400",Brand,Informational,Medium,New Post,Sonali

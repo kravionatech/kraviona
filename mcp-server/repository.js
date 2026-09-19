@@ -26,6 +26,7 @@ const SORT_FIELDS = new Set([
   "title",
   "name",
   "status",
+  "plannedDate",
   "order",
   "score",
 ]);

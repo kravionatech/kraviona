@@ -1,0 +1,34 @@
+kraviona.com — Technical SEO Fix Tracker  |  Source: Ubersuggest Site Audit + Manual Analysis,,,,,,,
+#,Issue Type,Affected URLs / Count,Fix Required,Assigned To,Target Date,Status,Notes
+1,🔴 404 Errors,"7 URLs:
+/ai-agents-2026...
+/ai-trends-august-2026...
+/best-ai-tools-for-freelancers-india-2026
+/claude-code-vs-cursor...
+/latest-ai-news-august-2026
+/model-context-protocol...
+/cdn-cgi/l/email-protection",Add 301 redirects: bare /slug → correct /category/slug. Update all internal links pointing to these.,Amar,Oct 7,⬜ TODO,Internal links from 40+ posts point to these URLs
+2,🔴 Toxic Backlinks,"80+ PBN links from casino/gambling sites, 20+ SEO Cartel .xyz domains (Spam 7-61)",Build disavow.txt. Add all domains one per line. Submit via GSC → Links → Disavow Links tool.,Kraviona,Oct 6,⬜ TODO,"Do NOT disavow dev.to, eweek.com, aitoptools.beehiiv.com, tenvaro.ai links"
+3,🔴 noindex Meta Tags,"3 pages:
+/blog/10-benefits-of-artificial-intelligence-essay-...
+/blog/ai-driven-seo-how-machine-learning-...
+/blog/what-is-technical-seo-the-complete-guide...",Remove <meta name='robots' content='noindex'> from these pages. Submit to GSC for re-indexing.,Amar,Oct 7,⬜ TODO,These are old /blog/ URLs — check if canonical pages exist
+4,🔴 Attribute Blocked,"5 pages:
+/autonomous-ai-agents-hacking-critical-infrastructure-2026
+/deploy-nodejs-app-aws-complete-guide-2026
+/how-to-choose-the-right-tech-stack...
+/lt-india-largest-ai-factory...
+/nvidia-250-billion-ai-supremacy...",Remove blocking attribute. Verify these are not intentionally blocked.,Amar,Oct 8,⬜ TODO,Some may be drafts — verify if they should be published or deleted
+5,🟡 Title Tags Too Long,75+ pages have | Kraviona Tech Solutions suffix — pushing to 80-100+ chars,Batch edit: remove ' | Kraviona Tech Solutions' from all post meta titles. Keep brand only on homepage/services.,Kraviona,Oct 8,⬜ TODO,Use MCP kraviona_update_post tool for each post OR bulk update via database
+6,🟡 Category Page Issues,"/category — 0 H1s, 144 words
+/news — 166 words
+/gallery — 173 words",Add H1 tag to /category. Add 300+ word descriptive intro to all three thin pages.,Sonali,Oct 12,⬜ TODO,Category page also has non-SEO-friendly URL flag
+7,🟡 MERN Stack Duplicate Posts,"/next-gen-web-development/what-is-mern-stack-the-complete-2026-guide-for-developer (2677 words)
+vs
+/next-gen-web-development/what-is-mern-stack-the-complete-2026-guide-for-developers (699 words)",Merge shorter post (699w) into longer one (2677w). Set 301 redirect from -for-developers to -for-developer. Add canonical tag.,Kraviona,Nov 6,⬜ TODO,Both pages appear in index — Google is confused about which to rank
+8,🟡 Email Protection 404,All 90+ pages show broken link: https://kraviona.com/cdn-cgi/l/email-protection,Disable Cloudflare email obfuscation (Scrape Shield settings) OR replace with contact form. Fix email link across site.,Amar,Oct 12,⬜ TODO,"Cloudflare is encoding email addresses, then the protection URL 404s"
+9,🟢 Low CTR (avg 0.3%),"Avg CTR = 0.3–1.0%. Aug 15 had 6,234 impressions but only 3 clicks (0.05% CTR)","Rewrite meta descriptions for top 20 pages. Add power words, numbers, CTAs. Aim for 3–5% CTR.",Kraviona,Dec 26,⬜ TODO,GSC data shows impressions growing rapidly — CTR is the bottleneck
+10,🟢 308 Redirects,"/case-studies → 308
+/services/node-js-development → 308
+/services/react-js-development → 308
+/services/web-development → 308",Verify 308 redirects point to correct canonical URLs. Update all internal links to point directly to final destination.,Amar,Oct 12,⬜ TODO,308 is permanent but non-standard; prefer 301

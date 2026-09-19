@@ -15,6 +15,8 @@ import { Project } from "../backend/src/models/portfolio/project.model.js";
 import { Service } from "../backend/src/models/services/service.model.js";
 import { TeamMemberModel } from "../backend/src/models/team/team.model.js";
 import { RedirectModel } from "../backend/src/models/settings/redirect.model.js";
+import { ContentPlanItem } from "../backend/src/models/ContentPlanItem.js";
+import { KeywordItem } from "../backend/src/models/KeywordItem.js";
 
 const CRUD = ["list", "get", "create", "update", "delete"];
 const READ_ONLY = ["list", "get"];
@@ -339,6 +341,45 @@ const definitions = [
     filterFields: ["userID", "module", "action"],
     projection:
       "userID module action resourceId resourceName ipAddress userAgent before after createdAt updatedAt",
+  },
+  {
+    name: "planner_items",
+    singular: "planner_item",
+    model: ContentPlanItem,
+    capabilities: CRUD,
+    searchFields: ["title", "keyword", "notes", "targetUrl"],
+    filterFields: [
+      "status",
+      "type",
+      "priority",
+      "assignedTo",
+      "createdBy",
+      "isOutdated",
+    ],
+    projection:
+      "title keyword type status priority plannedDate publishedDate assignedTo createdBy targetUrl notes linkedPostSlug isOutdated lastUpdated createdAt updatedAt",
+    serverManagedPaths: ["createdBy", "lastUpdated"],
+    prepareCreate: (payload, actor) =>
+      withActor(payload, actor, { createdBy: "createdBy" }),
+  },
+  {
+    name: "keywords",
+    singular: "keyword",
+    model: KeywordItem,
+    capabilities: CRUD,
+    searchFields: ["keyword", "cluster", "notes", "targetUrl"],
+    filterFields: [
+      "intent",
+      "status",
+      "cluster",
+      "assignedContentPlan",
+      "createdBy",
+    ],
+    projection:
+      "keyword intent monthlyVolume difficulty cluster targetUrl status notes assignedContentPlan createdBy createdAt updatedAt",
+    serverManagedPaths: ["createdBy"],
+    prepareCreate: (payload, actor) =>
+      withActor(payload, actor, { createdBy: "createdBy" }),
   },
 ];
 

@@ -13,6 +13,8 @@ import { TeamMemberModel } from "../../backend/src/models/team/team.model.js";
 import { Auth } from "../../backend/src/models/auth/auth.models.js";
 import { RedirectModel } from "../../backend/src/models/settings/redirect.model.js";
 import { SiteSettingModel } from "../../backend/src/models/settings/siteSettings.model.js";
+import { ContentPlanItem } from "../../backend/src/models/ContentPlanItem.js";
+import { KeywordItem } from "../../backend/src/models/KeywordItem.js";
 import { config } from "../config.js";
 import { connectDB, getDBStatus, pingDB } from "../db.js";
 import { getResource, resourceNames, resources } from "../catalog.js";
@@ -606,6 +608,206 @@ const kravionaTools = [
     },
     annotations: annotations({ title: "Search Data", readOnly: true }),
   },
+
+  // ── 8. Content Planner & Editorial Calendar ──────────────────────────────
+  {
+    name: "kraviona_list_planner_items",
+    description:
+      "List editorial content planner items with filtering by status ('Planned' | 'In Progress' | 'Done' | 'Published' | 'Indexed' | 'Needs Update'), type ('Blog' | 'News' | 'SEO Fix' | 'Keyword Research' | 'Social' | 'Other'), priority, outdated flag (>90d decay), and search query",
+    inputSchema: {
+      type: "object",
+      properties: {
+        status: {
+          type: "string",
+          enum: ["Planned", "In Progress", "Done", "Published", "Indexed", "Needs Update"],
+        },
+        type: {
+          type: "string",
+          enum: ["Blog", "News", "SEO Fix", "Keyword Research", "Social", "Other"],
+        },
+        priority: {
+          type: "string",
+          enum: ["High", "Medium", "Low"],
+        },
+        isOutdated: {
+          type: "boolean",
+          description: "Filter items flagged as needs update or older than 90 days",
+        },
+        search: { type: "string", description: "Search title, keyword, or notes" },
+        page: { type: "integer", default: 1 },
+        limit: { type: "integer", default: 20 },
+      },
+      additionalProperties: false,
+    },
+    annotations: annotations({ title: "List Planner Items", readOnly: true }),
+  },
+  {
+    name: "kraviona_get_planner_item",
+    description: "Get detailed information for a specific content plan item by MongoDB ObjectId",
+    inputSchema: {
+      type: "object",
+      properties: {
+        id: { type: "string", pattern: "^[a-fA-F0-9]{24}$", required: true },
+      },
+      required: ["id"],
+      additionalProperties: false,
+    },
+    annotations: annotations({ title: "Get Planner Item", readOnly: true }),
+  },
+  {
+    name: "kraviona_create_planner_item",
+    description: "Create and schedule a new content plan task on the Kraviona editorial calendar",
+    inputSchema: {
+      type: "object",
+      properties: {
+        title: {
+          type: "string",
+          minLength: 3,
+          description: "Title of the content or technical task",
+        },
+        plannedDate: {
+          type: "string",
+          description: "Scheduled date in ISO format YYYY-MM-DD",
+        },
+        type: {
+          type: "string",
+          enum: ["Blog", "News", "SEO Fix", "Keyword Research", "Social", "Other"],
+          default: "Blog",
+        },
+        status: {
+          type: "string",
+          enum: ["Planned", "In Progress", "Done", "Published", "Indexed", "Needs Update"],
+          default: "Planned",
+        },
+        priority: {
+          type: "string",
+          enum: ["High", "Medium", "Low"],
+          default: "Medium",
+        },
+        keyword: { type: "string", description: "Target primary keyword" },
+        targetUrl: { type: "string", description: "Target publication or ranking URL" },
+        assignedTo: { type: "string", description: "User ID assigned to this task" },
+        notes: { type: "string", description: "Editorial instructions or SEO focus points" },
+        linkedPostSlug: { type: "string", description: "Slug of published blog post" },
+      },
+      required: ["title", "plannedDate"],
+      additionalProperties: false,
+    },
+    annotations: annotations({ title: "Create Planner Item" }),
+  },
+  {
+    name: "kraviona_update_planner_item",
+    description: "Update fields or status of an existing editorial calendar task",
+    inputSchema: {
+      type: "object",
+      properties: {
+        id: { type: "string", pattern: "^[a-fA-F0-9]{24}$", required: true },
+        changes: {
+          type: "object",
+          properties: {
+            title: { type: "string" },
+            status: {
+              type: "string",
+              enum: ["Planned", "In Progress", "Done", "Published", "Indexed", "Needs Update"],
+            },
+            priority: { type: "string", enum: ["High", "Medium", "Low"] },
+            plannedDate: { type: "string" },
+            publishedDate: { type: "string" },
+            targetUrl: { type: "string" },
+            notes: { type: "string" },
+            isOutdated: { type: "boolean" },
+            assignedTo: { type: "string" },
+          },
+          additionalProperties: false,
+        },
+      },
+      required: ["id", "changes"],
+      additionalProperties: false,
+    },
+    annotations: annotations({ title: "Update Planner Item" }),
+  },
+  {
+    name: "kraviona_get_planner_calendar",
+    description: "Get monthly editorial calendar view grouped by date with per-date and monthly completion percentages",
+    inputSchema: {
+      type: "object",
+      properties: {
+        month: { type: "integer", minimum: 1, maximum: 12 },
+        year: { type: "integer", minimum: 2024, maximum: 2035 },
+      },
+      additionalProperties: false,
+    },
+    annotations: annotations({ title: "Get Planner Calendar", readOnly: true }),
+  },
+  {
+    name: "kraviona_list_keywords",
+    description: "List researched SEO keywords and topical clusters with search intent and difficulty",
+    inputSchema: {
+      type: "object",
+      properties: {
+        cluster: { type: "string" },
+        status: {
+          type: "string",
+          enum: ["Researched", "Assigned", "In Content Plan", "Published", "Ranking"],
+        },
+        search: { type: "string" },
+        page: { type: "integer", default: 1 },
+        limit: { type: "integer", default: 50 },
+      },
+      additionalProperties: false,
+    },
+    annotations: annotations({ title: "List Keywords", readOnly: true }),
+  },
+  {
+    name: "kraviona_create_keyword",
+    description: "Add a new target keyword to the SEO planner with search intent, volume, difficulty, and cluster",
+    inputSchema: {
+      type: "object",
+      properties: {
+        keyword: { type: "string", minLength: 1, description: "Keyword phrase" },
+        intent: {
+          type: "string",
+          enum: ["Informational", "Commercial", "Transactional", "Navigational"],
+          default: "Informational",
+        },
+        monthlyVolume: { type: "number", default: 0 },
+        difficulty: { type: "number", minimum: 0, maximum: 100, default: 0 },
+        cluster: { type: "string", default: "General" },
+        targetUrl: { type: "string" },
+        notes: { type: "string" },
+      },
+      required: ["keyword"],
+      additionalProperties: false,
+    },
+    annotations: annotations({ title: "Create Keyword" }),
+  },
+  {
+    name: "kraviona_create_plan_from_keyword",
+    description: "Convert a researched keyword into a scheduled ContentPlanItem on the Editorial Calendar",
+    inputSchema: {
+      type: "object",
+      properties: {
+        keywordId: { type: "string", pattern: "^[a-fA-F0-9]{24}$", required: true },
+        title: { type: "string", minLength: 3, required: true },
+        plannedDate: { type: "string", description: "YYYY-MM-DD", required: true },
+        type: {
+          type: "string",
+          enum: ["Blog", "News", "SEO Fix", "Keyword Research", "Social", "Other"],
+          default: "Blog",
+        },
+        priority: {
+          type: "string",
+          enum: ["High", "Medium", "Low"],
+          default: "Medium",
+        },
+        assignedTo: { type: "string" },
+        notes: { type: "string" },
+      },
+      required: ["keywordId", "title", "plannedDate"],
+      additionalProperties: false,
+    },
+    annotations: annotations({ title: "Create Plan from Keyword" }),
+  },
 ];
 
 export const tools = kravionaTools;
@@ -1090,6 +1292,154 @@ export const handle = async (toolName, args, context) => {
           results,
         },
         `Search completed for: ${args.query}`,
+      );
+    }
+
+    // ── 8. Content Planner & Editorial Calendar ──────────────────────────────
+    if (toolName === "kraviona_list_planner_items") {
+      const filter = {};
+      if (args.status) filter.status = args.status;
+      if (args.type) filter.type = args.type;
+      if (args.priority) filter.priority = args.priority;
+      if (args.isOutdated !== undefined) filter.isOutdated = args.isOutdated;
+      const result = await listRecords("planner_items", {
+        filter,
+        search: args.search,
+        page: args.page || 1,
+        limit: args.limit || 20,
+        sortBy: "plannedDate",
+        sortDirection: "desc",
+      });
+      return successResult({ success: true, ...result }, "Planner items list");
+    }
+
+    if (toolName === "kraviona_get_planner_item") {
+      const item = await getRecord("planner_items", { id: args.id });
+      return successResult({ success: true, item }, "Planner item details");
+    }
+
+    if (toolName === "kraviona_create_planner_item") {
+      const payload = {
+        title: args.title,
+        plannedDate: new Date(args.plannedDate),
+        type: args.type || "Blog",
+        status: args.status || "Planned",
+        priority: args.priority || "Medium",
+        keyword: args.keyword || "",
+        targetUrl: args.targetUrl || "",
+        assignedTo: args.assignedTo || null,
+        notes: args.notes || "",
+        linkedPostSlug: args.linkedPostSlug || "",
+      };
+      const record = await createRecord("planner_items", payload, actor);
+      return successResult(
+        { success: true, item: record },
+        `Created planner task: '${args.title}'`,
+      );
+    }
+
+    if (toolName === "kraviona_update_planner_item") {
+      const record = await updateRecord("planner_items", args.id, args.changes, actor);
+      return successResult({ success: true, item: record }, "Planner item updated");
+    }
+
+    if (toolName === "kraviona_get_planner_calendar") {
+      const now = new Date();
+      const month = args.month || now.getMonth() + 1;
+      const year = args.year || now.getFullYear();
+      const startOfMonth = new Date(year, month - 1, 1);
+      const endOfMonth = new Date(year, month, 0, 23, 59, 59, 999);
+
+      const items = await ContentPlanItem.find({
+        plannedDate: { $gte: startOfMonth, $lte: endOfMonth },
+      })
+        .populate("assignedTo", "name email username")
+        .sort({ plannedDate: 1, priority: -1 })
+        .lean();
+
+      const grouped = {};
+      let completed = 0;
+      for (const item of items) {
+        const key = new Date(item.plannedDate).toISOString().split("T")[0];
+        if (!grouped[key]) grouped[key] = [];
+        grouped[key].push(item);
+        if (["Done", "Published", "Indexed"].includes(item.status)) completed++;
+      }
+
+      const total = items.length;
+      const percentage = total > 0 ? Math.round((completed / total) * 100) : 0;
+
+      return successResult(
+        {
+          success: true,
+          month,
+          year,
+          totalTasks: total,
+          completedTasks: completed,
+          completionPercentage: percentage,
+          calendar: grouped,
+        },
+        `Editorial calendar for ${month}/${year}`,
+      );
+    }
+
+    if (toolName === "kraviona_list_keywords") {
+      const filter = {};
+      if (args.cluster) filter.cluster = args.cluster;
+      if (args.status) filter.status = args.status;
+      const result = await listRecords("keywords", {
+        filter,
+        search: args.search,
+        page: args.page || 1,
+        limit: args.limit || 50,
+      });
+      return successResult({ success: true, ...result }, "Keywords list");
+    }
+
+    if (toolName === "kraviona_create_keyword") {
+      const payload = {
+        keyword: String(args.keyword).trim().toLowerCase(),
+        intent: args.intent || "Informational",
+        monthlyVolume: Number(args.monthlyVolume) || 0,
+        difficulty: Number(args.difficulty) || 0,
+        cluster: args.cluster || "General",
+        targetUrl: args.targetUrl || "",
+        notes: args.notes || "",
+      };
+      const record = await createRecord("keywords", payload, actor);
+      return successResult(
+        { success: true, keyword: record },
+        `Created keyword: '${args.keyword}'`,
+      );
+    }
+
+    if (toolName === "kraviona_create_plan_from_keyword") {
+      const keywordDoc = await KeywordItem.findById(args.keywordId);
+      if (!keywordDoc) {
+        throw new Error(`Keyword not found with ID: ${args.keywordId}`);
+      }
+
+      const planPayload = {
+        title: args.title,
+        keyword: keywordDoc.keyword,
+        plannedDate: new Date(args.plannedDate),
+        type: args.type || "Blog",
+        status: "Planned",
+        priority: args.priority || "Medium",
+        targetUrl: keywordDoc.targetUrl || "",
+        notes: args.notes || keywordDoc.notes || "",
+        assignedTo: args.assignedTo || null,
+      };
+
+      const planItem = await createRecord("planner_items", planPayload, actor);
+
+      keywordDoc.assignedContentPlan = planItem.id || planItem._id;
+      keywordDoc.status = "In Content Plan";
+      await keywordDoc.save();
+
+      return successResult(
+        { success: true, item: planItem, keyword: keywordDoc },
+        `Created calendar task from keyword: '${keywordDoc.keyword}'`,
       );
     }
 
