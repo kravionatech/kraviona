@@ -3,6 +3,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import healthRouter from '../routes/health.routes.js';
 import Router from '../routes/router.routes.js';
+import plannerRoutes from '../routes/plannerRoutes.js';
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import { v2 as cloudinary } from 'cloudinary';
@@ -43,6 +44,8 @@ app.get('/api-docs', (req, res) => {
 
 app.get('/health', healthRouter);
 
+app.use('/api/planner', plannerRoutes);
+app.use('/api/v1/planner', plannerRoutes);
 app.use('/api/v1', Router);
 
 app.use((error, _req, res, _next) => {

@@ -17,6 +17,7 @@ import { apiRequest } from "@/components/api";
 
 const COMMANDS = [
   { href: "/dashboard", label: "Dashboard", hint: "Performance overview" },
+  { href: "/planner", label: "Content Planner", hint: "Editorial calendar & keywords" },
   { href: "/leads", label: "Leads", hint: "Manage sales opportunities", superAdminOnly: true },
   { href: "/messages", label: "Messages", hint: "Customer inbox", superAdminOnly: true },
   { href: "/newsletters", label: "Newsletter audience", hint: "Subscribers", superAdminOnly: true },

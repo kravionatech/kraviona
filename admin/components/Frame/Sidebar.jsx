@@ -18,6 +18,7 @@ import {
   Tag,
   BriefcaseBusiness,
   Bot,
+  CalendarDays,
   History,
   UserRound,
   Users,
@@ -26,6 +27,7 @@ import {
 
 const primaryNavigation = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/planner", label: "Content Planner", icon: CalendarDays },
   { href: "/blog", label: "All Posts", icon: FileText },
   { href: "/blog/new", label: "Create Post", icon: PlusCircle },
   { href: "/media", label: "Media Library", icon: ImageIcon },
