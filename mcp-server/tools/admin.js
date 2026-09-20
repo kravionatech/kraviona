@@ -15,6 +15,7 @@ import { RedirectModel } from "../../backend/src/models/settings/redirect.model.
 import { SiteSettingModel } from "../../backend/src/models/settings/siteSettings.model.js";
 import { ContentPlanItem } from "../../backend/src/models/ContentPlanItem.js";
 import { KeywordItem } from "../../backend/src/models/KeywordItem.js";
+import { CareerModel } from "../../backend/src/models/Careers/career.model.js";
 import { config } from "../config.js";
 import { connectDB, getDBStatus, pingDB } from "../db.js";
 import { getResource, resourceNames, resources } from "../catalog.js";
@@ -808,6 +809,866 @@ const kravionaTools = [
     },
     annotations: annotations({ title: "Create Plan from Keyword" }),
   },
+
+  // ── 9. Universal Resources & Session ─────────────────────────────────────
+  {
+    name: "get_admin_session",
+    description: "Get currently authenticated super-admin identity, role, and session expiration",
+    inputSchema: { type: "object", properties: {}, additionalProperties: false },
+    annotations: annotations({ title: "Get Admin Session", readOnly: true }),
+  },
+  {
+    name: "describe_admin_resources",
+    description: "List all manageable Kraviona backend resources with capabilities, filters, and search fields",
+    inputSchema: { type: "object", properties: {}, additionalProperties: false },
+    annotations: annotations({ title: "Describe Admin Resources", readOnly: true }),
+  },
+  {
+    name: "describe_admin_resource",
+    description: "Get schema details, server-managed fields, immutable paths, and validation rules for a specific backend resource",
+    inputSchema: {
+      type: "object",
+      properties: {
+        resource: {
+          type: "string",
+          enum: [...resourceNames],
+          description: "Resource name (e.g. posts, services, projects, users, careers)",
+        },
+      },
+      required: ["resource"],
+      additionalProperties: false,
+    },
+    annotations: annotations({ title: "Describe Admin Resource", readOnly: true }),
+  },
+
+  // ── 10. Canonical Aliases (required by smoke-test and standard MCP clients) ──
+  {
+    name: "get_admin_dashboard",
+    description: "Overview of Kraviona metrics, content, leads, redirects, and recent audited activity",
+    inputSchema: { type: "object", properties: {}, additionalProperties: false },
+    annotations: annotations({ title: "Admin Dashboard", readOnly: true }),
+  },
+  {
+    name: "list_posts",
+    description: "List posts with filtering by category, status, search, and pagination",
+    inputSchema: {
+      type: "object",
+      properties: {
+        contentType: { type: "string", enum: ["all", "blog", "news"], default: "all" },
+        categoryID: { type: "string", pattern: "^[a-fA-F0-9]{24}$" },
+        status: { type: "string", enum: ["published", "draft", "archived"] },
+        search: { type: "string" },
+        page: { type: "integer", minimum: 1, default: 1 },
+        limit: { type: "integer", minimum: 1, maximum: 100, default: 20 },
+      },
+      additionalProperties: false,
+    },
+    annotations: annotations({ title: "List Posts", readOnly: true }),
+  },
+  {
+    name: "create_post",
+    description: "Create a new Kraviona post or news article",
+    inputSchema: {
+      type: "object",
+      properties: {
+        title: { type: "string", minLength: 3, maxLength: 300 },
+        content: { type: "string", minLength: 10 },
+        contentType: { type: "string", enum: ["blog", "news"], default: "blog" },
+        categoryID: { type: "string", pattern: "^[a-fA-F0-9]{24}$" },
+        excerpt: { type: "string", maxLength: 600 },
+        status: { type: "string", enum: ["draft", "published", "archived"], default: "draft" },
+      },
+      required: ["title", "content", "categoryID"],
+      additionalProperties: false,
+    },
+    annotations: annotations({ title: "Create Post" }),
+  },
+  {
+    name: "delete_post",
+    description: "Permanently delete a Kraviona post. Requires confirmation: 'PERMANENTLY_DELETE'",
+    inputSchema: {
+      type: "object",
+      properties: {
+        id: { type: "string", pattern: "^[a-fA-F0-9]{24}$" },
+        confirmation: { type: "string", const: "PERMANENTLY_DELETE" },
+      },
+      required: ["id", "confirmation"],
+      additionalProperties: false,
+    },
+    annotations: annotations({ title: "Delete Post", destructive: true }),
+  },
+  {
+    name: "list_services",
+    description: "List agency services with filtering by category, active status, search, and pagination",
+    inputSchema: {
+      type: "object",
+      properties: {
+        category: { type: "string" },
+        isActive: { type: "boolean" },
+        search: { type: "string" },
+        page: { type: "integer", minimum: 1, default: 1 },
+        limit: { type: "integer", minimum: 1, maximum: 100, default: 20 },
+      },
+      additionalProperties: false,
+    },
+    annotations: annotations({ title: "List Services", readOnly: true }),
+  },
+  {
+    name: "list_projects",
+    description: "List portfolio and client case study projects",
+    inputSchema: {
+      type: "object",
+      properties: {
+        category: { type: "string" },
+        isActive: { type: "boolean" },
+        search: { type: "string" },
+        page: { type: "integer", minimum: 1, default: 1 },
+        limit: { type: "integer", minimum: 1, maximum: 100, default: 20 },
+      },
+      additionalProperties: false,
+    },
+    annotations: annotations({ title: "List Projects", readOnly: true }),
+  },
+  {
+    name: "list_activity_logs",
+    description: "List audited admin and MCP mutation logs",
+    inputSchema: {
+      type: "object",
+      properties: {
+        module: { type: "string" },
+        action: { type: "string" },
+        page: { type: "integer", minimum: 1, default: 1 },
+        limit: { type: "integer", minimum: 1, maximum: 100, default: 20 },
+      },
+      additionalProperties: false,
+    },
+    annotations: annotations({ title: "List Activity Logs", readOnly: true }),
+  },
+
+  // ── 11. Services Management ───────────────────────────────────────────────
+  {
+    name: "kraviona_list_services",
+    description: "List agency services offered by Kraviona with category, active status, and search filters",
+    inputSchema: {
+      type: "object",
+      properties: {
+        category: { type: "string" },
+        isActive: { type: "boolean" },
+        isFeatured: { type: "boolean" },
+        search: { type: "string" },
+        page: { type: "integer", minimum: 1, default: 1 },
+        limit: { type: "integer", minimum: 1, maximum: 100, default: 20 },
+      },
+      additionalProperties: false,
+    },
+    annotations: annotations({ title: "List Services", readOnly: true }),
+  },
+  {
+    name: "kraviona_get_service",
+    description: "Get service details by MongoDB ObjectId or slug",
+    inputSchema: {
+      type: "object",
+      properties: {
+        id: { type: "string", pattern: "^[a-fA-F0-9]{24}$" },
+        slug: { type: "string", minLength: 1 },
+      },
+      anyOf: [{ required: ["id"] }, { required: ["slug"] }],
+      additionalProperties: false,
+    },
+    annotations: annotations({ title: "Get Service", readOnly: true }),
+  },
+  {
+    name: "kraviona_create_service",
+    description: "Create a new agency service offering",
+    inputSchema: {
+      type: "object",
+      properties: {
+        title: { type: "string", minLength: 2 },
+        category: { type: "string" },
+        description: { type: "string" },
+        features: { type: "array", items: { type: "string" } },
+        isActive: { type: "boolean", default: true },
+        isFeatured: { type: "boolean", default: false },
+        order: { type: "number", default: 0 },
+        seo: {
+          type: "object",
+          properties: {
+            metaTitle: { type: "string" },
+            metaDescription: { type: "string" },
+            keywords: { type: "array", items: { type: "string" } },
+          },
+          additionalProperties: false,
+        },
+      },
+      required: ["title", "category", "description"],
+      additionalProperties: false,
+    },
+    annotations: annotations({ title: "Create Service" }),
+  },
+  {
+    name: "kraviona_update_service",
+    description: "Update an existing agency service",
+    inputSchema: {
+      type: "object",
+      properties: {
+        id: { type: "string", pattern: "^[a-fA-F0-9]{24}$" },
+        changes: {
+          type: "object",
+          properties: {
+            title: { type: "string" },
+            category: { type: "string" },
+            description: { type: "string" },
+            features: { type: "array", items: { type: "string" } },
+            isActive: { type: "boolean" },
+            isFeatured: { type: "boolean" },
+            order: { type: "number" },
+          },
+          additionalProperties: true,
+        },
+      },
+      required: ["id", "changes"],
+      additionalProperties: false,
+    },
+    annotations: annotations({ title: "Update Service" }),
+  },
+  {
+    name: "kraviona_delete_service",
+    description: "Permanently delete a service. Requires confirmation: 'PERMANENTLY_DELETE'",
+    inputSchema: {
+      type: "object",
+      properties: {
+        id: { type: "string", pattern: "^[a-fA-F0-9]{24}$" },
+        confirmation: { type: "string", const: "PERMANENTLY_DELETE" },
+      },
+      required: ["id", "confirmation"],
+      additionalProperties: false,
+    },
+    annotations: annotations({ title: "Delete Service", destructive: true }),
+  },
+
+  // ── 12. Portfolio & Projects ──────────────────────────────────────────────
+  {
+    name: "kraviona_list_projects",
+    description: "List Kraviona client showcase and case study projects",
+    inputSchema: {
+      type: "object",
+      properties: {
+        category: { type: "string" },
+        isActive: { type: "boolean" },
+        isFeatured: { type: "boolean" },
+        search: { type: "string" },
+        page: { type: "integer", minimum: 1, default: 1 },
+        limit: { type: "integer", minimum: 1, maximum: 100, default: 20 },
+      },
+      additionalProperties: false,
+    },
+    annotations: annotations({ title: "List Projects", readOnly: true }),
+  },
+  {
+    name: "kraviona_get_project",
+    description: "Get project details by MongoDB ObjectId or slug",
+    inputSchema: {
+      type: "object",
+      properties: {
+        id: { type: "string", pattern: "^[a-fA-F0-9]{24}$" },
+        slug: { type: "string", minLength: 1 },
+      },
+      anyOf: [{ required: ["id"] }, { required: ["slug"] }],
+      additionalProperties: false,
+    },
+    annotations: annotations({ title: "Get Project", readOnly: true }),
+  },
+  {
+    name: "kraviona_create_project",
+    description: "Create a new portfolio project or client case study",
+    inputSchema: {
+      type: "object",
+      properties: {
+        title: { type: "string", minLength: 2 },
+        category: { type: "string" },
+        description: { type: "string" },
+        techStack: { type: "array", items: { type: "string" } },
+        results: { type: "string" },
+        projectUrl: { type: "string" },
+        image: { type: "string" },
+        imageAlt: { type: "string" },
+        isActive: { type: "boolean", default: true },
+        isFeatured: { type: "boolean", default: false },
+        order: { type: "number", default: 0 },
+      },
+      required: ["title", "category", "description"],
+      additionalProperties: false,
+    },
+    annotations: annotations({ title: "Create Project" }),
+  },
+  {
+    name: "kraviona_update_project",
+    description: "Update an existing portfolio project",
+    inputSchema: {
+      type: "object",
+      properties: {
+        id: { type: "string", pattern: "^[a-fA-F0-9]{24}$" },
+        changes: {
+          type: "object",
+          properties: {
+            title: { type: "string" },
+            category: { type: "string" },
+            description: { type: "string" },
+            techStack: { type: "array", items: { type: "string" } },
+            results: { type: "string" },
+            projectUrl: { type: "string" },
+            isActive: { type: "boolean" },
+            isFeatured: { type: "boolean" },
+          },
+          additionalProperties: true,
+        },
+      },
+      required: ["id", "changes"],
+      additionalProperties: false,
+    },
+    annotations: annotations({ title: "Update Project" }),
+  },
+  {
+    name: "kraviona_delete_project",
+    description: "Permanently delete a portfolio project. Requires confirmation: 'PERMANENTLY_DELETE'",
+    inputSchema: {
+      type: "object",
+      properties: {
+        id: { type: "string", pattern: "^[a-fA-F0-9]{24}$" },
+        confirmation: { type: "string", const: "PERMANENTLY_DELETE" },
+      },
+      required: ["id", "confirmation"],
+      additionalProperties: false,
+    },
+    annotations: annotations({ title: "Delete Project", destructive: true }),
+  },
+
+  // ── 13. Careers & Job Postings ────────────────────────────────────────────
+  {
+    name: "kraviona_list_careers",
+    description: "List job openings and career opportunities with status, department, and employment type filters",
+    inputSchema: {
+      type: "object",
+      properties: {
+        status: { type: "string", enum: ["draft", "published", "paused", "closed", "archived"] },
+        department: { type: "string" },
+        employmentType: { type: "string" },
+        workplaceType: { type: "string" },
+        search: { type: "string" },
+        page: { type: "integer", minimum: 1, default: 1 },
+        limit: { type: "integer", minimum: 1, maximum: 100, default: 20 },
+      },
+      additionalProperties: false,
+    },
+    annotations: annotations({ title: "List Careers", readOnly: true }),
+  },
+  {
+    name: "kraviona_get_career",
+    description: "Get job posting details by MongoDB ObjectId or slug",
+    inputSchema: {
+      type: "object",
+      properties: {
+        id: { type: "string", pattern: "^[a-fA-F0-9]{24}$" },
+        slug: { type: "string", minLength: 1 },
+      },
+      anyOf: [{ required: ["id"] }, { required: ["slug"] }],
+      additionalProperties: false,
+    },
+    annotations: annotations({ title: "Get Career", readOnly: true }),
+  },
+  {
+    name: "kraviona_create_career",
+    description: "Post a new job opening on Kraviona Careers",
+    inputSchema: {
+      type: "object",
+      properties: {
+        jobTitle: { type: "string", minLength: 2 },
+        department: { type: "string" },
+        employmentType: { type: "string", enum: ["full-time", "part-time", "contract", "internship", "temporary", "freelance"], default: "full-time" },
+        workplaceType: { type: "string", enum: ["on-site", "hybrid", "remote"], default: "remote" },
+        summary: { type: "string" },
+        content: { type: "string" },
+        responsibilities: { type: "array", items: { type: "string" } },
+        requirements: { type: "array", items: { type: "string" } },
+        skills: { type: "array", items: { type: "string" } },
+        status: { type: "string", enum: ["draft", "published", "paused", "closed", "archived"], default: "draft" },
+      },
+      required: ["jobTitle", "department"],
+      additionalProperties: false,
+    },
+    annotations: annotations({ title: "Create Career" }),
+  },
+  {
+    name: "kraviona_update_career",
+    description: "Update an existing job posting",
+    inputSchema: {
+      type: "object",
+      properties: {
+        id: { type: "string", pattern: "^[a-fA-F0-9]{24}$" },
+        changes: {
+          type: "object",
+          properties: {
+            jobTitle: { type: "string" },
+            department: { type: "string" },
+            status: { type: "string", enum: ["draft", "published", "paused", "closed", "archived"] },
+            summary: { type: "string" },
+            content: { type: "string" },
+            responsibilities: { type: "array", items: { type: "string" } },
+            requirements: { type: "array", items: { type: "string" } },
+            skills: { type: "array", items: { type: "string" } },
+          },
+          additionalProperties: true,
+        },
+      },
+      required: ["id", "changes"],
+      additionalProperties: false,
+    },
+    annotations: annotations({ title: "Update Career" }),
+  },
+  {
+    name: "kraviona_delete_career",
+    description: "Permanently delete a job posting. Requires confirmation: 'PERMANENTLY_DELETE'",
+    inputSchema: {
+      type: "object",
+      properties: {
+        id: { type: "string", pattern: "^[a-fA-F0-9]{24}$" },
+        confirmation: { type: "string", const: "PERMANENTLY_DELETE" },
+      },
+      required: ["id", "confirmation"],
+      additionalProperties: false,
+    },
+    annotations: annotations({ title: "Delete Career", destructive: true }),
+  },
+
+  // ── 14. Team Members ──────────────────────────────────────────────────────
+  {
+    name: "kraviona_list_team_members",
+    description: "List company team members, leadership, and staff profiles",
+    inputSchema: {
+      type: "object",
+      properties: {
+        department: { type: "string" },
+        status: { type: "string" },
+        isFeatured: { type: "boolean" },
+        search: { type: "string" },
+        page: { type: "integer", minimum: 1, default: 1 },
+        limit: { type: "integer", minimum: 1, maximum: 100, default: 20 },
+      },
+      additionalProperties: false,
+    },
+    annotations: annotations({ title: "List Team Members", readOnly: true }),
+  },
+  {
+    name: "kraviona_get_team_member",
+    description: "Get team member profile by MongoDB ObjectId or slug",
+    inputSchema: {
+      type: "object",
+      properties: {
+        id: { type: "string", pattern: "^[a-fA-F0-9]{24}$" },
+        slug: { type: "string", minLength: 1 },
+      },
+      anyOf: [{ required: ["id"] }, { required: ["slug"] }],
+      additionalProperties: false,
+    },
+    annotations: annotations({ title: "Get Team Member", readOnly: true }),
+  },
+  {
+    name: "kraviona_create_team_member",
+    description: "Add a new team member to Kraviona",
+    inputSchema: {
+      type: "object",
+      properties: {
+        name: { type: "string", minLength: 2 },
+        designation: { type: "string", minLength: 2 },
+        department: { type: "string" },
+        email: { type: "string" },
+        phone: { type: "string" },
+        bio: { type: "string" },
+        skills: { type: "array", items: { type: "string" } },
+        status: { type: "string", default: "active" },
+        isFeatured: { type: "boolean", default: false },
+      },
+      required: ["name", "designation"],
+      additionalProperties: false,
+    },
+    annotations: annotations({ title: "Create Team Member" }),
+  },
+  {
+    name: "kraviona_update_team_member",
+    description: "Update team member details",
+    inputSchema: {
+      type: "object",
+      properties: {
+        id: { type: "string", pattern: "^[a-fA-F0-9]{24}$" },
+        changes: {
+          type: "object",
+          properties: {
+            name: { type: "string" },
+            designation: { type: "string" },
+            department: { type: "string" },
+            bio: { type: "string" },
+            skills: { type: "array", items: { type: "string" } },
+            isFeatured: { type: "boolean" },
+            status: { type: "string" },
+          },
+          additionalProperties: true,
+        },
+      },
+      required: ["id", "changes"],
+      additionalProperties: false,
+    },
+    annotations: annotations({ title: "Update Team Member" }),
+  },
+  {
+    name: "kraviona_delete_team_member",
+    description: "Permanently delete a team member. Requires confirmation: 'PERMANENTLY_DELETE'",
+    inputSchema: {
+      type: "object",
+      properties: {
+        id: { type: "string", pattern: "^[a-fA-F0-9]{24}$" },
+        confirmation: { type: "string", const: "PERMANENTLY_DELETE" },
+      },
+      required: ["id", "confirmation"],
+      additionalProperties: false,
+    },
+    annotations: annotations({ title: "Delete Team Member", destructive: true }),
+  },
+
+  // ── 15. Messages & Contact Inquiries ──────────────────────────────────────
+  {
+    name: "kraviona_list_messages",
+    description: "List website contact form messages and inquiries",
+    inputSchema: {
+      type: "object",
+      properties: {
+        status: { type: "string", enum: ["unread", "read", "replied", "archived"] },
+        search: { type: "string" },
+        page: { type: "integer", minimum: 1, default: 1 },
+        limit: { type: "integer", minimum: 1, maximum: 100, default: 20 },
+      },
+      additionalProperties: false,
+    },
+    annotations: annotations({ title: "List Messages", readOnly: true }),
+  },
+  {
+    name: "kraviona_get_message",
+    description: "Get contact message details by MongoDB ObjectId",
+    inputSchema: {
+      type: "object",
+      properties: {
+        id: { type: "string", pattern: "^[a-fA-F0-9]{24}$" },
+      },
+      required: ["id"],
+      additionalProperties: false,
+    },
+    annotations: annotations({ title: "Get Message", readOnly: true }),
+  },
+  {
+    name: "kraviona_update_message_status",
+    description: "Update contact message status (e.g. read, replied, archived)",
+    inputSchema: {
+      type: "object",
+      properties: {
+        id: { type: "string", pattern: "^[a-fA-F0-9]{24}$" },
+        status: { type: "string", enum: ["unread", "read", "replied", "archived"] },
+      },
+      required: ["id", "status"],
+      additionalProperties: false,
+    },
+    annotations: annotations({ title: "Update Message Status" }),
+  },
+  {
+    name: "kraviona_delete_message",
+    description: "Permanently delete a contact message. Requires confirmation: 'PERMANENTLY_DELETE'",
+    inputSchema: {
+      type: "object",
+      properties: {
+        id: { type: "string", pattern: "^[a-fA-F0-9]{24}$" },
+        confirmation: { type: "string", const: "PERMANENTLY_DELETE" },
+      },
+      required: ["id", "confirmation"],
+      additionalProperties: false,
+    },
+    annotations: annotations({ title: "Delete Message", destructive: true }),
+  },
+
+  // ── 16. Blog Comments Moderation ──────────────────────────────────────────
+  {
+    name: "kraviona_list_comments",
+    description: "List blog article comments with status and post filters",
+    inputSchema: {
+      type: "object",
+      properties: {
+        status: { type: "string", enum: ["pending", "approved", "rejected", "spam"] },
+        postSlug: { type: "string" },
+        search: { type: "string" },
+        page: { type: "integer", minimum: 1, default: 1 },
+        limit: { type: "integer", minimum: 1, maximum: 100, default: 20 },
+      },
+      additionalProperties: false,
+    },
+    annotations: annotations({ title: "List Comments", readOnly: true }),
+  },
+  {
+    name: "kraviona_update_comment_status",
+    description: "Moderate blog comment status (approved, rejected, spam)",
+    inputSchema: {
+      type: "object",
+      properties: {
+        id: { type: "string", pattern: "^[a-fA-F0-9]{24}$" },
+        status: { type: "string", enum: ["pending", "approved", "rejected", "spam"] },
+      },
+      required: ["id", "status"],
+      additionalProperties: false,
+    },
+    annotations: annotations({ title: "Update Comment Status" }),
+  },
+  {
+    name: "kraviona_delete_comment",
+    description: "Permanently delete a blog comment. Requires confirmation: 'PERMANENTLY_DELETE'",
+    inputSchema: {
+      type: "object",
+      properties: {
+        id: { type: "string", pattern: "^[a-fA-F0-9]{24}$" },
+        confirmation: { type: "string", const: "PERMANENTLY_DELETE" },
+      },
+      required: ["id", "confirmation"],
+      additionalProperties: false,
+    },
+    annotations: annotations({ title: "Delete Comment", destructive: true }),
+  },
+
+  // ── 17. Newsletter Subscribers ────────────────────────────────────────────
+  {
+    name: "kraviona_list_newsletter_subscribers",
+    description: "List email newsletter subscribers",
+    inputSchema: {
+      type: "object",
+      properties: {
+        status: { type: "string", enum: ["subscriber", "unsubscribed"] },
+        search: { type: "string" },
+        page: { type: "integer", minimum: 1, default: 1 },
+        limit: { type: "integer", minimum: 1, maximum: 100, default: 20 },
+      },
+      additionalProperties: false,
+    },
+    annotations: annotations({ title: "List Newsletter Subscribers", readOnly: true }),
+  },
+  {
+    name: "kraviona_delete_newsletter_subscriber",
+    description: "Permanently delete a newsletter subscriber. Requires confirmation: 'PERMANENTLY_DELETE'",
+    inputSchema: {
+      type: "object",
+      properties: {
+        id: { type: "string", pattern: "^[a-fA-F0-9]{24}$" },
+        confirmation: { type: "string", const: "PERMANENTLY_DELETE" },
+      },
+      required: ["id", "confirmation"],
+      additionalProperties: false,
+    },
+    annotations: annotations({ title: "Delete Newsletter Subscriber", destructive: true }),
+  },
+
+  // ── 18. Media Metadata ───────────────────────────────────────────────────
+  {
+    name: "kraviona_list_media",
+    description: "List media assets with type filter, pagination, and search",
+    inputSchema: {
+      type: "object",
+      properties: {
+        mediaType: { type: "string" },
+        search: { type: "string" },
+        page: { type: "integer", minimum: 1, default: 1 },
+        limit: { type: "integer", minimum: 1, maximum: 100, default: 20 },
+      },
+      additionalProperties: false,
+    },
+    annotations: annotations({ title: "List Media", readOnly: true }),
+  },
+  {
+    name: "kraviona_get_media",
+    description: "Get media asset metadata by MongoDB ObjectId",
+    inputSchema: {
+      type: "object",
+      properties: {
+        id: { type: "string", pattern: "^[a-fA-F0-9]{24}$" },
+      },
+      required: ["id"],
+      additionalProperties: false,
+    },
+    annotations: annotations({ title: "Get Media", readOnly: true }),
+  },
+  {
+    name: "kraviona_update_media",
+    description: "Update media alt text, caption, or metadata",
+    inputSchema: {
+      type: "object",
+      properties: {
+        id: { type: "string", pattern: "^[a-fA-F0-9]{24}$" },
+        changes: {
+          type: "object",
+          properties: {
+            altText: { type: "string" },
+            title: { type: "string" },
+            caption: { type: "string" },
+          },
+          additionalProperties: true,
+        },
+      },
+      required: ["id", "changes"],
+      additionalProperties: false,
+    },
+    annotations: annotations({ title: "Update Media" }),
+  },
+
+  // ── 19. User Administration ───────────────────────────────────────────────
+  {
+    name: "kraviona_list_users",
+    description: "List backend administrative users with role and verification filters",
+    inputSchema: {
+      type: "object",
+      properties: {
+        role: { type: "string" },
+        isActive: { type: "boolean" },
+        isVerified: { type: "boolean" },
+        search: { type: "string" },
+        page: { type: "integer", minimum: 1, default: 1 },
+        limit: { type: "integer", minimum: 1, maximum: 100, default: 20 },
+      },
+      additionalProperties: false,
+    },
+    annotations: annotations({ title: "List Users", readOnly: true }),
+  },
+  {
+    name: "kraviona_get_user",
+    description: "Get admin user profile by MongoDB ObjectId or email",
+    inputSchema: {
+      type: "object",
+      properties: {
+        id: { type: "string", pattern: "^[a-fA-F0-9]{24}$" },
+        email: { type: "string" },
+      },
+      anyOf: [{ required: ["id"] }, { required: ["email"] }],
+      additionalProperties: false,
+    },
+    annotations: annotations({ title: "Get User", readOnly: true }),
+  },
+  {
+    name: "kraviona_create_user",
+    description: "Create a new admin user account with required strong password",
+    inputSchema: {
+      type: "object",
+      properties: {
+        name: { type: "string", minLength: 2 },
+        email: { type: "string" },
+        password: { type: "string", minLength: 8 },
+        role: { type: "string", enum: ["super_admin", "admin", "editor", "author"] },
+        phone: { type: "string" },
+      },
+      required: ["name", "email", "password", "role"],
+      additionalProperties: false,
+    },
+    annotations: annotations({ title: "Create User" }),
+  },
+  {
+    name: "kraviona_update_user",
+    description: "Update user account role, status, profile, or password",
+    inputSchema: {
+      type: "object",
+      properties: {
+        id: { type: "string", pattern: "^[a-fA-F0-9]{24}$" },
+        changes: {
+          type: "object",
+          properties: {
+            name: { type: "string" },
+            role: { type: "string", enum: ["super_admin", "admin", "editor", "author"] },
+            isActive: { type: "boolean" },
+            isVerified: { type: "boolean" },
+            phone: { type: "string" },
+            password: { type: "string", minLength: 8 },
+          },
+          additionalProperties: true,
+        },
+      },
+      required: ["id", "changes"],
+      additionalProperties: false,
+    },
+    annotations: annotations({ title: "Update User" }),
+  },
+  {
+    name: "kraviona_delete_user",
+    description: "Permanently delete an admin user account. Requires confirmation: 'PERMANENTLY_DELETE'",
+    inputSchema: {
+      type: "object",
+      properties: {
+        id: { type: "string", pattern: "^[a-fA-F0-9]{24}$" },
+        confirmation: { type: "string", const: "PERMANENTLY_DELETE" },
+      },
+      required: ["id", "confirmation"],
+      additionalProperties: false,
+    },
+    annotations: annotations({ title: "Delete User", destructive: true }),
+  },
+
+  // ── 20. Lead Management Updates ──────────────────────────────────────────
+  {
+    name: "kraviona_update_lead",
+    description: "Update lead status, dealValue, priority, assigned admin, or tags",
+    inputSchema: {
+      type: "object",
+      properties: {
+        id: { type: "string", pattern: "^[a-fA-F0-9]{24}$" },
+        changes: {
+          type: "object",
+          properties: {
+            status: { type: "string" },
+            score: { type: "number" },
+            dealValue: { type: "number" },
+            currency: { type: "string" },
+            assignedTo: { type: "string" },
+            tags: { type: "array", items: { type: "string" } },
+            isArchived: { type: "boolean" },
+          },
+          additionalProperties: true,
+        },
+      },
+      required: ["id", "changes"],
+      additionalProperties: false,
+    },
+    annotations: annotations({ title: "Update Lead" }),
+  },
+  {
+    name: "kraviona_delete_lead",
+    description: "Permanently delete a CRM lead. Requires confirmation: 'PERMANENTLY_DELETE'",
+    inputSchema: {
+      type: "object",
+      properties: {
+        id: { type: "string", pattern: "^[a-fA-F0-9]{24}$" },
+        confirmation: { type: "string", const: "PERMANENTLY_DELETE" },
+      },
+      required: ["id", "confirmation"],
+      additionalProperties: false,
+    },
+    annotations: annotations({ title: "Delete Lead", destructive: true }),
+  },
+
+  // ── 21. Activity & Audit Logs ─────────────────────────────────────────────
+  {
+    name: "kraviona_list_activity_logs",
+    description: "List audited admin and MCP mutation logs",
+    inputSchema: {
+      type: "object",
+      properties: {
+        module: { type: "string" },
+        action: { type: "string" },
+        search: { type: "string" },
+        page: { type: "integer", minimum: 1, default: 1 },
+        limit: { type: "integer", minimum: 1, maximum: 100, default: 20 },
+      },
+      additionalProperties: false,
+    },
+    annotations: annotations({ title: "List Activity Logs", readOnly: true }),
+  },
 ];
 
 export const tools = kravionaTools;
@@ -824,6 +1685,10 @@ const getDashboardData = async () => {
     leads,
     messages,
     subscribers,
+    services,
+    projects,
+    careers,
+    teamMembers,
     recentMcpActivity,
   ] = await Promise.all([
     Auth.countDocuments(),
@@ -835,6 +1700,10 @@ const getDashboardData = async () => {
     Lead.countDocuments({ isArchived: { $ne: true } }),
     MessageModel.countDocuments(),
     newsLatterModel.countDocuments({ status: "subscriber" }),
+    Service.countDocuments(),
+    Project.countDocuments(),
+    CareerModel.countDocuments({ isDeleted: { $ne: true } }),
+    TeamMemberModel.countDocuments(),
     ActivityLog.find({ module: /^mcp:/ })
       .select("userID module action resourceId resourceName createdAt")
       .sort({ createdAt: -1 })
@@ -849,6 +1718,12 @@ const getDashboardData = async () => {
       blogPosts,
       newsPosts,
       categories,
+    },
+    agency: {
+      services,
+      projects,
+      careers,
+      teamMembers,
     },
     website: {
       activeRedirects: redirects,
@@ -1441,6 +2316,379 @@ export const handle = async (toolName, args, context) => {
         { success: true, item: planItem, keyword: keywordDoc },
         `Created calendar task from keyword: '${keywordDoc.keyword}'`,
       );
+    }
+
+    // ── 9. Universal Resources & Session ────────────────────────────────────
+    if (toolName === "get_admin_session" || toolName === "kraviona_get_admin_session") {
+      return successResult(
+        {
+          success: true,
+          admin: actor,
+          server: { name: config.name, version: config.version },
+        },
+        `Authenticated as ${actor.name} (${actor.role})`,
+      );
+    }
+
+    if (toolName === "describe_admin_resources" || toolName === "kraviona_describe_resources") {
+      return successResult(
+        { success: true, resources: describeResources() },
+        "Kraviona manageable backend resources",
+      );
+    }
+
+    if (toolName === "describe_admin_resource" || toolName === "kraviona_describe_resource") {
+      const desc = describeResource(args.resource);
+      return successResult(
+        desc,
+        `Admin resource schema: ${args.resource}`,
+      );
+    }
+
+    // ── 10. Canonical Aliases (for smoke-test and standard clients) ─────────
+    if (toolName === "get_admin_dashboard") {
+      const data = await getDashboardData();
+      return successResult({ success: true, dashboard: data }, "Kraviona Admin Dashboard");
+    }
+
+    if (toolName === "list_posts") {
+      const filters = {};
+      if (args.contentType && args.contentType !== "all") filters.contentType = args.contentType;
+      if (args.categoryID) filters.categoryID = args.categoryID;
+      if (args.status) filters.status = args.status;
+      const result = await listRecords("posts", {
+        page: args.page || 1,
+        limit: args.limit || 20,
+        search: args.search,
+        filters,
+        sortBy: "createdAt",
+        sortOrder: "desc",
+      });
+      return successResult({ success: true, ...result }, `Found ${result.pagination.total} posts`);
+    }
+
+    if (toolName === "create_post") {
+      const post = await createRecord("posts", args, actor);
+      return successResult({ success: true, post }, `Created post: ${post.title}`);
+    }
+
+    if (toolName === "delete_post") {
+      const deleted = await deleteRecord("posts", args.id, actor);
+      return successResult({ success: true, deleted }, `Deleted post ID: ${args.id}`);
+    }
+
+    // ── 11. Services Management ─────────────────────────────────────────────
+    if (toolName === "kraviona_list_services" || toolName === "list_services") {
+      const filters = {};
+      if (args.category) filters.category = args.category;
+      if (args.isActive !== undefined) filters.isActive = args.isActive;
+      if (args.isFeatured !== undefined) filters.isFeatured = args.isFeatured;
+      const result = await listRecords("services", {
+        page: args.page || 1,
+        limit: args.limit || 20,
+        search: args.search,
+        filters,
+        sortBy: "order",
+        sortOrder: "asc",
+      });
+      return successResult({ success: true, ...result }, `Found ${result.pagination.total} services`);
+    }
+
+    if (toolName === "kraviona_get_service" || toolName === "get_service") {
+      const service = await getRecord("services", args);
+      return successResult({ success: true, service }, `Service: ${service.title}`);
+    }
+
+    if (toolName === "kraviona_create_service" || toolName === "create_service") {
+      const service = await createRecord("services", args, actor);
+      return successResult({ success: true, service }, `Created service: ${service.title}`);
+    }
+
+    if (toolName === "kraviona_update_service" || toolName === "update_service") {
+      const service = await updateRecord("services", args.id, args.changes, actor);
+      return successResult({ success: true, service }, `Updated service: ${service.title}`);
+    }
+
+    if (toolName === "kraviona_delete_service" || toolName === "delete_service") {
+      const deleted = await deleteRecord("services", args.id, actor);
+      return successResult({ success: true, deleted }, `Deleted service ID: ${args.id}`);
+    }
+
+    // ── 12. Portfolio / Projects ────────────────────────────────────────────
+    if (toolName === "kraviona_list_projects" || toolName === "list_projects") {
+      const filters = {};
+      if (args.category) filters.category = args.category;
+      if (args.isActive !== undefined) filters.isActive = args.isActive;
+      if (args.isFeatured !== undefined) filters.isFeatured = args.isFeatured;
+      const result = await listRecords("projects", {
+        page: args.page || 1,
+        limit: args.limit || 20,
+        search: args.search,
+        filters,
+        sortBy: "order",
+        sortOrder: "asc",
+      });
+      return successResult({ success: true, ...result }, `Found ${result.pagination.total} projects`);
+    }
+
+    if (toolName === "kraviona_get_project" || toolName === "get_project") {
+      const project = await getRecord("projects", args);
+      return successResult({ success: true, project }, `Project: ${project.title}`);
+    }
+
+    if (toolName === "kraviona_create_project" || toolName === "create_project") {
+      const project = await createRecord("projects", args, actor);
+      return successResult({ success: true, project }, `Created project: ${project.title}`);
+    }
+
+    if (toolName === "kraviona_update_project" || toolName === "update_project") {
+      const project = await updateRecord("projects", args.id, args.changes, actor);
+      return successResult({ success: true, project }, `Updated project: ${project.title}`);
+    }
+
+    if (toolName === "kraviona_delete_project" || toolName === "delete_project") {
+      const deleted = await deleteRecord("projects", args.id, actor);
+      return successResult({ success: true, deleted }, `Deleted project ID: ${args.id}`);
+    }
+
+    // ── 13. Careers ─────────────────────────────────────────────────────────
+    if (toolName === "kraviona_list_careers" || toolName === "list_careers") {
+      const filters = {};
+      if (args.status) filters.status = args.status;
+      if (args.department) filters.department = args.department;
+      if (args.employmentType) filters.employmentType = args.employmentType;
+      if (args.workplaceType) filters.workplaceType = args.workplaceType;
+      const result = await listRecords("careers", {
+        page: args.page || 1,
+        limit: args.limit || 20,
+        search: args.search,
+        filters,
+        sortBy: "publishedAt",
+        sortOrder: "desc",
+      });
+      return successResult({ success: true, ...result }, `Found ${result.pagination.total} career openings`);
+    }
+
+    if (toolName === "kraviona_get_career" || toolName === "get_career") {
+      const career = await getRecord("careers", args);
+      return successResult({ success: true, career }, `Career: ${career.jobTitle}`);
+    }
+
+    if (toolName === "kraviona_create_career" || toolName === "create_career") {
+      const career = await createRecord("careers", args, actor);
+      return successResult({ success: true, career }, `Created career posting: ${career.jobTitle}`);
+    }
+
+    if (toolName === "kraviona_update_career" || toolName === "update_career") {
+      const career = await updateRecord("careers", args.id, args.changes, actor);
+      return successResult({ success: true, career }, `Updated career posting: ${career.jobTitle}`);
+    }
+
+    if (toolName === "kraviona_delete_career" || toolName === "delete_career") {
+      const deleted = await deleteRecord("careers", args.id, actor);
+      return successResult({ success: true, deleted }, `Deleted career ID: ${args.id}`);
+    }
+
+    // ── 14. Team Members ────────────────────────────────────────────────────
+    if (toolName === "kraviona_list_team_members" || toolName === "list_team_members") {
+      const filters = {};
+      if (args.department) filters.department = args.department;
+      if (args.status) filters.status = args.status;
+      if (args.isFeatured !== undefined) filters.isFeatured = args.isFeatured;
+      const result = await listRecords("team_members", {
+        page: args.page || 1,
+        limit: args.limit || 20,
+        search: args.search,
+        filters,
+        sortBy: "order",
+        sortOrder: "asc",
+      });
+      return successResult({ success: true, ...result }, `Found ${result.pagination.total} team members`);
+    }
+
+    if (toolName === "kraviona_get_team_member" || toolName === "get_team_member") {
+      const member = await getRecord("team_members", args);
+      return successResult({ success: true, member }, `Team member: ${member.name}`);
+    }
+
+    if (toolName === "kraviona_create_team_member" || toolName === "create_team_member") {
+      const member = await createRecord("team_members", args, actor);
+      return successResult({ success: true, member }, `Created team member: ${member.name}`);
+    }
+
+    if (toolName === "kraviona_update_team_member" || toolName === "update_team_member") {
+      const member = await updateRecord("team_members", args.id, args.changes, actor);
+      return successResult({ success: true, member }, `Updated team member: ${member.name}`);
+    }
+
+    if (toolName === "kraviona_delete_team_member" || toolName === "delete_team_member") {
+      const deleted = await deleteRecord("team_members", args.id, actor);
+      return successResult({ success: true, deleted }, `Deleted team member ID: ${args.id}`);
+    }
+
+    // ── 15. Contact Messages ────────────────────────────────────────────────
+    if (toolName === "kraviona_list_messages" || toolName === "list_messages") {
+      const filters = {};
+      if (args.status) filters.status = args.status;
+      const result = await listRecords("messages", {
+        page: args.page || 1,
+        limit: args.limit || 20,
+        search: args.search,
+        filters,
+        sortBy: "createdAt",
+        sortOrder: "desc",
+      });
+      return successResult({ success: true, ...result }, `Found ${result.pagination.total} contact messages`);
+    }
+
+    if (toolName === "kraviona_get_message" || toolName === "get_message") {
+      const message = await getRecord("messages", { id: args.id });
+      return successResult({ success: true, message }, `Message from: ${message.firstName} ${message.lastName}`);
+    }
+
+    if (toolName === "kraviona_update_message_status" || toolName === "update_message") {
+      const message = await updateRecord("messages", args.id, { status: args.status }, actor);
+      return successResult({ success: true, message }, `Updated message status to: ${args.status}`);
+    }
+
+    if (toolName === "kraviona_delete_message" || toolName === "delete_message") {
+      const deleted = await deleteRecord("messages", args.id, actor);
+      return successResult({ success: true, deleted }, `Deleted message ID: ${args.id}`);
+    }
+
+    // ── 16. Blog Comments Moderation ────────────────────────────────────────
+    if (toolName === "kraviona_list_comments" || toolName === "list_comments") {
+      const filters = {};
+      if (args.status) filters.status = args.status;
+      if (args.postSlug) filters.postSlug = args.postSlug;
+      const result = await listRecords("comments", {
+        page: args.page || 1,
+        limit: args.limit || 20,
+        search: args.search,
+        filters,
+        sortBy: "createdAt",
+        sortOrder: "desc",
+      });
+      return successResult({ success: true, ...result }, `Found ${result.pagination.total} comments`);
+    }
+
+    if (toolName === "kraviona_update_comment_status" || toolName === "update_comment") {
+      const comment = await updateRecord("comments", args.id, { status: args.status }, actor);
+      return successResult({ success: true, comment }, `Updated comment status to: ${args.status}`);
+    }
+
+    if (toolName === "kraviona_delete_comment" || toolName === "delete_comment") {
+      const deleted = await deleteRecord("comments", args.id, actor);
+      return successResult({ success: true, deleted }, `Deleted comment ID: ${args.id}`);
+    }
+
+    // ── 17. Newsletter Subscribers ──────────────────────────────────────────
+    if (toolName === "kraviona_list_newsletter_subscribers" || toolName === "list_newsletter_subscribers") {
+      const filters = {};
+      if (args.status) filters.status = args.status;
+      const result = await listRecords("newsletter_subscriptions", {
+        page: args.page || 1,
+        limit: args.limit || 20,
+        search: args.search,
+        filters,
+        sortBy: "createdAt",
+        sortOrder: "desc",
+      });
+      return successResult({ success: true, ...result }, `Found ${result.pagination.total} newsletter subscribers`);
+    }
+
+    if (toolName === "kraviona_delete_newsletter_subscriber" || toolName === "delete_newsletter_subscriber") {
+      const deleted = await deleteRecord("newsletter_subscriptions", args.id, actor);
+      return successResult({ success: true, deleted }, `Deleted subscriber ID: ${args.id}`);
+    }
+
+    // ── 18. Media Metadata ──────────────────────────────────────────────────
+    if (toolName === "kraviona_list_media" || toolName === "list_media") {
+      const filters = {};
+      if (args.mediaType) filters.mediaType = args.mediaType;
+      const result = await listRecords("media", {
+        page: args.page || 1,
+        limit: args.limit || 20,
+        search: args.search,
+        filters,
+        sortBy: "createdAt",
+        sortOrder: "desc",
+      });
+      return successResult({ success: true, ...result }, `Found ${result.pagination.total} media assets`);
+    }
+
+    if (toolName === "kraviona_get_media" || toolName === "get_media") {
+      const media = await getRecord("media", { id: args.id });
+      return successResult({ success: true, media }, `Media: ${media.fileName || media.originalName}`);
+    }
+
+    if (toolName === "kraviona_update_media" || toolName === "update_media") {
+      const media = await updateRecord("media", args.id, args.changes, actor);
+      return successResult({ success: true, media }, `Updated media ID: ${args.id}`);
+    }
+
+    // ── 19. User Administration ─────────────────────────────────────────────
+    if (toolName === "kraviona_list_users" || toolName === "list_users") {
+      const filters = {};
+      if (args.role) filters.role = args.role;
+      if (args.isActive !== undefined) filters.isActive = args.isActive;
+      if (args.isVerified !== undefined) filters.isVerified = args.isVerified;
+      const result = await listRecords("users", {
+        page: args.page || 1,
+        limit: args.limit || 20,
+        search: args.search,
+        filters,
+        sortBy: "createdAt",
+        sortOrder: "desc",
+      });
+      return successResult({ success: true, ...result }, `Found ${result.pagination.total} users`);
+    }
+
+    if (toolName === "kraviona_get_user" || toolName === "get_user") {
+      const user = await getRecord("users", args);
+      return successResult({ success: true, user }, `User: ${user.name} (${user.email})`);
+    }
+
+    if (toolName === "kraviona_create_user" || toolName === "create_user") {
+      const user = await createRecord("users", args, actor);
+      return successResult({ success: true, user }, `Created user: ${user.name} (${user.email})`);
+    }
+
+    if (toolName === "kraviona_update_user" || toolName === "update_user") {
+      const user = await updateRecord("users", args.id, args.changes, actor);
+      return successResult({ success: true, user }, `Updated user: ${user.name}`);
+    }
+
+    if (toolName === "kraviona_delete_user" || toolName === "delete_user") {
+      const deleted = await deleteRecord("users", args.id, actor);
+      return successResult({ success: true, deleted }, `Deleted user ID: ${args.id}`);
+    }
+
+    // ── 20. Lead Updates ────────────────────────────────────────────────────
+    if (toolName === "kraviona_update_lead" || toolName === "update_lead") {
+      const lead = await updateRecord("leads", args.id, args.changes, actor);
+      return successResult({ success: true, lead }, `Updated lead: ${lead.name}`);
+    }
+
+    if (toolName === "kraviona_delete_lead" || toolName === "delete_lead") {
+      const deleted = await deleteRecord("leads", args.id, actor);
+      return successResult({ success: true, deleted }, `Deleted lead ID: ${args.id}`);
+    }
+
+    // ── 21. Activity Logs ───────────────────────────────────────────────────
+    if (toolName === "kraviona_list_activity_logs" || toolName === "list_activity_logs") {
+      const filters = {};
+      if (args.module) filters.module = args.module;
+      if (args.action) filters.action = args.action;
+      const result = await listRecords("activity_logs", {
+        page: args.page || 1,
+        limit: args.limit || 20,
+        search: args.search,
+        filters,
+        sortBy: "createdAt",
+        sortOrder: "desc",
+      });
+      return successResult({ success: true, ...result }, `Found ${result.pagination.total} activity logs`);
     }
 
     throw new Error(`Unknown admin MCP tool: ${toolName}`);

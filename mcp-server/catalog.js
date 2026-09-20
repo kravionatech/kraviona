@@ -17,6 +17,7 @@ import { TeamMemberModel } from "../backend/src/models/team/team.model.js";
 import { RedirectModel } from "../backend/src/models/settings/redirect.model.js";
 import { ContentPlanItem } from "../backend/src/models/ContentPlanItem.js";
 import { KeywordItem } from "../backend/src/models/KeywordItem.js";
+import { CareerModel } from "../backend/src/models/Careers/career.model.js";
 
 const CRUD = ["list", "get", "create", "update", "delete"];
 const READ_ONLY = ["list", "get"];
@@ -380,6 +381,27 @@ const definitions = [
     serverManagedPaths: ["createdBy"],
     prepareCreate: (payload, actor) =>
       withActor(payload, actor, { createdBy: "createdBy" }),
+  },
+  {
+    name: "careers",
+    singular: "career",
+    model: CareerModel,
+    capabilities: CRUD,
+    autoSlug: true,
+    searchFields: ["jobTitle", "department", "summary", "skills"],
+    filterFields: [
+      "status",
+      "department",
+      "employmentType",
+      "workplaceType",
+      "isFeatured",
+      "isDeleted",
+    ],
+    projection:
+      "jobTitle slug department employmentType workplaceType location experienceLevel openings summary content responsibilities requirements niceToHave skills benefits salary application status isFeatured isDeleted order publishedAt userID createdBy createdAt updatedAt",
+    serverManagedPaths: ["userID", "createdBy"],
+    prepareCreate: (payload, actor) =>
+      withActor(payload, actor, { userID: "userID", createdBy: "createdBy" }),
   },
 ];
 

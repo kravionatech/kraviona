@@ -102,7 +102,7 @@ const requireMcpAuthorization = (serviceSession) => {
     }
 
     // 3. OAuth 2.1 Token
-    if (verifyOAuth && token) {
+    if (verifyOAuth) {
       return verifyOAuth(request, response, () => {
         const actor = request.auth?.extra?.actor;
         if (!actor) return jsonRpcError(response, 401, "Unauthorized");
@@ -117,7 +117,7 @@ const requireMcpAuthorization = (serviceSession) => {
     }
 
     response.setHeader("WWW-Authenticate", 'Bearer realm="Kraviona MCP"');
-    return jsonRpcError(response, 401, "Unauthorized: Valid Superadmin MCP Token or OAuth Bearer required");
+    return jsonRpcError(response, 401, "Unauthorized: Valid Superadmin MCP Token required");
   };
 };
 

@@ -1,4 +1,4 @@
-﻿# Dependencies
+# Dependencies
 node_modules/
 **/node_modules/
 
@@ -21,6 +21,8 @@ pnpm-debug.log*
 .env
 .env.*
 !.env.example
+.admin-session
+**/.admin-session
 
 # OS/editor
 .DS_Store
