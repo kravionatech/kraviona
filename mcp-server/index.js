@@ -7,11 +7,13 @@ export default vercelHandler;
 const isVercel = Boolean(process.env.VERCEL);
 const entryFile = process.argv[1] ? path.resolve(process.argv[1]) : "";
 const thisFile = path.resolve(fileURLToPath(import.meta.url));
+const isPm2 = Boolean(process.env.PM2_HOME || process.env.PM2_USAGE || process.env.pm_id !== undefined);
 const isDirectExecution =
-  Boolean(entryFile) &&
-  (entryFile === thisFile ||
-    entryFile.endsWith("pm2") ||
-    path.basename(entryFile) === "index.js");
+  isPm2 ||
+  (Boolean(entryFile) &&
+    (entryFile === thisFile ||
+      entryFile.includes("pm2") ||
+      path.basename(entryFile) === "index.js"));
 
 if (!isVercel && isDirectExecution) {
   try {
