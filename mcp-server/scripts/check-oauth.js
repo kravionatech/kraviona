@@ -2,6 +2,7 @@ process.env.MCP_PUBLIC_URL = "http://127.0.0.1:3333";
 process.env.MCP_TRANSPORT = "streamable-http";
 
 const { createHttpApp } = await import("../http.js");
+const { config } = await import("../config.js");
 
 const fail = (message) => {
   throw new Error(message);
@@ -29,11 +30,13 @@ try {
   const metadata = await metadataResponse.json();
 
   if (health.authentication !== "oauth-2.1") fail("OAuth health mode missing");
-  if (resource.resource !== "http://127.0.0.1:3333/mcp") {
-    fail("Protected resource metadata has the wrong MCP audience");
+  const expectedAudience = `${config.oauth.publicUrl}/mcp`;
+  const expectedServer = `${config.oauth.publicUrl}/`;
+  if (resource.resource !== expectedAudience) {
+    fail(`Protected resource metadata has the wrong MCP audience. Expected ${expectedAudience}, got ${resource.resource}`);
   }
-  if (!resource.authorization_servers?.includes("http://127.0.0.1:3333/")) {
-    fail("Protected resource metadata has no authorization server");
+  if (!resource.authorization_servers?.includes(expectedServer)) {
+    fail(`Protected resource metadata has no authorization server matching ${expectedServer}`);
   }
   if (!metadata.registration_endpoint || !metadata.revocation_endpoint) {
     fail("OAuth discovery must expose registration and revocation endpoints");
