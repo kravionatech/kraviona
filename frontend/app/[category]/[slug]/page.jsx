@@ -14,6 +14,7 @@ import {
   ArrowRight,
   ShieldCheck,
   CheckCircle2,
+  Zap,
 } from "lucide-react";
 import BlogEngagement from "@/components/Blog/BlogEngagement";
 import BlogDetailPage from "@/components/Blog/BlogDetails/BlogDetailPage";
@@ -364,65 +365,82 @@ export default async function PostDetailPage({ params }) {
         <JsonLd data={breadcrumbSchema} />
         <ReadingProgress />
 
-        <article className="min-h-screen bg-[#0a0f12] text-white">
+        <article className="min-h-screen bg-white text-gray-900 selection:bg-[#e84a2f] selection:text-white">
           {/* Top Editorial Nav Bar */}
-          <div className="border-b border-white/10 bg-[#060a0c]/85 backdrop-blur-md sticky top-0 z-30">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-wrap items-center justify-between gap-4">
+          <div className="border-b border-gray-200/80 bg-white/95 backdrop-blur-md sticky top-0 z-30 shadow-xs">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-wrap items-center justify-between gap-4">
               <div className="flex items-center gap-3">
                 <Link
                   href="/news"
-                  className="inline-flex items-center gap-1.5 text-xs font-bold text-white/70 hover:text-white transition-colors"
+                  className="inline-flex items-center gap-1.5 text-xs font-bold text-gray-600 hover:text-[#e84a2f] transition-colors"
                 >
                   <ArrowLeft size={14} />
                   <span>All Tech News</span>
                 </Link>
-                <span className="text-white/20">|</span>
-                <span className="inline-flex items-center gap-1.5 bg-[#e84a2f]/20 text-[#e84a2f] border border-[#e84a2f]/40 text-[10px] font-black uppercase tracking-widest px-2.5 py-0.5 rounded-full">
+                <span className="text-gray-300">|</span>
+                <span className="inline-flex items-center gap-1.5 bg-red-50 text-[#e84a2f] border border-red-200 text-[10px] font-black uppercase tracking-widest px-2.5 py-0.5 rounded-full">
                   <span className="h-1.5 w-1.5 rounded-full bg-[#e84a2f] animate-pulse" />
-                  Live Dispatch
+                  Live Tech Dispatch
+                </span>
+                <span className="hidden sm:inline text-gray-300">•</span>
+                <span className="hidden sm:inline text-xs font-semibold text-gray-500">
+                  {post.category?.name || "Technology"}
                 </span>
               </div>
 
-              <SocialShareButtons url={postCanonical} title={post.title} dark={true} />
+              <div className="flex items-center gap-3">
+                <SocialShareButtons url={postCanonical} title={post.title} dark={false} />
+              </div>
             </div>
           </div>
 
           {/* News Hero Header */}
-          <header className="max-w-5xl mx-auto px-4 sm:px-6 pt-12 pb-8">
+          <header className="max-w-5xl mx-auto px-4 sm:px-6 pt-10 pb-6">
+            {/* Category, Date & Meta Badges */}
             <div className="flex flex-wrap items-center gap-2.5 mb-5">
               <Link
                 href={`/news?category=${canonicalCategory}`}
-                className="inline-flex items-center gap-1.5 bg-[#e84a2f] text-white text-xs font-black uppercase tracking-wider px-3.5 py-1 rounded-full shadow-md shadow-[#e84a2f]/20 hover:bg-[#d43d23] transition-colors"
+                className="inline-flex items-center gap-1.5 bg-[#e84a2f] text-white text-xs font-black uppercase tracking-wider px-3.5 py-1 rounded-md shadow-sm hover:bg-[#d43d23] transition-colors"
               >
                 <Tag size={11} />
                 {post.category?.name || "Tech News"}
               </Link>
-              <span className="text-white/30 text-xs">•</span>
-              <span className="inline-flex items-center gap-1.5 text-xs text-white/70 font-medium">
+              <span className="text-gray-300 text-xs">•</span>
+              <span className="inline-flex items-center gap-1.5 text-xs text-gray-600 font-medium">
                 <CalendarDays size={13} className="text-[#e84a2f]" />
                 {publishedDate}
               </span>
-              <span className="text-white/30 text-xs">•</span>
-              <span className="inline-flex items-center gap-1.5 text-xs text-white/70 font-medium">
+              <span className="text-gray-300 text-xs">•</span>
+              <span className="inline-flex items-center gap-1.5 text-xs text-gray-600 font-medium">
                 <Clock size={13} className="text-[#e84a2f]" />
                 {readingTime}
               </span>
+              {updatedDate && (
+                <>
+                  <span className="text-gray-300 text-xs">•</span>
+                  <span className="inline-flex items-center gap-1 text-[11px] bg-gray-100 text-gray-600 px-2 py-0.5 rounded font-medium">
+                    Updated: {updatedDate}
+                  </span>
+                </>
+              )}
             </div>
 
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tight leading-[1.12] text-white mb-6">
+            {/* Main Headline */}
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[2.75rem] font-black tracking-tight leading-[1.16] text-[#0f172a] mb-6">
               {post.title}
             </h1>
 
+            {/* Editorial Deck / Excerpt */}
             {post.excerpt && (
-              <p className="text-lg sm:text-xl text-white/80 leading-relaxed font-normal mb-8 border-l-3 border-[#e84a2f] pl-5 bg-white/3 py-2 rounded-r-xl">
+              <p className="text-lg sm:text-xl text-gray-700 leading-relaxed font-normal mb-8 border-l-4 border-[#e84a2f] pl-5 bg-gradient-to-r from-orange-50/70 via-orange-50/20 to-transparent py-2.5 rounded-r-xl">
                 {plainText(post.excerpt)}
               </p>
             )}
 
-            {/* Author Byline */}
-            <div className="flex flex-wrap items-center justify-between gap-4 border-t border-b border-white/10 py-4 mb-8">
-              <div className="flex items-center gap-3">
-                <div className="w-11 h-11 rounded-full overflow-hidden bg-white/10 flex-shrink-0 relative border border-[#e84a2f]/40">
+            {/* Author Byline & Social Bar */}
+            <div className="flex flex-wrap items-center justify-between gap-4 border-t border-b border-gray-200 py-4 mb-8">
+              <div className="flex items-center gap-3.5">
+                <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-100 flex-shrink-0 relative border-2 border-red-100 shadow-sm">
                   {authorProfile.avatar ? (
                     <Image
                       src={authorProfile.avatar}
@@ -431,46 +449,54 @@ export default async function PostDetailPage({ params }) {
                       className="object-cover"
                     />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center text-white/60 text-sm font-bold">
+                    <div className="w-full h-full flex items-center justify-center text-gray-400 text-base font-bold">
                       {authorProfile.name.charAt(0)}
                     </div>
                   )}
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
-                    <p className="text-sm font-bold text-white">{authorProfile.name}</p>
-                    <span className="text-[10px] bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-1.5 py-0.2 rounded font-bold">
-                      Staff Report
+                    <p className="text-sm sm:text-base font-bold text-gray-900">{authorProfile.name}</p>
+                    <span className="text-[10px] bg-red-50 text-red-700 border border-red-200 px-2 py-0.5 rounded-full font-bold">
+                      Senior Tech Desk
                     </span>
                   </div>
-                  <p className="text-xs text-white/60">{authorProfile.role}</p>
+                  <p className="text-xs text-gray-500">{authorProfile.role}</p>
                 </div>
               </div>
 
-              {authorProfile.linkedin && (
-                <a
-                  href={authorProfile.linkedin}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 rounded-full bg-white/5 border border-white/10 px-3 py-1 text-xs text-white/70 hover:text-white hover:bg-white/10 transition-colors"
-                >
-                  <Linkedin size={13} className="text-[#0077b5]" />
-                  <span>Connect with Author</span>
-                </a>
-              )}
+              <div className="flex items-center gap-2.5">
+                {authorProfile.linkedin && (
+                  <a
+                    href={authorProfile.linkedin}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 rounded-full bg-gray-50 border border-gray-200 px-3.5 py-1.5 text-xs text-gray-700 font-semibold hover:border-gray-300 hover:bg-gray-100 transition-colors"
+                  >
+                    <Linkedin size={13} className="text-[#0077b5]" />
+                    <span>Author Profile</span>
+                  </a>
+                )}
+              </div>
             </div>
 
-            {/* Featured Image */}
+            {/* Hero Image */}
             {featuredImageUrl && (
-              <div className="relative aspect-[16/9] w-full rounded-3xl overflow-hidden mb-8 shadow-2xl border border-white/10">
-                <Image
-                  src={featuredImageUrl}
-                  alt={featuredImageAlt || post.title}
-                  fill
-                  priority
-                  sizes="(max-width: 1024px) 100vw, 1024px"
-                  className="object-cover"
-                />
+              <div className="mb-8">
+                <div className="relative aspect-[16/9] w-full rounded-2xl overflow-hidden shadow-md border border-gray-200 bg-gray-100">
+                  <Image
+                    src={featuredImageUrl}
+                    alt={featuredImageAlt || post.title}
+                    fill
+                    priority
+                    sizes="(max-width: 1024px) 100vw, 1024px"
+                    className="object-cover"
+                  />
+                </div>
+                <div className="flex items-center justify-between text-xs text-gray-500 italic mt-2.5 px-1">
+                  <span>{featuredImageAlt || post.title}</span>
+                  <span className="text-[11px] text-gray-400 not-italic">Photo: Kraviona Editorial Wire</span>
+                </div>
               </div>
             )}
           </header>
@@ -480,16 +506,19 @@ export default async function PostDetailPage({ params }) {
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
               {/* Left: Article Body */}
               <main className="lg:col-span-8">
-                {/* Key Takeaways */}
+                {/* Executive Summary / Key Takeaways Box */}
                 {Array.isArray(post.keyTakeaways) && post.keyTakeaways.length > 0 && (
-                  <div className="bg-[#142024] rounded-2xl border border-[#2a4a52] p-6 mb-10 shadow-lg">
-                    <p className="text-xs font-black uppercase tracking-widest text-[#e84a2f] mb-3">
-                      Executive Summary & Key Takeaways
-                    </p>
+                  <div className="bg-gradient-to-br from-[#fcfbf9] to-slate-50 rounded-2xl border border-gray-200/90 p-6 sm:p-7 mb-10 shadow-sm">
+                    <div className="flex items-center gap-2 mb-3 text-[#e84a2f]">
+                      <Zap size={16} className="fill-current" />
+                      <p className="text-xs font-black uppercase tracking-widest text-[#e84a2f]">
+                        The Big Picture • Key Facts
+                      </p>
+                    </div>
                     <ul className="space-y-3">
                       {post.keyTakeaways.map((point, i) => (
-                        <li key={i} className="flex items-start gap-3 text-sm sm:text-base text-white/85">
-                          <CheckCircle2 size={16} className="text-[#e84a2f] shrink-0 mt-0.5" />
+                        <li key={i} className="flex items-start gap-3 text-sm sm:text-base text-gray-800 leading-relaxed font-medium">
+                          <CheckCircle2 size={18} className="text-[#e84a2f] shrink-0 mt-0.5" />
                           <span>{point}</span>
                         </li>
                       ))}
@@ -497,33 +526,34 @@ export default async function PostDetailPage({ params }) {
                   </div>
                 )}
 
-                {/* Rich HTML Content */}
+                {/* Rich HTML Content (Light Prose) */}
                 <div
                   className="
-                    news-content prose prose-invert prose-lg max-w-none text-white/90 text-base sm:text-lg leading-relaxed space-y-6
-                    prose-headings:font-black prose-headings:text-white prose-headings:tracking-tight
-                    prose-h2:mt-12 prose-h2:mb-4 prose-h2:border-b prose-h2:border-white/10 prose-h2:pb-3 prose-h2:text-2xl md:prose-h2:text-3xl
-                    prose-h3:mt-8 prose-h3:mb-3 prose-h3:text-xl prose-h3:text-[#e84a2f]
-                    prose-a:text-[#e84a2f] prose-a:font-semibold hover:prose-a:underline
-                    prose-strong:text-white prose-strong:font-black
-                    prose-code:text-[#e84a2f] prose-code:bg-white/10 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm prose-code:font-mono
-                    prose-pre:overflow-x-auto prose-pre:rounded-2xl prose-pre:bg-[#142024] prose-pre:p-6 prose-pre:text-gray-100 prose-pre:border prose-pre:border-white/10
-                    prose-blockquote:rounded-r-2xl prose-blockquote:border-l-4 prose-blockquote:border-[#e84a2f] prose-blockquote:bg-white/5 prose-blockquote:py-4 prose-blockquote:pl-6 prose-blockquote:pr-6 prose-blockquote:text-white/80
-                    prose-img:rounded-2xl prose-img:border prose-img:border-white/10 prose-img:shadow-xl
+                    news-content prose prose-slate prose-lg max-w-none text-gray-800 text-base sm:text-lg leading-relaxed space-y-6
+                    prose-headings:font-bold prose-headings:text-[#0f172a] prose-headings:tracking-tight
+                    prose-h2:mt-12 prose-h2:mb-4 prose-h2:border-b prose-h2:border-gray-200 prose-h2:pb-3 prose-h2:text-2xl md:prose-h2:text-3xl
+                    prose-h3:mt-8 prose-h3:mb-3 prose-h3:text-xl prose-h3:text-[#0f172a]
+                    prose-p:text-gray-700 prose-p:leading-relaxed
+                    prose-a:text-[#e84a2f] prose-a:font-semibold hover:prose-a:underline hover:prose-a:text-[#c43820]
+                    prose-strong:text-gray-900 prose-strong:font-bold
+                    prose-code:text-[#e84a2f] prose-code:bg-orange-50 prose-code:border prose-code:border-orange-100 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm prose-code:font-mono
+                    prose-pre:overflow-x-auto prose-pre:rounded-2xl prose-pre:bg-[#0f172a] prose-pre:p-6 prose-pre:text-gray-100 prose-pre:border prose-pre:border-gray-800
+                    prose-blockquote:rounded-r-2xl prose-blockquote:border-l-4 prose-blockquote:border-[#e84a2f] prose-blockquote:bg-orange-50/40 prose-blockquote:py-4 prose-blockquote:pl-6 prose-blockquote:pr-6 prose-blockquote:text-gray-800 prose-blockquote:italic
+                    prose-img:rounded-2xl prose-img:border prose-img:border-gray-200 prose-img:shadow-md
                   "
                   dangerouslySetInnerHTML={{ __html: post.content }}
                 />
 
                 {/* Tags */}
                 {articleTags.length > 0 && (
-                  <div className="mt-12 pt-6 border-t border-white/10 flex flex-wrap gap-2 items-center">
-                    <span className="text-xs text-white/50 font-black uppercase tracking-wider mr-2">
-                      Tagged:
+                  <div className="mt-12 pt-6 border-t border-gray-200 flex flex-wrap gap-2 items-center">
+                    <span className="text-xs text-gray-400 font-bold uppercase tracking-wider mr-2">
+                      Topic Tags:
                     </span>
                     {articleTags.map((tag) => (
                       <span
                         key={tag}
-                        className="text-xs font-semibold bg-white/5 border border-white/10 text-white/80 px-3 py-1 rounded-full hover:border-[#e84a2f]/50 transition-colors"
+                        className="text-xs font-semibold bg-gray-100 border border-gray-200 text-gray-700 px-3.5 py-1 rounded-full hover:border-[#e84a2f]/50 hover:text-[#e84a2f] hover:bg-orange-50/50 transition-colors"
                       >
                         #{tag}
                       </span>
@@ -531,64 +561,95 @@ export default async function PostDetailPage({ params }) {
                   </div>
                 )}
 
-                {/* In-article Service Callout */}
-                <div className="my-12 rounded-2xl border border-[#e84a2f]/30 bg-gradient-to-r from-[#17252a] via-[#1f353d] to-[#122026] p-6 sm:p-8 text-white shadow-xl">
+                {/* In-article Newsroom Service Callout Banner */}
+                <div className="my-12 rounded-2xl border border-orange-200 bg-gradient-to-br from-orange-50/80 via-white to-orange-50/30 p-6 sm:p-8 text-gray-900 shadow-sm">
                   <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5">
-                    <div className="space-y-1">
-                      <span className="text-[10px] font-black uppercase tracking-widest text-[#e84a2f] bg-[#e84a2f]/20 border border-[#e84a2f]/40 px-2 py-0.5 rounded-full">
-                        Enterprise Engineering
+                    <div className="space-y-1.5">
+                      <span className="inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-[#e84a2f] bg-[#e84a2f]/10 border border-[#e84a2f]/20 px-2.5 py-0.5 rounded-full">
+                        <Sparkles size={11} />
+                        Kraviona Enterprise Tech Wire
                       </span>
-                      <h3 className="text-lg sm:text-xl font-black text-white">
-                        Implementing AI or Web Technologies at Scale?
+                      <h3 className="text-lg sm:text-xl font-black text-gray-900">
+                        Implementing Next-Gen Web Systems or Custom AI?
                       </h3>
-                      <p className="text-xs sm:text-sm text-white/70 max-w-lg">
-                        Kraviona builds custom full-stack web applications, technical SEO engines, and automated AI agents.
+                      <p className="text-xs sm:text-sm text-gray-600 max-w-lg leading-relaxed">
+                        Kraviona engineers production Next.js & MERN stack architectures, fixes technical SEO at scale, and builds custom autonomous AI workflows for tech companies.
                       </p>
                     </div>
-                    <Link
-                      href="/services"
-                      className="shrink-0 inline-flex items-center gap-2 rounded-xl bg-[#e84a2f] px-4 py-2.5 text-xs font-black uppercase tracking-wider text-white shadow-lg hover:bg-[#d43d23] transition-all"
-                    >
-                      <span>Explore Services</span>
-                      <ArrowRight size={13} />
-                    </Link>
+                    <div className="flex flex-wrap sm:flex-col gap-2 shrink-0 w-full sm:w-auto">
+                      <Link
+                        href="/services"
+                        className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#e84a2f] px-4 py-2.5 text-xs font-black uppercase tracking-wider text-white shadow-md hover:bg-[#d43d23] transition-all"
+                      >
+                        <span>Explore Services</span>
+                        <ArrowRight size={13} />
+                      </Link>
+                      <Link
+                        href="/contact"
+                        className="inline-flex items-center justify-center gap-2 rounded-xl bg-white border border-gray-200 px-4 py-2 text-xs font-bold text-gray-700 hover:bg-gray-50 transition-colors"
+                      >
+                        <span>Book Consultation</span>
+                      </Link>
+                    </div>
                   </div>
                 </div>
 
+                {/* Editorial Standards & Fact Check Disclosure */}
+                <div className="rounded-2xl border border-gray-200 bg-gray-50/80 p-5 my-8 flex items-start gap-3.5 text-xs text-gray-600">
+                  <ShieldCheck size={20} className="text-emerald-600 shrink-0 mt-0.5" />
+                  <div>
+                    <p className="font-bold text-gray-800 uppercase tracking-wider text-[11px] mb-0.5">
+                      Editorial Integrity & Verification Standards
+                    </p>
+                    <p className="leading-relaxed text-gray-500">
+                      Dispatches on Kraviona Tech News undergo multi-tier editorial and engineering review to ensure factual correctness, technical accuracy, and source integrity.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Bottom Social Share Bar */}
+                <div className="p-4 rounded-xl bg-gray-50 border border-gray-200/80 flex flex-wrap items-center justify-between gap-4">
+                  <span className="text-xs font-bold text-gray-600">
+                    Share this tech dispatch with your network:
+                  </span>
+                  <SocialShareButtons url={postCanonical} title={post.title} dark={false} />
+                </div>
+
                 {/* Live Engagement Section */}
-                <div className="mt-12 pt-8 border-t border-white/10">
+                <div className="mt-12 pt-8 border-t border-gray-200">
                   <BlogEngagement blog={post} />
                 </div>
               </main>
 
-              {/* Right: Sticky Sidebar with Services & Leads */}
+              {/* Right: Sticky Sidebar with Services & Leads (LIGHT THEME) */}
               <aside className="lg:col-span-4 lg:sticky lg:top-20">
-                <BlogSidebar post={post} relatedPosts={relatedPosts} dark={true} />
+                <BlogSidebar post={post} relatedPosts={relatedPosts} dark={false} />
               </aside>
             </div>
           </div>
 
-          {/* Full-Width Services Showcase Section */}
-          <ServicesShowcaseSection dark={true} />
+          {/* Full-Width Services Showcase Section (LIGHT THEME) */}
+          <ServicesShowcaseSection dark={false} />
 
-          {/* Related News Section */}
+          {/* Related News Section (LIGHT THEME) */}
           {relatedPosts.length > 0 && (
-            <section className="border-t border-white/10 bg-[#060a0c] py-16">
+            <section className="border-t border-gray-200 bg-[#f8fafc] py-16">
               <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex items-center justify-between mb-8">
                   <div>
                     <p className="text-xs font-black uppercase tracking-widest text-[#e84a2f]">
-                      Keep Reading
+                      Keep Reading • Kraviona Tech Wire
                     </p>
-                    <h2 className="text-2xl sm:text-3xl font-black text-white mt-1">
+                    <h2 className="text-2xl sm:text-3xl font-black text-gray-900 mt-1">
                       Related Tech Dispatches
                     </h2>
                   </div>
                   <Link
                     href="/news"
-                    className="text-xs font-bold text-white/70 hover:text-white transition-colors"
+                    className="inline-flex items-center gap-1 text-xs font-bold text-[#e84a2f] hover:text-[#d43d23] transition-colors"
                   >
-                    View all news →
+                    <span>View all news</span>
+                    <ArrowRight size={13} />
                   </Link>
                 </div>
 
