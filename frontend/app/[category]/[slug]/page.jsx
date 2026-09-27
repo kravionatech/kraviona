@@ -1,21 +1,25 @@
 import { notFound, permanentRedirect } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import Script from "next/script";
 import {
   CalendarDays,
   Clock,
   Eye,
   Linkedin,
   Mail,
-  UserRound,
   ArrowLeft,
   Newspaper,
   Tag,
-  Share2,
+  Sparkles,
+  ArrowRight,
+  ShieldCheck,
+  CheckCircle2,
 } from "lucide-react";
 import BlogEngagement from "@/components/Blog/BlogEngagement";
 import BlogDetailPage from "@/components/Blog/BlogDetails/BlogDetailPage";
+import BlogSidebar from "@/components/Blog/BlogSidebar";
+import ServicesShowcaseSection from "@/components/Blog/ServicesShowcaseSection";
+import SocialShareButtons from "@/components/Blog/SocialShareButtons";
 import PostCard from "@/components/Card/PostCard";
 import NewsCard from "@/components/News/NewsCard";
 import ReadingProgress from "@/components/Blog/ReadingProgress";
@@ -41,39 +45,6 @@ import { getAuthorAvatar } from "@/lib/utils/imageUrl";
 export const revalidate = 3600;
 export const dynamicParams = true;
 
-const SERVICE_LINKS = {
-  default: [
-    {
-      href: "/services/full-stack-development",
-      label: "Full-stack web development services",
-    },
-    {
-      href: "/services/react-development",
-      label: "React and Next.js development services",
-    },
-  ],
-  seo: [
-    {
-      href: "/services/technical-seo",
-      label: "Technical SEO services",
-    },
-    {
-      href: "/services/web-performance-optimization",
-      label: "Web performance optimization services",
-    },
-  ],
-  ai: [
-    {
-      href: "/services/ai-automation",
-      label: "AI workflow automation services",
-    },
-    {
-      href: "/services/ai-chatbot-development",
-      label: "AI chatbot development services",
-    },
-  ],
-};
-
 const plainText = (value = "") =>
   String(value)
     .replace(/<[^>]*>?/gm, "")
@@ -98,50 +69,53 @@ function getArticleSchemaType(blog) {
     searchable.includes("guide") ||
     searchable.includes("setup") ||
     searchable.includes("architecture") ||
-    searchable.includes("code")
+    searchable.includes("tutorial") ||
+    searchable.includes("benchmark")
   ) {
     return "TechArticle";
   }
 
-  return "BlogPosting";
+  return "Article";
 }
 
 function getAuthorProfile(blog) {
   const author = blog?.author || {};
-  const account =
-    blog?.userID && typeof blog.userID === "object" ? blog.userID : {};
+  const account = blog?.userID && typeof blog.userID === "object" ? blog.userID : {};
   const profile = account.profile || {};
-  const socialLinks = Array.isArray(profile.socialLinks)
-    ? profile.socialLinks
-    : [];
-
+  const sameAsList = Array.isArray(author.sameAs) ? author.sameAs : [];
   const socialUrl = (platform) =>
-    socialLinks.find((link) =>
+    sameAsList.find((link) =>
+      String(link?.url || link || "")
+        .toLowerCase()
+        .includes(platform),
+    ) ||
+    (Array.isArray(profile.socialLinks) ? profile.socialLinks : []).find((link) =>
       String(link?.name || "")
         .toLowerCase()
         .includes(platform),
     )?.url || "";
 
   return {
-    name: account.name || author.name || "Kraviona Team",
+    name: account.name || author.name || "Amar Kumar",
     username: account.username || author.username || "",
     role:
       profile.jobTitle ||
       author.jobTitle ||
       author.role ||
       author.title ||
-      "Senior Technical Strategist",
+      "Founder & Lead Technical Architect",
     bio:
       profile.bio ||
       author.bio ||
       author.description ||
-      "Technical insights and architectural guides from Kraviona Tech Solutions.",
+      "Full-stack MERN & Next.js engineer, Technical SEO specialist, and founder of Kraviona Tech Solutions.",
     avatar: getAuthorAvatar(
       account.avatar ||
         profile.avatar ||
         author.avatar ||
         author.image ||
-        author.profileImage,
+        author.profileImage ||
+        "/amar.jpeg",
     ),
     linkedin:
       author.linkedin ||
@@ -149,23 +123,9 @@ function getAuthorProfile(blog) {
       author.socialLinks?.linkedin ||
       profile.linkedin ||
       socialUrl("linkedin") ||
-      "https://www.linkedin.com/company/kraviona",
+      "https://www.linkedin.com/in/amarkumar96085/",
     email: account.email || author.email || "kravionatech@gmail.com",
   };
-}
-
-function getRelevantServices(blog) {
-  const category = String(
-    blog?.category?.slug || blog?.category?.name || "",
-  ).toLowerCase();
-
-  if (category.includes("seo") || category.includes("performance")) {
-    return SERVICE_LINKS.seo;
-  }
-  if (category.includes("ai") || category.includes("machine-learning")) {
-    return SERVICE_LINKS.ai;
-  }
-  return SERVICE_LINKS.default;
 }
 
 // ─── Data Fetchers ────────────────────────────────────────────────────────────
@@ -230,14 +190,14 @@ export async function generateMetadata({ params }) {
   const seoTitle =
     post.metaTitle ||
     (post.contentType === "news"
-      ? `${post.title} | Kraviona News`
+      ? `${post.title} | Kraviona Tech News`
       : `${post.title} | Kraviona Insights`);
 
   const description =
     post.metaDescription ||
     post.excerpt ||
     post.content?.replace(/<[^>]*>?/gm, "").substring(0, 160) ||
-    "Insights from Kraviona Tech Solutions.";
+    "Insights and engineering solutions from Kraviona Tech Solutions.";
 
   const featuredImageUrl = getImageUrl(post);
 
@@ -289,10 +249,7 @@ export default async function PostDetailPage({ params }) {
 
   if (!post) notFound();
 
-  // 1. Canonical Category & Slug Guard:
-  // If the URL category does not match the post's actual category slug,
-  // or if the URL slug was a legacy slug resolved via previousSlugs,
-  // issue a 301 permanent redirect to the canonical path /{canonicalCategory}/{canonicalSlug}.
+  // Canonical Category & Slug Guard (301 Permanent Redirect)
   const canonicalCategory =
     post.category?.slug || (post.contentType === "news" ? "news" : "blog");
   const canonicalSlug = post.slug || slug;
@@ -312,7 +269,7 @@ export default async function PostDetailPage({ params }) {
       const bSameCat = b.category?.slug === canonicalCategory ? 1 : 0;
       return bSameCat - aSameCat;
     })
-    .slice(0, 3);
+    .slice(0, 4);
 
   const featuredImageUrl = getImageUrl(post);
   const featuredImageAlt = getImageAlt(post);
@@ -338,7 +295,7 @@ export default async function PostDetailPage({ params }) {
   const articleTags = Array.isArray(post.tags) ? post.tags : [];
   const postCanonical = canonicalUrl(`/${canonicalCategory}/${canonicalSlug}`);
 
-  // ── News View ──────────────────────────────────────────────────────────────
+  // ── NEWS VIEW ───────────────────────────────────────────────────────────────
   if (isNews) {
     const newsArticleSchema = {
       "@context": "https://schema.org",
@@ -407,62 +364,65 @@ export default async function PostDetailPage({ params }) {
         <JsonLd data={breadcrumbSchema} />
         <ReadingProgress />
 
-        <article className="min-h-screen bg-[#0d1518] text-white">
-          {/* Top Editorial Bar */}
-          <div className="border-b border-white/10 bg-[#080d10]/80 backdrop-blur-md sticky top-0 z-30">
-            <div className="max-w-4xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
-              <Link
-                href="/news"
-                className="inline-flex items-center gap-2 text-xs font-bold text-white/60 hover:text-white transition-colors"
-              >
-                <ArrowLeft size={14} />
-                Back to News
-              </Link>
-              <div className="flex items-center gap-2">
-                <span className="inline-flex items-center gap-1 bg-[#e84a2f]/20 text-[#e84a2f] border border-[#e84a2f]/30 text-[10px] font-extrabold uppercase tracking-widest px-2.5 py-0.5 rounded-full">
-                  <Newspaper size={10} />
-                  News Report
+        <article className="min-h-screen bg-[#0a0f12] text-white">
+          {/* Top Editorial Nav Bar */}
+          <div className="border-b border-white/10 bg-[#060a0c]/85 backdrop-blur-md sticky top-0 z-30">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-wrap items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <Link
+                  href="/news"
+                  className="inline-flex items-center gap-1.5 text-xs font-bold text-white/70 hover:text-white transition-colors"
+                >
+                  <ArrowLeft size={14} />
+                  <span>All Tech News</span>
+                </Link>
+                <span className="text-white/20">|</span>
+                <span className="inline-flex items-center gap-1.5 bg-[#e84a2f]/20 text-[#e84a2f] border border-[#e84a2f]/40 text-[10px] font-black uppercase tracking-widest px-2.5 py-0.5 rounded-full">
+                  <span className="h-1.5 w-1.5 rounded-full bg-[#e84a2f] animate-pulse" />
+                  Live Dispatch
                 </span>
               </div>
+
+              <SocialShareButtons url={postCanonical} title={post.title} dark={true} />
             </div>
           </div>
 
-          {/* Article Header */}
-          <header className="max-w-4xl mx-auto px-4 sm:px-6 pt-10 pb-8">
-            <div className="flex flex-wrap items-center gap-2 mb-4">
+          {/* News Hero Header */}
+          <header className="max-w-5xl mx-auto px-4 sm:px-6 pt-12 pb-8">
+            <div className="flex flex-wrap items-center gap-2.5 mb-5">
               <Link
                 href={`/news?category=${canonicalCategory}`}
-                className="inline-flex items-center gap-1 bg-[#e84a2f] text-white text-[11px] font-black uppercase tracking-wider px-3 py-1 rounded-full hover:bg-[#d43d23] transition-colors"
+                className="inline-flex items-center gap-1.5 bg-[#e84a2f] text-white text-xs font-black uppercase tracking-wider px-3.5 py-1 rounded-full shadow-md shadow-[#e84a2f]/20 hover:bg-[#d43d23] transition-colors"
               >
-                <Tag size={10} />
-                {post.category?.name || "News"}
+                <Tag size={11} />
+                {post.category?.name || "Tech News"}
               </Link>
-              <span className="text-white/40 text-xs">•</span>
-              <span className="inline-flex items-center gap-1.5 text-xs text-white/60 font-medium">
-                <CalendarDays size={12} className="text-[#e84a2f]" />
+              <span className="text-white/30 text-xs">•</span>
+              <span className="inline-flex items-center gap-1.5 text-xs text-white/70 font-medium">
+                <CalendarDays size={13} className="text-[#e84a2f]" />
                 {publishedDate}
               </span>
-              <span className="text-white/40 text-xs">•</span>
-              <span className="inline-flex items-center gap-1.5 text-xs text-white/60 font-medium">
-                <Clock size={12} className="text-[#e84a2f]" />
+              <span className="text-white/30 text-xs">•</span>
+              <span className="inline-flex items-center gap-1.5 text-xs text-white/70 font-medium">
+                <Clock size={13} className="text-[#e84a2f]" />
                 {readingTime}
               </span>
             </div>
 
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight leading-tight text-white mb-6">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tight leading-[1.12] text-white mb-6">
               {post.title}
             </h1>
 
             {post.excerpt && (
-              <p className="text-lg sm:text-xl text-white/70 leading-relaxed font-normal mb-8 border-l-2 border-[#e84a2f] pl-4">
+              <p className="text-lg sm:text-xl text-white/80 leading-relaxed font-normal mb-8 border-l-3 border-[#e84a2f] pl-5 bg-white/3 py-2 rounded-r-xl">
                 {plainText(post.excerpt)}
               </p>
             )}
 
             {/* Author Byline */}
-            <div className="flex items-center justify-between border-t border-b border-white/10 py-4 mb-8">
+            <div className="flex flex-wrap items-center justify-between gap-4 border-t border-b border-white/10 py-4 mb-8">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full overflow-hidden bg-white/10 flex-shrink-0 relative">
+                <div className="w-11 h-11 rounded-full overflow-hidden bg-white/10 flex-shrink-0 relative border border-[#e84a2f]/40">
                   {authorProfile.avatar ? (
                     <Image
                       src={authorProfile.avatar}
@@ -471,104 +431,169 @@ export default async function PostDetailPage({ params }) {
                       className="object-cover"
                     />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center text-white/50 text-sm font-bold">
+                    <div className="w-full h-full flex items-center justify-center text-white/60 text-sm font-bold">
                       {authorProfile.name.charAt(0)}
                     </div>
                   )}
                 </div>
                 <div>
-                  <p className="text-sm font-bold text-white">{authorProfile.name}</p>
-                  <p className="text-xs text-white/50">{authorProfile.role}</p>
+                  <div className="flex items-center gap-2">
+                    <p className="text-sm font-bold text-white">{authorProfile.name}</p>
+                    <span className="text-[10px] bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-1.5 py-0.2 rounded font-bold">
+                      Staff Report
+                    </span>
+                  </div>
+                  <p className="text-xs text-white/60">{authorProfile.role}</p>
                 </div>
               </div>
+
+              {authorProfile.linkedin && (
+                <a
+                  href={authorProfile.linkedin}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 rounded-full bg-white/5 border border-white/10 px-3 py-1 text-xs text-white/70 hover:text-white hover:bg-white/10 transition-colors"
+                >
+                  <Linkedin size={13} className="text-[#0077b5]" />
+                  <span>Connect with Author</span>
+                </a>
+              )}
             </div>
 
             {/* Featured Image */}
             {featuredImageUrl && (
-              <div className="relative aspect-[16/9] w-full rounded-2xl overflow-hidden mb-10 shadow-2xl border border-white/10">
+              <div className="relative aspect-[16/9] w-full rounded-3xl overflow-hidden mb-8 shadow-2xl border border-white/10">
                 <Image
                   src={featuredImageUrl}
                   alt={featuredImageAlt || post.title}
                   fill
                   priority
-                  sizes="(max-width: 896px) 100vw, 896px"
+                  sizes="(max-width: 1024px) 100vw, 1024px"
                   className="object-cover"
                 />
               </div>
             )}
           </header>
 
-          {/* Article Body */}
-          <main className="max-w-3xl mx-auto px-4 sm:px-6 pb-16">
-            {/* Key Takeaways */}
-            {Array.isArray(post.keyTakeaways) && post.keyTakeaways.length > 0 && (
-              <div className="bg-[#142024] rounded-2xl border border-[#2a4a52] p-6 mb-10">
-                <p className="text-xs font-black uppercase tracking-widest text-[#e84a2f] mb-3">
-                  Key Takeaways
-                </p>
-                <ul className="space-y-2">
-                  {post.keyTakeaways.map((point, i) => (
-                    <li key={i} className="flex items-start gap-2.5 text-sm text-white/80">
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#e84a2f] mt-2 flex-shrink-0" />
-                      {point}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
+          {/* 2-Column Grid: Main Content + Sticky Sidebar */}
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+              {/* Left: Article Body */}
+              <main className="lg:col-span-8">
+                {/* Key Takeaways */}
+                {Array.isArray(post.keyTakeaways) && post.keyTakeaways.length > 0 && (
+                  <div className="bg-[#142024] rounded-2xl border border-[#2a4a52] p-6 mb-10 shadow-lg">
+                    <p className="text-xs font-black uppercase tracking-widest text-[#e84a2f] mb-3">
+                      Executive Summary & Key Takeaways
+                    </p>
+                    <ul className="space-y-3">
+                      {post.keyTakeaways.map((point, i) => (
+                        <li key={i} className="flex items-start gap-3 text-sm sm:text-base text-white/85">
+                          <CheckCircle2 size={16} className="text-[#e84a2f] shrink-0 mt-0.5" />
+                          <span>{point}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
 
-            {/* Rich HTML Content */}
-            <div
-              className="news-content prose prose-invert max-w-none text-white/85 text-base sm:text-lg leading-relaxed space-y-6"
-              dangerouslySetInnerHTML={{ __html: post.content }}
-            />
+                {/* Rich HTML Content */}
+                <div
+                  className="
+                    news-content prose prose-invert prose-lg max-w-none text-white/90 text-base sm:text-lg leading-relaxed space-y-6
+                    prose-headings:font-black prose-headings:text-white prose-headings:tracking-tight
+                    prose-h2:mt-12 prose-h2:mb-4 prose-h2:border-b prose-h2:border-white/10 prose-h2:pb-3 prose-h2:text-2xl md:prose-h2:text-3xl
+                    prose-h3:mt-8 prose-h3:mb-3 prose-h3:text-xl prose-h3:text-[#e84a2f]
+                    prose-a:text-[#e84a2f] prose-a:font-semibold hover:prose-a:underline
+                    prose-strong:text-white prose-strong:font-black
+                    prose-code:text-[#e84a2f] prose-code:bg-white/10 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm prose-code:font-mono
+                    prose-pre:overflow-x-auto prose-pre:rounded-2xl prose-pre:bg-[#142024] prose-pre:p-6 prose-pre:text-gray-100 prose-pre:border prose-pre:border-white/10
+                    prose-blockquote:rounded-r-2xl prose-blockquote:border-l-4 prose-blockquote:border-[#e84a2f] prose-blockquote:bg-white/5 prose-blockquote:py-4 prose-blockquote:pl-6 prose-blockquote:pr-6 prose-blockquote:text-white/80
+                    prose-img:rounded-2xl prose-img:border prose-img:border-white/10 prose-img:shadow-xl
+                  "
+                  dangerouslySetInnerHTML={{ __html: post.content }}
+                />
 
-            {/* Tags */}
-            {articleTags.length > 0 && (
-              <div className="mt-10 pt-6 border-t border-white/10 flex flex-wrap gap-2 items-center">
-                <span className="text-xs text-white/40 font-bold uppercase tracking-wider mr-2">
-                  Tags:
-                </span>
-                {articleTags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="text-xs font-semibold bg-white/5 border border-white/10 text-white/70 px-3 py-1 rounded-full"
-                  >
-                    #{tag}
-                  </span>
-                ))}
-              </div>
-            )}
+                {/* Tags */}
+                {articleTags.length > 0 && (
+                  <div className="mt-12 pt-6 border-t border-white/10 flex flex-wrap gap-2 items-center">
+                    <span className="text-xs text-white/50 font-black uppercase tracking-wider mr-2">
+                      Tagged:
+                    </span>
+                    {articleTags.map((tag) => (
+                      <span
+                        key={tag}
+                        className="text-xs font-semibold bg-white/5 border border-white/10 text-white/80 px-3 py-1 rounded-full hover:border-[#e84a2f]/50 transition-colors"
+                      >
+                        #{tag}
+                      </span>
+                    ))}
+                  </div>
+                )}
 
-            {/* Live Engagement Section */}
-            <div className="mt-10 pt-8 border-t border-white/10">
-              <BlogEngagement blog={post} />
+                {/* In-article Service Callout */}
+                <div className="my-12 rounded-2xl border border-[#e84a2f]/30 bg-gradient-to-r from-[#17252a] via-[#1f353d] to-[#122026] p-6 sm:p-8 text-white shadow-xl">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5">
+                    <div className="space-y-1">
+                      <span className="text-[10px] font-black uppercase tracking-widest text-[#e84a2f] bg-[#e84a2f]/20 border border-[#e84a2f]/40 px-2 py-0.5 rounded-full">
+                        Enterprise Engineering
+                      </span>
+                      <h3 className="text-lg sm:text-xl font-black text-white">
+                        Implementing AI or Web Technologies at Scale?
+                      </h3>
+                      <p className="text-xs sm:text-sm text-white/70 max-w-lg">
+                        Kraviona builds custom full-stack web applications, technical SEO engines, and automated AI agents.
+                      </p>
+                    </div>
+                    <Link
+                      href="/services"
+                      className="shrink-0 inline-flex items-center gap-2 rounded-xl bg-[#e84a2f] px-4 py-2.5 text-xs font-black uppercase tracking-wider text-white shadow-lg hover:bg-[#d43d23] transition-all"
+                    >
+                      <span>Explore Services</span>
+                      <ArrowRight size={13} />
+                    </Link>
+                  </div>
+                </div>
+
+                {/* Live Engagement Section */}
+                <div className="mt-12 pt-8 border-t border-white/10">
+                  <BlogEngagement blog={post} />
+                </div>
+              </main>
+
+              {/* Right: Sticky Sidebar with Services & Leads */}
+              <aside className="lg:col-span-4 lg:sticky lg:top-20">
+                <BlogSidebar post={post} relatedPosts={relatedPosts} dark={true} />
+              </aside>
             </div>
-          </main>
+          </div>
 
-          {/* Related News */}
+          {/* Full-Width Services Showcase Section */}
+          <ServicesShowcaseSection dark={true} />
+
+          {/* Related News Section */}
           {relatedPosts.length > 0 && (
-            <section className="border-t border-white/10 bg-[#080d10] py-16">
-              <div className="max-w-6xl mx-auto px-4 sm:px-6">
+            <section className="border-t border-white/10 bg-[#060a0c] py-16">
+              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex items-center justify-between mb-8">
                   <div>
                     <p className="text-xs font-black uppercase tracking-widest text-[#e84a2f]">
                       Keep Reading
                     </p>
-                    <h2 className="text-2xl font-black text-white mt-1">
-                      Related Tech News
+                    <h2 className="text-2xl sm:text-3xl font-black text-white mt-1">
+                      Related Tech Dispatches
                     </h2>
                   </div>
                   <Link
                     href="/news"
-                    className="text-xs font-bold text-white/60 hover:text-white transition-colors"
+                    className="text-xs font-bold text-white/70 hover:text-white transition-colors"
                   >
                     View all news →
                   </Link>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  {relatedPosts.map((item) => (
+                  {relatedPosts.slice(0, 3).map((item) => (
                     <NewsCard key={item.slug} post={item} />
                   ))}
                 </div>
@@ -580,7 +605,7 @@ export default async function PostDetailPage({ params }) {
     );
   }
 
-  // ── Blog View ──────────────────────────────────────────────────────────────
+  // ── BLOG / IN-DEPTH ARTICLE VIEW ──────────────────────────────────────────
   const uploadedBannerImageUrl =
     typeof post.bannerImage === "string"
       ? post.bannerImage
@@ -592,10 +617,9 @@ export default async function PostDetailPage({ params }) {
     ? uploadedBannerImageAlt
     : featuredImageAlt;
 
-  const relevantServices = getRelevantServices(post);
   const bannerExcerpt =
-    cleanExcerpt(post.excerpt || post.content || "", 220) ||
-    "Fresh insights from Kraviona on modern web development, performance, SEO, and digital growth.";
+    cleanExcerpt(post.excerpt || post.content || "", 240) ||
+    "In-depth technical guides, architectural blueprints, and search performance strategies from Kraviona.";
 
   const authorSocials = [
     {
@@ -670,7 +694,6 @@ export default async function PostDetailPage({ params }) {
     },
   };
 
-  // Breadcrumb matches the actual URL: /{category}/{slug} (no /blog/ segment)
   const blogBreadcrumbs = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
@@ -703,9 +726,9 @@ export default async function PostDetailPage({ params }) {
       {faqPageSchema && <JsonLd data={normalizeStructuredData(faqPageSchema)} />}
       <ReadingProgress />
 
-      <main className="min-h-screen bg-surface">
+      <main className="min-h-screen bg-[#F7FAFA]">
         {/* Blog Hero Banner */}
-        <section className="relative overflow-hidden bg-gradient-to-br from-primary via-primary-dark to-[#09353a] px-4 pb-14 pt-12 text-white sm:px-6 sm:pb-16 sm:pt-14 lg:px-8">
+        <section className="relative overflow-hidden bg-gradient-to-br from-[#1A2E33] via-[#243F45] to-[#0A2024] px-4 pb-16 pt-12 text-white sm:px-6 sm:pb-20 sm:pt-16 lg:px-8 shadow-md">
           {heroImageUrl && (
             <div className="absolute inset-0 -z-0">
               <Image
@@ -714,65 +737,69 @@ export default async function PostDetailPage({ params }) {
                 fill
                 priority
                 sizes="100vw"
-                className="object-cover opacity-20"
+                className="object-cover opacity-20 blur-[1px]"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#09353a] via-primary-dark/80 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#0A2024] via-[#1A2E33]/85 to-[#1A2E33]/90" />
             </div>
           )}
 
-          <div className="relative z-10 mx-auto max-w-5xl">
-            {/* Breadcrumb row — matches actual URL: /{category}/{slug} */}
+          <div className="relative z-10 mx-auto max-w-7xl">
+            {/* Breadcrumb Navigation */}
             <nav
               aria-label="Breadcrumb"
               className="mb-6 flex flex-wrap items-center gap-2 text-xs font-semibold text-white/70"
             >
-              <Link href="/" className="hover:text-white">
+              <Link href="/" className="hover:text-white transition-colors">
                 Home
               </Link>
-              <span>/</span>
+              <span className="text-white/40">/</span>
               <Link
                 href={`/category/${canonicalCategory}`}
-                className="hover:text-white capitalize"
+                className="hover:text-white capitalize transition-colors"
               >
                 {post.category?.name || "Category"}
               </Link>
-              <span>/</span>
-              <span className="truncate text-white/50 max-w-[200px]">
+              <span className="text-white/40">/</span>
+              <span className="truncate text-white/50 max-w-[280px]">
                 {post.title}
               </span>
             </nav>
 
-            <div className="mb-4 inline-flex items-center gap-2">
-              <Link
-                href={`/category/${canonicalCategory}`}
-                className="rounded-full bg-accent/20 border border-accent/40 px-3 py-1 text-xs font-bold uppercase tracking-wider text-accent-light hover:bg-accent/30 transition-colors"
-              >
-                {post.category?.name || "Article"}
-              </Link>
-              <span className="text-white/40 text-xs">•</span>
-              <span className="inline-flex items-center gap-1.5 text-xs text-white/70">
-                <CalendarDays size={12} className="text-accent" />
-                {publishedDate}
-              </span>
-              <span className="text-white/40 text-xs">•</span>
-              <span className="inline-flex items-center gap-1.5 text-xs text-white/70">
-                <Clock size={12} className="text-accent" />
-                {readingTime}
-              </span>
+            <div className="flex flex-wrap items-center justify-between gap-4 mb-5">
+              <div className="inline-flex flex-wrap items-center gap-2.5">
+                <Link
+                  href={`/category/${canonicalCategory}`}
+                  className="rounded-full bg-[#E8622A] px-3.5 py-1 text-xs font-black uppercase tracking-wider text-white hover:bg-[#d43d23] shadow-md shadow-[#E8622A]/20 transition-colors"
+                >
+                  {post.category?.name || "Technical Guide"}
+                </Link>
+                <span className="text-white/40 text-xs">•</span>
+                <span className="inline-flex items-center gap-1.5 text-xs text-white/80">
+                  <CalendarDays size={13} className="text-[#FF8E5C]" />
+                  {publishedDate}
+                </span>
+                <span className="text-white/40 text-xs">•</span>
+                <span className="inline-flex items-center gap-1.5 text-xs text-white/80">
+                  <Clock size={13} className="text-[#FF8E5C]" />
+                  {readingTime}
+                </span>
+              </div>
+
+              <SocialShareButtons url={postCanonical} title={post.title} dark={true} />
             </div>
 
-            <h1 className="text-3xl font-black tracking-tight sm:text-4xl md:text-5xl text-white leading-tight mb-6">
+            <h1 className="text-3xl font-black tracking-tight sm:text-4xl md:text-5xl lg:text-6xl text-white leading-[1.14] mb-6 max-w-5xl">
               {post.title}
             </h1>
 
-            <p className="text-base sm:text-lg text-white/80 leading-relaxed max-w-3xl mb-8">
+            <p className="text-base sm:text-lg lg:text-xl text-white/85 leading-relaxed max-w-3xl mb-8">
               {bannerExcerpt}
             </p>
 
-            {/* Author info */}
-            <div className="flex flex-wrap items-center justify-between gap-4 border-t border-white/15 pt-6">
-              <div className="flex items-center gap-3">
-                <div className="w-11 h-11 rounded-full overflow-hidden bg-white/10 flex-shrink-0 relative">
+            {/* Author info bar */}
+            <div className="flex flex-wrap items-center justify-between gap-4 border-t border-white/15 pt-6 max-w-5xl">
+              <div className="flex items-center gap-3.5">
+                <div className="w-12 h-12 rounded-full overflow-hidden bg-white/10 flex-shrink-0 relative border-2 border-[#E8622A]/60">
                   {authorProfile.avatar ? (
                     <Image
                       src={authorProfile.avatar}
@@ -781,14 +808,20 @@ export default async function PostDetailPage({ params }) {
                       className="object-cover"
                     />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center text-white/60 font-bold">
+                    <div className="w-full h-full flex items-center justify-center text-white font-black text-base">
                       {authorProfile.name.charAt(0)}
                     </div>
                   )}
                 </div>
                 <div>
-                  <p className="text-sm font-bold text-white">{authorProfile.name}</p>
-                  <p className="text-xs text-white/60">{authorProfile.role}</p>
+                  <div className="flex items-center gap-2">
+                    <p className="text-sm sm:text-base font-bold text-white">{authorProfile.name}</p>
+                    <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 text-[10px] font-bold">
+                      <ShieldCheck size={11} />
+                      Lead Engineer
+                    </span>
+                  </div>
+                  <p className="text-xs text-white/70">{authorProfile.role}</p>
                 </div>
               </div>
 
@@ -802,10 +835,10 @@ export default async function PostDetailPage({ params }) {
                         href={social.href}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="rounded-full bg-white/10 p-2 text-white/70 hover:bg-white/20 hover:text-white transition-colors"
+                        className="rounded-full bg-white/10 p-2.5 text-white/80 hover:bg-white/25 hover:text-white transition-colors"
                         aria-label={social.name}
                       >
-                        <Icon size={15} />
+                        <Icon size={16} />
                       </a>
                     );
                   })}
@@ -815,39 +848,64 @@ export default async function PostDetailPage({ params }) {
           </div>
         </section>
 
-        {/* Blog Article Body with Sidebar & Components */}
-        <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
-          <BlogDetailPage blog={post} />
+        {/* 2-Column Grid: Main Content + Sticky Sidebar */}
+        <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+            {/* Left: Article Body */}
+            <div className="lg:col-span-8">
+              {featuredImageUrl && (
+                <div className="relative aspect-[16/9] w-full rounded-2xl overflow-hidden mb-10 shadow-lg border border-gray-200">
+                  <Image
+                    src={featuredImageUrl}
+                    alt={featuredImageAlt || post.title}
+                    fill
+                    priority
+                    sizes="(max-width: 1024px) 100vw, 850px"
+                    className="object-cover"
+                  />
+                </div>
+              )}
+
+              <BlogDetailPage blog={post} />
+
+              <div className="mt-12 pt-8 border-t border-gray-200">
+                <BlogEngagement blog={post} />
+              </div>
+            </div>
+
+            {/* Right: Sticky Sidebar with Services & Discovery Leads */}
+            <aside className="lg:col-span-4 lg:sticky lg:top-20">
+              <BlogSidebar post={post} relatedPosts={relatedPosts} dark={false} />
+            </aside>
+          </div>
         </div>
 
-        {/* Live Engagement Section */}
-        <div className="mx-auto max-w-4xl px-4 pb-12 sm:px-6">
-          <BlogEngagement blog={post} />
-        </div>
+        {/* Full-Width Services Showcase Section */}
+        <ServicesShowcaseSection dark={false} />
 
-        {/* Related Posts */}
+        {/* Related Insights Grid */}
         {relatedPosts.length > 0 && (
-          <section className="border-t border-gray-200/80 bg-gray-50/50 py-16">
-            <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+          <section className="border-t border-gray-200 bg-white py-16">
+            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
               <div className="mb-8 flex items-center justify-between">
                 <div>
-                  <p className="text-xs font-black uppercase tracking-widest text-accent">
+                  <p className="text-xs font-black uppercase tracking-widest text-[#E8622A]">
                     Related Insights
                   </p>
-                  <h2 className="text-2xl font-black text-gray-900 mt-1">
+                  <h2 className="text-2xl sm:text-3xl font-black text-[#1A2E33] mt-1">
                     Continue Reading
                   </h2>
                 </div>
                 <Link
                   href="/blog"
-                  className="text-xs font-bold text-primary hover:underline"
+                  className="text-xs font-bold text-[#E8622A] hover:underline"
                 >
-                  View all articles →
+                  View all articles & guides →
                 </Link>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {relatedPosts.map((item) => (
+                {relatedPosts.slice(0, 3).map((item) => (
                   <PostCard key={item.slug} post={item} />
                 ))}
               </div>

@@ -44,14 +44,18 @@ const getViewEventId = (visitorId) => {
 };
 
 export default function BlogEngagement({
-  slug,
-  title,
+  slug: directSlug,
+  title: directTitle,
   initialSummary,
+  blog,
 }) {
+  const slug = directSlug || blog?.slug || "";
+  const title = directTitle || blog?.title || "";
   const [visitorId, setVisitorId] = useState("");
   const [summary, setSummary] = useState({
     ...defaultSummary,
     ...(initialSummary || {}),
+    ...(blog ? { views: blog.views || 0, commentCount: blog.commentCount || 0 } : {}),
   });
   const [comments, setComments] = useState([]);
   const [status, setStatus] = useState("");
