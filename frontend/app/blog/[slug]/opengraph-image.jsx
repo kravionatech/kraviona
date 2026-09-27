@@ -1,3 +1,4 @@
+import { notFound } from "next/navigation";
 import { ImageResponse } from "next/og";
 import { API_URL } from "@/utils/api";
 
@@ -49,20 +50,25 @@ async function getPostDetailsForOg(slug) {
       next: { revalidate: 3600 },
     });
 
-    if (!response.ok) {
-      return { title: FALLBACK_TITLE, category: FALLBACK_CATEGORY };
+    if (response.status === 404 || !response.ok) {
+      return null;
     }
 
     const payload = await response.json();
+    if (!payload?.data && !payload?.post && !payload?.blog) return null;
     return getPostDetails(payload);
   } catch {
-    return { title: FALLBACK_TITLE, category: FALLBACK_CATEGORY };
+    return null;
   }
 }
 
 export default async function BlogOpenGraphImage({ params }) {
   const { slug } = await params;
-  const { title, category } = await getPostDetailsForOg(slug);
+  const details = await getPostDetailsForOg(slug);
+  if (!details) {
+    notFound();
+  }
+  const { title, category } = details;
 
   return new ImageResponse(
     (

@@ -182,6 +182,9 @@ const kravionaTools = [
             keywords: { type: "array", items: { type: "string" } },
             metaTitle: { type: "string" },
             metaDescription: { type: "string" },
+            canonicalUrl: { type: "string" },
+            schemaType: { type: "string" },
+            structuredDataOverride: { type: "object" },
             isNoIndex: { type: "boolean" },
             featuredImage: {
               type: "object",

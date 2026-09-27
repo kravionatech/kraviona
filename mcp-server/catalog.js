@@ -130,7 +130,7 @@ const definitions = [
       "isNoIndex",
     ],
     projection:
-      "title slug excerpt quickAnswer tags wordCount readingTimeMinutes author category categoryID featuredImage status publishedAt scheduledAt metaTitle metaDescription schemaType contentType isNoIndex language contentSourceType userID createdAt updatedAt",
+      "title slug excerpt quickAnswer tags wordCount readingTimeMinutes author category categoryID featuredImage status publishedAt scheduledAt metaTitle metaDescription canonicalUrl schemaType structuredDataOverride contentType isNoIndex language contentSourceType userID createdAt updatedAt",
     serverManagedPaths: ["userID", "wordCount", "readingTimeMinutes", "previousSlugs"],
     immutablePaths: ["slug", "createdAt", "publishedAt"],
     prepareCreate: (payload, actor) => ({
